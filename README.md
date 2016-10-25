@@ -59,7 +59,7 @@ Playing Content
 ```java
 player.addPreparedListener(new Player.PreparedListener() {
     @Override
-    public void onPrepared(PlayerState playerMonitor) {
+    public void onPrepared(PlayerState playerState) {
         player.play();
     }
 });
