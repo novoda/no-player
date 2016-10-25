@@ -29,15 +29,12 @@ dependencies {
 
 
 ## Simple usage
-
 Creating a `Player`
 ```java
 PlayerFactory playerFactory = new PlayerFactory(this, PrioritisedPlayers.prioritiseExoPlayer());
 Player player = new playerFactory.create(DrmHandler.NO_DRM);
 ```
-
 Creating the `PlayerView`
-
 ```xml
 R.layout.player_activity
 
@@ -47,12 +44,12 @@ R.layout.player_activity
     android:layout_height="wrap_content"
     android:layout_gravity="center" />
 ```
-
 Attaching to a `PlayerView`
 ```java
 PlayerView playerView = findViewById(R.id.player_view);
 player.attach(playerView);
 ```
+
 
 Playing Content
 
