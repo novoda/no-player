@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MPD
+
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+    xmlns="urn:mpeg:dash:schema:mpd:2011"
+  xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-DASH_schema_files/DASH-MPD.xsd"
+
+    xmlns:cenc="urn:mpeg:cenc:2013"
+
+    xmlns:mspr="urn:microsoft:playready"
+
+    xmlns:mas="urn:marlin:mas:1-0:services:schemas:mpd"
+  type="static"
+  mediaPresentationDuration="PT24M"
+  minBufferTime="PT10S"
+  profiles="urn:mpeg:dash:profile:isoff-on-demand:2011">
+    <Period
+    duration="PT24M">
+        <AdaptationSet
+      group="1"
+      contentType="audio"
+      segmentAlignment="true"
+      subsegmentAlignment="true"
+      subsegmentStartsWithSAP="1"
+      mimeType="audio/mp4">
+            <Representation
+        id="audio=128000"
+        bandwidth="128000"
+        audioSamplingRate="48000"
+        codecs="mp4a.40.2">
+                <AudioChannelConfiguration
+          schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011"
+          value="2"></AudioChannelConfiguration>
+                <BaseURL>CH4_33_05_43_48956249001002_004_AudioOnly.mp4</BaseURL>
+                <SegmentBase
+          timescale="48000"
+          indexRangeExact="true"
+          indexRange="1360-3311">
+                    <Initialization
+            range="0-1359" />
+                </SegmentBase>
+            </Representation>
+        </AdaptationSet>
+        <AdaptationSet
+      group="2"
+      contentType="video"
+      par="16:9"
+      segmentAlignment="true"
+      subsegmentAlignment="true"
+      subsegmentStartsWithSAP="1"
+      mimeType="video/mp4"
+      startWithSAP="1">
+            <Representation
+        id="video=1500391"
+        bandwidth="1500391"
+        width="1024"
+        height="576"
+        frameRate="25"
+        codecs="avc1.4D401F"
+        scanType="progressive">
+                <BaseURL>CH4_33_05_43_48956249001002_004_1500.mp4</BaseURL>
+                <SegmentBase
+          timescale="25"
+          indexRangeExact="true"
+          indexRange="1454-3213">
+                    <Initialization
+            range="0-1453" />
+                </SegmentBase>
+            </Representation>
+        </AdaptationSet>
+    </Period>
+</MPD>
+<!-- Created with Unified Streaming Platform(version=1.7.16) -->
