@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'bintray-release'
 apply plugin: 'jacoco'
 
 android {
@@ -52,3 +53,15 @@ project.afterEvaluate({
         testOutput jarTest
     }
 })
+
+publish {
+    userOrg = 'novoda'
+    repoName = 'maven-private'
+    groupId = 'com.novoda'
+    artifactId = 'no-player'
+    version = project.version
+
+    uploadName = 'no-player'
+    description = 'player to wrap players'
+    website = 'https://github.com/novoda/no-player'
+}
