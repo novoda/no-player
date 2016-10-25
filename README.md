@@ -8,9 +8,9 @@ Some of the benefits are -
 
 - Unified playback interface and event listeners
 - `MediaPlayer` buffering
-- `ExoPlayer` local, streaming and provisioning modular drm
+- `ExoPlayer` local, streaming and provisioning widevine modular DRM
 - Aspect ratio maintaining 
-- Player selection based on `ContentType`
+- Player selection based on `ContentType` and DRM
 
 
 ## Adding to your project
