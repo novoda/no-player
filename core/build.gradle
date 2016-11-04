@@ -4,7 +4,7 @@ apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         minSdkVersion 15
