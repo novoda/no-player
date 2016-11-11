@@ -5,23 +5,23 @@ import android.os.Looper;
 
 public class Heart {
 
-    private static final Time HEART_BEAT_FREQUENCY = Time.fromMillis(500);
+    private static final long HEART_BEAT_FREQUENCY_IN_MILLIS = 500;
 
     private final Handler handler;
     private final Heartbeat heartbeatAction;
-    private final Time heartbeatFrequency;
+    private final long heartbeatFrequency;
 
     private boolean beating;
 
     public static Heart newInstance(Heartbeat onHeartbeat) {
         Handler handler = new Handler(Looper.getMainLooper());
-        return new Heart(handler, onHeartbeat, HEART_BEAT_FREQUENCY);
+        return new Heart(handler, onHeartbeat, HEART_BEAT_FREQUENCY_IN_MILLIS);
     }
 
-    Heart(Handler handler, Heartbeat onHeartbeat, Time heartbeatFrequency) {
+    Heart(Handler handler, Heartbeat onHeartbeat, long heartbeatFrequencyInMillis) {
         this.handler = handler;
         this.heartbeatAction = onHeartbeat;
-        this.heartbeatFrequency = heartbeatFrequency;
+        this.heartbeatFrequency = heartbeatFrequencyInMillis;
     }
 
     public void startBeatingHeart() {
@@ -39,7 +39,7 @@ public class Heart {
     };
 
     private void scheduleNextBeat() {
-        handler.postDelayed(heartbeat, heartbeatFrequency.toMillis());
+        handler.postDelayed(heartbeat, heartbeatFrequency);
     }
 
     public void stopBeatingHeart() {

@@ -8,9 +8,9 @@ public interface PlayerState {
 
     int getVideoHeight();
 
-    Time getPlayheadPosition();
+    VideoPosition getPlayheadPosition();
 
-    Time getMediaDuration();
+    VideoDuration getMediaDuration();
 
     int getBufferPercentage();
 
