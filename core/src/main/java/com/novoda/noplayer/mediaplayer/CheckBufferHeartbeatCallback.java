@@ -2,7 +2,7 @@ package com.novoda.noplayer.mediaplayer;
 
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.Time;
+import com.novoda.noplayer.VideoPosition;
 
 @SuppressWarnings("PMD.RedundantFieldInitializer")
         // we're being very explicit with our default field values, not a bad thing!
@@ -11,7 +11,7 @@ class CheckBufferHeartbeatCallback implements Heart.Heartbeat.Callback<Player> {
     private static final int FORCED_BUFFERING_BEATS_THRESHOLD = 4;
     private final BufferListener bufferListener;
 
-    private Time previousPosition = Time.INVALID;
+    private VideoPosition previousPosition = VideoPosition.INVALID;
     private int beatsPlayed;
 
     CheckBufferHeartbeatCallback(BufferListener bufferListener) {
@@ -25,7 +25,7 @@ class CheckBufferHeartbeatCallback implements Heart.Heartbeat.Callback<Player> {
             return;
         }
 
-        Time currentPosition = player.getPlayheadPosition();
+        VideoPosition currentPosition = player.getPlayheadPosition();
         if (positionNotUpdating(currentPosition)) {
             beatsPlayed = 0;
             startBuffering();
@@ -38,7 +38,7 @@ class CheckBufferHeartbeatCallback implements Heart.Heartbeat.Callback<Player> {
         }
     }
 
-    private boolean positionNotUpdating(Time currentPosition) {
+    private boolean positionNotUpdating(VideoPosition currentPosition) {
         return currentPosition.equals(previousPosition);
     }
 

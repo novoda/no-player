@@ -2,13 +2,15 @@ package com.novoda.noplayer.exoplayer;
 
 import android.net.Uri;
 
-import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.Time;
+import com.novoda.noplayer.Timeout;
+import com.novoda.noplayer.VideoContainer;
+import com.novoda.noplayer.VideoDuration;
+import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.player.PlayerInformation;
 
 // TODO Temp name until we rename/hide exoplayer
@@ -68,8 +70,8 @@ public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
     }
 
     @Override
-    public Time getMediaDuration() {
-        return Time.fromMillis(exoPlayer.getDuration());
+    public VideoDuration getMediaDuration() {
+        return VideoDuration.fromMillis(exoPlayer.getDuration());
     }
 
     @Override
@@ -78,8 +80,8 @@ public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
     }
 
     @Override
-    public Time getPlayheadPosition() {
-        return Time.fromMillis(exoPlayer.getCurrentPosition());
+    public VideoPosition getPlayheadPosition() {
+        return VideoPosition.fromMillis(exoPlayer.getCurrentPosition());
     }
 
     @Override
@@ -105,7 +107,7 @@ public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
     }
 
     @Override
-    public void play(Time position) {
+    public void play(VideoPosition position) {
         seekTo(position);
         play();
     }
@@ -121,8 +123,8 @@ public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
     }
 
     @Override
-    public void seekTo(Time position) {
-        exoPlayer.seekTo(position.toMillis());
+    public void seekTo(VideoPosition position) {
+        exoPlayer.seekTo(position.inMillis());
     }
 
     @Override
@@ -155,7 +157,7 @@ public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
     }
 
     @Override
-    public void loadVideoWithTimeout(Uri uri, ContentType contentType, Time timeout, LoadTimeoutCallback loadTimeoutCallback) {
+    public void loadVideoWithTimeout(Uri uri, ContentType contentType, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback) {
         // TODO do the timeout!
         loadVideo(uri, contentType);
     }

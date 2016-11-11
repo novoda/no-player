@@ -4,7 +4,7 @@ import android.os.Handler;
 
 import com.novoda.noplayer.Clock;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.Time;
+import com.novoda.noplayer.Timeout;
 
 class LoadTimeout {
 
@@ -22,11 +22,11 @@ class LoadTimeout {
         this.handler = handler;
     }
 
-    public void start(Time timeout, Player.LoadTimeoutCallback loadTimeoutCallback) {
+    public void start(Timeout timeout, Player.LoadTimeoutCallback loadTimeoutCallback) {
         cancel();
         this.loadTimeoutCallback = loadTimeoutCallback;
         startTime = clock.getCurrentTime();
-        endTime = startTime + timeout.toMillis();
+        endTime = startTime + timeout.inMillis();
         handler.post(loadTimeoutCheck);
     }
 

@@ -5,22 +5,24 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SystemClock;
-import com.novoda.noplayer.Time;
+import com.novoda.noplayer.Timeout;
+import com.novoda.noplayer.VideoContainer;
+import com.novoda.noplayer.VideoDuration;
+import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.notils.logger.simple.Log;
 
 public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Player {
 
-    private static final Time NO_SEEK_TO_POSITION = Time.INVALID;
+    private static final VideoPosition NO_SEEK_TO_POSITION = VideoPosition.INVALID;
     private static final MediaPlayerInformation MEDIA_PLAYER_INFORMATION = new MediaPlayerInformation();
-    private static final Time INITIAL_PLAY_SEEK_DELAY = Time.fromMillis(500);
+    private static final int INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
 
     private final AndroidMediaPlayerFacade mediaPlayer;
 
@@ -31,7 +33,7 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     private int videoWidth;
     private int videoHeight;
 
-    private Time seekToPosition = NO_SEEK_TO_POSITION;
+    private VideoPosition seekToPosition = NO_SEEK_TO_POSITION;
     private boolean seekingWithIntentToPlay;
 
     private VideoContainer videoContainer = VideoContainer.empty();
@@ -128,7 +130,7 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     };
 
     @Override
-    public void play(Time position) {
+    public void play(VideoPosition position) {
         if (getPlayheadPosition().equals(position)) {
             play();
         } else {
@@ -142,7 +144,7 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
      *
      * @param initialPlayPosition
      */
-    private void initialSeekWorkaround(final Time initialPlayPosition) {
+    private void initialSeekWorkaround(final VideoPosition initialPlayPosition) {
         show();
         getBufferStateListeners().onBufferStarted();
         initialisePlaybackForSeeking();
@@ -151,7 +153,7 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
             public void run() {
                 seekWithIntentToPlay(initialPlayPosition);
             }
-        }, INITIAL_PLAY_SEEK_DELAY.toIntMillis());
+        }, INITIAL_PLAY_SEEK_DELAY_IN_MILLIS);
     }
 
     private void initialisePlaybackForSeeking() {
@@ -159,7 +161,7 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
         mediaPlayer.pause();
     }
 
-    private void seekWithIntentToPlay(Time position) {
+    private void seekWithIntentToPlay(VideoPosition position) {
         seekingWithIntentToPlay = true;
         seekTo(position);
     }
@@ -178,9 +180,9 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     }
 
     @Override
-    public void seekTo(Time position) {
+    public void seekTo(VideoPosition position) {
         seekToPosition = position;
-        mediaPlayer.seekTo(position.toIntMillis());
+        mediaPlayer.seekTo(position.inImpreciseMillis());
     }
 
     private void startBeatingHeart() {
@@ -217,28 +219,28 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     }
 
     @Override
-    public void loadVideoWithTimeout(Uri uri, ContentType contentType, Time timeout, LoadTimeoutCallback loadTimeoutCallback) {
+    public void loadVideoWithTimeout(Uri uri, ContentType contentType, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback) {
         loadTimeout.start(timeout, loadTimeoutCallback);
         loadVideo(uri, contentType);
     }
 
     @Override
-    public Time getPlayheadPosition() {
+    public VideoPosition getPlayheadPosition() {
         try {
-            return isSeeking() ? seekToPosition : Time.fromMillis(mediaPlayer.getCurrentPosition());
+            return isSeeking() ? seekToPosition : VideoPosition.fromMillis(mediaPlayer.getCurrentPosition());
         } catch (IllegalStateException e) {
             Log.e(e, "Cannot get current position:");
-            return Time.INVALID;
+            return VideoPosition.INVALID;
         }
     }
 
     @Override
-    public Time getMediaDuration() {
+    public VideoDuration getMediaDuration() {
         try {
-            return Time.fromMillis(mediaPlayer.getDuration());
+            return VideoDuration.fromMillis(mediaPlayer.getDuration());
         } catch (IllegalStateException e) {
             Log.e(e, "Cannot get duration: ");
-            return Time.INVALID;
+            return VideoDuration.INVALID;
         }
     }
 
