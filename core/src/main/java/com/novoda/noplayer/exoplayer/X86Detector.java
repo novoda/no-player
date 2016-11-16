@@ -14,7 +14,7 @@ public class X86Detector {
     private final String[] supportedAbis;
 
     public static X86Detector newInstance(AndroidVersion androidVersion) {
-        if (androidVersion.deviceOsVersion() >= Build.VERSION_CODES.LOLLIPOP) {
+        if (androidVersion.is21LollipopOrOver()) {
             return new X86Detector(getSupportedAbis());
         } else {
             return new X86Detector(getLegacySupportedAbis());
