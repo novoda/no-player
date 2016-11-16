@@ -42,6 +42,7 @@ import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.upstream.UriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
 import com.google.android.exoplayer.util.Util;
+import com.novoda.noplayer.AndroidVersion;
 
 import java.io.IOException;
 
@@ -242,7 +243,8 @@ class DashRendererCreator implements RendererCreator {
             LoadControl loadControl = new DefaultLoadControl(new DefaultAllocator(BUFFER_SEGMENT_SIZE));
             DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter(mainHandler, null);
 
-            MediaCodecSelector mediaCodecSelector = MediaCodecSelectorFactory.newInstance(Build.VERSION.SDK_INT).createSelector();
+            AndroidVersion androidVersion = AndroidVersion.from(Build.VERSION.SDK_INT);
+            MediaCodecSelector mediaCodecSelector = MediaCodecSelectorFactory.newInstance(androidVersion).createSelector();
             TrackRenderer videoRenderer = createVideoRenderer(
                     mainHandler,
                     loadControl,
