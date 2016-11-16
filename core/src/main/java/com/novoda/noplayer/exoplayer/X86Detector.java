@@ -3,8 +3,6 @@ package com.novoda.noplayer.exoplayer;
 import android.annotation.TargetApi;
 import android.os.Build;
 
-import com.novoda.support.DeviceAndroidVersion;
-
 import java.util.Arrays;
 
 public class X86Detector {
@@ -13,9 +11,8 @@ public class X86Detector {
 
     private final String[] supportedAbis;
 
-    public static X86Detector newInstance() {
-        DeviceAndroidVersion deviceAndroidVersion = DeviceAndroidVersion.newInstance();
-        if (deviceAndroidVersion.is21LollipopOrOver()) {
+    public static X86Detector newInstance(AndroidVersion androidVersion) {
+        if (androidVersion.is21LollipopOrOver()) {
             return new X86Detector(getSupportedAbis());
         } else {
             return new X86Detector(getLegacySupportedAbis());
