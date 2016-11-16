@@ -1,7 +1,6 @@
 package com.novoda.noplayer.exoplayer;
 
 import com.google.android.exoplayer.MediaCodecSelector;
-import com.novoda.noplayer.AndroidVersion;
 
 class MediaCodecSelectorFactory {
 

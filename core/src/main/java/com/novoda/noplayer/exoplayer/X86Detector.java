@@ -3,8 +3,6 @@ package com.novoda.noplayer.exoplayer;
 import android.annotation.TargetApi;
 import android.os.Build;
 
-import com.novoda.noplayer.AndroidVersion;
-
 import java.util.Arrays;
 
 public class X86Detector {

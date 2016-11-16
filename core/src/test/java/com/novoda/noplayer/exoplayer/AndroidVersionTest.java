@@ -1,4 +1,4 @@
-package com.novoda.noplayer;
+package com.novoda.noplayer.exoplayer;
 
 import org.junit.Test;
 

@@ -1,12 +1,12 @@
-package com.novoda.noplayer;
+package com.novoda.noplayer.exoplayer;
 
 import android.os.Build;
 
-public class AndroidVersion {
+class AndroidVersion {
 
-    private static int deviceOsVersion;
+    private int deviceOsVersion;
 
-    public static AndroidVersion from(int deviceOsVersion) {
+    static AndroidVersion from(int deviceOsVersion) {
         return new AndroidVersion(deviceOsVersion);
     }
 
@@ -14,7 +14,7 @@ public class AndroidVersion {
         this.deviceOsVersion = deviceOsVersion;
     }
 
-    public boolean is21LollipopOrOver() {
+    boolean is21LollipopOrOver() {
         return deviceOsVersion >= Build.VERSION_CODES.LOLLIPOP;
     }
 }

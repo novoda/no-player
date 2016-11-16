@@ -42,7 +42,6 @@ import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.upstream.UriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
 import com.google.android.exoplayer.util.Util;
-import com.novoda.noplayer.AndroidVersion;
 
 import java.io.IOException;
 
