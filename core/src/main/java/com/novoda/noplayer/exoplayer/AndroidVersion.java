@@ -6,11 +6,11 @@ class AndroidVersion {
 
     private int deviceOsVersion;
 
-    static AndroidVersion from(int deviceOsVersion) {
-        return new AndroidVersion(deviceOsVersion);
+    static AndroidVersion newInstance() {
+        return new AndroidVersion(Build.VERSION.SDK_INT);
     }
 
-    private AndroidVersion(int deviceOsVersion) {
+    AndroidVersion(int deviceOsVersion) {
         this.deviceOsVersion = deviceOsVersion;
     }
 

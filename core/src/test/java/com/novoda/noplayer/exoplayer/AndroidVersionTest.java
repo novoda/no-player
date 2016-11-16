@@ -12,7 +12,7 @@ public class AndroidVersionTest {
 
     @Test
     public void givenAndroidVersionIs20_whenCheckForLollipopOrOver_thenReturnsFalse() {
-        AndroidVersion deviceAndroidVersion = AndroidVersion.from(ANDROID_VERSION_20);
+        AndroidVersion deviceAndroidVersion = new AndroidVersion(ANDROID_VERSION_20);
 
         boolean lollipopOrOver = deviceAndroidVersion.is21LollipopOrOver();
 
@@ -21,7 +21,7 @@ public class AndroidVersionTest {
 
     @Test
     public void givenAndroidVersionIs21_whenCheckForLollipopOrOver_thenReturnsTrue() {
-        AndroidVersion deviceAndroidVersion = AndroidVersion.from(ANDROID_VERSION_21);
+        AndroidVersion deviceAndroidVersion = new AndroidVersion(ANDROID_VERSION_21);
 
         boolean lollipopOrOver = deviceAndroidVersion.is21LollipopOrOver();
 
@@ -30,7 +30,7 @@ public class AndroidVersionTest {
 
     @Test
     public void givenAndroidVersionIs22_whenCheckForLollipopOrOver_thenReturnsTrue() {
-        AndroidVersion deviceAndroidVersion = AndroidVersion.from(ANDROID_VERSION_22);
+        AndroidVersion deviceAndroidVersion = new AndroidVersion(ANDROID_VERSION_22);
 
         boolean lollipopOrOver = deviceAndroidVersion.is21LollipopOrOver();
 
