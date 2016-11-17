@@ -6,8 +6,8 @@ class MediaCodecSelectorFactory {
 
     private final X86Detector x86Detector;
 
-    public static MediaCodecSelectorFactory newInstance() {
-        X86Detector x86Detector = X86Detector.newInstance();
+    public static MediaCodecSelectorFactory newInstance(AndroidVersion androidVersion) {
+        X86Detector x86Detector = X86Detector.newInstance(androidVersion);
         return new MediaCodecSelectorFactory(x86Detector);
     }
 

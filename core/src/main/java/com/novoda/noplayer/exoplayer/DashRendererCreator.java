@@ -242,7 +242,8 @@ class DashRendererCreator implements RendererCreator {
             LoadControl loadControl = new DefaultLoadControl(new DefaultAllocator(BUFFER_SEGMENT_SIZE));
             DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter(mainHandler, null);
 
-            MediaCodecSelector mediaCodecSelector = MediaCodecSelectorFactory.newInstance().createSelector();
+            AndroidVersion androidVersion = AndroidVersion.newInstance();
+            MediaCodecSelector mediaCodecSelector = MediaCodecSelectorFactory.newInstance(androidVersion).createSelector();
             TrackRenderer videoRenderer = createVideoRenderer(
                     mainHandler,
                     loadControl,

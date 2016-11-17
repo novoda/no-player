@@ -9,11 +9,11 @@ public interface Player extends PlayerState, PlayerListeners {
 
     void play();
 
-    void play(Time position);
+    void play(VideoPosition position);
 
     void pause();
 
-    void seekTo(Time position);
+    void seekTo(VideoPosition position);
 
     void reset();
 
@@ -21,7 +21,7 @@ public interface Player extends PlayerState, PlayerListeners {
 
     void loadVideo(Uri uri, ContentType contentType);
 
-    void loadVideoWithTimeout(Uri uri, ContentType contentType, Time timeout, LoadTimeoutCallback loadTimeoutCallback);
+    void loadVideoWithTimeout(Uri uri, ContentType contentType, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback);
 
     PlayerInformation getPlayerInformation();
 

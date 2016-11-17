@@ -4,7 +4,7 @@ import android.os.Handler;
 
 import com.novoda.noplayer.Clock;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.Time;
+import com.novoda.noplayer.Timeout;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class LoadTimeoutTest {
 
-    private static final Time ANY_TIME = Time.ZERO;
+    private static final Timeout ANY_TIME = Timeout.fromSeconds(0);
 
     @Mock
     private Clock clock;
