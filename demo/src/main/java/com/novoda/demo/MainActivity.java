@@ -14,6 +14,8 @@ import com.novoda.noplayer.player.PrioritisedPlayers;
 
 public class MainActivity extends Activity {
 
+    private static final String URI_VIDEO_MP4 = "http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-85.mp4";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +31,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        Uri uri = Uri.parse("http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-85.mp4");
+        Uri uri = Uri.parse(URI_VIDEO_MP4);
         player.loadVideo(uri, ContentType.H264);
     }
 
