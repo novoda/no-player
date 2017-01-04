@@ -5,7 +5,7 @@ import android.os.Build;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.noplayer.player.PlayerType;
 
-public class MediaPlayerInformation implements PlayerInformation {
+class MediaPlayerInformation implements PlayerInformation {
 
     @Override
     public PlayerType getPlayerType() {
