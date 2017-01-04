@@ -26,7 +26,7 @@ public class MainActivity extends Activity {
         player.attach(noPlayerView);
         player.addPreparedListener(new Player.PreparedListener() {
             @Override
-            public void onPrepared(PlayerState playerMonitor) {
+            public void onPrepared(PlayerState playerState) {
                 player.play();
             }
         });

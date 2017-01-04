@@ -54,7 +54,7 @@ public interface Player extends PlayerState, PlayerListeners {
 
     interface PreparedListener {
 
-        void onPrepared(PlayerState playerMonitor);
+        void onPrepared(PlayerState playerState);
     }
 
     interface BufferStateListener {
