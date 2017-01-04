@@ -172,6 +172,7 @@ public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
         videoContainer = VideoContainer.with(playerView.getContainerView());
         exoPlayer.setSurfaceHolderRequester(playerView.getSurfaceHolderRequester());
         exoPlayer.setSubtitleLayout(playerView.getSubtitleLayout());
+        addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
     }
 
     // Used by the infinite modular video activity, purely for logging purposes

@@ -283,6 +283,7 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
         videoContainer = VideoContainer.with(playerView.getContainerView());
         mediaPlayer.setSurfaceHolderRequester(playerView.getSurfaceHolderRequester());
         BuggyVideoDriverPreventer.newInstance(playerView.getContainerView(), this).preventVideoDriverBug();
+        addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
     }
 
     @Override
