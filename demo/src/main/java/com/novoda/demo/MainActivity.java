@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         NoPlayerView noPlayerView = (NoPlayerView) findViewById(R.id.player_view);
 
-        final Player player = new PlayerFactory(this, PrioritisedPlayers.prioritiseExoPlayer()).create(DrmHandler.NO_DRM);
+        final Player player = new PlayerFactory(this, PrioritisedPlayers.prioritiseExoPlayer()).create();
         player.attach(noPlayerView);
         player.addPreparedListener(new Player.PreparedListener() {
             @Override

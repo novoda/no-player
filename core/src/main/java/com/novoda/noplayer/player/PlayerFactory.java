@@ -26,6 +26,10 @@ public class PlayerFactory {
         this.prioritisedPlayers = prioritisedPlayers;
     }
 
+    public Player create() {
+        return create(DrmHandler.NO_DRM);
+    }
+
     public Player create(DrmHandler drm) {
         for (PlayerType playerType : prioritisedPlayers) {
             if (playerType.supports(drm)) {
