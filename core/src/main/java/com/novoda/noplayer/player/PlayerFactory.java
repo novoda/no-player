@@ -3,8 +3,8 @@ package com.novoda.noplayer.player;
 import android.content.Context;
 
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
+import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.exoplayer.DrmSessionCreator;
@@ -14,7 +14,6 @@ import com.novoda.noplayer.exoplayer.ProvisioningModularDrmCallback;
 import com.novoda.noplayer.exoplayer.RendererFactory;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerFacade;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
-import com.novoda.notils.exception.DeveloperError;
 
 public class PlayerFactory {
 
@@ -36,7 +35,7 @@ public class PlayerFactory {
                 return createPlayerForType(playerType, drm);
             }
         }
-        throw new DeveloperError("No player available to handle : " + drm);
+        throw UnableToCreatePlayerException.contentNotSupported();
     }
 
     private Player createPlayerForType(PlayerType playerType, DrmHandler drm) {
@@ -46,7 +45,7 @@ public class PlayerFactory {
             case EXO_PLAYER:
                 return createExoPlayer(createDrmSessionCreatorFor(drm));
             default:
-                throw new DeveloperError("Unhandled player type : " + playerType.name());
+                throw UnableToCreatePlayerException.unknownPlayerType(playerType);
         }
     }
 
@@ -60,7 +59,7 @@ public class PlayerFactory {
         } else if (drm instanceof DownloadedModularDrm) {
             return new LocalDrmSessionCreator((DownloadedModularDrm) drm);
         } else {
-            throw new DeveloperError("Unhandled DrmHandler : " + drm);
+            throw UnableToCreatePlayerException.unknownDrmHandler(drm);
         }
     }
 
@@ -78,4 +77,25 @@ public class PlayerFactory {
         AndroidMediaPlayerFacade androidMediaPlayer = new AndroidMediaPlayerFacade(context);
         return new AndroidMediaPlayerImpl(androidMediaPlayer);
     }
+
+    static class UnableToCreatePlayerException extends RuntimeException {
+
+        static UnableToCreatePlayerException contentNotSupported() {
+            return new UnableToCreatePlayerException("No player available to handle content");
+        }
+
+        static UnableToCreatePlayerException unknownDrmHandler(DrmHandler drmHandler) {
+            return new UnableToCreatePlayerException("Unhandled DrmHandler : " + drmHandler.getClass().getName());
+        }
+
+        static UnableToCreatePlayerException unknownPlayerType(PlayerType playerType) {
+            return new UnableToCreatePlayerException("Unhandled player type : " + playerType.name());
+        }
+
+        UnableToCreatePlayerException(String reason) {
+            super(reason);
+        }
+
+    }
+
 }
