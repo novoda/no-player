@@ -32,7 +32,7 @@ dependencies {
 Creating a `Player`
 ```java
 PlayerFactory playerFactory = new PlayerFactory(this, PrioritisedPlayers.prioritiseExoPlayer());
-Player player = new playerFactory.create(DrmHandler.NO_DRM);
+Player player = new playerFactory.create();
 ```
 Creating the `PlayerView`
 ```xml
