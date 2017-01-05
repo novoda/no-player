@@ -41,18 +41,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
     }
 
-    public void attach(Player player) {
-        player.attach(this);
-        player.addVideoSizeChangedListener(videoSizeChangedListener);
-    }
-
-    private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
-        @Override
-        public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-            aspectRatioChangeListener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
-        }
-    };
-
     @Override
     public void onNewAspectRatio(float aspectRatio) {
         videoFrame.setAspectRatio(aspectRatio);
@@ -82,4 +70,16 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
     public void hideSubtitles() {
         subtitleLayout.setVisibility(INVISIBLE);
     }
+
+    @Override
+    public Player.VideoSizeChangedListener getVideoSizeChangedListener() {
+        return videoSizeChangedListener;
+    }
+
+    private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
+        @Override
+        public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+            aspectRatioChangeListener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+        }
+    };
 }

@@ -13,7 +13,6 @@ import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.player.PlayerInformation;
 
-// TODO Temp name until we rename/hide exoplayer
 public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
 
     private static final ExoPlayerInformation EXO_PLAYER_INFORMATION = new ExoPlayerInformation();
@@ -172,6 +171,7 @@ public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
         videoContainer = VideoContainer.with(playerView.getContainerView());
         exoPlayer.setSurfaceHolderRequester(playerView.getSurfaceHolderRequester());
         exoPlayer.setSubtitleLayout(playerView.getSubtitleLayout());
+        addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
     }
 
     // Used by the infinite modular video activity, purely for logging purposes

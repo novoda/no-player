@@ -18,7 +18,13 @@ class SystemProperties {
             Class<?> systemProperties = Class.forName(SYSTEM_PROPERTIES_CLASS);
             Method getMethod = systemProperties.getMethod(SYSTEM_PROPERTIES_METHOD_GET, String.class);
             return (String) getMethod.invoke(STATIC_CLASS_INSTANCE, key);
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (ClassNotFoundException e) {
+            throw new MissingSystemPropertiesException(e);
+        } catch (NoSuchMethodException e) {
+            throw new MissingSystemPropertiesException(e);
+        } catch (InvocationTargetException e) {
+            throw new MissingSystemPropertiesException(e);
+        } catch (IllegalAccessException e) {
             throw new MissingSystemPropertiesException(e);
         }
     }
