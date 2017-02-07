@@ -1,10 +1,13 @@
 package com.novoda.noplayer.exoplayer;
 
+import android.media.MediaCodec;
+
 import com.google.android.exoplayer.ParserException;
 import com.google.android.exoplayer.upstream.HttpDataSource;
-import com.novoda.noplayer.drm.DrmRequestException;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.drm.DrmRequestException;
 import com.novoda.noplayer.exoplayer.playererror.ConnectivityError;
+import com.novoda.noplayer.exoplayer.playererror.DrmDecryptionError;
 import com.novoda.noplayer.exoplayer.playererror.DrmRequestError;
 import com.novoda.noplayer.exoplayer.playererror.InvalidResponseCodeError;
 import com.novoda.noplayer.exoplayer.playererror.MalformedContentError;
@@ -27,6 +30,9 @@ final class ExoPlayerErrorFactory {
         }
 
         Throwable cause = e.getCause();
+        if (e.getCause() instanceof MediaCodec.CryptoException) {
+            return new DrmDecryptionError(e);
+        }
         if (cause instanceof DrmRequestException) {
             return new DrmRequestError(cause);
         }
