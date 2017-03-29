@@ -2,17 +2,17 @@ package com.novoda.noplayer;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.novoda.notils.caster.Views;
 
 public class NoPlayerView extends FrameLayout implements PlayerView {
 
     private final PlayerViewSurfaceHolder surfaceHolderProvider;
 
-    private SurfaceView surfaceView;
+    private SimpleExoPlayerView playerView;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -27,14 +27,12 @@ public class NoPlayerView extends FrameLayout implements PlayerView {
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
-        surfaceView = Views.findById(this, R.id.surface_view);
-
-        surfaceView.getHolder().addCallback(surfaceHolderProvider);
+        playerView = Views.findById(this, R.id.simple_player_view);
     }
 
     @Override
     public View getContainerView() {
-        return surfaceView;
+        return playerView.getVideoSurfaceView();
     }
 
     @Override
@@ -45,6 +43,11 @@ public class NoPlayerView extends FrameLayout implements PlayerView {
     @Override
     public Player.VideoSizeChangedListener getVideoSizeChangedListener() {
         return videoSizeChangedListener;
+    }
+
+    @Override
+    public SimpleExoPlayerView simplePlayerView() {
+        return playerView;
     }
 
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {

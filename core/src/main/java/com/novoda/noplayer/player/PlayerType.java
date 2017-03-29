@@ -8,7 +8,7 @@ public enum PlayerType implements PlayerCapabilities {
     EXO_PLAYER(new PlayerCapabilities() {
         @Override
         public boolean supports(DrmHandler drmHandler) {
-            return false;
+            return true;
         }
     });
 
