@@ -5,7 +5,12 @@ import com.novoda.notils.exception.DeveloperError;
 
 public enum PlayerType implements PlayerCapabilities {
     MEDIA_PLAYER(new AndroidMediaPlayerCapabilities()),
-    EXO_PLAYER(new ExoPlayerCapabilities());
+    EXO_PLAYER(new PlayerCapabilities() {
+        @Override
+        public boolean supports(DrmHandler drmHandler) {
+            return false;
+        }
+    });
 
 
     private final PlayerCapabilities playerCapabilities;

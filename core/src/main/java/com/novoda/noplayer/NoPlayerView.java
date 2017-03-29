@@ -6,19 +6,13 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.google.android.exoplayer.AspectRatioFrameLayout;
-import com.google.android.exoplayer.text.SubtitleLayout;
-import com.novoda.noplayer.exoplayer.AspectRatioChangeListener;
 import com.novoda.notils.caster.Views;
 
-public class NoPlayerView extends FrameLayout implements AspectRatioChangeListener.Listener, PlayerView {
+public class NoPlayerView extends FrameLayout implements PlayerView {
 
     private final PlayerViewSurfaceHolder surfaceHolderProvider;
-    private final AspectRatioChangeListener aspectRatioChangeListener;
 
-    private AspectRatioFrameLayout videoFrame;
     private SurfaceView surfaceView;
-    private SubtitleLayout subtitleLayout;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -27,23 +21,15 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         surfaceHolderProvider = new PlayerViewSurfaceHolder();
-        aspectRatioChangeListener = new AspectRatioChangeListener(this);
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
-        videoFrame = Views.findById(this, R.id.video_frame);
         surfaceView = Views.findById(this, R.id.surface_view);
-        subtitleLayout = Views.findById(this, R.id.subtitles_layout);
 
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
-    }
-
-    @Override
-    public void onNewAspectRatio(float aspectRatio) {
-        videoFrame.setAspectRatio(aspectRatio);
     }
 
     @Override
@@ -57,21 +43,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
     }
 
     @Override
-    public SubtitleLayout getSubtitleLayout() {
-        return subtitleLayout;
-    }
-
-    @Override
-    public void showSubtitles() {
-        subtitleLayout.setVisibility(VISIBLE);
-    }
-
-    @Override
-    public void hideSubtitles() {
-        subtitleLayout.setVisibility(INVISIBLE);
-    }
-
-    @Override
     public Player.VideoSizeChangedListener getVideoSizeChangedListener() {
         return videoSizeChangedListener;
     }
@@ -79,7 +50,8 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-            aspectRatioChangeListener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+// TODO:            aspectRatioChangeListener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
         }
     };
+
 }
