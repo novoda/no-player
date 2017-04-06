@@ -2,6 +2,7 @@ package com.novoda.noplayer.exoplayer;
 
 import android.net.Uri;
 
+import com.google.android.exoplayer.MediaFormat;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
@@ -12,6 +13,8 @@ import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.player.PlayerInformation;
+
+import java.util.List;
 
 public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
 
@@ -177,5 +180,15 @@ public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
     // Used by the infinite modular video activity, purely for logging purposes
     public ExoPlayerFacade getInternalExoPlayer() {
         return exoPlayer;
+    }
+
+    @Override
+    public void setAudioTrack(int mediaTrackPosition) {
+        exoPlayer.setAudioTrack(mediaTrackPosition);
+    }
+
+    @Override
+    public List<MediaFormat> getAudioTracks() {
+        return exoPlayer.getAudioTracks();
     }
 }

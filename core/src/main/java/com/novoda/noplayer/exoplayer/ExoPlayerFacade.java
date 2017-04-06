@@ -11,6 +11,7 @@ import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecTrackRenderer.DecoderInitializationException;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
+import com.google.android.exoplayer.MediaFormat;
 import com.google.android.exoplayer.TimeRange;
 import com.google.android.exoplayer.TrackRenderer;
 import com.google.android.exoplayer.audio.AudioTrack;
@@ -29,6 +30,7 @@ import com.novoda.notils.exception.DeveloperError;
 import com.novoda.notils.logger.simple.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -433,6 +435,19 @@ public class ExoPlayerFacade implements ChunkSampleSource.EventListener,
     @Override
     public void onUpstreamDiscarded(int sourceId, long mediaStartTimeMs, long mediaEndTimeMs) {
         // Do nothing.
+    }
+
+    public void setAudioTrack(int mediaTrackPosition) {
+        player.setSelectedTrack(Renderers.AUDIO_RENDERER_ID, mediaTrackPosition);
+    }
+
+    public List<MediaFormat> getAudioTracks() {
+        List<MediaFormat> tracks = new ArrayList<>();
+        for (int i = 0; i < player.getTrackCount(Renderers.AUDIO_RENDERER_ID); i++) {
+            MediaFormat track = player.getTrackFormat(Renderers.AUDIO_RENDERER_ID, i);
+            tracks.add(track);
+        }
+        return tracks;
     }
 
     public void setSubtitleLayout(SubtitleLayout subtitleLayout) {

@@ -36,6 +36,10 @@ public class Renderers {
         return renderers[VIDEO_RENDERER_INDEX];
     }
 
+    public TrackRenderer getAudioRenderer() {
+        return renderers[AUDIO_RENDERER_INDEX];
+    }
+
     public TrackRenderer[] asArray() {
         return Arrays.copyOf(renderers, renderers.length);
     }
