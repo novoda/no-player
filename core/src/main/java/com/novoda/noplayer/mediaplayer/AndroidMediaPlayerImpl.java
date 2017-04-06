@@ -306,8 +306,9 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     }
 
     @Override
-    public void setAudioTrack(int mediaTrackPosition) {
-        mediaPlayer.setAudioTrack();
+    public void setAudioTrack(int audioTrackIndex) {
+        mediaPlayer.setAudioTrack(audioTrackIndex);
+
     }
 
     @Override

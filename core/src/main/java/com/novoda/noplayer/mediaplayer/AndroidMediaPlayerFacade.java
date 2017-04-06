@@ -11,7 +11,7 @@ import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.notils.logger.simple.Log;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -240,10 +240,33 @@ public class AndroidMediaPlayerFacade {
     }
 
     public List<PlayerAudioTrack> getAudioTracks() {
-        return Collections.emptyList();
+        ArrayList<PlayerAudioTrack> audioTracks = new ArrayList<>();
+        for (MediaPlayer.TrackInfo trackInfo : mediaPlayer.getTrackInfo()) {
+            if (trackInfo.getTrackType() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
+                audioTracks.add(new PlayerAudioTrack(String.valueOf(trackInfo.hashCode()), trackInfo.getLanguage(), "", -1, -1));
+            }
+        }
+        return audioTracks;
     }
 
-    public void setAudioTrack() {
-        // TODO:
+    public void setAudioTrack(int audioTrackIndex) {
+        int index = 0;
+        MediaPlayer.TrackInfo[] trackInfos = mediaPlayer.getTrackInfo();
+
+        for (int i = 0; i < trackInfos.length; i++) {
+            MediaPlayer.TrackInfo trackInfo = trackInfos[i];
+            if (trackInfo.getTrackType() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO && index == audioTrackIndex) {
+                mediaPlayer.selectTrack(i);
+            } else if (trackInfo.getTrackType() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
+                index++;
+            }
+        }
+        Log.e(String.format(
+                "Attempt to %s has been ignored because an invalid position was specified: %s, total: %s",
+                "setAudioTrack()",
+                audioTrackIndex,
+                index
+              )
+        );
     }
 }
