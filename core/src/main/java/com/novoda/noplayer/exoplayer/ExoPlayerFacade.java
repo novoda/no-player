@@ -441,7 +441,13 @@ public class ExoPlayerFacade implements ChunkSampleSource.EventListener,
     public void setAudioTrack(int mediaTrackPosition) {
         int trackCount = player.getTrackCount(Renderers.AUDIO_RENDERER_ID);
         if (mediaTrackPosition > trackCount || mediaTrackPosition < 0) {
-            Log.e(String.format("Attempt to %s has been ignored because an invalid position was specified: %s", "setAudioTrack()", mediaTrackPosition));
+            Log.e(String.format(
+                    "Attempt to %s has been ignored because an invalid position was specified: %s, total: %s",
+                    "setAudioTrack()",
+                    mediaTrackPosition,
+                    trackCount
+                  )
+            );
             return;
         }
         player.setSelectedTrack(Renderers.AUDIO_RENDERER_ID, mediaTrackPosition);
@@ -451,7 +457,7 @@ public class ExoPlayerFacade implements ChunkSampleSource.EventListener,
         List<PlayerAudioTrack> tracks = new ArrayList<>();
         for (int i = 0; i < player.getTrackCount(Renderers.AUDIO_RENDERER_ID); i++) {
             MediaFormat track = player.getTrackFormat(Renderers.AUDIO_RENDERER_ID, i);
-            PlayerAudioTrack playerAudioTrack = new PlayerAudioTrack(track.trackId);
+            PlayerAudioTrack playerAudioTrack = new PlayerAudioTrack(track.trackId, track.language, track.mimeType, track.channelCount, track.bitrate);
             tracks.add(playerAudioTrack);
         }
         return tracks;

@@ -183,8 +183,8 @@ public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
     }
 
     @Override
-    public void setAudioTrack(int mediaTrackPosition) {
-        exoPlayer.setAudioTrack(mediaTrackPosition);
+    public void setAudioTrack(int audioTrackIndex) {
+        exoPlayer.setAudioTrack(audioTrackIndex);
     }
 
     @Override

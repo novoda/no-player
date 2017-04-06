@@ -29,7 +29,7 @@ public interface Player extends PlayerState, PlayerListeners {
 
     void attach(PlayerView playerView);
 
-    void setAudioTrack(int mediaTrackPosition);
+    void setAudioTrack(int audioTrackIndex);
 
     List<PlayerAudioTrack> getAudioTracks();
 
