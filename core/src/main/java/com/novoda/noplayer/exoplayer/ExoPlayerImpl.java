@@ -2,10 +2,10 @@ package com.novoda.noplayer.exoplayer;
 
 import android.net.Uri;
 
-import com.google.android.exoplayer.MediaFormat;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.Timeout;
@@ -188,7 +188,7 @@ public class ExoPlayerImpl extends PlayerListenersHolder implements Player {
     }
 
     @Override
-    public List<MediaFormat> getAudioTracks() {
+    public List<PlayerAudioTrack> getAudioTracks() {
         return exoPlayer.getAudioTracks();
     }
 }

@@ -5,10 +5,10 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.google.android.exoplayer.MediaFormat;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SystemClock;
@@ -311,7 +311,7 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     }
 
     @Override
-    public List<MediaFormat> getAudioTracks() {
+    public List<PlayerAudioTrack> getAudioTracks() {
         return mediaPlayer.getAudioTracks();
     }
 }

@@ -25,6 +25,7 @@ import com.google.android.exoplayer.text.SubtitleLayout;
 import com.google.android.exoplayer.text.TextRenderer;
 import com.google.android.exoplayer.upstream.BandwidthMeter;
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.notils.exception.DeveloperError;
 import com.novoda.notils.logger.simple.Log;
@@ -438,14 +439,20 @@ public class ExoPlayerFacade implements ChunkSampleSource.EventListener,
     }
 
     public void setAudioTrack(int mediaTrackPosition) {
+        int trackCount = player.getTrackCount(Renderers.AUDIO_RENDERER_ID);
+        if (mediaTrackPosition > trackCount || mediaTrackPosition < 0) {
+            Log.e(String.format("Attempt to %s has been ignored because an invalid position was specified: %s", "setAudioTrack()", mediaTrackPosition));
+            return;
+        }
         player.setSelectedTrack(Renderers.AUDIO_RENDERER_ID, mediaTrackPosition);
     }
 
-    public List<MediaFormat> getAudioTracks() {
-        List<MediaFormat> tracks = new ArrayList<>();
+    public List<PlayerAudioTrack> getAudioTracks() {
+        List<PlayerAudioTrack> tracks = new ArrayList<>();
         for (int i = 0; i < player.getTrackCount(Renderers.AUDIO_RENDERER_ID); i++) {
             MediaFormat track = player.getTrackFormat(Renderers.AUDIO_RENDERER_ID, i);
-            tracks.add(track);
+            PlayerAudioTrack playerAudioTrack = new PlayerAudioTrack(track.trackId);
+            tracks.add(playerAudioTrack);
         }
         return tracks;
     }

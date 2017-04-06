@@ -2,7 +2,6 @@ package com.novoda.noplayer;
 
 import android.net.Uri;
 
-import com.google.android.exoplayer.MediaFormat;
 import com.novoda.noplayer.exoplayer.Bitrate;
 import com.novoda.noplayer.player.PlayerInformation;
 
@@ -32,7 +31,7 @@ public interface Player extends PlayerState, PlayerListeners {
 
     void setAudioTrack(int mediaTrackPosition);
 
-    List<MediaFormat> getAudioTracks();
+    List<PlayerAudioTrack> getAudioTracks();
 
     interface PreReleaseListener {
 

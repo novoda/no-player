@@ -6,7 +6,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
-import com.google.android.exoplayer.MediaFormat;
+import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.notils.logger.simple.Log;
 
@@ -239,7 +239,7 @@ public class AndroidMediaPlayerFacade {
                 && currentState != STATE_PREPARING;
     }
 
-    public List<MediaFormat> getAudioTracks() {
+    public List<PlayerAudioTrack> getAudioTracks() {
         return Collections.emptyList();
     }
 
