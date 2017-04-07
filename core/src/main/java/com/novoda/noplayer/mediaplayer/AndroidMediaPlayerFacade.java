@@ -263,7 +263,7 @@ public class AndroidMediaPlayerFacade {
         }
         Log.e(String.format(
                 "Attempt to %s has been ignored because an invalid position was specified: %s, total: %s",
-                "setAudioTrack()",
+                "selectAudioTrack()",
                 audioTrackIndex,
                 index
               )
