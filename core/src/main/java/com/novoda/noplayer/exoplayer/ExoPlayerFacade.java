@@ -11,6 +11,7 @@ import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecTrackRenderer.DecoderInitializationException;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
+import com.google.android.exoplayer.MediaFormat;
 import com.google.android.exoplayer.TimeRange;
 import com.google.android.exoplayer.TrackRenderer;
 import com.google.android.exoplayer.audio.AudioTrack;
@@ -24,11 +25,13 @@ import com.google.android.exoplayer.text.SubtitleLayout;
 import com.google.android.exoplayer.text.TextRenderer;
 import com.google.android.exoplayer.upstream.BandwidthMeter;
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.notils.exception.DeveloperError;
 import com.novoda.notils.logger.simple.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -433,6 +436,37 @@ public class ExoPlayerFacade implements ChunkSampleSource.EventListener,
     @Override
     public void onUpstreamDiscarded(int sourceId, long mediaStartTimeMs, long mediaEndTimeMs) {
         // Do nothing.
+    }
+
+    public void selectAudioTrack(int audioTrackIndex) {
+        int trackCount = player.getTrackCount(Renderers.AUDIO_RENDERER_ID);
+        if (audioTrackIndex < 0 || audioTrackIndex > trackCount - 1) {
+            Log.e(String.format(
+                    "Attempt to %s has been ignored because an invalid position was specified: %s, total: %s",
+                    "selectAudioTrack()",
+                    audioTrackIndex,
+                    trackCount
+                  )
+            );
+            return;
+        }
+        player.setSelectedTrack(Renderers.AUDIO_RENDERER_ID, audioTrackIndex);
+    }
+
+    public List<PlayerAudioTrack> getAudioTracks() {
+        List<PlayerAudioTrack> tracks = new ArrayList<>();
+        for (int i = 0; i < player.getTrackCount(Renderers.AUDIO_RENDERER_ID); i++) {
+            MediaFormat track = player.getTrackFormat(Renderers.AUDIO_RENDERER_ID, i);
+            PlayerAudioTrack playerAudioTrack = new PlayerAudioTrack(
+                    track.trackId,
+                    track.language,
+                    track.mimeType,
+                    track.channelCount,
+                    track.bitrate
+            );
+            tracks.add(playerAudioTrack);
+        }
+        return tracks;
     }
 
     public void setSubtitleLayout(SubtitleLayout subtitleLayout) {

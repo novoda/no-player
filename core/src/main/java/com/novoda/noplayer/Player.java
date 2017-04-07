@@ -5,6 +5,8 @@ import android.net.Uri;
 import com.novoda.noplayer.exoplayer.Bitrate;
 import com.novoda.noplayer.player.PlayerInformation;
 
+import java.util.List;
+
 public interface Player extends PlayerState, PlayerListeners {
 
     void play();
@@ -26,6 +28,10 @@ public interface Player extends PlayerState, PlayerListeners {
     PlayerInformation getPlayerInformation();
 
     void attach(PlayerView playerView);
+
+    void selectAudioTrack(int audioTrackIndex);
+
+    List<PlayerAudioTrack> getAudioTracks();
 
     interface PreReleaseListener {
 

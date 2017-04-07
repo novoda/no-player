@@ -8,6 +8,7 @@ import android.os.Looper;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SystemClock;
@@ -17,6 +18,8 @@ import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.notils.logger.simple.Log;
+
+import java.util.List;
 
 public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Player {
 
@@ -300,5 +303,16 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
         mediaPlayer.release();
         getStateChangedListeners().onVideoReleased();
         videoContainer.hide();
+    }
+
+    @Override
+    public void selectAudioTrack(int audioTrackIndex) {
+        mediaPlayer.setAudioTrack(audioTrackIndex);
+
+    }
+
+    @Override
+    public List<PlayerAudioTrack> getAudioTracks() {
+        return mediaPlayer.getAudioTracks();
     }
 }
