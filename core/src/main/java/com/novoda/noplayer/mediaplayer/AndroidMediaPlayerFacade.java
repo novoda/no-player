@@ -26,7 +26,8 @@ public class AndroidMediaPlayerFacade {
     private static final int STATE_PAUSED = 4;
     private static final int STATE_PLAYBACK_COMPLETED = 5;
     private static final Map<String, String> NO_HEADERS = null;
-    public static final int INVALID_AUDIO_TRACK_INDEX = -1;
+
+    private static final int INVALID_AUDIO_TRACK_INDEX = -1;
 
     private final Context context;
 
