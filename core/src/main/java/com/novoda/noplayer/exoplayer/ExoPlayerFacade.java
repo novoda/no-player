@@ -439,7 +439,12 @@ public class ExoPlayerFacade implements ChunkSampleSource.EventListener,
     }
 
     public void selectAudioTrack(int audioTrackIndex) {
+        if (player == null) {
+            throw new NullPointerException("You can only call selectAudioTrack() when video is prepared.");
+        }
+
         int trackCount = player.getTrackCount(Renderers.AUDIO_RENDERER_ID);
+
         if (audioTrackIndex < 0 || audioTrackIndex > trackCount - 1) {
             Log.e(String.format(
                     "Attempt to %s has been ignored because an invalid position was specified: %s, total: %s",
@@ -450,10 +455,15 @@ public class ExoPlayerFacade implements ChunkSampleSource.EventListener,
             );
             return;
         }
+
         player.setSelectedTrack(Renderers.AUDIO_RENDERER_ID, audioTrackIndex);
     }
 
     public List<PlayerAudioTrack> getAudioTracks() {
+        if (player == null) {
+            throw new NullPointerException("You can only call getAudioTracks() when video is prepared.");
+        }
+
         List<PlayerAudioTrack> tracks = new ArrayList<>();
         for (int i = 0; i < player.getTrackCount(Renderers.AUDIO_RENDERER_ID); i++) {
             MediaFormat track = player.getTrackFormat(Renderers.AUDIO_RENDERER_ID, i);
