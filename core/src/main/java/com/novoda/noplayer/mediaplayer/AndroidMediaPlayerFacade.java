@@ -12,7 +12,6 @@ import com.novoda.notils.logger.simple.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -244,8 +243,7 @@ public class AndroidMediaPlayerFacade {
 
     public List<PlayerAudioTrack> getAudioTracks() {
         if (mediaPlayer == null) {
-            Log.w("You can only call getAudioTracks() when video is prepared.");
-            return Collections.emptyList();
+            throw new NullPointerException("You can only call getAudioTracks() when video is prepared.");
         }
 
         return getOnlyAudioTracks();
@@ -263,8 +261,7 @@ public class AndroidMediaPlayerFacade {
 
     public void selectAudioTrack(int audioTrackIndex) {
         if (mediaPlayer == null) {
-            Log.w("You can only call selectAudioTrack() when video is prepared.");
-            return;
+            throw new NullPointerException("You can only call selectAudioTrack() when video is prepared.");
         }
 
         int absoluteAudioTrackIndex = getAbsoluteAudioTrackIndex(audioTrackIndex);

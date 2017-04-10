@@ -32,7 +32,6 @@ import com.novoda.notils.logger.simple.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -441,8 +440,7 @@ public class ExoPlayerFacade implements ChunkSampleSource.EventListener,
 
     public void selectAudioTrack(int audioTrackIndex) {
         if (player == null) {
-            Log.w("You can only call selectAudioTrack() when video is prepared.");
-            return;
+            throw new NullPointerException("You can only call selectAudioTrack() when video is prepared.");
         }
 
         int trackCount = player.getTrackCount(Renderers.AUDIO_RENDERER_ID);
@@ -463,8 +461,7 @@ public class ExoPlayerFacade implements ChunkSampleSource.EventListener,
 
     public List<PlayerAudioTrack> getAudioTracks() {
         if (player == null) {
-            Log.w("You can only call getAudioTracks() when video is prepared.");
-            return Collections.emptyList();
+            throw new NullPointerException("You can only call getAudioTracks() when video is prepared.");
         }
 
         List<PlayerAudioTrack> tracks = new ArrayList<>();
