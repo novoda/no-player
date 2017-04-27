@@ -1,9 +1,9 @@
 package com.novoda.noplayer.player;
 
-import com.novoda.noplayer.drm.DrmHandler;
+import com.novoda.noplayer.drm.DrmType;
 
 interface PlayerCapabilities {
 
-    boolean supports(DrmHandler drmHandler);
+    boolean supports(DrmType drmType);
 
 }

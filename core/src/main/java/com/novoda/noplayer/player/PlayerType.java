@@ -1,6 +1,6 @@
 package com.novoda.noplayer.player;
 
-import com.novoda.noplayer.drm.DrmHandler;
+import com.novoda.noplayer.drm.DrmType;
 import com.novoda.notils.exception.DeveloperError;
 
 public enum PlayerType implements PlayerCapabilities {
@@ -15,8 +15,8 @@ public enum PlayerType implements PlayerCapabilities {
     }
 
     @Override
-    public boolean supports(DrmHandler drmHandler) {
-        return playerCapabilities.supports(drmHandler);
+    public boolean supports(DrmType drmType) {
+        return playerCapabilities.supports(drmType);
     }
 
     public static PlayerType from(String rawPlayerType) {

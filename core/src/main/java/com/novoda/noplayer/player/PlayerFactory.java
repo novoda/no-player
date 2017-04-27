@@ -5,6 +5,7 @@ import android.content.Context;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
+import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.exoplayer.DrmSessionCreator;
@@ -18,48 +19,50 @@ import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
 public class PlayerFactory {
 
     private final Context context;
-    private final PrioritisedPlayers prioritisedPlayers;
+    private final PrioritizedPlayers prioritizedPlayers;
 
-    public PlayerFactory(Context context, PrioritisedPlayers prioritisedPlayers) {
+    public PlayerFactory(Context context, PrioritizedPlayers prioritizedPlayers) {
         this.context = context;
-        this.prioritisedPlayers = prioritisedPlayers;
+        this.prioritizedPlayers = prioritizedPlayers;
     }
 
     public Player create() {
-        return create(DrmHandler.NO_DRM);
+        return create(DrmType.NONE, DrmHandler.NO_DRM);
     }
 
-    public Player create(DrmHandler drm) {
-        for (PlayerType playerType : prioritisedPlayers) {
-            if (playerType.supports(drm)) {
-                return createPlayerForType(playerType, drm);
+    public Player create(DrmType drmType, DrmHandler drmHandler) {
+        for (PlayerType player : prioritizedPlayers) {
+            if (player.supports(drmType)) {
+                return createPlayerForType(player, drmType, drmHandler);
             }
         }
-        throw UnableToCreatePlayerException.contentNotSupported();
+        throw UnableToCreatePlayerException.unknownDrmType(drmType);
     }
 
-    private Player createPlayerForType(PlayerType playerType, DrmHandler drm) {
+    private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler) {
         switch (playerType) {
             case MEDIA_PLAYER:
                 return createMediaPlayer();
             case EXO_PLAYER:
-                return createExoPlayer(createDrmSessionCreatorFor(drm));
+                return createExoPlayer(createDrmSessionCreatorFor(drmType, drmHandler));
             default:
                 throw UnableToCreatePlayerException.unknownPlayerType(playerType);
         }
     }
 
-    private DrmSessionCreator createDrmSessionCreatorFor(DrmHandler drm) {
-        if (drm == DrmHandler.NO_DRM) {
-            return new NoDrmSessionCreator();
-        } else if (drm instanceof StreamingModularDrm) {
-            ProvisionExecutor provisionExecutor = ProvisionExecutor.newInstance();
-            ProvisioningModularDrmCallback mediaDrmCallback = new ProvisioningModularDrmCallback((StreamingModularDrm) drm, provisionExecutor);
-            return new StreamingDrmSessionCreator(mediaDrmCallback);
-        } else if (drm instanceof DownloadedModularDrm) {
-            return new LocalDrmSessionCreator((DownloadedModularDrm) drm);
-        } else {
-            throw UnableToCreatePlayerException.unknownDrmHandler(drm);
+    private DrmSessionCreator createDrmSessionCreatorFor(DrmType drmType, DrmHandler drmHandler) {
+        switch (drmType) {
+            case NONE:
+            case WIDEVINE_CLASSIC:
+                return new NoDrmSessionCreator();
+            case WIDEVINE_MODULAR_STREAM:
+                ProvisionExecutor provisionExecutor = ProvisionExecutor.newInstance();
+                ProvisioningModularDrmCallback mediaDrmCallback = new ProvisioningModularDrmCallback((StreamingModularDrm) drmHandler, provisionExecutor);
+                return new StreamingDrmSessionCreator(mediaDrmCallback);
+            case WIDEVINE_MODULAR_DOWNLOAD:
+                return new LocalDrmSessionCreator((DownloadedModularDrm) drmHandler);
+            default:
+                throw UnableToCreatePlayerException.noDrmHandlerFor(drmType);
         }
     }
 
@@ -80,16 +83,16 @@ public class PlayerFactory {
 
     static class UnableToCreatePlayerException extends RuntimeException {
 
-        static UnableToCreatePlayerException contentNotSupported() {
-            return new UnableToCreatePlayerException("No player available to handle content");
+        static UnableToCreatePlayerException unknownDrmType(DrmType drmType) {
+            return new UnableToCreatePlayerException("Unhandled DrmType: " + drmType);
         }
 
-        static UnableToCreatePlayerException unknownDrmHandler(DrmHandler drmHandler) {
-            return new UnableToCreatePlayerException("Unhandled DrmHandler : " + drmHandler.getClass().getName());
+        static UnableToCreatePlayerException noDrmHandlerFor(DrmType drmType) {
+            return new UnableToCreatePlayerException("No DrmHandler for DrmType: " + drmType);
         }
 
         static UnableToCreatePlayerException unknownPlayerType(PlayerType playerType) {
-            return new UnableToCreatePlayerException("Unhandled player type : " + playerType.name());
+            return new UnableToCreatePlayerException("Unhandled player type: " + playerType.name());
         }
 
         UnableToCreatePlayerException(String reason) {
