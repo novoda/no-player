@@ -19,11 +19,20 @@ import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
 public class PlayerFactory {
 
     private final Context context;
-    private final PrioritizedPlayers prioritizedPlayers;
+    private final PrioritizedPlayerTypes prioritizedPlayerTypes;
+    private final ExoPlayerCreator exoPlayerCreator;
+    private final MediaPlayerCreator mediaPlayerCreator;
 
-    public PlayerFactory(Context context, PrioritizedPlayers prioritizedPlayers) {
+
+    public PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
+        this(context, prioritizedPlayerTypes, new ExoPlayerCreator(), new MediaPlayerCreator());
+    }
+
+    PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes, ExoPlayerCreator exoPlayerCreator, MediaPlayerCreator mediaPlayerCreator) {
         this.context = context;
-        this.prioritizedPlayers = prioritizedPlayers;
+        this.prioritizedPlayerTypes = prioritizedPlayerTypes;
+        this.exoPlayerCreator = exoPlayerCreator;
+        this.mediaPlayerCreator = mediaPlayerCreator;
     }
 
     public Player create() {
@@ -31,7 +40,7 @@ public class PlayerFactory {
     }
 
     public Player create(DrmType drmType, DrmHandler drmHandler) {
-        for (PlayerType player : prioritizedPlayers) {
+        for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
                 return createPlayerForType(player, drmType, drmHandler);
             }
@@ -42,9 +51,10 @@ public class PlayerFactory {
     private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler) {
         switch (playerType) {
             case MEDIA_PLAYER:
-                return createMediaPlayer();
+                return mediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
-                return createExoPlayer(createDrmSessionCreatorFor(drmType, drmHandler));
+                DrmSessionCreator drmSessionCreator = createDrmSessionCreatorFor(drmType, drmHandler);
+                return exoPlayerCreator.createExoPlayer(context, drmSessionCreator);
             default:
                 throw UnableToCreatePlayerException.unknownPlayerType(playerType);
         }
@@ -66,21 +76,6 @@ public class PlayerFactory {
         }
     }
 
-    private Player createExoPlayer(DrmSessionCreator drmSessionCreator) {
-        RendererFactory rendererFactory = createRendererFactory(drmSessionCreator);
-        ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(rendererFactory);
-        return new ExoPlayerImpl(exoPlayerFacade);
-    }
-
-    private RendererFactory createRendererFactory(DrmSessionCreator drmSessionCreator) {
-        return new RendererFactory(context, drmSessionCreator);
-    }
-
-    private Player createMediaPlayer() {
-        AndroidMediaPlayerFacade androidMediaPlayer = new AndroidMediaPlayerFacade(context);
-        return new AndroidMediaPlayerImpl(androidMediaPlayer);
-    }
-
     static class UnableToCreatePlayerException extends RuntimeException {
 
         static UnableToCreatePlayerException unknownDrmType(DrmType drmType) {
@@ -97,6 +92,29 @@ public class PlayerFactory {
 
         UnableToCreatePlayerException(String reason) {
             super(reason);
+        }
+
+    }
+
+    static class ExoPlayerCreator {
+
+        Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator) {
+            RendererFactory rendererFactory = createRendererFactory(context, drmSessionCreator);
+            ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(rendererFactory);
+            return new ExoPlayerImpl(exoPlayerFacade);
+        }
+
+        private RendererFactory createRendererFactory(Context context, DrmSessionCreator drmSessionCreator) {
+            return new RendererFactory(context, drmSessionCreator);
+        }
+
+    }
+
+    static class MediaPlayerCreator {
+
+        Player createMediaPlayer(Context context) {
+            AndroidMediaPlayerFacade androidMediaPlayer = new AndroidMediaPlayerFacade(context);
+            return new AndroidMediaPlayerImpl(androidMediaPlayer);
         }
 
     }

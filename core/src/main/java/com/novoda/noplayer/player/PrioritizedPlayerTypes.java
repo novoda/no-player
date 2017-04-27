@@ -4,25 +4,25 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class PrioritizedPlayers implements Iterable<PlayerType> {
+public class PrioritizedPlayerTypes implements Iterable<PlayerType> {
 
     private final List<PlayerType> playerPriorities;
 
-    public static PrioritizedPlayers prioritizeExoPlayer() {
+    public static PrioritizedPlayerTypes prioritizeExoPlayer() {
         List<PlayerType> players = new ArrayList<>();
         players.add(PlayerType.EXO_PLAYER);
         players.add(PlayerType.MEDIA_PLAYER);
-        return new PrioritizedPlayers(players);
+        return new PrioritizedPlayerTypes(players);
     }
 
-    public static PrioritizedPlayers prioritizeMediaPlayer() {
+    public static PrioritizedPlayerTypes prioritizeMediaPlayer() {
         List<PlayerType> players = new ArrayList<>();
         players.add(PlayerType.MEDIA_PLAYER);
         players.add(PlayerType.EXO_PLAYER);
-        return new PrioritizedPlayers(players);
+        return new PrioritizedPlayerTypes(players);
     }
 
-    PrioritizedPlayers(List<PlayerType> playerPriorities) {
+    PrioritizedPlayerTypes(List<PlayerType> playerPriorities) {
         this.playerPriorities = playerPriorities;
     }
 
