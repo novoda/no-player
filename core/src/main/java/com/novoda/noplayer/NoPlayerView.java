@@ -50,6 +50,16 @@ public class NoPlayerView extends FrameLayout implements PlayerView {
         return playerView;
     }
 
+    @Override
+    public void showSubtitles() {
+
+    }
+
+    @Override
+    public void hideSubtitles() {
+
+    }
+
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {

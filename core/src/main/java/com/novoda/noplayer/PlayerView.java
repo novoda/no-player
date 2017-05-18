@@ -13,4 +13,8 @@ public interface PlayerView {
     Player.VideoSizeChangedListener getVideoSizeChangedListener();
 
     SimpleExoPlayerView simplePlayerView();
+
+    void showSubtitles();
+
+    void hideSubtitles();
 }
