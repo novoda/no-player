@@ -8,6 +8,7 @@ import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.Timeout;
+import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.player.PlayerInformation;
@@ -16,7 +17,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     private final ExoPlayerTwoFacade facade;
     private final Heart heart;
-//    private VideoContainer videoContainer = VideoContainer.empty();
+    private VideoContainer videoContainer = VideoContainer.empty();
 
     public ExoPlayerTwoImpl(ExoPlayerTwoFacade facade) {
         this.facade = facade;
@@ -179,7 +180,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         getStateChangedListeners().onVideoReleased();
         heart.stopBeatingHeart();
         facade.release();
-//        videoContainer.hide();
+        videoContainer.hide();
     }
 
     @Override
@@ -201,7 +202,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void attach(PlayerView playerView) {
-//       videoContainer = VideoContainer.with(playerView.getContainerView());
+        videoContainer = VideoContainer.with(playerView.getContainerView());
         facade.setSurfaceHolderRequester(playerView.getSurfaceHolderRequester());
         facade.setPlayer(playerView.simplePlayerView());
         addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
@@ -210,7 +211,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     }
 
     private void showContainer() {
-//        videoContainer.show();
+        videoContainer.show();
     }
 
     public ExoPlayerTwoFacade getInternalExoPlayer() {
