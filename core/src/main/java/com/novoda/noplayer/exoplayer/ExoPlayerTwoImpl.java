@@ -23,6 +23,13 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         this.facade = facade;
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
         heart = Heart.newInstance(onHeartbeat);
+
+        facade.addListener(new OnPrepareForwarder(getPreparedListeners(), this));
+        facade.addListener(new OnCompletionForwarder(getCompletionListeners()));
+//        facade.addListener(new ErrorForwarder(this, getErrorListeners()));
+//        facade.addListener(new BufferStateForwarder(getBufferStateListeners()));
+//        facade.setInfoListener(new InfoForwarder(getBitrateChangedListeners()));
+//        facade.addListener(new VideoSizeChangedForwarder(getVideoSizeChangedListeners()));
     }
 
     @Override
@@ -53,91 +60,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     @Override
     public int getBufferPercentage() {
         return facade.getBufferedPercentage();
-    }
-
-    @Override
-    public void addErrorListener(ErrorListener errorListener) {
-
-    }
-
-    @Override
-    public void removeErrorListener(ErrorListener errorListener) {
-
-    }
-
-    @Override
-    public void addPreparedListener(PreparedListener preparedListener) {
-
-    }
-
-    @Override
-    public void removePreparedListener(PreparedListener preparedListener) {
-
-    }
-
-    @Override
-    public void addBufferStateListener(BufferStateListener bufferStateListener) {
-
-    }
-
-    @Override
-    public void removeBufferStateListener(BufferStateListener bufferStateListener) {
-
-    }
-
-    @Override
-    public void addCompletionListener(CompletionListener completionListener) {
-        facade.addCompletionListener(completionListener);
-    }
-
-    @Override
-    public void removeCompletionListener(CompletionListener completionListener) {
-
-    }
-
-    @Override
-    public void addStateChangedListener(StateChangedListener stateChangedListener) {
-
-    }
-
-    @Override
-    public void removeStateChangedListener(StateChangedListener stateChangedListener) {
-
-    }
-
-    @Override
-    public void addBitrateChangedListener(BitrateChangedListener bitrateChangedListener) {
-
-    }
-
-    @Override
-    public void removeBitrateChangedListener(BitrateChangedListener bitrateChangedListener) {
-
-    }
-
-    @Override
-    public void setPreReleaseListener(PreReleaseListener playerReleaseListener) {
-
-    }
-
-    @Override
-    public void addHeartbeatCallback(Heart.Heartbeat.Callback<Player> callback) {
-
-    }
-
-    @Override
-    public void removeHeartbeatCallback(Heart.Heartbeat.Callback<Player> callback) {
-
-    }
-
-    @Override
-    public void addVideoSizeChangedListener(VideoSizeChangedListener videoSizeChangedListener) {
-
-    }
-
-    @Override
-    public void removeVideoSizeChangedListener(VideoSizeChangedListener videoSizeChangedListener) {
-
     }
 
     @Override
@@ -217,4 +139,5 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     public ExoPlayerTwoFacade getInternalExoPlayer() {
         return facade;
     }
+
 }

@@ -25,12 +25,11 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.Player;
 import com.novoda.noplayer.SurfaceHolderRequester;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
@@ -42,7 +41,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     private final MediaSourceFactory mediaSourceFactory;
     private SurfaceHolderRequester surfaceHolderRequester;
 
-    private List<Player.CompletionListener> completionListeners = new ArrayList<>();
+    private List<Listener> listeners = new CopyOnWriteArrayList<>();
 
     public static ExoPlayerTwoFacade newInstance(Context context) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
@@ -181,46 +180,49 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         exoPlayer.setAudioDebugListener(eventLogger);
         exoPlayer.setVideoDebugListener(eventLogger);
         exoPlayer.setMetadataOutput(eventLogger);
-        exoPlayer.addListener(new ExoPlayer.EventListener() {
-            @Override
-            public void onTimelineChanged(Timeline timeline, Object manifest) {
-
-            }
-
-            @Override
-            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
-            }
-
-            @Override
-            public void onLoadingChanged(boolean isLoading) {
-
-            }
-
-            @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                if (playbackState == ExoPlayer.STATE_ENDED) {
-                    for (Player.CompletionListener completionListener : completionListeners) {
-                        completionListener.onCompletion();
-                    }
-                }
-            }
-
-            @Override
-            public void onPlayerError(ExoPlaybackException error) {
-
-            }
-
-            @Override
-            public void onPositionDiscontinuity() {
-
-            }
-        });
+        exoPlayer.addListener(listener);
         setPlayWhenReady(true);
 
         MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, eventListener);
         exoPlayer.prepare(mediaSource, true, false);
     }
+
+    private final ExoPlayer.EventListener listener = new ExoPlayer.EventListener() {
+
+        @Override
+        public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+        }
+
+        @Override
+        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+        }
+
+        @Override
+        public void onLoadingChanged(boolean isLoading) {
+
+        }
+
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            for (Listener listener : listeners) {
+                listener.onPlayerStateChanged(playWhenReady, playbackState);
+            }
+        }
+
+        @Override
+        public void onPlayerError(ExoPlaybackException error) {
+            for (Listener listener : listeners) {
+                listener.onPlayerError(error);
+            }
+        }
+
+        @Override
+        public void onPositionDiscontinuity() {
+            //no-op
+        }
+    };
 
     private final ExtractorMediaSource.EventListener eventListener = new ExtractorMediaSource.EventListener() {
         @Override
@@ -237,8 +239,15 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         simpleExoPlayerView.setPlayer(exoPlayer);
     }
 
-    public void addCompletionListener(Player.CompletionListener completionListener) {
-        completionListeners.add(completionListener);
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    interface Listener {
+
+        void onPlayerStateChanged(boolean playWhenReady, int playbackState);
+
+        void onPlayerError(ExoPlaybackException error);
     }
 
 }
