@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.Surface;
-import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -25,7 +24,6 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.SurfaceHolderRequester;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,7 +37,6 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     private final SimpleExoPlayer exoPlayer;
     private final DefaultTrackSelector trackSelector;
     private final MediaSourceFactory mediaSourceFactory;
-    private SurfaceHolderRequester surfaceHolderRequester;
 
     private List<Listener> listeners = new CopyOnWriteArrayList<>();
 
@@ -142,26 +139,8 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
     public void setPlayWhenReady(boolean playWhenReady) {
         if (hasPlayer()) {
-            if (playWhenReady) {
-                pushSurface();
-            }
             exoPlayer.setPlayWhenReady(playWhenReady);
         }
-    }
-
-    private void pushSurface() {
-        if (surfaceHolderRequester == null) {
-            Log.w(getClass().getSimpleName(), "Attempt to pushSurface has been ignored because the Player has not been attached to a PlayerView");
-            return;
-        }
-
-        surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
-            @Override
-            public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                Log.e("!!!", "onSurfaceHolderReady");
-                exoPlayer.setVideoSurface(surfaceHolder.getSurface());
-            }
-        });
     }
 
     public void seekTo(long positionMillis) {
@@ -171,7 +150,9 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     }
 
     public void release() {
-        exoPlayer.release();
+        if (hasPlayer()) {
+            exoPlayer.release();
+        }
     }
 
     public void prepare(Uri uri, ContentType contentType) {
@@ -230,10 +211,6 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
             Log.e("!!!", "ON LOAD ERROR");
         }
     };
-
-    public void setSurfaceHolderRequester(SurfaceHolderRequester surfaceHolderRequester) {
-        this.surfaceHolderRequester = surfaceHolderRequester;
-    }
 
     public void setPlayer(SimpleExoPlayerView simpleExoPlayerView) {
         simpleExoPlayerView.setPlayer(exoPlayer);

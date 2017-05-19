@@ -29,7 +29,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         facade.addListener(prepareForwarder);
         facade.addListener(new OnCompletionForwarder(getCompletionListeners()));
         facade.addListener(new OnErrorForwarder(this, getErrorListeners()));
-//        facade.addListener(new ErrorForwarder(this, getErrorListeners()));
 //        facade.addListener(new BufferStateForwarder(getBufferStateListeners()));
 //        facade.setInfoListener(new InfoForwarder(getBitrateChangedListeners()));
 //        facade.addListener(new VideoSizeChangedForwarder(getVideoSizeChangedListeners()));
@@ -128,7 +127,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     @Override
     public void attach(PlayerView playerView) {
         videoContainer = VideoContainer.with(playerView.getContainerView());
-        facade.setSurfaceHolderRequester(playerView.getSurfaceHolderRequester());
         facade.setPlayer(playerView.simplePlayerView());
         addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         // TODO : Set SubtitleView
