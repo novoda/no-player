@@ -87,7 +87,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void addCompletionListener(CompletionListener completionListener) {
-
+        facade.addCompletionListener(completionListener);
     }
 
     @Override

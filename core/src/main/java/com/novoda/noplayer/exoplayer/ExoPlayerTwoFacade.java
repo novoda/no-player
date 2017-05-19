@@ -6,27 +6,31 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.Player;
 import com.novoda.noplayer.SurfaceHolderRequester;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
@@ -37,6 +41,8 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     private final DefaultTrackSelector trackSelector;
     private final MediaSourceFactory mediaSourceFactory;
     private SurfaceHolderRequester surfaceHolderRequester;
+
+    private List<Player.CompletionListener> completionListeners = new ArrayList<>();
 
     public static ExoPlayerTwoFacade newInstance(Context context) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
@@ -138,10 +144,25 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     public void setPlayWhenReady(boolean playWhenReady) {
         if (hasPlayer()) {
             if (playWhenReady) {
-                // TODO do pushSurface (what is it?)
+                pushSurface();
             }
             exoPlayer.setPlayWhenReady(playWhenReady);
         }
+    }
+
+    private void pushSurface() {
+        if (surfaceHolderRequester == null) {
+            Log.w(getClass().getSimpleName(), "Attempt to pushSurface has been ignored because the Player has not been attached to a PlayerView");
+            return;
+        }
+
+        surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
+            @Override
+            public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
+                Log.e("!!!", "onSurfaceHolderReady");
+                exoPlayer.setVideoSurface(surfaceHolder.getSurface());
+            }
+        });
     }
 
     public void seekTo(long positionMillis) {
@@ -155,12 +176,46 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     }
 
     public void prepare(Uri uri, ContentType contentType) {
-
         EventLogger eventLogger = new EventLogger(trackSelector);
         exoPlayer.addListener(eventLogger);
         exoPlayer.setAudioDebugListener(eventLogger);
         exoPlayer.setVideoDebugListener(eventLogger);
         exoPlayer.setMetadataOutput(eventLogger);
+        exoPlayer.addListener(new ExoPlayer.EventListener() {
+            @Override
+            public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+            }
+
+            @Override
+            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+            }
+
+            @Override
+            public void onLoadingChanged(boolean isLoading) {
+
+            }
+
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                if (playbackState == ExoPlayer.STATE_ENDED) {
+                    for (Player.CompletionListener completionListener : completionListeners) {
+                        completionListener.onCompletion();
+                    }
+                }
+            }
+
+            @Override
+            public void onPlayerError(ExoPlaybackException error) {
+
+            }
+
+            @Override
+            public void onPositionDiscontinuity() {
+
+            }
+        });
         setPlayWhenReady(true);
 
         MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, eventListener);
@@ -182,70 +237,8 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         simpleExoPlayerView.setPlayer(exoPlayer);
     }
 
-    static class MediaSourceFactory {
-
-        private final DataSource.Factory mediaDataSourceFactory;
-        private final Handler handler;
-
-        MediaSourceFactory(DataSource.Factory mediaDataSourceFactory, Handler handler) {
-            this.mediaDataSourceFactory = mediaDataSourceFactory;
-            this.handler = handler;
-        }
-
-        MediaSource create(ContentType contentType, Uri uri, ExtractorMediaSource.EventListener eventListener) {
-            switch (contentType) {
-                case HLS:
-                    return new HlsMediaSource(uri, mediaDataSourceFactory, handler, this.eventListener);
-                case DASH:
-                case H264:
-                default:
-                    return new ExtractorMediaSource(
-                            uri,
-                            mediaDataSourceFactory,
-                            new DefaultExtractorsFactory(),
-                            handler,
-                            eventListener
-                    );
-
-            }
-        }
-
-        private final AdaptiveMediaSourceEventListener eventListener = new AdaptiveMediaSourceEventListener() {
-            @Override
-            public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object
-                    trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs) {
-                // no-op
-            }
-
-            @Override
-            public void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object
-                    trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {
-                // no-op
-            }
-
-            @Override
-            public void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object
-                    trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {
-                // no-op
-            }
-
-            @Override
-            public void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object
-                    trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded, IOException
-                                            error, boolean wasCanceled) {
-                // no-op
-            }
-
-            @Override
-            public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {
-                // no-op
-            }
-
-            @Override
-            public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData,
-                                                  long mediaTimeMs) {
-                // no-op
-            }
-        };
+    public void addCompletionListener(Player.CompletionListener completionListener) {
+        completionListeners.add(completionListener);
     }
+
 }

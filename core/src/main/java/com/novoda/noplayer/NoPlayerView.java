@@ -2,6 +2,7 @@ package com.novoda.noplayer;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -13,6 +14,7 @@ public class NoPlayerView extends FrameLayout implements PlayerView {
     private final PlayerViewSurfaceHolder surfaceHolderProvider;
 
     private SimpleExoPlayerView playerView;
+    private SurfaceView surfaceView;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -28,11 +30,13 @@ public class NoPlayerView extends FrameLayout implements PlayerView {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
         playerView = Views.findById(this, R.id.simple_player_view);
+        surfaceView = (SurfaceView) playerView.getVideoSurfaceView();
+        surfaceView.getHolder().addCallback(surfaceHolderProvider);
     }
 
     @Override
     public View getContainerView() {
-        return playerView.getVideoSurfaceView();
+        return surfaceView;
     }
 
     @Override
