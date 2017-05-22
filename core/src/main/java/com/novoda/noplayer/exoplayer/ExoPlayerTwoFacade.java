@@ -39,6 +39,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     private final MediaSourceFactory mediaSourceFactory;
 
     private List<Listener> listeners = new CopyOnWriteArrayList<>();
+    private InfoForwarder infoListener;
 
     public static ExoPlayerTwoFacade newInstance(Context context) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
@@ -110,13 +111,20 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
     @Override
     public void onDroppedFrames(int count, long elapsedMs) {
+        if (infoListener == null) {
+            return;
+        }
 
+        infoListener.onDroppedFrames(count, elapsedMs);
     }
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         videoHeight = height;
         videoWidth = width;
+        for (Listener listener : listeners) {
+            listener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+        }
     }
 
     @Override
@@ -183,7 +191,6 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
         @Override
         public void onLoadingChanged(boolean isLoading) {
-
         }
 
         @Override
@@ -225,11 +232,17 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         exoPlayer.stop();
     }
 
+    public void setInfoListener(InfoForwarder infoListener) {
+        this.infoListener = infoListener;
+    }
+
     interface Listener {
 
         void onPlayerStateChanged(boolean playWhenReady, int playbackState);
 
         void onPlayerError(ExoPlaybackException error);
+
+        void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
     }
 
 }

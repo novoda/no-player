@@ -15,6 +15,7 @@ import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
+import com.novoda.noplayer.exoplayer.InfoListener;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.notils.logger.simple.Log;
 
@@ -254,12 +255,12 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     }
 
     @Override
-    public void addBitrateChangedListener(BitrateChangedListener bitrateChangedListener) {
+    public void addInfoListener(InfoListener infoListener) {
         // media player does not support this
     }
 
     @Override
-    public void removeBitrateChangedListener(BitrateChangedListener bitrateChangedListener) {
+    public void removeInfoListener(InfoListener infoListener) {
         // media player does not support this
     }
 
