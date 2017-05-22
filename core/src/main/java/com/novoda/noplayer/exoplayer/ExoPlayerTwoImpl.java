@@ -17,6 +17,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     private final ExoPlayerTwoFacade facade;
     private final Heart heart;
+    private final OnPrepareForwarder prepareForwarder;
     private VideoContainer videoContainer = VideoContainer.empty();
 
     public ExoPlayerTwoImpl(ExoPlayerTwoFacade facade) {
@@ -24,9 +25,10 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
         heart = Heart.newInstance(onHeartbeat);
 
-        facade.addListener(new OnPrepareForwarder(getPreparedListeners(), this));
+        prepareForwarder = new OnPrepareForwarder(getPreparedListeners(), this);
+        facade.addListener(prepareForwarder);
         facade.addListener(new OnCompletionForwarder(getCompletionListeners()));
-//        facade.addListener(new ErrorForwarder(this, getErrorListeners()));
+        facade.addListener(new OnErrorForwarder(this, getErrorListeners()));
 //        facade.addListener(new BufferStateForwarder(getBufferStateListeners()));
 //        facade.setInfoListener(new InfoForwarder(getBitrateChangedListeners()));
 //        facade.addListener(new VideoSizeChangedForwarder(getVideoSizeChangedListeners()));
@@ -112,7 +114,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void loadVideo(Uri uri, ContentType contentType) {
-//        preparerForwarder.reset();
+        prepareForwarder.reset();
         showContainer();
         facade.prepare(uri, contentType);
     }
@@ -130,7 +132,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     @Override
     public void attach(PlayerView playerView) {
         videoContainer = VideoContainer.with(playerView.getContainerView());
-        facade.setSurfaceHolderRequester(playerView.getSurfaceHolderRequester());
         facade.setPlayer(playerView.simplePlayerView());
         addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         // TODO : Set SubtitleView
