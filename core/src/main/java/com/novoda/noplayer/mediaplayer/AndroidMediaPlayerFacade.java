@@ -6,10 +6,13 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
+import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.notils.logger.simple.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class AndroidMediaPlayerFacade {
@@ -23,6 +26,8 @@ public class AndroidMediaPlayerFacade {
     private static final int STATE_PLAYBACK_COMPLETED = 5;
     private static final Map<String, String> NO_HEADERS = null;
 
+    private static final int INVALID_AUDIO_TRACK_INDEX = -1;
+
     private final Context context;
 
     private int currentState = STATE_IDLE;
@@ -35,6 +40,7 @@ public class AndroidMediaPlayerFacade {
     private MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
 
     private SurfaceHolderRequester surfaceHolderRequester;
+    private List<PlayerAudioTrack> audioTracks;
 
     public AndroidMediaPlayerFacade(Context context) {
         this.context = context;
@@ -239,5 +245,59 @@ public class AndroidMediaPlayerFacade {
 
     public void stop() {
         mediaPlayer.stop();
+    }
+
+    public void selectAudioTrack(int audioTrackIndex) {
+        if (mediaPlayer == null) {
+            throw new NullPointerException("You can only call selectAudioTrack() when video is prepared.");
+        }
+
+        int absoluteAudioTrackIndex = getAbsoluteAudioTrackIndex(audioTrackIndex);
+
+        if (absoluteAudioTrackIndex != INVALID_AUDIO_TRACK_INDEX) {
+            mediaPlayer.selectTrack(absoluteAudioTrackIndex);
+        }
+    }
+
+    private int getAbsoluteAudioTrackIndex(int relativeAudioTrackIndex) {
+        int absoluteAudioTrackIndex = 0;
+
+        for (MediaPlayer.TrackInfo trackInfo : mediaPlayer.getTrackInfo()) {
+            if (trackInfo.getTrackType() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
+                absoluteAudioTrackIndex++;
+            }
+
+            if (absoluteAudioTrackIndex == relativeAudioTrackIndex) {
+                return absoluteAudioTrackIndex;
+            }
+        }
+
+        Log.e(String.format(
+                "Attempt to %s has been ignored because an invalid position was specified: %s, total: %s",
+                "getAbsoluteAudioTrackIndex()",
+                relativeAudioTrackIndex,
+                absoluteAudioTrackIndex
+              )
+        );
+
+        return INVALID_AUDIO_TRACK_INDEX;
+    }
+
+    public List<PlayerAudioTrack> getAudioTracks() {
+        if (mediaPlayer == null) {
+            throw new NullPointerException("You can only call getAudioTracks() when video is prepared.");
+        }
+
+        return getOnlyAudioTracks();
+    }
+
+    private ArrayList<PlayerAudioTrack> getOnlyAudioTracks() {
+        ArrayList<PlayerAudioTrack> audioTracks = new ArrayList<>();
+        for (MediaPlayer.TrackInfo trackInfo : mediaPlayer.getTrackInfo()) {
+            if (trackInfo.getTrackType() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
+                audioTracks.add(new PlayerAudioTrack(String.valueOf(trackInfo.hashCode()), trackInfo.getLanguage(), "", -1, -1));
+            }
+        }
+        return audioTracks;
     }
 }

@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.Timeout;
@@ -12,6 +13,9 @@ import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.player.PlayerInformation;
+
+import java.util.Collections;
+import java.util.List;
 
 public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
@@ -30,8 +34,8 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         facade.addListener(new OnCompletionForwarder(getCompletionListeners()));
         facade.addListener(new OnErrorForwarder(this, getErrorListeners()));
         facade.addListener(new BufferStateForwarder(getBufferStateListeners()));
-        facade.setInfoListener(new InfoForwarder(getInfoListeners()));
         facade.addListener(new VideoSizeChangedForwarder(getVideoSizeChangedListeners()));
+        facade.setInfoListeners(getInfoListeners());
     }
 
     @Override
@@ -136,6 +140,16 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         // TODO : Set SubtitleView
         // facade.setSubtitleView(playerView.());
+    }
+
+    @Override
+    public void selectAudioTrack(int audioTrackIndex) {
+        //TODO: actually select the audio track.
+    }
+
+    @Override
+    public List<PlayerAudioTrack> getAudioTracks() {
+        return Collections.emptyList();
     }
 
     private void showContainer() {

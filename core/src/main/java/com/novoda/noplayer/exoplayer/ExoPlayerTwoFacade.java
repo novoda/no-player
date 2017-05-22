@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -24,6 +23,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.listeners.InfoListeners;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,7 +39,8 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     private final MediaSourceFactory mediaSourceFactory;
 
     private List<Listener> listeners = new CopyOnWriteArrayList<>();
-    private InfoForwarder infoListener;
+    private InfoListeners infoListeners;
+    private InternalErrorListener internalErrorListener;
 
     public static ExoPlayerTwoFacade newInstance(Context context) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
@@ -111,11 +112,10 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
     @Override
     public void onDroppedFrames(int count, long elapsedMs) {
-        if (infoListener == null) {
+        if (infoListeners == null) {
             return;
         }
-
-        infoListener.onDroppedFrames(count, elapsedMs);
+        infoListeners.onDroppedFrames(count, elapsedMs);
     }
 
     @Override
@@ -216,7 +216,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     private final ExtractorMediaSource.EventListener eventListener = new ExtractorMediaSource.EventListener() {
         @Override
         public void onLoadError(IOException error) {
-            Log.e("!!!", "ON LOAD ERROR");
+            internalErrorListener.onLoadError(error);
         }
     };
 
@@ -232,11 +232,15 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         exoPlayer.stop();
     }
 
-    public void setInfoListener(InfoForwarder infoListener) {
-        this.infoListener = infoListener;
+    public void setInfoListeners(InfoListeners infoListeners) {
+        this.infoListeners = infoListeners;
     }
 
-    interface Listener {
+    public void setInternalErrorListener(InternalErrorListener internalErrorListener) {
+        this.internalErrorListener = internalErrorListener;
+    }
+
+    public interface Listener {
 
         void onPlayerStateChanged(boolean playWhenReady, int playbackState);
 
