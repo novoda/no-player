@@ -79,7 +79,6 @@ public class AndroidMediaPlayerFacade {
 
     private MediaPlayer createMediaPlayer(SurfaceHolder surfaceHolder, Uri videoUri) throws IOException {
         MediaPlayer mediaPlayer = new MediaPlayer();
-
         mediaPlayer.setOnPreparedListener(internalPeparedListener);
         mediaPlayer.setOnVideoSizeChangedListener(internalSizeChangedListener);
         mediaPlayer.setOnCompletionListener(internalCompletionListener);
@@ -247,6 +246,24 @@ public class AndroidMediaPlayerFacade {
         mediaPlayer.stop();
     }
 
+    public List<PlayerAudioTrack> getAudioTracks() {
+        if (mediaPlayer == null) {
+            throw new NullPointerException("You can only call getAudioTracks() when video is prepared.");
+        }
+
+        return getOnlyAudioTracks();
+    }
+
+    private ArrayList<PlayerAudioTrack> getOnlyAudioTracks() {
+        ArrayList<PlayerAudioTrack> audioTracks = new ArrayList<>();
+        for (MediaPlayer.TrackInfo trackInfo : mediaPlayer.getTrackInfo()) {
+            if (trackInfo.getTrackType() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
+                audioTracks.add(new PlayerAudioTrack(String.valueOf(trackInfo.hashCode()), trackInfo.getLanguage(), "", -1, -1));
+            }
+        }
+        return audioTracks;
+    }
+
     public void selectAudioTrack(int audioTrackIndex) {
         if (mediaPlayer == null) {
             throw new NullPointerException("You can only call selectAudioTrack() when video is prepared.");
@@ -281,23 +298,5 @@ public class AndroidMediaPlayerFacade {
         );
 
         return INVALID_AUDIO_TRACK_INDEX;
-    }
-
-    public List<PlayerAudioTrack> getAudioTracks() {
-        if (mediaPlayer == null) {
-            throw new NullPointerException("You can only call getAudioTracks() when video is prepared.");
-        }
-
-        return getOnlyAudioTracks();
-    }
-
-    private ArrayList<PlayerAudioTrack> getOnlyAudioTracks() {
-        ArrayList<PlayerAudioTrack> audioTracks = new ArrayList<>();
-        for (MediaPlayer.TrackInfo trackInfo : mediaPlayer.getTrackInfo()) {
-            if (trackInfo.getTrackType() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
-                audioTracks.add(new PlayerAudioTrack(String.valueOf(trackInfo.hashCode()), trackInfo.getLanguage(), "", -1, -1));
-            }
-        }
-        return audioTracks;
     }
 }
