@@ -64,6 +64,11 @@ public class NoPlayerView extends FrameLayout implements PlayerView {
 
     }
 
+    @Override
+    public void removeControls() {
+        playerView.setUseController(false);
+    }
+
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {

@@ -162,6 +162,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         exoPlayer.setVideoDebugListener(eventLogger);
         exoPlayer.setMetadataOutput(eventLogger);
         exoPlayer.addListener(listener);
+
         setPlayWhenReady(true);
 
         MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, eventListener);

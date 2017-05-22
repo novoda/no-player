@@ -33,6 +33,7 @@ public class MainActivity extends Activity {
         });
         PlayerView playerView = (PlayerView) findViewById(R.id.player_view);
         player.attach(playerView);
+        playerView.removeControls();
     }
 
     @Override
