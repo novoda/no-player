@@ -97,6 +97,11 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     }
 
     @Override
+    public void stop() {
+        facade.stop();
+    }
+
+    @Override
     public void release() {
         getPlayerReleaseListener().onPlayerPreRelease(this);
         getStateChangedListeners().onVideoReleased();

@@ -293,6 +293,11 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     }
 
     @Override
+    public void stop() {
+        mediaPlayer.stop();
+    }
+
+    @Override
     public void release() {
         loadTimeout.cancel();
         stopBeatingHeart();

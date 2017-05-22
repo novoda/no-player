@@ -236,4 +236,8 @@ public class AndroidMediaPlayerFacade {
                 && currentState != STATE_IDLE
                 && currentState != STATE_PREPARING;
     }
+
+    public void stop() {
+        mediaPlayer.stop();
+    }
 }

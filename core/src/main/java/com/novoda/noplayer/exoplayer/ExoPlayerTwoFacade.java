@@ -243,6 +243,10 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         listeners.add(listener);
     }
 
+    public void stop() {
+        exoPlayer.stop();
+    }
+
     interface Listener {
 
         void onPlayerStateChanged(boolean playWhenReady, int playbackState);

@@ -16,6 +16,8 @@ public interface Player extends PlayerState, PlayerListeners {
 
     void reset();
 
+    void stop();
+
     void release();
 
     void loadVideo(Uri uri, ContentType contentType);
