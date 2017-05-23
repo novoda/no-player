@@ -67,12 +67,12 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
 
     @Override
     public void showSubtitles() {
-
+        playerView.getSubtitleView().setVisibility(VISIBLE);
     }
 
     @Override
     public void hideSubtitles() {
-
+        playerView.getSubtitleView().setVisibility(GONE);
     }
 
     @Override
