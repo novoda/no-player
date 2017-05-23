@@ -164,11 +164,6 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     }
 
     public void prepare(Uri uri, ContentType contentType) {
-        EventLogger eventLogger = new EventLogger(trackSelector);
-        exoPlayer.addListener(eventLogger);
-        exoPlayer.setAudioDebugListener(eventLogger);
-        exoPlayer.setVideoDebugListener(eventLogger);
-        exoPlayer.setMetadataOutput(eventLogger);
         exoPlayer.addListener(listener);
 
         setPlayWhenReady(true);
