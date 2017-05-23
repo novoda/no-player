@@ -44,7 +44,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     private final SimpleExoPlayer exoPlayer;
     private final MediaSourceFactory mediaSourceFactory;
 
-    private List<Listener> listeners = new CopyOnWriteArrayList<>();
+    private List<Forwarder> forwarders = new CopyOnWriteArrayList<>();
     private InfoListeners infoListeners;
     private BitrateChangedListeners bitrateChangedListeners;
     private InternalErrorListener internalErrorListener;
@@ -126,8 +126,8 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         videoHeight = height;
         videoWidth = width;
-        for (Listener listener : listeners) {
-            listener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+        for (Forwarder forwarder : forwarders) {
+            forwarder.forwardVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
         }
     }
 
@@ -197,15 +197,15 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            for (Listener listener : listeners) {
-                listener.onPlayerStateChanged(playWhenReady, playbackState);
+            for (Forwarder forwarder : forwarders) {
+                forwarder.forwardPlayerStateChanged(playWhenReady, playbackState);
             }
         }
 
         @Override
         public void onPlayerError(ExoPlaybackException error) {
-            for (Listener listener : listeners) {
-                listener.onPlayerError(error);
+            for (Forwarder forwarder : forwarders) {
+                forwarder.forwardPlayerError(error);
             }
         }
 
@@ -290,8 +290,8 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         simpleExoPlayerView.setPlayer(exoPlayer);
     }
 
-    public void addListener(Listener listener) {
-        listeners.add(listener);
+    void addForwarder(Forwarder forwarder) {
+        forwarders.add(forwarder);
     }
 
     public void stop() {
@@ -312,13 +312,13 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         this.internalErrorListener = internalErrorListener;
     }
 
-    public interface Listener {
+    public interface Forwarder {
 
-        void onPlayerStateChanged(boolean playWhenReady, int playbackState);
+        void forwardPlayerStateChanged(boolean playWhenReady, int playbackState);
 
-        void onPlayerError(ExoPlaybackException error);
+        void forwardPlayerError(ExoPlaybackException error);
 
-        void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
+        void forwardVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
     }
 
 }

@@ -9,13 +9,13 @@ import android.widget.FrameLayout;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.ui.SubtitleView;
-import com.novoda.noplayer.exoplayer.AspectRatioChangeListener;
+import com.novoda.noplayer.exoplayer.AspectRatioChangeForwarder;
 import com.novoda.notils.caster.Views;
 
-public class NoPlayerView extends FrameLayout implements AspectRatioChangeListener.Listener, PlayerView {
+public class NoPlayerView extends FrameLayout implements AspectRatioChangeForwarder.Listener, PlayerView {
 
     private final PlayerViewSurfaceHolder surfaceHolderProvider;
-    private final AspectRatioChangeListener aspectRatioChangeListener;
+    private final AspectRatioChangeForwarder aspectRatioChangeListener;
 
     private AspectRatioFrameLayout videoFrame;
     private SimpleExoPlayerView playerView;
@@ -29,7 +29,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         surfaceHolderProvider = new PlayerViewSurfaceHolder();
-        aspectRatioChangeListener = new AspectRatioChangeListener(this);
+        aspectRatioChangeListener = new AspectRatioChangeForwarder(this);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-            aspectRatioChangeListener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+            aspectRatioChangeListener.forwardVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
         }
     };
 }

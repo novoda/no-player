@@ -38,6 +38,7 @@ public class PlayerFactory {
                 return createMediaPlayer();
             case EXO_PLAYER:
                 ExoPlayerTwoFacade facade = ExoPlayerTwoFacade.newInstance(context);
+
                 return new ExoPlayerTwoImpl(facade);
             default:
                 throw UnableToCreatePlayerException.unknownPlayerType(playerType);

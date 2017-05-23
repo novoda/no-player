@@ -3,7 +3,7 @@ package com.novoda.noplayer.exoplayer;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.novoda.noplayer.listeners.BufferStateListeners;
 
-class BufferStateForwarder extends ExoPlayerStateChangedListener {
+class BufferStateForwarder extends ExoPlayerStateChangedForwarder {
 
     private final BufferStateListeners bufferStateListeners;
 
@@ -12,7 +12,7 @@ class BufferStateForwarder extends ExoPlayerStateChangedListener {
     }
 
     @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    public void forwardPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == ExoPlayer.STATE_BUFFERING) {
             bufferStateListeners.onBufferStarted();
         } else if (playbackState == ExoPlayer.STATE_READY) {

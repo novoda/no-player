@@ -30,11 +30,11 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         heart = Heart.newInstance(onHeartbeat);
 
         prepareForwarder = new OnPrepareForwarder(getPreparedListeners(), this);
-        facade.addListener(prepareForwarder);
-        facade.addListener(new OnCompletionForwarder(getCompletionListeners()));
-        facade.addListener(new OnErrorForwarder(this, getErrorListeners()));
-        facade.addListener(new BufferStateForwarder(getBufferStateListeners()));
-        facade.addListener(new VideoSizeChangedForwarder(getVideoSizeChangedListeners()));
+        facade.addForwarder(prepareForwarder);
+        facade.addForwarder(new OnCompletionForwarder(getCompletionListeners()));
+        facade.addForwarder(new OnErrorForwarder(this, getErrorListeners()));
+        facade.addForwarder(new BufferStateForwarder(getBufferStateListeners()));
+        facade.addForwarder(new VideoSizeChangedForwarder(getVideoSizeChangedListeners()));
 
         facade.setBitrateChangedListeners(getBitrateChangedListeners());
         facade.setInfoListeners(getInfoListeners());

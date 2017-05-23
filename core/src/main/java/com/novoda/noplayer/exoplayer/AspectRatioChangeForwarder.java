@@ -2,27 +2,27 @@ package com.novoda.noplayer.exoplayer;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 
-public class AspectRatioChangeListener implements ExoPlayerTwoFacade.Listener {
+public class AspectRatioChangeForwarder implements ExoPlayerTwoFacade.Forwarder {
 
     private final Listener listener;
 
-    public AspectRatioChangeListener(Listener listener) {
+    public AspectRatioChangeForwarder(Listener listener) {
         this.listener = listener;
     }
 
     @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    public void forwardPlayerStateChanged(boolean playWhenReady, int playbackState) {
         //no-op
 
     }
 
     @Override
-    public void onPlayerError(ExoPlaybackException error) {
+    public void forwardPlayerError(ExoPlaybackException error) {
         //no-op
     }
 
     @Override
-    public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+    public void forwardVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         float aspectRatio = determineAspectRatio(width, height, pixelWidthHeightRatio);
         listener.onNewAspectRatio(aspectRatio);
     }

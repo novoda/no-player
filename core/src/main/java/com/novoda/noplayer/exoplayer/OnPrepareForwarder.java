@@ -4,7 +4,7 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.listeners.PreparedListeners;
 
-class OnPrepareForwarder extends ExoPlayerStateChangedListener {
+class OnPrepareForwarder extends ExoPlayerStateChangedForwarder {
 
     private final PreparedListeners preparedListeners;
     private final PlayerState playerState;
@@ -16,7 +16,7 @@ class OnPrepareForwarder extends ExoPlayerStateChangedListener {
     }
 
     @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    public void forwardPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (isReady(playbackState) && hasNotPreviouslyPrepared()) {
             hasPrepared = true;
             preparedListeners.onPrepared(playerState);

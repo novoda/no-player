@@ -2,7 +2,7 @@ package com.novoda.noplayer.exoplayer;
 
 import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 
-class VideoSizeChangedForwarder extends ExoPlayerVideoSizeChangedListener {
+class VideoSizeChangedForwarder extends ExoPlayerVideoSizeChangedForwarder {
 
     private final VideoSizeChangedListeners videoSizeChangedListeners;
 
@@ -11,7 +11,7 @@ class VideoSizeChangedForwarder extends ExoPlayerVideoSizeChangedListener {
     }
 
     @Override
-    public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+    public void forwardVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         videoSizeChangedListeners.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
     }
 }
