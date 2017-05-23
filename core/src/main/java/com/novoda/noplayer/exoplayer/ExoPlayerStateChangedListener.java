@@ -2,7 +2,7 @@ package com.novoda.noplayer.exoplayer;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 
-abstract class ExoPlayerStateChangeListener implements ExoPlayerTwoFacade.Listener {
+abstract class ExoPlayerStateChangedListener implements ExoPlayerTwoFacade.Listener {
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
