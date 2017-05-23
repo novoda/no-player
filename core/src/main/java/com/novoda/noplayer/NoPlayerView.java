@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.SubtitleView;
 import com.novoda.noplayer.exoplayer.AspectRatioChangeListener;
 import com.novoda.notils.caster.Views;
 
@@ -19,6 +20,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
     private AspectRatioFrameLayout videoFrame;
     private SimpleExoPlayerView playerView;
     private SurfaceView surfaceView;
+    private SubtitleView subtitleView;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -38,6 +40,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
         playerView = Views.findById(this, R.id.simple_player_view);
         surfaceView = (SurfaceView) playerView.getVideoSurfaceView();
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
+        subtitleView = playerView.getSubtitleView();
     }
 
     @Override
@@ -67,12 +70,12 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
 
     @Override
     public void showSubtitles() {
-        playerView.getSubtitleView().setVisibility(VISIBLE);
+        subtitleView.setVisibility(VISIBLE);
     }
 
     @Override
     public void hideSubtitles() {
-        playerView.getSubtitleView().setVisibility(GONE);
+        subtitleView.setVisibility(GONE);
     }
 
     @Override
