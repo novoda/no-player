@@ -35,6 +35,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
+    private static final boolean RESET_POSITION = true;
+    private static final boolean RESET_STATE = false;
+
     private int videoWidth;
     private int videoHeight;
 
@@ -170,7 +173,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         setPlayWhenReady(true);
 
         MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, eventListener, mediaSourceEventListener);
-        exoPlayer.prepare(mediaSource, true, false);
+        exoPlayer.prepare(mediaSource, RESET_POSITION, RESET_STATE);
     }
 
     private final ExoPlayer.EventListener listener = new ExoPlayer.EventListener() {
