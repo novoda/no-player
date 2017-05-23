@@ -6,13 +6,17 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.novoda.noplayer.exoplayer.AspectRatioChangeListener;
 import com.novoda.notils.caster.Views;
 
-public class NoPlayerView extends FrameLayout implements PlayerView {
+public class NoPlayerView extends FrameLayout implements AspectRatioChangeListener.Listener, PlayerView {
 
     private final PlayerViewSurfaceHolder surfaceHolderProvider;
+    private final AspectRatioChangeListener aspectRatioChangeListener;
 
+    private AspectRatioFrameLayout videoFrame;
     private SimpleExoPlayerView playerView;
     private SurfaceView surfaceView;
 
@@ -23,15 +27,22 @@ public class NoPlayerView extends FrameLayout implements PlayerView {
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         surfaceHolderProvider = new PlayerViewSurfaceHolder();
+        aspectRatioChangeListener = new AspectRatioChangeListener(this);
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
+        videoFrame = Views.findById(this, R.id.video_frame);
         playerView = Views.findById(this, R.id.simple_player_view);
         surfaceView = (SurfaceView) playerView.getVideoSurfaceView();
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
+    }
+
+    @Override
+    public void onNewAspectRatio(float aspectRatio) {
+        videoFrame.setAspectRatio(aspectRatio);
     }
 
     @Override
@@ -72,8 +83,7 @@ public class NoPlayerView extends FrameLayout implements PlayerView {
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-// TODO:            aspectRatioChangeListener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+            aspectRatioChangeListener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
         }
     };
-
 }
