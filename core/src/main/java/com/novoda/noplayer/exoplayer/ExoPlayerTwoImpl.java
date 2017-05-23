@@ -37,7 +37,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         facade.addForwarder(new VideoSizeChangedForwarder(getVideoSizeChangedListeners()));
 
         facade.setBitrateForwarder(new BitrateForwarder(getBitrateChangedListeners()));
-        facade.setInfoListeners(getInfoListeners());
+        facade.setInfoForwarder(new InfoForwarder(getInfoListeners()));
     }
 
     @Override

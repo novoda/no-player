@@ -25,7 +25,6 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.listeners.InfoListeners;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,7 +42,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     private final MediaSourceFactory mediaSourceFactory;
 
     private List<Forwarder> forwarders = new CopyOnWriteArrayList<>();
-    private InfoListeners infoListeners;
+    private InfoForwarder infoForwarder;
     private BitrateForwarder bitrateForwarder;
     private InternalErrorListener internalErrorListener;
 
@@ -114,10 +113,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
     @Override
     public void onDroppedFrames(int count, long elapsedMs) {
-        if (infoListeners == null) {
-            return;
-        }
-        infoListeners.onDroppedFrames(count, elapsedMs);
+      infoForwarder.onDroppedFrames(count, elapsedMs);
     }
 
     @Override
@@ -225,7 +221,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         @Override
         public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
                                   Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs) {
-            infoListeners.onLoadStarted(
+            infoForwarder.onLoadStarted(
                     dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
                     elapsedRealtimeMs
             );
@@ -235,7 +231,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         public void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
                                     Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
                                     long loadDurationMs, long bytesLoaded) {
-            infoListeners.onLoadCompleted(
+            infoForwarder.onLoadCompleted(
                     dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
                     elapsedRealtimeMs, loadDurationMs, bytesLoaded
             );
@@ -246,7 +242,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         public void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
                                    Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
                                    long loadDurationMs, long bytesLoaded) {
-            infoListeners.onLoadCanceled(
+            infoForwarder.onLoadCanceled(
                     dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
                     elapsedRealtimeMs, loadDurationMs, bytesLoaded
             );
@@ -256,7 +252,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         public void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
                                 Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs,
                                 long bytesLoaded, IOException error, boolean wasCanceled) {
-            infoListeners.onLoadError(
+            infoForwarder.onLoadError(
                     dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
                     elapsedRealtimeMs, loadDurationMs, bytesLoaded, error, wasCanceled
             );
@@ -264,7 +260,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
         @Override
         public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {
-            infoListeners.onUpstreamDiscarded(trackType, mediaStartTimeMs, mediaEndTimeMs);
+            infoForwarder.onUpstreamDiscarded(trackType, mediaStartTimeMs, mediaEndTimeMs);
         }
 
         @Override
@@ -288,8 +284,8 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         }
     }
 
-    public void setInfoListeners(InfoListeners infoListeners) {
-        this.infoListeners = infoListeners;
+    public void setInfoForwarder(InfoForwarder infoForwarder) {
+        this.infoForwarder = infoForwarder;
     }
 
     public void setBitrateForwarder(BitrateForwarder bitrateForwarder) {
