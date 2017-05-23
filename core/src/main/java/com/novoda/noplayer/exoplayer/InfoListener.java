@@ -27,7 +27,4 @@ public interface InfoListener {
 
     void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs);
 
-    void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData,
-                                   long mediaTimeMs);
-
 }

@@ -81,11 +81,4 @@ public class InfoListeners implements InfoListener {
         }
     }
 
-    @Override
-    public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaTimeMs) {
-        for (InfoListener listener : listeners) {
-            listener.onDownstreamFormatChanged(trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaTimeMs);
-        }
-    }
-
 }

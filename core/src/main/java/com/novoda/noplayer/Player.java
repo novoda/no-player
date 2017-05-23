@@ -2,6 +2,7 @@ package com.novoda.noplayer;
 
 import android.net.Uri;
 
+import com.novoda.noplayer.exoplayer.Bitrate;
 import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;
@@ -83,6 +84,11 @@ public interface Player extends PlayerState, PlayerListeners {
         void onVideoPaused();
 
         void onVideoReleased();
+    }
+
+    interface BitrateChangedListener {
+
+        void onBitrateChanged(Bitrate audioBitrate, Bitrate videoBitrate);
     }
 
     interface VideoSizeChangedListener {

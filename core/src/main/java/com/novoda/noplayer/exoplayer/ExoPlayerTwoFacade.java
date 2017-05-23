@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.Surface;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -25,6 +26,7 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.listeners.BitrateChangedListeners;
 import com.novoda.noplayer.listeners.InfoListeners;
 
 import java.io.IOException;
@@ -41,6 +43,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
     private List<Listener> listeners = new CopyOnWriteArrayList<>();
     private InfoListeners infoListeners;
+    private BitrateChangedListeners bitrateChangedListeners;
     private InternalErrorListener internalErrorListener;
 
     public static ExoPlayerTwoFacade newInstance(Context context) {
@@ -215,6 +218,10 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     };
 
     private final AdaptiveMediaSourceEventListener mediaSourceEventListener = new AdaptiveMediaSourceEventListener() {
+
+        private Bitrate videoBitrate = Bitrate.fromBitsPerSecond(0);
+        private Bitrate audioBitrate = Bitrate.fromBitsPerSecond(0);
+
         @Override
         public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
                                   Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs) {
@@ -263,7 +270,14 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         @Override
         public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData,
                                               long mediaTimeMs) {
-            infoListeners.onDownstreamFormatChanged(trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaTimeMs);
+
+            if (trackType == C.TRACK_TYPE_VIDEO) {
+                videoBitrate = Bitrate.fromBitsPerSecond(trackFormat.bitrate);
+                bitrateChangedListeners.onBitrateChanged(audioBitrate, videoBitrate);
+            } else if (trackType == C.TRACK_TYPE_AUDIO) {
+                audioBitrate = Bitrate.fromBitsPerSecond(trackFormat.bitrate);
+                bitrateChangedListeners.onBitrateChanged(audioBitrate, videoBitrate);
+            }
         }
     };
 
@@ -281,6 +295,10 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
     public void setInfoListeners(InfoListeners infoListeners) {
         this.infoListeners = infoListeners;
+    }
+
+    public void setBitrateChangedListeners(BitrateChangedListeners bitrateChangedListeners) {
+        this.bitrateChangedListeners = bitrateChangedListeners;
     }
 
     public void setInternalErrorListener(InternalErrorListener internalErrorListener) {

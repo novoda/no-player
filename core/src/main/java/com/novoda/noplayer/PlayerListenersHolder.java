@@ -1,6 +1,8 @@
 package com.novoda.noplayer;
 
+import com.novoda.noplayer.Player.BitrateChangedListener;
 import com.novoda.noplayer.exoplayer.InfoListener;
+import com.novoda.noplayer.listeners.BitrateChangedListeners;
 import com.novoda.noplayer.listeners.BufferStateListeners;
 import com.novoda.noplayer.listeners.CompletionListeners;
 import com.novoda.noplayer.listeners.ErrorListeners;
@@ -18,6 +20,7 @@ public class PlayerListenersHolder implements PlayerListeners {
     private final StateChangedListeners stateChangedListeners;
     private final InfoListeners infoListeners;
     private final VideoSizeChangedListeners videoSizeChangedListeners;
+    private final BitrateChangedListeners bitrateChangedListeners;
 
     private final HeartbeatCallbacks<Player> heartbeatCallbacks;
 
@@ -32,6 +35,7 @@ public class PlayerListenersHolder implements PlayerListeners {
         infoListeners = new InfoListeners();
         heartbeatCallbacks = new HeartbeatCallbacks<>();
         videoSizeChangedListeners = new VideoSizeChangedListeners();
+        bitrateChangedListeners = new BitrateChangedListeners();
     }
 
     @Override
@@ -95,6 +99,16 @@ public class PlayerListenersHolder implements PlayerListeners {
     }
 
     @Override
+    public void addBitrateChangedlListener(BitrateChangedListener bitrateChangedListener) {
+        bitrateChangedListeners.add(bitrateChangedListener);
+    }
+
+    @Override
+    public void removeBitrateChangedListener(BitrateChangedListener bitrateChangedListener) {
+        bitrateChangedListeners.remove(bitrateChangedListener);
+    }
+
+    @Override
     public void setPreReleaseListener(Player.PreReleaseListener playerReleaseListener) {
         this.playerReleaseListener = playerReleaseListener;
     }
@@ -153,5 +167,9 @@ public class PlayerListenersHolder implements PlayerListeners {
 
     protected final VideoSizeChangedListeners getVideoSizeChangedListeners() {
         return videoSizeChangedListeners;
+    }
+
+    protected final BitrateChangedListeners getBitrateChangedListeners() {
+        return bitrateChangedListeners;
     }
 }

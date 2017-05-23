@@ -28,6 +28,10 @@ public interface PlayerListeners {
 
     void removeInfoListener(InfoListener infoListener);
 
+    void addBitrateChangedlListener(Player.BitrateChangedListener bitrateChangedListener);
+
+    void removeBitrateChangedListener(Player.BitrateChangedListener bitrateChangedListener);
+
     void setPreReleaseListener(Player.PreReleaseListener playerReleaseListener);
 
     void addHeartbeatCallback(Heart.Heartbeat.Callback<Player> callback);
