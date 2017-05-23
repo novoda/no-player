@@ -35,7 +35,6 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     private int videoHeight;
 
     private final SimpleExoPlayer exoPlayer;
-    private final DefaultTrackSelector trackSelector;
     private final MediaSourceFactory mediaSourceFactory;
 
     private List<Listener> listeners = new CopyOnWriteArrayList<>();
@@ -48,14 +47,11 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
         SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, new DefaultLoadControl());
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
-        return new ExoPlayerTwoFacade(exoPlayer, trackSelector, mediaSourceFactory);
+        return new ExoPlayerTwoFacade(exoPlayer, mediaSourceFactory);
     }
 
-    public ExoPlayerTwoFacade(SimpleExoPlayer exoPlayer,
-                              DefaultTrackSelector trackSelector,
-                              MediaSourceFactory mediaSourceFactory) {
+    public ExoPlayerTwoFacade(SimpleExoPlayer exoPlayer, MediaSourceFactory mediaSourceFactory) {
         this.exoPlayer = exoPlayer;
-        this.trackSelector = trackSelector;
         this.mediaSourceFactory = mediaSourceFactory;
     }
 
@@ -97,17 +93,17 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
     @Override
     public void onVideoEnabled(DecoderCounters counters) {
-
+        // no-op
     }
 
     @Override
     public void onVideoDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
-
+        // no-op
     }
 
     @Override
     public void onVideoInputFormatChanged(Format format) {
-
+        // no-op
     }
 
     @Override
@@ -129,12 +125,12 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
     @Override
     public void onRenderedFirstFrame(Surface surface) {
-
+        // no-op
     }
 
     @Override
     public void onVideoDisabled(DecoderCounters counters) {
-
+        // no-op
     }
 
     public int getBufferedPercentage() {
@@ -176,16 +172,17 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
         @Override
         public void onTimelineChanged(Timeline timeline, Object manifest) {
-
+            // no-op
         }
 
         @Override
         public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
+            // no-op
         }
 
         @Override
         public void onLoadingChanged(boolean isLoading) {
+            // no-op
         }
 
         @Override
