@@ -168,12 +168,14 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     }
 
     public void prepare(Uri uri, ContentType contentType) {
-        exoPlayer.addListener(exoPlayerEventListener);
+        if (hasPlayer()) {
+            exoPlayer.addListener(exoPlayerEventListener);
 
-        setPlayWhenReady(true);
+            setPlayWhenReady(true);
 
-        MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, extractorMediaSourceEventListener, adaptiveMediaSourceEventListener);
-        exoPlayer.prepare(mediaSource, RESET_POSITION, RESET_STATE);
+            MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, extractorMediaSourceEventListener, adaptiveMediaSourceEventListener);
+            exoPlayer.prepare(mediaSource, RESET_POSITION, RESET_STATE);
+        }
     }
 
     private final ExoPlayer.EventListener exoPlayerEventListener = new ExoPlayer.EventListener() {
@@ -293,7 +295,9 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     }
 
     public void stop() {
-        exoPlayer.stop();
+        if (hasPlayer()) {
+            exoPlayer.stop();
+        }
     }
 
     public void setInfoListeners(InfoListeners infoListeners) {
