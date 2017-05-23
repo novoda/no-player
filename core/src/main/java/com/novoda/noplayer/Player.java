@@ -85,11 +85,6 @@ public interface Player extends PlayerState, PlayerListeners {
         void onVideoReleased();
     }
 
-    interface BitrateChangedListener {
-
-        void onBitrateChanged(Bitrate audioBitrate, Bitrate videoBitrate);
-    }
-
     interface VideoSizeChangedListener {
 
         void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
