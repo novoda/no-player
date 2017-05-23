@@ -6,7 +6,6 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import java.io.IOException;
 
 /**
- * TODO: Figure out which ExoPlayer.EventListener events we want to listen for.
  * A listener for debugging information.
  */
 public interface InfoListener {
