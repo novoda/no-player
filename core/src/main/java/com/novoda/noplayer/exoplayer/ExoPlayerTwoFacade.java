@@ -14,12 +14,14 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
+import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.novoda.noplayer.ContentType;
@@ -164,7 +166,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
         setPlayWhenReady(true);
 
-        MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, eventListener);
+        MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, eventListener, mediaSourceEventListener);
         exoPlayer.prepare(mediaSource, true, false);
     }
 
@@ -209,6 +211,59 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         @Override
         public void onLoadError(IOException error) {
             internalErrorListener.onLoadError(error);
+        }
+    };
+
+    private final AdaptiveMediaSourceEventListener mediaSourceEventListener = new AdaptiveMediaSourceEventListener() {
+        @Override
+        public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
+                                  Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs) {
+            infoListeners.onLoadStarted(
+                    dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
+                    elapsedRealtimeMs
+            );
+        }
+
+        @Override
+        public void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
+                                    Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
+                                    long loadDurationMs, long bytesLoaded) {
+            infoListeners.onLoadCompleted(
+                    dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
+                    elapsedRealtimeMs, loadDurationMs, bytesLoaded
+            );
+
+        }
+
+        @Override
+        public void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
+                                   Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
+                                   long loadDurationMs, long bytesLoaded) {
+            infoListeners.onLoadCanceled(
+                    dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
+                    elapsedRealtimeMs, loadDurationMs, bytesLoaded
+            );
+        }
+
+        @Override
+        public void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
+                                Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs,
+                                long bytesLoaded, IOException error, boolean wasCanceled) {
+            infoListeners.onLoadError(
+                    dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
+                    elapsedRealtimeMs, loadDurationMs, bytesLoaded, error, wasCanceled
+            );
+        }
+
+        @Override
+        public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {
+            infoListeners.onUpstreamDiscarded(trackType, mediaStartTimeMs, mediaEndTimeMs);
+        }
+
+        @Override
+        public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData,
+                                              long mediaTimeMs) {
+            infoListeners.onDownstreamFormatChanged(trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaTimeMs);
         }
     };
 
