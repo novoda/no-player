@@ -29,8 +29,6 @@ class MediaSourceFactory {
             case HLS:
                 return new HlsMediaSource(uri, mediaDataSourceFactory, handler, mediaSourceEventListener);
             case DASH:
-            case H264:
-            default:
                 return new ExtractorMediaSource(
                         uri,
                         mediaDataSourceFactory,
@@ -38,6 +36,9 @@ class MediaSourceFactory {
                         handler,
                         eventListener
                 );
+            case H264:
+            default:
+                throw new UnsupportedOperationException("Content type: " + contentType + " is not supported.");
 
         }
     }
