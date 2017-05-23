@@ -113,7 +113,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
     @Override
     public void onDroppedFrames(int count, long elapsedMs) {
-      infoForwarder.onDroppedFrames(count, elapsedMs);
+        infoForwarder.onDroppedFrames(count, elapsedMs);
     }
 
     @Override
@@ -266,6 +266,7 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         @Override
         public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData,
                                               long mediaTimeMs) {
+            infoForwarder.onDownstreamFormatChanged(trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaTimeMs);
             bitrateForwarder.onDownstreamFormatChanged(trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaTimeMs);
         }
     };
