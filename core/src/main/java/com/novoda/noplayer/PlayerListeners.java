@@ -28,7 +28,7 @@ public interface PlayerListeners {
 
     void removeInfoListener(InfoListener infoListener);
 
-    void addBitrateChangedlListener(Player.BitrateChangedListener bitrateChangedListener);
+    void addBitrateChangedListener(Player.BitrateChangedListener bitrateChangedListener);
 
     void removeBitrateChangedListener(Player.BitrateChangedListener bitrateChangedListener);
 

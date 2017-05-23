@@ -99,7 +99,7 @@ public class PlayerListenersHolder implements PlayerListeners {
     }
 
     @Override
-    public void addBitrateChangedlListener(BitrateChangedListener bitrateChangedListener) {
+    public void addBitrateChangedListener(BitrateChangedListener bitrateChangedListener) {
         bitrateChangedListeners.add(bitrateChangedListener);
     }
 
