@@ -277,11 +277,10 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
             if (trackType == C.TRACK_TYPE_VIDEO) {
                 videoBitrate = Bitrate.fromBitsPerSecond(trackFormat.bitrate);
-                bitrateChangedListeners.onBitrateChanged(audioBitrate, videoBitrate);
             } else if (trackType == C.TRACK_TYPE_AUDIO) {
                 audioBitrate = Bitrate.fromBitsPerSecond(trackFormat.bitrate);
-                bitrateChangedListeners.onBitrateChanged(audioBitrate, videoBitrate);
             }
+            bitrateChangedListeners.onBitrateChanged(audioBitrate, videoBitrate);
         }
     };
 
