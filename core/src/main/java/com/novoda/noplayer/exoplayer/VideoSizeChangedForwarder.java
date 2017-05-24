@@ -2,7 +2,7 @@ package com.novoda.noplayer.exoplayer;
 
 import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 
-class VideoSizeChangedForwarder extends ExoPlayerVideoSizeChangedForwarder {
+class VideoSizeChangedForwarder extends ExoPlayerEventForwarder {
 
     private final VideoSizeChangedListeners videoSizeChangedListeners;
 

@@ -7,7 +7,6 @@ import android.os.Looper;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -39,8 +38,6 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     private final EventListener exoPlayerEventListener;
 
     private List<Forwarder> forwarders;
-    private InfoForwarder infoForwarder;
-    private BitrateForwarder bitrateForwarder;
     private InternalErrorListener internalErrorListener;
 
     public static ExoPlayerTwoFacade newInstance(Context context) {
@@ -119,7 +116,9 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
     @Override
     public void onDroppedFrames(int count, long elapsedMs) {
-        infoForwarder.onDroppedFrames(count, elapsedMs);
+        for (Forwarder forwarder : forwarders) {
+            forwarder.onDroppedFrames(count, elapsedMs);
+        }
     }
 
     @Override
@@ -188,54 +187,139 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
     private final AdaptiveMediaSourceEventListener adaptiveMediaSourceEventListener = new AdaptiveMediaSourceEventListener() {
 
         @Override
-        public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                                  Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs) {
-            infoForwarder.onLoadStarted(
-                    dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
-                    elapsedRealtimeMs
-            );
+        public void onLoadStarted(DataSpec dataSpec,
+                                  int dataType,
+                                  int trackType,
+                                  Format trackFormat,
+                                  int trackSelectionReason,
+                                  Object trackSelectionData,
+                                  long mediaStartTimeMs,
+                                  long mediaEndTimeMs,
+                                  long elapsedRealtimeMs) {
+            for (Forwarder forwarder : forwarders) {
+                forwarder.onLoadStarted(
+                        dataSpec,
+                        dataType,
+                        trackType,
+                        trackFormat,
+                        trackSelectionReason,
+                        trackSelectionData,
+                        mediaStartTimeMs,
+                        mediaEndTimeMs,
+                        elapsedRealtimeMs
+                );
+            }
         }
 
         @Override
-        public void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                                    Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
-                                    long loadDurationMs, long bytesLoaded) {
-            infoForwarder.onLoadCompleted(
-                    dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
-                    elapsedRealtimeMs, loadDurationMs, bytesLoaded
-            );
+        public void onLoadCompleted(DataSpec dataSpec,
+                                    int dataType,
+                                    int trackType,
+                                    Format trackFormat,
+                                    int trackSelectionReason,
+                                    Object trackSelectionData,
+                                    long mediaStartTimeMs,
+                                    long mediaEndTimeMs,
+                                    long elapsedRealtimeMs,
+                                    long loadDurationMs,
+                                    long bytesLoaded) {
+
+            for (Forwarder forwarder : forwarders) {
+                forwarder.onLoadCompleted(
+                        dataSpec,
+                        dataType,
+                        trackType,
+                        trackFormat,
+                        trackSelectionReason,
+                        trackSelectionData,
+                        mediaStartTimeMs,
+                        mediaEndTimeMs,
+                        elapsedRealtimeMs,
+                        loadDurationMs,
+                        bytesLoaded
+                );
+            }
+
         }
 
         @Override
-        public void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                                   Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
-                                   long loadDurationMs, long bytesLoaded) {
-            infoForwarder.onLoadCanceled(
-                    dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
-                    elapsedRealtimeMs, loadDurationMs, bytesLoaded
-            );
+        public void onLoadCanceled(DataSpec dataSpec,
+                                   int dataType,
+                                   int trackType,
+                                   Format trackFormat,
+                                   int trackSelectionReason,
+                                   Object trackSelectionData,
+                                   long mediaStartTimeMs,
+                                   long mediaEndTimeMs,
+                                   long elapsedRealtimeMs,
+                                   long loadDurationMs,
+                                   long bytesLoaded) {
+            for (Forwarder forwarder : forwarders) {
+                forwarder.onLoadCanceled(
+                        dataSpec,
+                        dataType,
+                        trackType,
+                        trackFormat,
+                        trackSelectionReason,
+                        trackSelectionData,
+                        mediaStartTimeMs,
+                        mediaEndTimeMs,
+                        elapsedRealtimeMs,
+                        loadDurationMs,
+                        bytesLoaded
+                );
+            }
         }
 
         @Override
-        public void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                                Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs,
-                                long bytesLoaded, IOException error, boolean wasCanceled) {
-            infoForwarder.onLoadError(
-                    dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
-                    elapsedRealtimeMs, loadDurationMs, bytesLoaded, error, wasCanceled
-            );
+        public void onLoadError(DataSpec dataSpec,
+                                int dataType,
+                                int trackType,
+                                Format trackFormat,
+                                int trackSelectionReason,
+                                Object trackSelectionData,
+                                long mediaStartTimeMs,
+                                long mediaEndTimeMs,
+                                long elapsedRealtimeMs,
+                                long loadDurationMs,
+                                long bytesLoaded,
+                                IOException error,
+                                boolean wasCanceled) {
+            for (Forwarder forwarder : forwarders) {
+                forwarder.onLoadError(
+                        dataSpec,
+                        dataType,
+                        trackType,
+                        trackFormat,
+                        trackSelectionReason,
+                        trackSelectionData,
+                        mediaStartTimeMs,
+                        mediaEndTimeMs,
+                        elapsedRealtimeMs,
+                        loadDurationMs,
+                        bytesLoaded,
+                        error,
+                        wasCanceled
+                );
+            }
         }
 
         @Override
         public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {
-            infoForwarder.onUpstreamDiscarded(trackType, mediaStartTimeMs, mediaEndTimeMs);
+            for (Forwarder forwarder : forwarders) {
+                forwarder.onUpstreamDiscarded(trackType, mediaStartTimeMs, mediaEndTimeMs);
+            }
         }
 
         @Override
-        public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData,
+        public void onDownstreamFormatChanged(int trackType,
+                                              Format trackFormat,
+                                              int trackSelectionReason,
+                                              Object trackSelectionData,
                                               long mediaTimeMs) {
-            infoForwarder.onDownstreamFormatChanged(trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaTimeMs);
-            bitrateForwarder.onDownstreamFormatChanged(trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaTimeMs);
+            for (Forwarder forwarder : forwarders) {
+                forwarder.onDownstreamFormatChanged(trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaTimeMs);
+            }
         }
     };
 
@@ -253,29 +337,8 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         }
     }
 
-    public void setInfoForwarder(InfoForwarder infoForwarder) {
-        this.infoForwarder = infoForwarder;
-    }
-
-    public void setBitrateForwarder(BitrateForwarder bitrateForwarder) {
-        this.bitrateForwarder = bitrateForwarder;
-    }
-
     public void setInternalErrorListener(InternalErrorListener internalErrorListener) {
         this.internalErrorListener = internalErrorListener;
     }
 
-    interface BitrateForwarder {
-        void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData,
-                                       long mediaTimeMs);
-    }
-
-    public interface Forwarder {
-
-        void forwardPlayerStateChanged(boolean playWhenReady, int playbackState);
-
-        void forwardPlayerError(ExoPlaybackException error);
-
-        void forwardVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
-    }
 }

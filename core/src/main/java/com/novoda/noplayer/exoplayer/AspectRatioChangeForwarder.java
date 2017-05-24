@@ -2,7 +2,7 @@ package com.novoda.noplayer.exoplayer;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 
-public class AspectRatioChangeForwarder implements ExoPlayerTwoFacade.Forwarder {
+public class AspectRatioChangeForwarder extends ExoPlayerEventForwarder {
 
     private final Listener listener;
 

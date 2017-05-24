@@ -4,7 +4,7 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;
 
-class BitrateForwarder implements ExoPlayerTwoFacade.BitrateForwarder {
+class BitrateForwarder extends ExoPlayerEventForwarder {
 
     private Bitrate videoBitrate = Bitrate.fromBitsPerSecond(0);
     private Bitrate audioBitrate = Bitrate.fromBitsPerSecond(0);

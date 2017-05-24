@@ -11,9 +11,9 @@ import java.util.List;
 
 class EventListener implements ExoPlayer.EventListener {
 
-    private final List<ExoPlayerTwoFacade.Forwarder> forwarders;
+    private final List<Forwarder> forwarders;
 
-    EventListener(List<ExoPlayerTwoFacade.Forwarder> forwarders) {
+    EventListener(List<Forwarder> forwarders) {
         this.forwarders = forwarders;
     }
 
@@ -34,14 +34,14 @@ class EventListener implements ExoPlayer.EventListener {
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        for (ExoPlayerTwoFacade.Forwarder forwarder : forwarders) {
+        for (Forwarder forwarder : forwarders) {
             forwarder.forwardPlayerStateChanged(playWhenReady, playbackState);
         }
     }
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-        for (ExoPlayerTwoFacade.Forwarder forwarder : forwarders) {
+        for (Forwarder forwarder : forwarders) {
             forwarder.forwardPlayerError(error);
         }
     }

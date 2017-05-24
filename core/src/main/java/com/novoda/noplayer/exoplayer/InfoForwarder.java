@@ -7,7 +7,7 @@ import com.novoda.noplayer.listeners.InfoListeners;
 import java.io.IOException;
 import java.util.HashMap;
 
-class InfoForwarder {
+class InfoForwarder extends ExoPlayerEventForwarder {
 
     private final InfoListeners infoListeners;
 
@@ -15,8 +15,9 @@ class InfoForwarder {
         this.infoListeners = infoListeners;
     }
 
-    void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                       Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs) {
+    @Override
+    public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
+                              Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs) {
         HashMap<String, String> keyValuePairs = new HashMap<>();
         keyValuePairs.put("dataSpec", String.valueOf(dataSpec));
         keyValuePairs.put("dataType", String.valueOf(dataType));
@@ -31,28 +32,10 @@ class InfoForwarder {
         infoListeners.onNewInfo("onLoadStarted", keyValuePairs);
     }
 
-    void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                         Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
-                         long loadDurationMs, long bytesLoaded) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("dataSpec", String.valueOf(dataSpec));
-        keyValuePairs.put("dataType", String.valueOf(dataType));
-        keyValuePairs.put("trackType", String.valueOf(trackType));
-        keyValuePairs.put("trackFormat", String.valueOf(trackFormat));
-        keyValuePairs.put("trackSelectionReason", String.valueOf(trackSelectionReason));
-        keyValuePairs.put("trackSelectionData", String.valueOf(trackSelectionData));
-        keyValuePairs.put("mediaStartTimeMs", String.valueOf(mediaStartTimeMs));
-        keyValuePairs.put("mediaEndTimeMs", String.valueOf(mediaEndTimeMs));
-        keyValuePairs.put("elapsedRealtimeMs", String.valueOf(elapsedRealtimeMs));
-        keyValuePairs.put("loadDurationMs", String.valueOf(loadDurationMs));
-        keyValuePairs.put("bytesLoaded", String.valueOf(bytesLoaded));
-
-        infoListeners.onNewInfo("onLoadStarted", keyValuePairs);
-    }
-
-    void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                        Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
-                        long loadDurationMs, long bytesLoaded) {
+    @Override
+    public void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
+                                Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
+                                long loadDurationMs, long bytesLoaded) {
         HashMap<String, String> keyValuePairs = new HashMap<>();
         keyValuePairs.put("dataSpec", String.valueOf(dataSpec));
         keyValuePairs.put("dataType", String.valueOf(dataType));
@@ -69,9 +52,30 @@ class InfoForwarder {
         infoListeners.onNewInfo("onLoadStarted", keyValuePairs);
     }
 
-    void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                     Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs,
-                     long bytesLoaded, IOException error, boolean wasCanceled) {
+    @Override
+    public void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
+                               Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
+                               long loadDurationMs, long bytesLoaded) {
+        HashMap<String, String> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("dataSpec", String.valueOf(dataSpec));
+        keyValuePairs.put("dataType", String.valueOf(dataType));
+        keyValuePairs.put("trackType", String.valueOf(trackType));
+        keyValuePairs.put("trackFormat", String.valueOf(trackFormat));
+        keyValuePairs.put("trackSelectionReason", String.valueOf(trackSelectionReason));
+        keyValuePairs.put("trackSelectionData", String.valueOf(trackSelectionData));
+        keyValuePairs.put("mediaStartTimeMs", String.valueOf(mediaStartTimeMs));
+        keyValuePairs.put("mediaEndTimeMs", String.valueOf(mediaEndTimeMs));
+        keyValuePairs.put("elapsedRealtimeMs", String.valueOf(elapsedRealtimeMs));
+        keyValuePairs.put("loadDurationMs", String.valueOf(loadDurationMs));
+        keyValuePairs.put("bytesLoaded", String.valueOf(bytesLoaded));
+
+        infoListeners.onNewInfo("onLoadStarted", keyValuePairs);
+    }
+
+    @Override
+    public void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
+                            Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs,
+                            long bytesLoaded, IOException error, boolean wasCanceled) {
         HashMap<String, String> keyValuePairs = new HashMap<>();
         keyValuePairs.put("dataSpec", String.valueOf(dataSpec));
         keyValuePairs.put("dataType", String.valueOf(dataType));
@@ -90,7 +94,8 @@ class InfoForwarder {
         infoListeners.onNewInfo("onLoadStarted", keyValuePairs);
     }
 
-    void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {
+    @Override
+    public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {
         HashMap<String, String> keyValuePairs = new HashMap<>();
         keyValuePairs.put("trackType", String.valueOf(trackType));
         keyValuePairs.put("mediaStartTimeMs", String.valueOf(mediaStartTimeMs));
@@ -99,8 +104,9 @@ class InfoForwarder {
         infoListeners.onNewInfo("onUpstreamDiscarded", keyValuePairs);
     }
 
-    void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData,
-                                   long mediaTimeMs) {
+    @Override
+    public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData,
+                                          long mediaTimeMs) {
         HashMap<String, String> keyValuePairs = new HashMap<>();
         keyValuePairs.put("trackType", String.valueOf(trackType));
         keyValuePairs.put("trackFormat", String.valueOf(trackFormat));
@@ -111,7 +117,8 @@ class InfoForwarder {
         infoListeners.onNewInfo("onDownstreamFormatChanged", keyValuePairs);
     }
 
-    void onDroppedFrames(int count, long elapsedMs) {
+    @Override
+    public void onDroppedFrames(int count, long elapsedMs) {
         HashMap<String, String> keyValuePairs = new HashMap<>();
         keyValuePairs.put("count", String.valueOf(count));
         keyValuePairs.put("elapsedMs", String.valueOf(elapsedMs));

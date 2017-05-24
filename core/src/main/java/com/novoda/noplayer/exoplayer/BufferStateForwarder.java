@@ -3,7 +3,7 @@ package com.novoda.noplayer.exoplayer;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.novoda.noplayer.listeners.BufferStateListeners;
 
-class BufferStateForwarder extends ExoPlayerStateChangedForwarder {
+class BufferStateForwarder extends ExoPlayerEventForwarder {
 
     private final BufferStateListeners bufferStateListeners;
 

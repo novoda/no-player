@@ -4,7 +4,7 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.listeners.ErrorListeners;
 
-class OnErrorForwarder extends ExoPlayerErrorForwarder {
+class OnErrorForwarder extends ExoPlayerEventForwarder {
 
     private final Player player;
     private final ErrorListeners errorListeners;
