@@ -244,7 +244,6 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
                     dataSpec, dataType, trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaStartTimeMs, mediaEndTimeMs,
                     elapsedRealtimeMs, loadDurationMs, bytesLoaded
             );
-
         }
 
         @Override
