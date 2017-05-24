@@ -36,7 +36,6 @@ class MediaSourceFactory {
                         handler,
                         eventListener
                 );
-            case DASH:
             default:
                 throw new UnsupportedOperationException("Content type: " + contentType + " is not supported.");
 
