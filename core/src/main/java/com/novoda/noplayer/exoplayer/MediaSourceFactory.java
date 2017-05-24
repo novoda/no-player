@@ -38,7 +38,6 @@ class MediaSourceFactory {
                 );
             default:
                 throw new UnsupportedOperationException("Content type: " + contentType + " is not supported.");
-
         }
     }
 }
