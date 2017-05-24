@@ -6,8 +6,9 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.google.android.exoplayer.AspectRatioFrameLayout;
-import com.google.android.exoplayer.text.SubtitleLayout;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.SubtitleView;
 import com.novoda.noplayer.exoplayer.AspectRatioChangeListener;
 import com.novoda.notils.caster.Views;
 
@@ -17,8 +18,9 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
     private final AspectRatioChangeListener aspectRatioChangeListener;
 
     private AspectRatioFrameLayout videoFrame;
+    private SimpleExoPlayerView playerView;
     private SurfaceView surfaceView;
-    private SubtitleLayout subtitleLayout;
+    private SubtitleView subtitleView;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -35,10 +37,10 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
         videoFrame = Views.findById(this, R.id.video_frame);
-        surfaceView = Views.findById(this, R.id.surface_view);
-        subtitleLayout = Views.findById(this, R.id.subtitles_layout);
-
+        playerView = Views.findById(this, R.id.simple_player_view);
+        surfaceView = (SurfaceView) playerView.getVideoSurfaceView();
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
+        subtitleView = playerView.getSubtitleView();
     }
 
     @Override
@@ -57,23 +59,28 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
     }
 
     @Override
-    public SubtitleLayout getSubtitleLayout() {
-        return subtitleLayout;
+    public Player.VideoSizeChangedListener getVideoSizeChangedListener() {
+        return videoSizeChangedListener;
+    }
+
+    @Override
+    public SimpleExoPlayerView simplePlayerView() {
+        return playerView;
     }
 
     @Override
     public void showSubtitles() {
-        subtitleLayout.setVisibility(VISIBLE);
+        subtitleView.setVisibility(VISIBLE);
     }
 
     @Override
     public void hideSubtitles() {
-        subtitleLayout.setVisibility(INVISIBLE);
+        subtitleView.setVisibility(GONE);
     }
 
     @Override
-    public Player.VideoSizeChangedListener getVideoSizeChangedListener() {
-        return videoSizeChangedListener;
+    public void removeControls() {
+        playerView.setUseController(false);
     }
 
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {

@@ -1,6 +1,6 @@
 package com.novoda.noplayer.exoplayer;
 
-import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.novoda.noplayer.listeners.CompletionListeners;
 
 class OnCompletionForwarder extends ExoPlayerStateChangedListener {
@@ -12,10 +12,9 @@ class OnCompletionForwarder extends ExoPlayerStateChangedListener {
     }
 
     @Override
-    public void onStateChanged(boolean playWhenReady, int playbackState) {
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == ExoPlayer.STATE_ENDED) {
             completionListeners.onCompletion();
         }
     }
-
 }

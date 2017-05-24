@@ -1,9 +1,12 @@
 package com.novoda.noplayer;
 
+import com.novoda.noplayer.Player.BitrateChangedListener;
+import com.novoda.noplayer.exoplayer.InfoListener;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;
 import com.novoda.noplayer.listeners.BufferStateListeners;
 import com.novoda.noplayer.listeners.CompletionListeners;
 import com.novoda.noplayer.listeners.ErrorListeners;
+import com.novoda.noplayer.listeners.InfoListeners;
 import com.novoda.noplayer.listeners.PreparedListeners;
 import com.novoda.noplayer.listeners.StateChangedListeners;
 import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
@@ -15,8 +18,9 @@ public class PlayerListenersHolder implements PlayerListeners {
     private final BufferStateListeners bufferStateListeners;
     private final CompletionListeners completionListeners;
     private final StateChangedListeners stateChangedListeners;
-    private final BitrateChangedListeners bitrateChangedListeners;
+    private final InfoListeners infoListeners;
     private final VideoSizeChangedListeners videoSizeChangedListeners;
+    private final BitrateChangedListeners bitrateChangedListeners;
 
     private final HeartbeatCallbacks<Player> heartbeatCallbacks;
 
@@ -28,9 +32,10 @@ public class PlayerListenersHolder implements PlayerListeners {
         bufferStateListeners = new BufferStateListeners();
         completionListeners = new CompletionListeners();
         stateChangedListeners = new StateChangedListeners();
-        bitrateChangedListeners = new BitrateChangedListeners();
+        infoListeners = new InfoListeners();
         heartbeatCallbacks = new HeartbeatCallbacks<>();
         videoSizeChangedListeners = new VideoSizeChangedListeners();
+        bitrateChangedListeners = new BitrateChangedListeners();
     }
 
     @Override
@@ -84,12 +89,22 @@ public class PlayerListenersHolder implements PlayerListeners {
     }
 
     @Override
-    public void addBitrateChangedListener(Player.BitrateChangedListener bitrateChangedListener) {
+    public void addInfoListener(InfoListener infoListener) {
+        infoListeners.add(infoListener);
+    }
+
+    @Override
+    public void removeInfoListener(InfoListener infoListener) {
+        infoListeners.remove(infoListener);
+    }
+
+    @Override
+    public void addBitrateChangedListener(BitrateChangedListener bitrateChangedListener) {
         bitrateChangedListeners.add(bitrateChangedListener);
     }
 
     @Override
-    public void removeBitrateChangedListener(Player.BitrateChangedListener bitrateChangedListener) {
+    public void removeBitrateChangedListener(BitrateChangedListener bitrateChangedListener) {
         bitrateChangedListeners.remove(bitrateChangedListener);
     }
 
@@ -138,8 +153,8 @@ public class PlayerListenersHolder implements PlayerListeners {
         return stateChangedListeners;
     }
 
-    protected final BitrateChangedListeners getBitrateChangedListeners() {
-        return bitrateChangedListeners;
+    protected final InfoListeners getInfoListeners() {
+        return infoListeners;
     }
 
     protected final Player.PreReleaseListener getPlayerReleaseListener() {
@@ -152,5 +167,9 @@ public class PlayerListenersHolder implements PlayerListeners {
 
     protected final VideoSizeChangedListeners getVideoSizeChangedListeners() {
         return videoSizeChangedListeners;
+    }
+
+    protected final BitrateChangedListeners getBitrateChangedListeners() {
+        return bitrateChangedListeners;
     }
 }

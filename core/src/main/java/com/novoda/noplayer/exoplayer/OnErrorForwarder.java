@@ -1,22 +1,22 @@
 package com.novoda.noplayer.exoplayer;
 
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.listeners.ErrorListeners;
 
-class ErrorForwarder extends ExoPlayerErrorListener {
+class OnErrorForwarder extends ExoPlayerErrorListener {
 
     private final Player player;
     private final ErrorListeners errorListeners;
 
-    ErrorForwarder(Player player, ErrorListeners errorListeners) {
+    OnErrorForwarder(Player player, ErrorListeners errorListeners) {
         this.player = player;
         this.errorListeners = errorListeners;
     }
 
     @Override
-    public void onError(Exception e) {
-        Player.PlayerError playerError = ExoPlayerErrorFactory.errorFor(e);
+    public void onPlayerError(ExoPlaybackException error) {
+        Player.PlayerError playerError = ExoPlayerErrorFactory.errorFor(error);
         errorListeners.onError(player, playerError);
     }
-
 }

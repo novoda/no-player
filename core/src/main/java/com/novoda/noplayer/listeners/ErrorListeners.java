@@ -23,5 +23,4 @@ public class ErrorListeners implements Player.ErrorListener {
             listener.onError(player, error);
         }
     }
-
 }

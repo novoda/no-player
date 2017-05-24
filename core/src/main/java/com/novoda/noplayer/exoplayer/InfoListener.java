@@ -1,7 +1,9 @@
 package com.novoda.noplayer.exoplayer;
 
-import com.google.android.exoplayer.TimeRange;
-import com.google.android.exoplayer.chunk.Format;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.upstream.DataSpec;
+
+import java.io.IOException;
 
 /**
  * A listener for debugging information.
@@ -10,18 +12,19 @@ public interface InfoListener {
 
     void onDroppedFrames(int count, long elapsed);
 
-    void onLoadStarted(int sourceId, long length, int type, int trigger, Format format,
-                       long mediaStartTimeMs, long mediaEndTimeMs);
+    void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object
+            trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs);
 
-    void onLoadCompleted(int sourceId, long bytesLoaded, int type, int trigger, Format format,
-                         long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs);
+    void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object
+            trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded);
 
-    void onDecoderInitialized(String decoderName, long elapsedRealtimeMs,
-                              long initializationDurationMs);
+    void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object
+            trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded);
 
-    void onAudioTrackUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs);
+    void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object
+            trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded, IOException
+                             error, boolean wasCanceled);
 
-    void onAvailableRangeChanged(int sourceId, TimeRange availableRange);
+    void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs);
 
-    void onDownstreamFormatChanged(int sourceId, Format format, int trigger, long mediaTimeMs);
 }

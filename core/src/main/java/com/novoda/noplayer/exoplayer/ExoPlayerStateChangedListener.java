@@ -1,14 +1,16 @@
 package com.novoda.noplayer.exoplayer;
 
-abstract class ExoPlayerStateChangedListener implements ExoPlayerFacade.Listener {
+import com.google.android.exoplayer2.ExoPlaybackException;
+
+abstract class ExoPlayerStateChangedListener implements ExoPlayerTwoFacade.Listener {
 
     @Override
-    public final void onError(Exception e) {
+    public void onPlayerError(ExoPlaybackException error) {
         // This class must be used as a state changed listener only
     }
 
     @Override
-    public final void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+    public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         // This class must be used as a state changed listener only
     }
 }

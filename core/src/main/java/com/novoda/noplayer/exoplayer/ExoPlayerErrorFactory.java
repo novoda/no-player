@@ -2,8 +2,8 @@ package com.novoda.noplayer.exoplayer;
 
 import android.media.MediaCodec;
 
-import com.google.android.exoplayer.ParserException;
-import com.google.android.exoplayer.upstream.HttpDataSource;
+import com.google.android.exoplayer2.ParserException;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmRequestException;
 import com.novoda.noplayer.exoplayer.playererror.ConnectivityError;
@@ -22,6 +22,7 @@ final class ExoPlayerErrorFactory {
     }
 
     static Player.PlayerError errorFor(Exception e) {
+
         if (e instanceof HttpDataSource.InvalidResponseCodeException) {
             return new InvalidResponseCodeError(e);
         }
@@ -39,7 +40,6 @@ final class ExoPlayerErrorFactory {
         if (e instanceof IOException || cause instanceof IOException) {
             return new ConnectivityError(cause == null ? e : cause);
         }
-
         return new UnknownError(e);
     }
 }

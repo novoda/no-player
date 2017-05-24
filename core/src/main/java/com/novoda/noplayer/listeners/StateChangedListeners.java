@@ -37,5 +37,4 @@ public class StateChangedListeners implements Player.StateChangedListener {
             listener.onVideoReleased();
         }
     }
-
 }

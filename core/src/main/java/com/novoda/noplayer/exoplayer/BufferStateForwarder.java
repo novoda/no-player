@@ -1,6 +1,6 @@
 package com.novoda.noplayer.exoplayer;
 
-import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.novoda.noplayer.listeners.BufferStateListeners;
 
 class BufferStateForwarder extends ExoPlayerStateChangedListener {
@@ -12,12 +12,11 @@ class BufferStateForwarder extends ExoPlayerStateChangedListener {
     }
 
     @Override
-    public void onStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == ExoPlayer.STATE_PREPARING || playbackState == ExoPlayer.STATE_BUFFERING) {
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        if (playbackState == ExoPlayer.STATE_BUFFERING) {
             bufferStateListeners.onBufferStarted();
         } else if (playbackState == ExoPlayer.STATE_READY) {
             bufferStateListeners.onBufferCompleted();
         }
     }
-
 }

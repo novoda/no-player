@@ -40,6 +40,7 @@ public class AndroidMediaPlayerFacade {
     private MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
 
     private SurfaceHolderRequester surfaceHolderRequester;
+    private List<PlayerAudioTrack> audioTracks;
 
     public AndroidMediaPlayerFacade(Context context) {
         this.context = context;
@@ -239,6 +240,10 @@ public class AndroidMediaPlayerFacade {
                 && currentState != STATE_ERROR
                 && currentState != STATE_IDLE
                 && currentState != STATE_PREPARING;
+    }
+
+    public void stop() {
+        mediaPlayer.stop();
     }
 
     public List<PlayerAudioTrack> getAudioTracks() {
