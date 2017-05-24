@@ -22,7 +22,6 @@ final class ExoPlayerErrorFactory {
     }
 
     static Player.PlayerError errorFor(Exception e) {
-
         if (e instanceof HttpDataSource.InvalidResponseCodeException) {
             return new InvalidResponseCodeError(e);
         }

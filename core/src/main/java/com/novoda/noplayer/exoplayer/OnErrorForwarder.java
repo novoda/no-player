@@ -2,7 +2,10 @@ package com.novoda.noplayer.exoplayer;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.exoplayer.playererror.MediaSourceError;
 import com.novoda.noplayer.listeners.ErrorListeners;
+
+import java.io.IOException;
 
 class OnErrorForwarder extends ExoPlayerEventForwarder {
 
@@ -19,4 +22,11 @@ class OnErrorForwarder extends ExoPlayerEventForwarder {
         Player.PlayerError playerError = ExoPlayerErrorFactory.errorFor(error);
         errorListeners.onError(player, playerError);
     }
+
+    @Override
+    public void onLoadError(IOException error) {
+        Player.PlayerError playerError = new MediaSourceError(error);
+        errorListeners.onError(player, playerError);
+    }
+
 }

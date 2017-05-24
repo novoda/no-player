@@ -8,14 +8,12 @@ import android.os.Looper;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.ContentType;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -29,9 +27,8 @@ public class ExoPlayerTwoFacade {
     private final EventListener exoPlayerEventListener;
     private final MediaSourceEventListener mediaSourceEventListener;
     private final ExoPlayerVideoRendererEventListener videoRendererEventListener;
+    private final ExoPlayerExtractorMediaSourceListener exoPlayerExtractorMediaSourceListener;
     private final List<Forwarder> forwarders;
-
-    private InternalErrorListener internalErrorListener;
 
     public static ExoPlayerTwoFacade newInstance(Context context) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
@@ -44,6 +41,7 @@ public class ExoPlayerTwoFacade {
         EventListener exoPlayerEventListener = new EventListener(forwarders);
         MediaSourceEventListener mediaSourceEventListener = new MediaSourceEventListener(forwarders);
         ExoPlayerVideoRendererEventListener videoRendererEventListener = new ExoPlayerVideoRendererEventListener(forwarders);
+        ExoPlayerExtractorMediaSourceListener exoPlayerExtractorMediaSourceListener = new ExoPlayerExtractorMediaSourceListener(forwarders);
 
         return new ExoPlayerTwoFacade(
                 exoPlayer,
@@ -51,7 +49,8 @@ public class ExoPlayerTwoFacade {
                 forwarders,
                 exoPlayerEventListener,
                 mediaSourceEventListener,
-                videoRendererEventListener
+                videoRendererEventListener,
+                exoPlayerExtractorMediaSourceListener
         );
     }
 
@@ -60,13 +59,15 @@ public class ExoPlayerTwoFacade {
                               List<Forwarder> forwarders,
                               EventListener exoPlayerEventListener,
                               MediaSourceEventListener mediaSourceEventListener,
-                              ExoPlayerVideoRendererEventListener videoRendererEventListener) {
+                              ExoPlayerVideoRendererEventListener videoRendererEventListener,
+                              ExoPlayerExtractorMediaSourceListener exoPlayerExtractorMediaSourceListener) {
         this.exoPlayer = exoPlayer;
         this.mediaSourceFactory = mediaSourceFactory;
         this.exoPlayerEventListener = exoPlayerEventListener;
         this.forwarders = forwarders;
         this.mediaSourceEventListener = mediaSourceEventListener;
         this.videoRendererEventListener = videoRendererEventListener;
+        this.exoPlayerExtractorMediaSourceListener = exoPlayerExtractorMediaSourceListener;
     }
 
     public boolean getPlayWhenReady() {
@@ -137,19 +138,10 @@ public class ExoPlayerTwoFacade {
 
             setPlayWhenReady(true);
 
-            MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, extractorMediaSourceEventListener, mediaSourceEventListener);
+            MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, exoPlayerExtractorMediaSourceListener, mediaSourceEventListener);
             exoPlayer.prepare(mediaSource, RESET_POSITION, RESET_STATE);
         }
     }
-
-    private final ExtractorMediaSource.EventListener extractorMediaSourceEventListener = new ExtractorMediaSource.EventListener() {
-        @Override
-        public void onLoadError(IOException error) {
-            internalErrorListener.onLoadError(error);
-        }
-    };
-
-    ;
 
     public void setPlayer(SimpleExoPlayerView simpleExoPlayerView) {
         simpleExoPlayerView.setPlayer(exoPlayer);
@@ -163,10 +155,6 @@ public class ExoPlayerTwoFacade {
         if (hasPlayer()) {
             exoPlayer.stop();
         }
-    }
-
-    public void setInternalErrorListener(InternalErrorListener internalErrorListener) {
-        this.internalErrorListener = internalErrorListener;
     }
 
 }

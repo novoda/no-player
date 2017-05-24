@@ -157,7 +157,4 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         videoContainer.show();
     }
 
-    public ExoPlayerTwoFacade getInternalExoPlayer() {
-        return facade;
-    }
 }

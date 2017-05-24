@@ -42,4 +42,6 @@ public interface Forwarder {
     void onRenderedFirstFrame(Surface surface);
 
     void onVideoDisabled(DecoderCounters counters);
+
+    void onLoadError(IOException error);
 }

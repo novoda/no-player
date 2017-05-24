@@ -9,7 +9,7 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 
 import java.io.IOException;
 
-public abstract class ExoPlayerEventForwarder implements Forwarder {
+abstract class ExoPlayerEventForwarder implements Forwarder {
 
     @Override
     public void forwardPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -88,6 +88,11 @@ public abstract class ExoPlayerEventForwarder implements Forwarder {
 
     @Override
     public void onVideoDisabled(DecoderCounters counters) {
+        // no-op
+    }
+
+    @Override
+    public void onLoadError(IOException error) {
         // no-op
     }
 }
