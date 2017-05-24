@@ -8,19 +8,14 @@ import android.view.Surface;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -41,8 +36,9 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
     private final SimpleExoPlayer exoPlayer;
     private final MediaSourceFactory mediaSourceFactory;
+    private final EventListener exoPlayerEventListener;
 
-    private List<Forwarder> forwarders = new CopyOnWriteArrayList<>();
+    private List<Forwarder> forwarders;
     private InfoForwarder infoForwarder;
     private BitrateForwarder bitrateForwarder;
     private InternalErrorListener internalErrorListener;
@@ -53,12 +49,21 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
         SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, new DefaultLoadControl());
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
-        return new ExoPlayerTwoFacade(exoPlayer, mediaSourceFactory);
+
+        List<Forwarder> forwarders = new CopyOnWriteArrayList<>();
+        EventListener eventListener = new EventListener(forwarders);
+
+        return new ExoPlayerTwoFacade(exoPlayer, mediaSourceFactory, eventListener, forwarders);
     }
 
-    public ExoPlayerTwoFacade(SimpleExoPlayer exoPlayer, MediaSourceFactory mediaSourceFactory) {
+    public ExoPlayerTwoFacade(SimpleExoPlayer exoPlayer,
+                              MediaSourceFactory mediaSourceFactory,
+                              EventListener exoPlayerEventListener,
+                              List<Forwarder> forwarders) {
         this.exoPlayer = exoPlayer;
         this.mediaSourceFactory = mediaSourceFactory;
+        this.exoPlayerEventListener = exoPlayerEventListener;
+        this.forwarders = forwarders;
     }
 
     public boolean getPlayWhenReady() {
@@ -172,48 +177,6 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
             exoPlayer.prepare(mediaSource, RESET_POSITION, RESET_STATE);
         }
     }
-
-    private final ExoPlayer.EventListener exoPlayerEventListener = new ExoPlayer.EventListener() {
-
-        @Override
-        public void onTimelineChanged(Timeline timeline, Object manifest) {
-            // no-op
-        }
-
-        @Override
-        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-            // no-op
-        }
-
-        @Override
-        public void onLoadingChanged(boolean isLoading) {
-            // no-op
-        }
-
-        @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            for (Forwarder forwarder : forwarders) {
-                forwarder.forwardPlayerStateChanged(playWhenReady, playbackState);
-            }
-        }
-
-        @Override
-        public void onPlayerError(ExoPlaybackException error) {
-            for (Forwarder forwarder : forwarders) {
-                forwarder.forwardPlayerError(error);
-            }
-        }
-
-        @Override
-        public void onPositionDiscontinuity() {
-            //no-op
-        }
-
-        @Override
-        public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-            // no-op
-        }
-    };
 
     private final ExtractorMediaSource.EventListener extractorMediaSourceEventListener = new ExtractorMediaSource.EventListener() {
         @Override
