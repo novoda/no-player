@@ -13,5 +13,4 @@ abstract class ExoPlayerVideoSizeChangedListener implements ExoPlayerTwoFacade.L
     public void onPlayerError(ExoPlaybackException error) {
         // This class must be used as a video size changed listener only
     }
-
 }

@@ -324,5 +324,4 @@ public class ExoPlayerTwoFacade implements VideoRendererEventListener {
 
         void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
     }
-
 }

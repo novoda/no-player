@@ -23,5 +23,4 @@ public class CompletionListeners implements Player.CompletionListener {
             listener.onCompletion();
         }
     }
-
 }

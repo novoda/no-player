@@ -149,5 +149,4 @@ public class InfoListeners implements InfoListener {
             listener.onUpstreamDiscarded(trackType, mediaStartTimeMs, mediaEndTimeMs);
         }
     }
-
 }

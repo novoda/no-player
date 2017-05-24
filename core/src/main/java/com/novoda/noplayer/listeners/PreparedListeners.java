@@ -24,5 +24,4 @@ public class PreparedListeners implements Player.PreparedListener {
             listener.onPrepared(playerState);
         }
     }
-
 }

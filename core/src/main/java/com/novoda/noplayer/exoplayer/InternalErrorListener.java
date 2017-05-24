@@ -14,8 +14,6 @@ import java.io.IOException;
  */
 public interface InternalErrorListener {
 
-    void onLoadError(IOException e);
-
     // TODO: Add additional logging when developing DRM.
-
+    void onLoadError(IOException e);
 }

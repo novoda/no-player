@@ -161,5 +161,4 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     public ExoPlayerTwoFacade getInternalExoPlayer() {
         return facade;
     }
-
 }
