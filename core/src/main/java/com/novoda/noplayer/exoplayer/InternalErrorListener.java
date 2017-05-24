@@ -5,7 +5,7 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import java.io.IOException;
 
 /**
- * TODO: Add additional logging when developing DRM. A listener for internal errors.
+ * A listener for internal errors.
  * <p>
  * These errors are not visible to the user, and hence this listener is provided for
  * informational purposes only. Note however that an internal error may cause a fatal
@@ -14,6 +14,6 @@ import java.io.IOException;
  */
 public interface InternalErrorListener {
 
+    // TODO: Add additional logging when developing DRM.
     void onLoadError(IOException e);
-
 }

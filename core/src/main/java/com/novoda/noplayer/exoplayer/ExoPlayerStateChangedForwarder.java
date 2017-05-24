@@ -6,11 +6,11 @@ abstract class ExoPlayerStateChangedForwarder implements ExoPlayerTwoFacade.Forw
 
     @Override
     public void forwardPlayerError(ExoPlaybackException error) {
-        // This class must be used as a state changed listener only
+        // This class must be used as a state changed forwarder only
     }
 
     @Override
     public void forwardVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-        // This class must be used as a state changed listener only
+        // This class must be used as a state changed forwarder only
     }
 }

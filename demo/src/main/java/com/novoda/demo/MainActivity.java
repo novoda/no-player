@@ -17,13 +17,19 @@ public class MainActivity extends Activity {
     private static final String URI_VIDEO_MP4 = "http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-85.mp4";
 
     private Player player;
+    private PlayerView playerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.setShowLogs(true);
         setContentView(R.layout.activity_main);
+        playerView = (PlayerView) findViewById(R.id.player_view);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         player = new PlayerFactory(this, PrioritisedPlayers.prioritiseExoPlayer()).create();
         player.addPreparedListener(new Player.PreparedListener() {
             @Override
@@ -31,13 +37,8 @@ public class MainActivity extends Activity {
                 player.play();
             }
         });
-        PlayerView playerView = (PlayerView) findViewById(R.id.player_view);
         player.attach(playerView);
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         Uri uri = Uri.parse(URI_VIDEO_MP4);
         player.loadVideo(uri, ContentType.H264);
     }

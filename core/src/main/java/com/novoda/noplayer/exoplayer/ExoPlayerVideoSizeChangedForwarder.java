@@ -6,12 +6,11 @@ abstract class ExoPlayerVideoSizeChangedForwarder implements ExoPlayerTwoFacade.
 
     @Override
     public void forwardPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        // This class must be used as a vido size changed listener only
+        // This class must be used as a video size changed forwarder only
     }
 
     @Override
     public void forwardPlayerError(ExoPlaybackException error) {
-        // This class must be used as a vido size changed listener only
+        // This class must be used as a video size changed forwarder only
     }
-
 }

@@ -101,7 +101,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void reset() {
-        // TODO
+        // TODO: Reset the player, so that it can be used by another video source.
     }
 
     @Override
@@ -140,18 +140,17 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         videoContainer = VideoContainer.with(playerView.getContainerView());
         facade.setPlayer(playerView.simplePlayerView());
         addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
-        // TODO : Set SubtitleView
-        // facade.setSubtitleView(playerView.());
+        // TODO : Set SubtitleView on the facade.
     }
 
     @Override
     public void selectAudioTrack(int audioTrackIndex) {
-        //TODO: actually select the audio track.
+        //TODO: Select the audio track on the facade.
     }
 
     @Override
     public List<PlayerAudioTrack> getAudioTracks() {
-        //TODO : return audio tracks.
+        //TODO : Get a list of audio tracks from the facade.
         return Collections.emptyList();
     }
 
@@ -162,5 +161,4 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     public ExoPlayerTwoFacade getInternalExoPlayer() {
         return facade;
     }
-
 }
