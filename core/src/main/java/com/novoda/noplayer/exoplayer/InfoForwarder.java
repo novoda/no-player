@@ -1,6 +1,10 @@
 package com.novoda.noplayer.exoplayer;
 
+import android.view.Surface;
+
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.novoda.noplayer.listeners.InfoListeners;
 
@@ -124,5 +128,94 @@ class InfoForwarder extends ExoPlayerEventForwarder {
         keyValuePairs.put("elapsedMs", String.valueOf(elapsedMs));
 
         infoListeners.onNewInfo("onDroppedFrames", keyValuePairs);
+    }
+
+    @Override
+    public void forwardPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        HashMap<String, String> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("playWhenReady", String.valueOf(playWhenReady));
+        keyValuePairs.put("playbackState", String.valueOf(playbackState));
+
+        infoListeners.onNewInfo("forwardPlayerStateChanged", keyValuePairs);
+    }
+
+    @Override
+    public void forwardPlayerError(ExoPlaybackException error) {
+        HashMap<String, String> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("error", String.valueOf(error));
+
+        infoListeners.onNewInfo("forwardPlayerError", keyValuePairs);
+    }
+
+    @Override
+    public void forwardVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+        HashMap<String, String> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("width", String.valueOf(width));
+        keyValuePairs.put("height", String.valueOf(height));
+        keyValuePairs.put("unappliedRotationDegrees", String.valueOf(unappliedRotationDegrees));
+        keyValuePairs.put("pixelWidthHeightRatio", String.valueOf(pixelWidthHeightRatio));
+
+        infoListeners.onNewInfo("forwardVideoSizeChanged", keyValuePairs);
+    }
+
+    @Override
+    public void onVideoEnabled(DecoderCounters counters) {
+        HashMap<String, String> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("counters", String.valueOf(counters));
+
+        infoListeners.onNewInfo("onVideoEnabled", keyValuePairs);
+    }
+
+    @Override
+    public void onVideoDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
+        HashMap<String, String> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("decoderName", String.valueOf(decoderName));
+        keyValuePairs.put("initializedTimestampMs", String.valueOf(initializedTimestampMs));
+        keyValuePairs.put("initializationDurationMs", String.valueOf(initializationDurationMs));
+
+        infoListeners.onNewInfo("onVideoDecoderInitialized", keyValuePairs);
+    }
+
+    @Override
+    public void onVideoInputFormatChanged(Format format) {
+        HashMap<String, String> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("format", String.valueOf(format));
+
+        infoListeners.onNewInfo("onVideoInputFormatChanged", keyValuePairs);
+    }
+
+    @Override
+    public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+        HashMap<String, String> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("width", String.valueOf(width));
+        keyValuePairs.put("height", String.valueOf(height));
+        keyValuePairs.put("unappliedRotationDegrees", String.valueOf(unappliedRotationDegrees));
+        keyValuePairs.put("pixelWidthHeightRatio", String.valueOf(pixelWidthHeightRatio));
+
+        infoListeners.onNewInfo("onVideoSizeChanged", keyValuePairs);
+    }
+
+    @Override
+    public void onRenderedFirstFrame(Surface surface) {
+        HashMap<String, String> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("surface", String.valueOf(surface));
+
+        infoListeners.onNewInfo("onRenderedFirstFrame", keyValuePairs);
+    }
+
+    @Override
+    public void onVideoDisabled(DecoderCounters counters) {
+        HashMap<String, String> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("counters", String.valueOf(counters));
+
+        infoListeners.onNewInfo("onVideoDisabled", keyValuePairs);
+    }
+
+    @Override
+    public void onLoadError(IOException error) {
+        HashMap<String, String> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("error", String.valueOf(error));
+
+        infoListeners.onNewInfo("onLoadError", keyValuePairs);
     }
 }
