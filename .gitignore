@@ -44,15 +44,5 @@ proguard/
 # OSX
 *.DS_Store
 
-# Google play publishing plugin
-mobile/src/main/play/
-
-# Temp local file
-team-props/api/response.xml
-test-acceptance/.calabash_settings
-
-# Generated during build
-com_crashlytics_export_strings.xml
-
 # Heap dump captures
 captures/
