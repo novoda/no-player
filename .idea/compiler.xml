@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <resourceExtensions />
+    <wildcardResourcePatterns />
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
