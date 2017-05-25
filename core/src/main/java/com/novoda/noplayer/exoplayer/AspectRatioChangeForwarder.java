@@ -8,7 +8,7 @@ public class AspectRatioChangeForwarder extends ExoPlayerEventForwarder {
         this.listener = listener;
     }
 
-    @Overrides
+    @Override
     public void forwardVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         float aspectRatio = determineAspectRatio(width, height, pixelWidthHeightRatio);
         listener.onNewAspectRatio(aspectRatio);
