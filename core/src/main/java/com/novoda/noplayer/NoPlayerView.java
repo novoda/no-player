@@ -21,6 +21,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeForwar
     private SimpleExoPlayerView playerView;
     private SurfaceView surfaceView;
     private SubtitleView subtitleView;
+    private View shutterView;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -36,8 +37,9 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeForwar
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
-        videoFrame = Views.findById(this, R.id.video_frame);
+        videoFrame = Views.findById(this, R.id.exo_content_frame);
         playerView = Views.findById(this, R.id.simple_player_view);
+        shutterView = Views.findById(this, R.id.exo_shutter);
         surfaceView = (SurfaceView) playerView.getVideoSurfaceView();
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
         subtitleView = playerView.getSubtitleView();
@@ -64,6 +66,11 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeForwar
     }
 
     @Override
+    public Player.StateChangedListener getStateChangedListener() {
+        return stateChangedListener;
+    }
+
+    @Override
     public SimpleExoPlayerView simplePlayerView() {
         return playerView;
     }
@@ -87,6 +94,23 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeForwar
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
             aspectRatioChangeListener.forwardVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+        }
+    };
+
+    private final Player.StateChangedListener stateChangedListener = new Player.StateChangedListener() {
+        @Override
+        public void onVideoPlaying() {
+            shutterView.setVisibility(INVISIBLE);
+        }
+
+        @Override
+        public void onVideoPaused() {
+            //We don't care
+        }
+
+        @Override
+        public void onVideoReleased() {
+            shutterView.setVisibility(VISIBLE);
         }
     };
 }
