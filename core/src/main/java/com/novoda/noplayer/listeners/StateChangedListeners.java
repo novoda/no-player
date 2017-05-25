@@ -17,6 +17,10 @@ public class StateChangedListeners implements Player.StateChangedListener {
         listeners.remove(listener);
     }
 
+    public void clearListeners() {
+        listeners.clear();
+    }
+
     @Override
     public void onVideoPlaying() {
         for (Player.StateChangedListener listener : listeners) {

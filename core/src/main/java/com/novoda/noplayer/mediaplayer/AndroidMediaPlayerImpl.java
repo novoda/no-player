@@ -319,6 +319,7 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
         getPlayerReleaseListener().onPlayerPreRelease(this);
         mediaPlayer.release();
         getStateChangedListeners().onVideoReleased();
+        getStateChangedListeners().clearListeners();
         videoContainer.hide();
     }
 }
