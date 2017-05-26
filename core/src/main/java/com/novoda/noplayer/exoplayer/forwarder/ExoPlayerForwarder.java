@@ -1,4 +1,4 @@
-package com.novoda.noplayer.exoplayer;
+package com.novoda.noplayer.exoplayer.forwarder;
 
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerState;
@@ -70,9 +70,5 @@ public class ExoPlayerForwarder {
         mediaSourceEventListener.add(new MediaSourceInfoForwarder(infoListeners));
         videoRendererEventListener.add(new VideoRendererInfoForwarder(infoListeners));
         extractorMediaSourceListener.add(new ExtractorInfoForwarder(infoListeners));
-    }
-
-    public void bind(ExoPlayerTwoFacade facade) {
-        facade.setForwarder(this);
     }
 }

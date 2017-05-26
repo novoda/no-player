@@ -2,7 +2,7 @@ package com.novoda.noplayer;
 
 import android.net.Uri;
 
-import com.novoda.noplayer.exoplayer.Bitrate;
+import com.novoda.noplayer.exoplayer.forwarder.Bitrate;
 import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;

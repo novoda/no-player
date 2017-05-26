@@ -1,4 +1,4 @@
-package com.novoda.noplayer.exoplayer;
+package com.novoda.noplayer.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -6,23 +6,28 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.novoda.noplayer.listeners.BufferStateListeners;
+import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.listeners.PreparedListeners;
 
-class BufferStateForwarder implements ExoPlayer.EventListener {
+class OnPrepareForwarder implements ExoPlayer.EventListener {
 
-    private final BufferStateListeners bufferStateListeners;
+    private final PreparedListeners preparedListeners;
+    private final PlayerState playerState;
 
-    BufferStateForwarder(BufferStateListeners bufferStateListeners) {
-        this.bufferStateListeners = bufferStateListeners;
+    OnPrepareForwarder(PreparedListeners preparedListeners, PlayerState playerState) {
+        this.preparedListeners = preparedListeners;
+        this.playerState = playerState;
     }
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == ExoPlayer.STATE_BUFFERING) {
-            bufferStateListeners.onBufferStarted();
-        } else if (playbackState == ExoPlayer.STATE_READY) {
-            bufferStateListeners.onBufferCompleted();
+        if (isReady(playbackState)) {
+            preparedListeners.onPrepared(playerState);
         }
+    }
+
+    private boolean isReady(int playbackState) {
+        return playbackState == ExoPlayer.STATE_READY;
     }
 
     @Override

@@ -1,14 +1,13 @@
 package com.novoda.noplayer.exoplayer;
 
-public class AspectRatioChangeForwarder extends ExoPlayerEventForwarder {
+public class AspectRatioChangeCalculator {
 
     private final Listener listener;
 
-    public AspectRatioChangeForwarder(Listener listener) {
+    public AspectRatioChangeCalculator(Listener listener) {
         this.listener = listener;
     }
 
-    @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         float aspectRatio = determineAspectRatio(width, height, pixelWidthHeightRatio);
         listener.onNewAspectRatio(aspectRatio);

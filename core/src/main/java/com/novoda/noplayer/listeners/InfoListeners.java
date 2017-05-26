@@ -1,6 +1,6 @@
 package com.novoda.noplayer.listeners;
 
-import com.novoda.noplayer.exoplayer.InfoListener;
+import com.novoda.noplayer.exoplayer.forwarder.InfoListener;
 
 import java.util.Map;
 import java.util.Set;

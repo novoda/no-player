@@ -1,4 +1,4 @@
-package com.novoda.noplayer.exoplayer;
+package com.novoda.noplayer.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.novoda.noplayer.listeners.InfoListeners;

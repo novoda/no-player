@@ -16,7 +16,7 @@ import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
-import com.novoda.noplayer.exoplayer.InfoListener;
+import com.novoda.noplayer.exoplayer.forwarder.InfoListener;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.notils.logger.simple.Log;
 

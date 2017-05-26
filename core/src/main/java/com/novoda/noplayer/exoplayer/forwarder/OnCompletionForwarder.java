@@ -1,4 +1,4 @@
-package com.novoda.noplayer.exoplayer;
+package com.novoda.noplayer.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -6,23 +6,21 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.novoda.noplayer.Player;
-import com.novoda.noplayer.listeners.ErrorListeners;
+import com.novoda.noplayer.listeners.CompletionListeners;
 
-class PlayerOnErrorForwarder implements ExoPlayer.EventListener {
+class OnCompletionForwarder implements ExoPlayer.EventListener {
 
-    private final Player player;
-    private final ErrorListeners errorListeners;
+    private final CompletionListeners completionListeners;
 
-    PlayerOnErrorForwarder(Player player, ErrorListeners errorListeners) {
-        this.player = player;
-        this.errorListeners = errorListeners;
+    OnCompletionForwarder(CompletionListeners completionListeners) {
+        this.completionListeners = completionListeners;
     }
 
     @Override
-    public void onPlayerError(ExoPlaybackException error) {
-        Player.PlayerError playerError = ExoPlayerErrorFactory.errorFor(error);
-        errorListeners.onError(player, playerError);
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        if (playbackState == ExoPlayer.STATE_ENDED) {
+            completionListeners.onCompletion();
+        }
     }
 
     @Override
@@ -41,8 +39,8 @@ class PlayerOnErrorForwarder implements ExoPlayer.EventListener {
     }
 
     @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        //Handled by OnPrepared and OnCompletion forwarders
+    public void onPlayerError(ExoPlaybackException error) {
+        //Sent by ErrorForwarder
     }
 
     @Override
