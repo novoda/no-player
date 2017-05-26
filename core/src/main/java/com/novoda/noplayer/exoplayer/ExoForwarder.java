@@ -20,7 +20,6 @@ public class ExoForwarder {
     private final MediaSourceEventListener mediaSourceEventListener;
     private final ExoPlayerVideoRendererEventListener videoRendererEventListener;
     private final ExoPlayerExtractorMediaSourceListener exoPlayerExtractorMediaSourceListener;
-    private OnPrepareForwarder onPrepareForwarder;
 
     public ExoForwarder() {
         forwarders = new CopyOnWriteArrayList<>();
@@ -47,8 +46,7 @@ public class ExoForwarder {
     }
 
     public void bind(PreparedListeners preparedListeners, PlayerState playerState) {
-        onPrepareForwarder = new OnPrepareForwarder(preparedListeners, playerState);
-        forwarders.add(onPrepareForwarder);
+        forwarders.add(new OnPrepareForwarder(preparedListeners, playerState));
     }
 
     public void bind(CompletionListeners completionListeners) {
@@ -77,9 +75,5 @@ public class ExoForwarder {
 
     public void bind(ExoPlayerTwoFacade facade) {
         facade.setForwarder(this);
-    }
-
-    public void resetPrepared() {
-        onPrepareForwarder.reset(); //TODO remove state in forwarder
     }
 }

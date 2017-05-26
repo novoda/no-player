@@ -8,7 +8,6 @@ class OnPrepareForwarder extends ExoPlayerEventForwarder {
 
     private final PreparedListeners preparedListeners;
     private final PlayerState playerState;
-    private boolean hasPrepared;
 
     OnPrepareForwarder(PreparedListeners preparedListeners, PlayerState playerState) {
         this.preparedListeners = preparedListeners;
@@ -17,21 +16,12 @@ class OnPrepareForwarder extends ExoPlayerEventForwarder {
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (isReady(playbackState) && hasNotPreviouslyPrepared()) {
-            hasPrepared = true;
+        if (isReady(playbackState)) {
             preparedListeners.onPrepared(playerState);
         }
     }
 
     private boolean isReady(int playbackState) {
         return playbackState == ExoPlayer.STATE_READY;
-    }
-
-    private boolean hasNotPreviouslyPrepared() {
-        return !hasPrepared;
-    }
-
-    public void reset() {
-        hasPrepared = false;
     }
 }

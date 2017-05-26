@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -13,6 +14,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 
 class ExoPlayerTwoFacade {
 
@@ -22,12 +24,14 @@ class ExoPlayerTwoFacade {
     private final SimpleExoPlayer exoPlayer;
     private final MediaSourceFactory mediaSourceFactory;
     private ExoForwarder forwarder;
+    private int videoWidth;
+    private int videoHeight;
 
     static ExoPlayerTwoFacade newInstance(Context context) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
         Handler handler = new Handler(Looper.getMainLooper());
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
-        SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, new DefaultLoadControl());
+        SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(context), trackSelector, new DefaultLoadControl());
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
 
         return new ExoPlayerTwoFacade(
@@ -43,90 +47,71 @@ class ExoPlayerTwoFacade {
     }
 
     boolean getPlayWhenReady() {
-        if (hasPlayer()) {
-            return exoPlayer.getPlayWhenReady();
-        } else {
-            return false;
-        }
+        return exoPlayer.getPlayWhenReady();
     }
 
     long getPlayheadPosition() {
-        if (hasPlayer()) {
-            return exoPlayer.getCurrentPosition();
-        } else {
-            return 0;
-        }
-    }
-
-    private boolean hasPlayer() {
-        return exoPlayer != null;
+        return exoPlayer.getCurrentPosition();
     }
 
     int getVideoWidth() {
-        return forwarder.videoRendererEventListener().videoWidth();
+        return videoWidth;
     }
 
     int getVideoHeight() {
-        return forwarder.videoRendererEventListener().videoHeight();
+        return videoHeight;
     }
 
     long getMediaDuration() {
-        if (hasPlayer()) {
-            return exoPlayer.getDuration();
-        } else {
-            return 0;
-        }
+        return exoPlayer.getDuration();
     }
 
     int getBufferedPercentage() {
-        if (hasPlayer()) {
-            return exoPlayer.getBufferedPercentage();
-        } else {
-            return 0;
-        }
-    }
-
-    void setPlayWhenReady(boolean playWhenReady) {
-        if (hasPlayer()) {
-            exoPlayer.setPlayWhenReady(playWhenReady);
-        }
+        return exoPlayer.getBufferedPercentage();
     }
 
     void seekTo(long positionMillis) {
-        if (hasPlayer()) {
-            exoPlayer.seekTo(positionMillis);
-        }
-    }
-
-    void release() {
-        if (hasPlayer()) {
-            exoPlayer.release();
-        }
+        exoPlayer.seekTo(positionMillis);
     }
 
     void prepare(Uri uri, ContentType contentType) {
-        if (hasPlayer()) {
-            exoPlayer.addListener(forwarder.exoPlayerEventListener());
-            exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
+        exoPlayer.addListener(forwarder.exoPlayerEventListener());
+        exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
 
-            setPlayWhenReady(true);
+        exoPlayer.setPlayWhenReady(true);
 
-            MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, forwarder.mediaSourceListener(), forwarder.mediaSourceEventListener());
-            exoPlayer.prepare(mediaSource, RESET_POSITION, RESET_STATE);
-        }
+        MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, forwarder.mediaSourceListener(), forwarder.mediaSourceEventListener());
+        exoPlayer.prepare(mediaSource, RESET_POSITION, RESET_STATE);
+    }
+
+    public void play() {
+        exoPlayer.setPlayWhenReady(true);
+    }
+
+    void pause() {
+        exoPlayer.setPlayWhenReady(false);
+    }
+
+    void stop() {
+        exoPlayer.stop();
+    }
+
+    void release() {
+        exoPlayer.release();
     }
 
     void setPlayer(SimpleExoPlayerView simpleExoPlayerView) {
         simpleExoPlayerView.setPlayer(exoPlayer);
     }
 
-    void stop() {
-        if (hasPlayer()) {
-            exoPlayer.stop();
-        }
-    }
-
     void setForwarder(ExoForwarder forwarder) {
         this.forwarder = forwarder;
+        forwarder.bind(new VideoSizeChangedListeners() {
+            @Override
+            public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+                ExoPlayerTwoFacade.this.videoWidth = width;
+                ExoPlayerTwoFacade.this.videoHeight = height;
+            }
+        });
     }
 }

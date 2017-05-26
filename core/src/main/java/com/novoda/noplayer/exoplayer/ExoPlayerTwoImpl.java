@@ -22,7 +22,6 @@ import java.util.List;
 public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     private final ExoPlayerTwoFacade facade;
-    private final Forwarder forwarder;
     private final Heart heart;
     private VideoContainer videoContainer = VideoContainer.empty();
 
@@ -31,16 +30,15 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         ExoPlayerTwoFacade facade = ExoPlayerTwoFacade.newInstance(context);
         ExoPlayerBinder exoPlayerBinder = new ExoPlayerBinder(facade);
 
-        return new ExoPlayerTwoImpl(facade, forwarder, exoPlayerBinder);
+        ExoPlayerTwoImpl exoPlayerTwo = new ExoPlayerTwoImpl(facade);
+        forwarder.bind(exoPlayerBinder, exoPlayerTwo, exoPlayerTwo);
+        return exoPlayerTwo;
     }
 
-    private ExoPlayerTwoImpl(ExoPlayerTwoFacade facade, Forwarder forwarder, ExoPlayerBinder exoPlayerBinder) {
+    private ExoPlayerTwoImpl(ExoPlayerTwoFacade facade) {
         this.facade = facade;
-        this.forwarder = forwarder;
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
         heart = Heart.newInstance(onHeartbeat);
-
-        forwarder.bind(exoPlayerBinder, this, this);
     }
 
     @Override
@@ -77,7 +75,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     public void play() {
         showContainer();
         heart.startBeatingHeart();
-        facade.setPlayWhenReady(true);
+        facade.play();
         getStateChangedListeners().onVideoPlaying();
     }
 
@@ -89,7 +87,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void pause() {
-        facade.setPlayWhenReady(false);
+        facade.pause();
         getStateChangedListeners().onVideoPaused();
         if (heart.isBeating()) {
             heart.stopBeatingHeart();
@@ -123,7 +121,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void loadVideo(Uri uri, ContentType contentType) {
-        forwarder.resetPrepared(); //If we can get rid of this then we don't need the field anymore
+        getPreparedListeners().reset();
         showContainer();
         facade.prepare(uri, contentType);
     }
