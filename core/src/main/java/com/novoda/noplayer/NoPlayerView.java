@@ -93,7 +93,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeForwar
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-            aspectRatioChangeForwarder.forwardVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+            aspectRatioChangeForwarder.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
         }
     };
 

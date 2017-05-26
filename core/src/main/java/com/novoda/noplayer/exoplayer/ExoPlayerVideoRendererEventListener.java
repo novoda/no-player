@@ -21,17 +21,23 @@ class ExoPlayerVideoRendererEventListener implements VideoRendererEventListener 
 
     @Override
     public void onVideoEnabled(DecoderCounters counters) {
-        // no-op
+        for (ExoPlayerForwarder forwarder : forwarders) {
+            forwarder.onVideoEnabled(counters);
+        }
     }
 
     @Override
     public void onVideoDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
-        // no-op
+        for (ExoPlayerForwarder forwarder : forwarders) {
+            forwarder.onVideoDecoderInitialized(decoderName, initializedTimestampMs, initializationDurationMs);
+        }
     }
 
     @Override
     public void onVideoInputFormatChanged(Format format) {
-        // no-op
+        for (ExoPlayerForwarder forwarder : forwarders) {
+            forwarder.onVideoInputFormatChanged(format);
+        }
     }
 
     @Override
@@ -46,18 +52,22 @@ class ExoPlayerVideoRendererEventListener implements VideoRendererEventListener 
         videoHeight = height;
         videoWidth = width;
         for (ExoPlayerForwarder forwarder : forwarders) {
-            forwarder.forwardVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+            forwarder.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
         }
     }
 
     @Override
     public void onRenderedFirstFrame(Surface surface) {
-        // no-op
+        for (ExoPlayerForwarder forwarder : forwarders) {
+            forwarder.onRenderedFirstFrame(surface);
+        }
     }
 
     @Override
     public void onVideoDisabled(DecoderCounters counters) {
-        // no-op
+        for (ExoPlayerForwarder forwarder : forwarders) {
+            forwarder.onVideoDisabled(counters);
+        }
     }
 
     public int videoWidth() {

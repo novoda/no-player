@@ -19,17 +19,23 @@ class EventListener implements ExoPlayer.EventListener {
 
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {
-        // no-op
+        for (ExoPlayerForwarder forwarder : forwarders) {
+            forwarder.onTimelineChanged(timeline, manifest);
+        }
     }
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-        // no-op
+        for (ExoPlayerForwarder forwarder : forwarders) {
+            forwarder.onTracksChanged(trackGroups, trackSelections);
+        }
     }
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
-        // no-op
+        for (ExoPlayerForwarder forwarder : forwarders) {
+            forwarder.onLoadingChanged(isLoading);
+        }
     }
 
     @Override
@@ -48,11 +54,15 @@ class EventListener implements ExoPlayer.EventListener {
 
     @Override
     public void onPositionDiscontinuity() {
-        //no-op
+        for (ExoPlayerForwarder forwarder : forwarders) {
+            forwarder.onPositionDiscontinuity();
+        }
     }
 
     @Override
     public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-        // no-op
+        for (ExoPlayerForwarder forwarder : forwarders) {
+            forwarder.onPlaybackParametersChanged(playbackParameters);
+        }
     }
 }
