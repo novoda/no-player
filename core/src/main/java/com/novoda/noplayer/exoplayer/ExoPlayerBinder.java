@@ -8,8 +8,8 @@ public class ExoPlayerBinder {
         this.facade = facade;
     }
 
-    public void bind(ExoForwarder exoForwarder) {
-        exoForwarder.bind(facade);
+    public void bind(ExoPlayerForwarder exoPlayerForwarder) {
+        exoPlayerForwarder.bind(facade);
     }
 
 }

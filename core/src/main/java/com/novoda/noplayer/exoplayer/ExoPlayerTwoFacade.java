@@ -23,7 +23,7 @@ class ExoPlayerTwoFacade {
 
     private final SimpleExoPlayer exoPlayer;
     private final MediaSourceFactory mediaSourceFactory;
-    private ExoForwarder forwarder;
+    private ExoPlayerForwarder forwarder;
     private int videoWidth;
     private int videoHeight;
 
@@ -80,7 +80,7 @@ class ExoPlayerTwoFacade {
 
         exoPlayer.setPlayWhenReady(true);
 
-        MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, forwarder.mediaSourceListener(), forwarder.mediaSourceEventListener());
+        MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, forwarder.extractorMediaSourceListener(), forwarder.mediaSourceEventListener());
         exoPlayer.prepare(mediaSource, RESET_POSITION, RESET_STATE);
     }
 
@@ -104,7 +104,7 @@ class ExoPlayerTwoFacade {
         simpleExoPlayerView.setPlayer(exoPlayer);
     }
 
-    void setForwarder(ExoForwarder forwarder) {
+    void setForwarder(ExoPlayerForwarder forwarder) {
         this.forwarder = forwarder;
         forwarder.bind(new VideoSizeChangedListeners() {
             @Override
