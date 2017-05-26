@@ -305,4 +305,8 @@ public class AndroidMediaPlayerFacade {
 
         return INVALID_AUDIO_TRACK_INDEX;
     }
+
+    public void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener) {
+        mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
+    }
 }

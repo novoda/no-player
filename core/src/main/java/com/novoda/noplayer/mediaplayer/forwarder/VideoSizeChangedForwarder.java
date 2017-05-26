@@ -1,4 +1,4 @@
-package com.novoda.noplayer.mediaplayer;
+package com.novoda.noplayer.mediaplayer.forwarder;
 
 import android.media.MediaPlayer;
 

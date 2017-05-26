@@ -10,13 +10,14 @@ import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
+import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
-import com.novoda.noplayer.exoplayer.forwarder.InfoListener;
+import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.notils.logger.simple.Log;
 
@@ -45,7 +46,7 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     private StateChangedListener stateChangedListener;
     private CheckBufferHeartbeatCallback heartbeatCallback;
 
-    public AndroidMediaPlayerImpl(AndroidMediaPlayerFacade mediaPlayer) {
+    public AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer, MediaPlayerForwarder forwarder) {
         this.mediaPlayer = mediaPlayer;
         handler = new Handler(Looper.getMainLooper());
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
@@ -53,76 +54,38 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
 
         loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
 
-        addPreparedListenerForwarder();
-        addBufferStateListenerForwarder();
-        addCompletionListenerForwarder();
-        addErrorListenerForwarder();
-        addVideoSizeChangedForwarder();
-    }
+        forwarder.bind(getPreparedListeners(), this);
+        forwarder.bind(getBufferStateListeners(), getErrorListeners(), this);
+        forwarder.bind(getCompletionListeners());
+        forwarder.bind(getVideoSizeChangedListeners());
+        forwarder.bind(getInfoListeners());
 
-    private void addPreparedListenerForwarder() {
-        MediaPlayer.OnPreparedListener decoratedListener = decoratePreparedListener();
-        mediaPlayer.setOnPreparedListener(decoratedListener);
-    }
+        mediaPlayer.setOnPreparedListener(forwarder.onPreparedListener());
+        addHeartbeatCallback(new CheckBufferHeartbeatCallback(forwarder.onHeartbeatListener()));
+        mediaPlayer.setOnCompletionListener(forwarder.onCompletionListener());
+        mediaPlayer.setOnErrorListener(forwarder.onErrorListener());
+        mediaPlayer.setOnSizeChangedListener(forwarder.onSizeChangedListener());
 
-    private MediaPlayer.OnPreparedListener decoratePreparedListener() {
-        return new MediaPlayer.OnPreparedListener() {
+        addPreparedListener(new PreparedListener() {
             @Override
-            public void onPrepared(MediaPlayer mp) {
+            public void onPrepared(PlayerState playerState) {
                 loadTimeout.cancel();
-                mp.setOnSeekCompleteListener(seekToResettingSeekListener);
-                videoWidth = mp.getVideoWidth();
-                videoHeight = mp.getVideoHeight();
-                getBufferStateListeners().onBufferCompleted();
-                getPreparedListeners().onPrepared(AndroidMediaPlayerImpl.this);
-            }
-        };
-    }
-
-    private void addBufferStateListenerForwarder() {
-        heartbeatCallback = new CheckBufferHeartbeatCallback(new CheckBufferHeartbeatCallback.BufferListener() {
-
-            @Override
-            public void onBufferStart() {
-                getBufferStateListeners().onBufferStarted();
-            }
-
-            @Override
-            public void onBufferComplete() {
-                getBufferStateListeners().onBufferCompleted();
+                mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener); //TODO move in forwarder ?
             }
         });
-        addHeartbeatCallback(heartbeatCallback);
-    }
-
-    private void addCompletionListenerForwarder() {
-        mediaPlayer.setOnCompletionListener(
-                new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        getCompletionListeners().onCompletion();
-                    }
-                }
-        );
-    }
-
-    private void addErrorListenerForwarder() {
-        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+        addErrorListener(new ErrorListener() {
             @Override
-            public boolean onError(MediaPlayer mp, int what, int extra) {
-                getBufferStateListeners().onBufferCompleted();
+            public void onError(Player player, PlayerError error) {
                 loadTimeout.cancel();
-                PlayerError error = ErrorFactory.createErrorFrom(what, extra);
-
-                getErrorListeners().onError(AndroidMediaPlayerImpl.this, error);
-
-                return true;
             }
         });
-    }
-
-    private void addVideoSizeChangedForwarder() {
-        mediaPlayer.setOnSizeChangedListener(new VideoSizeChangedForwarder(getVideoSizeChangedListeners()));
+        addVideoSizeChangedListener(new VideoSizeChangedListener() {
+            @Override
+            public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+                videoWidth = width;
+                videoHeight = height;
+            }
+        });
     }
 
     private final MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener = new MediaPlayer.OnSeekCompleteListener() {
@@ -259,16 +222,6 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
 
     private boolean isSeeking() {
         return !seekToPosition.equals(NO_SEEK_TO_POSITION);
-    }
-
-    @Override
-    public void addInfoListener(InfoListener infoListener) {
-        // media player does not support this
-    }
-
-    @Override
-    public void removeInfoListener(InfoListener infoListener) {
-        // media player does not support this
     }
 
     @Override
