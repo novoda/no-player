@@ -14,9 +14,6 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.ContentType;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 class ExoPlayerTwoFacade {
 
     private static final boolean RESET_POSITION = true;
@@ -24,11 +21,7 @@ class ExoPlayerTwoFacade {
 
     private final SimpleExoPlayer exoPlayer;
     private final MediaSourceFactory mediaSourceFactory;
-    private final EventListener exoPlayerEventListener;
-    private final MediaSourceEventListener mediaSourceEventListener;
-    private final ExoPlayerVideoRendererEventListener videoRendererEventListener;
-    private final ExoPlayerExtractorMediaSourceListener exoPlayerExtractorMediaSourceListener;
-    private final List<ExoPlayerForwarder> forwarders;
+    private ExoForwarder forwarder;
 
     static ExoPlayerTwoFacade newInstance(Context context) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
@@ -37,37 +30,16 @@ class ExoPlayerTwoFacade {
         SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, new DefaultLoadControl());
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
 
-        List<ExoPlayerForwarder> forwarders = new CopyOnWriteArrayList<>();
-        EventListener exoPlayerEventListener = new EventListener(forwarders);
-        MediaSourceEventListener mediaSourceEventListener = new MediaSourceEventListener(forwarders);
-        ExoPlayerVideoRendererEventListener videoRendererEventListener = new ExoPlayerVideoRendererEventListener(forwarders);
-        ExoPlayerExtractorMediaSourceListener exoPlayerExtractorMediaSourceListener = new ExoPlayerExtractorMediaSourceListener(forwarders);
-
         return new ExoPlayerTwoFacade(
                 exoPlayer,
-                mediaSourceFactory,
-                forwarders,
-                exoPlayerEventListener,
-                mediaSourceEventListener,
-                videoRendererEventListener,
-                exoPlayerExtractorMediaSourceListener
+                mediaSourceFactory
         );
     }
 
     private ExoPlayerTwoFacade(SimpleExoPlayer exoPlayer,
-                               MediaSourceFactory mediaSourceFactory,
-                               List<ExoPlayerForwarder> forwarders,
-                               EventListener exoPlayerEventListener,
-                               MediaSourceEventListener mediaSourceEventListener,
-                               ExoPlayerVideoRendererEventListener videoRendererEventListener,
-                               ExoPlayerExtractorMediaSourceListener exoPlayerExtractorMediaSourceListener) {
+                               MediaSourceFactory mediaSourceFactory) {
         this.exoPlayer = exoPlayer;
         this.mediaSourceFactory = mediaSourceFactory;
-        this.exoPlayerEventListener = exoPlayerEventListener;
-        this.forwarders = forwarders;
-        this.mediaSourceEventListener = mediaSourceEventListener;
-        this.videoRendererEventListener = videoRendererEventListener;
-        this.exoPlayerExtractorMediaSourceListener = exoPlayerExtractorMediaSourceListener;
     }
 
     boolean getPlayWhenReady() {
@@ -91,11 +63,11 @@ class ExoPlayerTwoFacade {
     }
 
     int getVideoWidth() {
-        return videoRendererEventListener.videoWidth();
+        return forwarder.videoRendererEventListener().videoWidth();
     }
 
     int getVideoHeight() {
-        return videoRendererEventListener.videoHeight();
+        return forwarder.videoRendererEventListener().videoHeight();
     }
 
     long getMediaDuration() {
@@ -134,11 +106,12 @@ class ExoPlayerTwoFacade {
 
     void prepare(Uri uri, ContentType contentType) {
         if (hasPlayer()) {
-            exoPlayer.addListener(exoPlayerEventListener);
+            exoPlayer.addListener(forwarder.exoPlayerEventListener());
+            exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
 
             setPlayWhenReady(true);
 
-            MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, exoPlayerExtractorMediaSourceListener, mediaSourceEventListener);
+            MediaSource mediaSource = mediaSourceFactory.create(contentType, uri, forwarder.mediaSourceListener(), forwarder.mediaSourceEventListener());
             exoPlayer.prepare(mediaSource, RESET_POSITION, RESET_STATE);
         }
     }
@@ -147,14 +120,13 @@ class ExoPlayerTwoFacade {
         simpleExoPlayerView.setPlayer(exoPlayer);
     }
 
-    void addForwarder(ExoPlayerForwarder forwarder) {
-        forwarders.add(forwarder);
-    }
-
     void stop() {
         if (hasPlayer()) {
             exoPlayer.stop();
         }
     }
 
+    void setForwarder(ExoForwarder forwarder) {
+        this.forwarder = forwarder;
+    }
 }

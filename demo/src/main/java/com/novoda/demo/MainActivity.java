@@ -30,7 +30,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        player = new PlayerFactory(this, PrioritisedPlayers.prioritiseMediaPlayer()).create();
+        player = new PlayerFactory(this, PrioritisedPlayers.prioritiseExoPlayer()).create();
         player.addPreparedListener(new Player.PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {

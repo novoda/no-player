@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.Forwarder;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
@@ -21,29 +22,25 @@ import java.util.List;
 public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     private final ExoPlayerTwoFacade facade;
+    private final Forwarder forwarder;
     private final Heart heart;
-    private final OnPrepareForwarder prepareForwarder;
     private VideoContainer videoContainer = VideoContainer.empty();
 
     public static ExoPlayerTwoImpl newInstance(Context context) {
+        Forwarder forwarder = new Forwarder();
         ExoPlayerTwoFacade facade = ExoPlayerTwoFacade.newInstance(context);
+        ExoPlayerBinder exoPlayerBinder = new ExoPlayerBinder(facade);
 
-        return new ExoPlayerTwoImpl(facade);
+        return new ExoPlayerTwoImpl(facade, forwarder, exoPlayerBinder);
     }
 
-    private ExoPlayerTwoImpl(ExoPlayerTwoFacade facade) {
+    private ExoPlayerTwoImpl(ExoPlayerTwoFacade facade, Forwarder forwarder, ExoPlayerBinder exoPlayerBinder) {
         this.facade = facade;
+        this.forwarder = forwarder;
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
         heart = Heart.newInstance(onHeartbeat);
 
-        prepareForwarder = new OnPrepareForwarder(getPreparedListeners(), this);
-        facade.addForwarder(prepareForwarder);
-        facade.addForwarder(new OnCompletionForwarder(getCompletionListeners()));
-        facade.addForwarder(new OnErrorForwarder(this, getErrorListeners()));
-        facade.addForwarder(new BufferStateForwarder(getBufferStateListeners()));
-        facade.addForwarder(new VideoSizeChangedForwarder(getVideoSizeChangedListeners()));
-        facade.addForwarder(new BitrateForwarder(getBitrateChangedListeners()));
-        facade.addForwarder(new InfoForwarder(getInfoListeners()));
+        forwarder.bind(exoPlayerBinder, this, this);
     }
 
     @Override
@@ -126,7 +123,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void loadVideo(Uri uri, ContentType contentType) {
-        prepareForwarder.reset();
+        forwarder.resetPrepared(); //If we can get rid of this then we don't need the field anymore
         showContainer();
         facade.prepare(uri, contentType);
     }
