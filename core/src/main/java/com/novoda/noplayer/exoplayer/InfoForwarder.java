@@ -53,7 +53,7 @@ class InfoForwarder extends ExoPlayerEventForwarder {
         keyValuePairs.put("loadDurationMs", String.valueOf(loadDurationMs));
         keyValuePairs.put("bytesLoaded", String.valueOf(bytesLoaded));
 
-        infoListeners.onNewInfo("onLoadStarted", keyValuePairs);
+        infoListeners.onNewInfo("onLoadCompleted", keyValuePairs);
     }
 
     @Override
@@ -73,7 +73,7 @@ class InfoForwarder extends ExoPlayerEventForwarder {
         keyValuePairs.put("loadDurationMs", String.valueOf(loadDurationMs));
         keyValuePairs.put("bytesLoaded", String.valueOf(bytesLoaded));
 
-        infoListeners.onNewInfo("onLoadStarted", keyValuePairs);
+        infoListeners.onNewInfo("onLoadCanceled", keyValuePairs);
     }
 
     @Override
@@ -95,7 +95,7 @@ class InfoForwarder extends ExoPlayerEventForwarder {
         keyValuePairs.put("IOException", String.valueOf(error));
         keyValuePairs.put("wasCanceled", String.valueOf(wasCanceled));
 
-        infoListeners.onNewInfo("onLoadStarted", keyValuePairs);
+        infoListeners.onNewInfo("onLoadError", keyValuePairs);
     }
 
     @Override
@@ -136,7 +136,7 @@ class InfoForwarder extends ExoPlayerEventForwarder {
         keyValuePairs.put("playWhenReady", String.valueOf(playWhenReady));
         keyValuePairs.put("playbackState", String.valueOf(playbackState));
 
-        infoListeners.onNewInfo("forwardPlayerStateChanged", keyValuePairs);
+        infoListeners.onNewInfo("onPlayerStateChanged", keyValuePairs);
     }
 
     @Override
@@ -144,7 +144,7 @@ class InfoForwarder extends ExoPlayerEventForwarder {
         HashMap<String, String> keyValuePairs = new HashMap<>();
         keyValuePairs.put("error", String.valueOf(error));
 
-        infoListeners.onNewInfo("forwardPlayerError", keyValuePairs);
+        infoListeners.onNewInfo("onPlayerError", keyValuePairs);
     }
 
     @Override
