@@ -1,5 +1,6 @@
 package com.novoda.noplayer.exoplayer;
 
+import android.content.Context;
 import android.net.Uri;
 
 import com.novoda.noplayer.ContentType;
@@ -24,20 +25,25 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     private final OnPrepareForwarder prepareForwarder;
     private VideoContainer videoContainer = VideoContainer.empty();
 
-    public ExoPlayerTwoImpl(ExoPlayerTwoFacade facade) {
+    public static ExoPlayerTwoImpl newInstance(Context context) {
+        ExoPlayerTwoFacade facade = ExoPlayerTwoFacade.newInstance(context);
+
+        return new ExoPlayerTwoImpl(facade);
+    }
+
+    private ExoPlayerTwoImpl(ExoPlayerTwoFacade facade) {
         this.facade = facade;
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
         heart = Heart.newInstance(onHeartbeat);
 
         prepareForwarder = new OnPrepareForwarder(getPreparedListeners(), this);
-        facade.addListener(prepareForwarder);
-        facade.addListener(new OnCompletionForwarder(getCompletionListeners()));
-        facade.addListener(new OnErrorForwarder(this, getErrorListeners()));
-        facade.addListener(new BufferStateForwarder(getBufferStateListeners()));
-        facade.addListener(new VideoSizeChangedForwarder(getVideoSizeChangedListeners()));
-
-        facade.setBitrateChangedListeners(getBitrateChangedListeners());
-        facade.setInfoListeners(getInfoListeners());
+        facade.addForwarder(prepareForwarder);
+        facade.addForwarder(new OnCompletionForwarder(getCompletionListeners()));
+        facade.addForwarder(new OnErrorForwarder(this, getErrorListeners()));
+        facade.addForwarder(new BufferStateForwarder(getBufferStateListeners()));
+        facade.addForwarder(new VideoSizeChangedForwarder(getVideoSizeChangedListeners()));
+        facade.addForwarder(new BitrateForwarder(getBitrateChangedListeners()));
+        facade.addForwarder(new InfoForwarder(getInfoListeners()));
     }
 
     @Override
@@ -139,7 +145,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     public void attach(PlayerView playerView) {
         videoContainer = VideoContainer.with(playerView.getContainerView());
         facade.setPlayer(playerView.simplePlayerView());
-        addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         // TODO : Set SubtitleView on the facade.
     }
 
@@ -158,7 +163,4 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         videoContainer.show();
     }
 
-    public ExoPlayerTwoFacade getInternalExoPlayer() {
-        return facade;
-    }
 }

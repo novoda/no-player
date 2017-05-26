@@ -4,7 +4,7 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.listeners.PreparedListeners;
 
-class OnPrepareForwarder extends ExoPlayerStateChangedListener {
+class OnPrepareForwarder extends ExoPlayerEventForwarder {
 
     private final PreparedListeners preparedListeners;
     private final PlayerState playerState;

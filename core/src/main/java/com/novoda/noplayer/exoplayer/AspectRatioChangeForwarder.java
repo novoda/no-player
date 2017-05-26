@@ -1,24 +1,11 @@
 package com.novoda.noplayer.exoplayer;
 
-import com.google.android.exoplayer2.ExoPlaybackException;
-
-public class AspectRatioChangeListener implements ExoPlayerTwoFacade.Listener {
+public class AspectRatioChangeForwarder extends ExoPlayerEventForwarder {
 
     private final Listener listener;
 
-    public AspectRatioChangeListener(Listener listener) {
+    public AspectRatioChangeForwarder(Listener listener) {
         this.listener = listener;
-    }
-
-    @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        //no-op
-
-    }
-
-    @Override
-    public void onPlayerError(ExoPlaybackException error) {
-        //no-op
     }
 
     @Override

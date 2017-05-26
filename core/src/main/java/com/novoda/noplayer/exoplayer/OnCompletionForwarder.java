@@ -3,7 +3,7 @@ package com.novoda.noplayer.exoplayer;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.novoda.noplayer.listeners.CompletionListeners;
 
-class OnCompletionForwarder extends ExoPlayerStateChangedListener {
+class OnCompletionForwarder extends ExoPlayerEventForwarder {
 
     private final CompletionListeners completionListeners;
 

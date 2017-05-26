@@ -167,12 +167,16 @@ public class AndroidMediaPlayerFacade {
     }
 
     public void release() {
-        if (mediaPlayer != null) {
+        if (hasPlayer()) {
             mediaPlayer.reset();
             mediaPlayer.release();
             mediaPlayer = null;
             currentState = STATE_IDLE;
         }
+    }
+
+    private boolean hasPlayer() {
+        return mediaPlayer != null;
     }
 
     public void start() {
@@ -229,21 +233,23 @@ public class AndroidMediaPlayerFacade {
     }
 
     public int getBufferPercentage() {
-        if (mediaPlayer != null) {
+        if (hasPlayer()) {
             return currentBufferPercentage;
         }
         return 0;
     }
 
     private boolean isInPlaybackState() {
-        return mediaPlayer != null
+        return hasPlayer()
                 && currentState != STATE_ERROR
                 && currentState != STATE_IDLE
                 && currentState != STATE_PREPARING;
     }
 
     public void stop() {
-        mediaPlayer.stop();
+        if (hasPlayer()) {
+            mediaPlayer.stop();
+        }
     }
 
     public List<PlayerAudioTrack> getAudioTracks() {

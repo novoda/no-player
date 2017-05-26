@@ -41,6 +41,9 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     private boolean seekingWithIntentToPlay;
 
     private VideoContainer videoContainer = VideoContainer.empty();
+    private VideoSizeChangedListener videoSizeChangedListener;
+    private StateChangedListener stateChangedListener;
+    private CheckBufferHeartbeatCallback heartbeatCallback;
 
     public AndroidMediaPlayerImpl(AndroidMediaPlayerFacade mediaPlayer) {
         this.mediaPlayer = mediaPlayer;
@@ -77,7 +80,7 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     }
 
     private void addBufferStateListenerForwarder() {
-        addHeartbeatCallback(new CheckBufferHeartbeatCallback(new CheckBufferHeartbeatCallback.BufferListener() {
+        heartbeatCallback = new CheckBufferHeartbeatCallback(new CheckBufferHeartbeatCallback.BufferListener() {
 
             @Override
             public void onBufferStart() {
@@ -88,7 +91,8 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
             public void onBufferComplete() {
                 getBufferStateListeners().onBufferCompleted();
             }
-        }));
+        });
+        addHeartbeatCallback(heartbeatCallback);
     }
 
     private void addCompletionListenerForwarder() {
@@ -287,7 +291,10 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
         videoContainer = VideoContainer.with(playerView.getContainerView());
         mediaPlayer.setSurfaceHolderRequester(playerView.getSurfaceHolderRequester());
         BuggyVideoDriverPreventer.newInstance(playerView.getContainerView(), this).preventVideoDriverBug();
-        addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        videoSizeChangedListener = playerView.getVideoSizeChangedListener();
+        addVideoSizeChangedListener(videoSizeChangedListener);
+        stateChangedListener = playerView.getStateChangedListener();
+        getStateChangedListeners().add(stateChangedListener);
     }
 
     @Override
@@ -318,6 +325,12 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
         getPlayerReleaseListener().onPlayerPreRelease(this);
         mediaPlayer.release();
         getStateChangedListeners().onVideoReleased();
+        removeVideoSizeChangedListener(videoSizeChangedListener);
+        removeStateChangedListener(stateChangedListener);
+        removeHeartbeatCallback(heartbeatCallback);
+        videoSizeChangedListener = null;
+        stateChangedListener = null;
+        heartbeatCallback = null;
         videoContainer.hide();
     }
 }
