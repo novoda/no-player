@@ -52,7 +52,6 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                                 long elapsedRealtimeMs,
                                 long loadDurationMs,
                                 long bytesLoaded) {
-
         for (Forwarder forwarder : forwarders) {
             forwarder.onLoadCompleted(
                     dataSpec,
@@ -68,7 +67,6 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                     bytesLoaded
             );
         }
-
     }
 
     @Override
