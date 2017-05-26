@@ -16,7 +16,7 @@ class OnPrepareForwarder extends ExoPlayerEventForwarder {
     }
 
     @Override
-    public void forwardPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (isReady(playbackState) && hasNotPreviouslyPrepared()) {
             hasPrepared = true;
             preparedListeners.onPrepared(playerState);

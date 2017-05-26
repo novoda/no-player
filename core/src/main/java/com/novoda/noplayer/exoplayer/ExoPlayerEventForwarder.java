@@ -4,25 +4,49 @@ import android.view.Surface;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSpec;
 
 import java.io.IOException;
 
-abstract class ExoPlayerEventForwarder implements Forwarder {
+abstract class ExoPlayerEventForwarder implements ExoPlayerForwarder {
 
     @Override
-    public void forwardPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    public void onTimelineChanged(Timeline timeline, Object manifest) {
         // no-op
     }
 
     @Override
-    public void forwardPlayerError(ExoPlaybackException error) {
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
         // no-op
     }
 
     @Override
-    public void forwardVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+    public void onLoadingChanged(boolean isLoading) {
+        // no-op
+    }
+
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        // no-op
+    }
+
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+        // no-op
+    }
+
+    @Override
+    public void onPositionDiscontinuity() {
+        // no-op
+    }
+
+    @Override
+    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
         // no-op
     }
 
@@ -53,6 +77,11 @@ abstract class ExoPlayerEventForwarder implements Forwarder {
 
     @Override
     public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaTimeMs) {
+        // no-op
+    }
+
+    @Override
+    public void onLoadError(IOException error) {
         // no-op
     }
 
@@ -88,11 +117,6 @@ abstract class ExoPlayerEventForwarder implements Forwarder {
 
     @Override
     public void onVideoDisabled(DecoderCounters counters) {
-        // no-op
-    }
-
-    @Override
-    public void onLoadError(IOException error) {
         // no-op
     }
 }

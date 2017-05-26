@@ -12,7 +12,7 @@ class OnCompletionForwarder extends ExoPlayerEventForwarder {
     }
 
     @Override
-    public void forwardPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == ExoPlayer.STATE_ENDED) {
             completionListeners.onCompletion();
         }

@@ -12,7 +12,7 @@ class BufferStateForwarder extends ExoPlayerEventForwarder {
     }
 
     @Override
-    public void forwardPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == ExoPlayer.STATE_BUFFERING) {
             bufferStateListeners.onBufferStarted();
         } else if (playbackState == ExoPlayer.STATE_READY) {

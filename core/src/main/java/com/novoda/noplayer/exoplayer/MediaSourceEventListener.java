@@ -9,9 +9,9 @@ import java.util.List;
 
 class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
 
-    private final List<Forwarder> forwarders;
+    private final List<ExoPlayerForwarder> forwarders;
 
-    MediaSourceEventListener(List<Forwarder> forwarders) {
+    MediaSourceEventListener(List<ExoPlayerForwarder> forwarders) {
         this.forwarders = forwarders;
     }
 
@@ -25,7 +25,7 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                               long mediaStartTimeMs,
                               long mediaEndTimeMs,
                               long elapsedRealtimeMs) {
-        for (Forwarder forwarder : forwarders) {
+        for (ExoPlayerForwarder forwarder : forwarders) {
             forwarder.onLoadStarted(
                     dataSpec,
                     dataType,
@@ -52,7 +52,7 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                                 long elapsedRealtimeMs,
                                 long loadDurationMs,
                                 long bytesLoaded) {
-        for (Forwarder forwarder : forwarders) {
+        for (ExoPlayerForwarder forwarder : forwarders) {
             forwarder.onLoadCompleted(
                     dataSpec,
                     dataType,
@@ -81,7 +81,7 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                                long elapsedRealtimeMs,
                                long loadDurationMs,
                                long bytesLoaded) {
-        for (Forwarder forwarder : forwarders) {
+        for (ExoPlayerForwarder forwarder : forwarders) {
             forwarder.onLoadCanceled(
                     dataSpec,
                     dataType,
@@ -112,7 +112,7 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                             long bytesLoaded,
                             IOException error,
                             boolean wasCanceled) {
-        for (Forwarder forwarder : forwarders) {
+        for (ExoPlayerForwarder forwarder : forwarders) {
             forwarder.onLoadError(
                     dataSpec,
                     dataType,
@@ -133,7 +133,7 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
 
     @Override
     public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {
-        for (Forwarder forwarder : forwarders) {
+        for (ExoPlayerForwarder forwarder : forwarders) {
             forwarder.onUpstreamDiscarded(trackType, mediaStartTimeMs, mediaEndTimeMs);
         }
     }
@@ -144,7 +144,7 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                                           int trackSelectionReason,
                                           Object trackSelectionData,
                                           long mediaTimeMs) {
-        for (Forwarder forwarder : forwarders) {
+        for (ExoPlayerForwarder forwarder : forwarders) {
             forwarder.onDownstreamFormatChanged(trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaTimeMs);
         }
     }

@@ -10,12 +10,12 @@ import java.util.List;
 
 class ExoPlayerVideoRendererEventListener implements VideoRendererEventListener {
 
-    private final List<Forwarder> forwarders;
+    private final List<ExoPlayerForwarder> forwarders;
 
     private int videoWidth;
     private int videoHeight;
 
-    ExoPlayerVideoRendererEventListener(List<Forwarder> forwarders) {
+    ExoPlayerVideoRendererEventListener(List<ExoPlayerForwarder> forwarders) {
         this.forwarders = forwarders;
     }
 
@@ -36,7 +36,7 @@ class ExoPlayerVideoRendererEventListener implements VideoRendererEventListener 
 
     @Override
     public void onDroppedFrames(int count, long elapsedMs) {
-        for (Forwarder forwarder : forwarders) {
+        for (ExoPlayerForwarder forwarder : forwarders) {
             forwarder.onDroppedFrames(count, elapsedMs);
         }
     }
@@ -45,7 +45,7 @@ class ExoPlayerVideoRendererEventListener implements VideoRendererEventListener 
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         videoHeight = height;
         videoWidth = width;
-        for (Forwarder forwarder : forwarders) {
+        for (ExoPlayerForwarder forwarder : forwarders) {
             forwarder.forwardVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
         }
     }

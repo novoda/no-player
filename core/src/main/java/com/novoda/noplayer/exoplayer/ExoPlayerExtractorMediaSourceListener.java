@@ -7,15 +7,15 @@ import java.util.List;
 
 class ExoPlayerExtractorMediaSourceListener implements ExtractorMediaSource.EventListener {
 
-    private final List<Forwarder> forwarders;
+    private final List<ExoPlayerForwarder> forwarders;
 
-    ExoPlayerExtractorMediaSourceListener(List<Forwarder> forwarders) {
+    ExoPlayerExtractorMediaSourceListener(List<ExoPlayerForwarder> forwarders) {
         this.forwarders = forwarders;
     }
 
     @Override
     public void onLoadError(IOException error) {
-        for (Forwarder forwarder : forwarders) {
+        for (ExoPlayerForwarder forwarder : forwarders) {
             forwarder.onLoadError(error);
         }
     }

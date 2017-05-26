@@ -131,7 +131,7 @@ class InfoForwarder extends ExoPlayerEventForwarder {
     }
 
     @Override
-    public void forwardPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         HashMap<String, String> keyValuePairs = new HashMap<>();
         keyValuePairs.put("playWhenReady", String.valueOf(playWhenReady));
         keyValuePairs.put("playbackState", String.valueOf(playbackState));
@@ -140,22 +140,11 @@ class InfoForwarder extends ExoPlayerEventForwarder {
     }
 
     @Override
-    public void forwardPlayerError(ExoPlaybackException error) {
+    public void onPlayerError(ExoPlaybackException error) {
         HashMap<String, String> keyValuePairs = new HashMap<>();
         keyValuePairs.put("error", String.valueOf(error));
 
         infoListeners.onNewInfo("forwardPlayerError", keyValuePairs);
-    }
-
-    @Override
-    public void forwardVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("width", String.valueOf(width));
-        keyValuePairs.put("height", String.valueOf(height));
-        keyValuePairs.put("unappliedRotationDegrees", String.valueOf(unappliedRotationDegrees));
-        keyValuePairs.put("pixelWidthHeightRatio", String.valueOf(pixelWidthHeightRatio));
-
-        infoListeners.onNewInfo("forwardVideoSizeChanged", keyValuePairs);
     }
 
     @Override

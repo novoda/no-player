@@ -28,7 +28,7 @@ public class ExoPlayerTwoFacade {
     private final MediaSourceEventListener mediaSourceEventListener;
     private final ExoPlayerVideoRendererEventListener videoRendererEventListener;
     private final ExoPlayerExtractorMediaSourceListener exoPlayerExtractorMediaSourceListener;
-    private final List<Forwarder> forwarders;
+    private final List<ExoPlayerForwarder> forwarders;
 
     public static ExoPlayerTwoFacade newInstance(Context context) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
@@ -37,7 +37,7 @@ public class ExoPlayerTwoFacade {
         SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, new DefaultLoadControl());
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
 
-        List<Forwarder> forwarders = new CopyOnWriteArrayList<>();
+        List<ExoPlayerForwarder> forwarders = new CopyOnWriteArrayList<>();
         EventListener exoPlayerEventListener = new EventListener(forwarders);
         MediaSourceEventListener mediaSourceEventListener = new MediaSourceEventListener(forwarders);
         ExoPlayerVideoRendererEventListener videoRendererEventListener = new ExoPlayerVideoRendererEventListener(forwarders);
@@ -56,7 +56,7 @@ public class ExoPlayerTwoFacade {
 
     public ExoPlayerTwoFacade(SimpleExoPlayer exoPlayer,
                               MediaSourceFactory mediaSourceFactory,
-                              List<Forwarder> forwarders,
+                              List<ExoPlayerForwarder> forwarders,
                               EventListener exoPlayerEventListener,
                               MediaSourceEventListener mediaSourceEventListener,
                               ExoPlayerVideoRendererEventListener videoRendererEventListener,
@@ -147,7 +147,7 @@ public class ExoPlayerTwoFacade {
         simpleExoPlayerView.setPlayer(exoPlayer);
     }
 
-    void addForwarder(Forwarder forwarder) {
+    void addForwarder(ExoPlayerForwarder forwarder) {
         forwarders.add(forwarder);
     }
 
