@@ -5,7 +5,7 @@ import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
-public interface ExoPlayerForwarder extends AdaptiveMediaSourceEventListener,
+interface ExoPlayerForwarder extends AdaptiveMediaSourceEventListener,
         ExoPlayer.EventListener,
         VideoRendererEventListener,
         ExtractorMediaSource.EventListener {

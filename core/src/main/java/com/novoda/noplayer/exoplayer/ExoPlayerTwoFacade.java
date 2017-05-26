@@ -17,7 +17,7 @@ import com.novoda.noplayer.ContentType;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ExoPlayerTwoFacade {
+class ExoPlayerTwoFacade {
 
     private static final boolean RESET_POSITION = true;
     private static final boolean RESET_STATE = false;
@@ -30,7 +30,7 @@ public class ExoPlayerTwoFacade {
     private final ExoPlayerExtractorMediaSourceListener exoPlayerExtractorMediaSourceListener;
     private final List<ExoPlayerForwarder> forwarders;
 
-    public static ExoPlayerTwoFacade newInstance(Context context) {
+    static ExoPlayerTwoFacade newInstance(Context context) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
         Handler handler = new Handler(Looper.getMainLooper());
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
@@ -54,13 +54,13 @@ public class ExoPlayerTwoFacade {
         );
     }
 
-    public ExoPlayerTwoFacade(SimpleExoPlayer exoPlayer,
-                              MediaSourceFactory mediaSourceFactory,
-                              List<ExoPlayerForwarder> forwarders,
-                              EventListener exoPlayerEventListener,
-                              MediaSourceEventListener mediaSourceEventListener,
-                              ExoPlayerVideoRendererEventListener videoRendererEventListener,
-                              ExoPlayerExtractorMediaSourceListener exoPlayerExtractorMediaSourceListener) {
+    private ExoPlayerTwoFacade(SimpleExoPlayer exoPlayer,
+                               MediaSourceFactory mediaSourceFactory,
+                               List<ExoPlayerForwarder> forwarders,
+                               EventListener exoPlayerEventListener,
+                               MediaSourceEventListener mediaSourceEventListener,
+                               ExoPlayerVideoRendererEventListener videoRendererEventListener,
+                               ExoPlayerExtractorMediaSourceListener exoPlayerExtractorMediaSourceListener) {
         this.exoPlayer = exoPlayer;
         this.mediaSourceFactory = mediaSourceFactory;
         this.exoPlayerEventListener = exoPlayerEventListener;
@@ -70,7 +70,7 @@ public class ExoPlayerTwoFacade {
         this.exoPlayerExtractorMediaSourceListener = exoPlayerExtractorMediaSourceListener;
     }
 
-    public boolean getPlayWhenReady() {
+    boolean getPlayWhenReady() {
         if (hasPlayer()) {
             return exoPlayer.getPlayWhenReady();
         } else {
@@ -78,7 +78,7 @@ public class ExoPlayerTwoFacade {
         }
     }
 
-    public long getPlayheadPosition() {
+    long getPlayheadPosition() {
         if (hasPlayer()) {
             return exoPlayer.getCurrentPosition();
         } else {
@@ -90,15 +90,15 @@ public class ExoPlayerTwoFacade {
         return exoPlayer != null;
     }
 
-    public int getVideoWidth() {
+    int getVideoWidth() {
         return videoRendererEventListener.videoWidth();
     }
 
-    public int getVideoHeight() {
+    int getVideoHeight() {
         return videoRendererEventListener.videoHeight();
     }
 
-    public long getMediaDuration() {
+    long getMediaDuration() {
         if (hasPlayer()) {
             return exoPlayer.getDuration();
         } else {
@@ -106,7 +106,7 @@ public class ExoPlayerTwoFacade {
         }
     }
 
-    public int getBufferedPercentage() {
+    int getBufferedPercentage() {
         if (hasPlayer()) {
             return exoPlayer.getBufferedPercentage();
         } else {
@@ -114,25 +114,25 @@ public class ExoPlayerTwoFacade {
         }
     }
 
-    public void setPlayWhenReady(boolean playWhenReady) {
+    void setPlayWhenReady(boolean playWhenReady) {
         if (hasPlayer()) {
             exoPlayer.setPlayWhenReady(playWhenReady);
         }
     }
 
-    public void seekTo(long positionMillis) {
+    void seekTo(long positionMillis) {
         if (hasPlayer()) {
             exoPlayer.seekTo(positionMillis);
         }
     }
 
-    public void release() {
+    void release() {
         if (hasPlayer()) {
             exoPlayer.release();
         }
     }
 
-    public void prepare(Uri uri, ContentType contentType) {
+    void prepare(Uri uri, ContentType contentType) {
         if (hasPlayer()) {
             exoPlayer.addListener(exoPlayerEventListener);
 
@@ -143,7 +143,7 @@ public class ExoPlayerTwoFacade {
         }
     }
 
-    public void setPlayer(SimpleExoPlayerView simpleExoPlayerView) {
+    void setPlayer(SimpleExoPlayerView simpleExoPlayerView) {
         simpleExoPlayerView.setPlayer(exoPlayer);
     }
 
@@ -151,7 +151,7 @@ public class ExoPlayerTwoFacade {
         forwarders.add(forwarder);
     }
 
-    public void stop() {
+    void stop() {
         if (hasPlayer()) {
             exoPlayer.stop();
         }

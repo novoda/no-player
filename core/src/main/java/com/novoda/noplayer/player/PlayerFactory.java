@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmHandler;
-import com.novoda.noplayer.exoplayer.ExoPlayerTwoFacade;
 import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerFacade;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
@@ -37,9 +36,7 @@ public class PlayerFactory {
             case MEDIA_PLAYER:
                 return createMediaPlayer();
             case EXO_PLAYER:
-                ExoPlayerTwoFacade facade = ExoPlayerTwoFacade.newInstance(context);
-
-                return new ExoPlayerTwoImpl(facade);
+                return ExoPlayerTwoImpl.newInstance(context);
             default:
                 throw UnableToCreatePlayerException.unknownPlayerType(playerType);
         }

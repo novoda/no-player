@@ -1,5 +1,6 @@
 package com.novoda.noplayer.exoplayer;
 
+import android.content.Context;
 import android.net.Uri;
 
 import com.novoda.noplayer.ContentType;
@@ -24,7 +25,13 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     private final OnPrepareForwarder prepareForwarder;
     private VideoContainer videoContainer = VideoContainer.empty();
 
-    public ExoPlayerTwoImpl(ExoPlayerTwoFacade facade) {
+    public static ExoPlayerTwoImpl newInstance(Context context) {
+        ExoPlayerTwoFacade facade = ExoPlayerTwoFacade.newInstance(context);
+
+        return new ExoPlayerTwoImpl(facade);
+    }
+
+    private ExoPlayerTwoImpl(ExoPlayerTwoFacade facade) {
         this.facade = facade;
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
         heart = Heart.newInstance(onHeartbeat);
