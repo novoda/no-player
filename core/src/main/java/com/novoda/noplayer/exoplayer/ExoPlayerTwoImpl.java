@@ -65,14 +65,16 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         forwarder.bind(getVideoSizeChangedListeners());
         forwarder.bind(getBitrateChangedListeners());
         forwarder.bind(getInfoListeners());
-        addVideoSizeChangedListener(new VideoSizeChangedListener() {
-            @Override
-            public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-                videoWidth = width;
-                videoHeight = height;
-            }
-        });
+        addVideoSizeChangedListener(videoSizeChangedListener);
     }
+
+    private final VideoSizeChangedListener videoSizeChangedListener = new VideoSizeChangedListener() {
+        @Override
+        public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+            videoWidth = width;
+            videoHeight = height;
+        }
+    };
 
     @Override
     public boolean isPlaying() {
