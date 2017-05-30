@@ -8,9 +8,14 @@ import android.os.Looper;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroup;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
@@ -28,8 +33,10 @@ import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.android.exoplayer2.C.TRACK_TYPE_AUDIO;
 
 public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
@@ -39,6 +46,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     private final SimpleExoPlayer exoPlayer;
     private final MediaSourceFactory mediaSourceFactory;
     private final ExoPlayerForwarder forwarder;
+    private final DefaultTrackSelector trackSelector;
     private final Heart heart;
     private final LoadTimeout loadTimeout;
 
@@ -54,17 +62,19 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
         SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(context), trackSelector, new DefaultLoadControl());
         LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
-        return new ExoPlayerTwoImpl(exoPlayer, mediaSourceFactory, new ExoPlayerForwarder(), loadTimeout);
+        return new ExoPlayerTwoImpl(exoPlayer, mediaSourceFactory, new ExoPlayerForwarder(), loadTimeout, trackSelector);
     }
 
     private ExoPlayerTwoImpl(SimpleExoPlayer exoPlayer,
                              MediaSourceFactory mediaSourceFactory,
                              ExoPlayerForwarder exoPlayerForwarder,
-                             LoadTimeout loadTimeoutParam) {
+                             LoadTimeout loadTimeoutParam,
+                             DefaultTrackSelector trackSelector) {
         this.exoPlayer = exoPlayer;
         this.mediaSourceFactory = mediaSourceFactory;
         this.loadTimeout = loadTimeoutParam;
-        forwarder = exoPlayerForwarder;
+        this.forwarder = exoPlayerForwarder;
+        this.trackSelector = trackSelector;
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
         heart = Heart.newInstance(onHeartbeat);
         forwarder.bind(getPreparedListeners(), this);
@@ -216,8 +226,40 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public List<PlayerAudioTrack> getAudioTracks() {
-        //TODO : Get a list of audio tracks from the facade.
-        return Collections.emptyList();
+        MappingTrackSelector.MappedTrackInfo trackInfo = trackSelector.getCurrentMappedTrackInfo();
+
+        if (trackInfo == null) {
+            throw new NullPointerException("Track info is not available.");
+        }
+
+        TrackGroupArray trackGroups = trackInfo.getTrackGroups(TRACK_TYPE_AUDIO);
+
+        List<PlayerAudioTrack> audioTracks = new ArrayList<>();
+
+        for (int groupIndex = 0; groupIndex < trackGroups.length; groupIndex++) {
+            if (trackSwitchingSupported(trackGroups, trackInfo, groupIndex)) {
+                TrackGroup trackGroup = trackGroups.get(groupIndex);
+
+                for (int formatIndex = 0; formatIndex < trackGroup.length; formatIndex++) {
+                    Format format = trackGroup.getFormat(formatIndex);
+                    PlayerAudioTrack playerAudioTrack = new PlayerAudioTrack(
+                            format.id,
+                            format.language,
+                            format.sampleMimeType,
+                            format.channelCount,
+                            format.bitrate
+                    );
+                    audioTracks.add(playerAudioTrack);
+                }
+            }
+        }
+
+        return audioTracks;
+    }
+
+    private boolean trackSwitchingSupported(TrackGroupArray trackGroups, MappingTrackSelector.MappedTrackInfo trackInfo, int groupIndex) {
+        return trackGroups.get(groupIndex).length > 1
+                && trackInfo.getAdaptiveSupport(TRACK_TYPE_AUDIO, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
     }
 
     private void showContainer() {
