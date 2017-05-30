@@ -30,17 +30,18 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        player = new PlayerFactory(this, PrioritisedPlayers.prioritiseMediaPlayer()).create();
+        player = new PlayerFactory(this, PrioritisedPlayers.prioritiseExoPlayer()).create();
         player.addPreparedListener(new Player.PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
                 player.play();
+                player.getAudioTracks();
             }
         });
         player.attach(playerView);
 
         Uri uri = Uri.parse(URI_VIDEO_MP4);
-        player.loadVideo(uri, ContentType.H264);
+        player.loadVideo(uri, ContentType.DASH);
     }
 
     @Override

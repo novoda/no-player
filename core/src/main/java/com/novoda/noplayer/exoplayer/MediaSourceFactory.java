@@ -7,6 +7,8 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
+import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.novoda.noplayer.ContentType;
@@ -35,6 +37,10 @@ class MediaSourceFactory {
                         new DefaultExtractorsFactory(),
                         handler,
                         eventListener
+                );
+            case DASH:
+                return new DashMediaSource(uri, mediaDataSourceFactory,
+                                           new DefaultDashChunkSource.Factory(mediaDataSourceFactory), handler, mediaSourceEventListener
                 );
             default:
                 throw new UnsupportedOperationException("Content type: " + contentType + " is not supported.");
