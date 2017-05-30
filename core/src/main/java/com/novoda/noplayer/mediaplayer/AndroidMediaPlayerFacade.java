@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class AndroidMediaPlayerFacade {
+class AndroidMediaPlayerFacade {
 
     private static final int STATE_ERROR = -1;
     private static final int STATE_IDLE = 0;
@@ -42,7 +42,7 @@ public class AndroidMediaPlayerFacade {
     private SurfaceHolderRequester surfaceHolderRequester;
     private List<PlayerAudioTrack> audioTracks;
 
-    public AndroidMediaPlayerFacade(Context context) {
+    AndroidMediaPlayerFacade(Context context) {
         this.context = context;
         currentState = STATE_IDLE;
     }
@@ -150,23 +150,23 @@ public class AndroidMediaPlayerFacade {
         }
     };
 
-    public void setOnPreparedListener(MediaPlayer.OnPreparedListener listener) {
+    void setOnPreparedListener(MediaPlayer.OnPreparedListener listener) {
         onPreparedListener = listener;
     }
 
-    public void setOnCompletionListener(MediaPlayer.OnCompletionListener listener) {
+    void setOnCompletionListener(MediaPlayer.OnCompletionListener listener) {
         onCompletionListener = listener;
     }
 
-    public void setOnErrorListener(MediaPlayer.OnErrorListener listener) {
+    void setOnErrorListener(MediaPlayer.OnErrorListener listener) {
         onErrorListener = listener;
     }
 
-    public void setOnSizeChangedListener(MediaPlayer.OnVideoSizeChangedListener listener) {
+    void setOnSizeChangedListener(MediaPlayer.OnVideoSizeChangedListener listener) {
         onSizeChangedListener = listener;
     }
 
-    public void release() {
+    void release() {
         if (hasPlayer()) {
             mediaPlayer.reset();
             mediaPlayer.release();
@@ -179,7 +179,7 @@ public class AndroidMediaPlayerFacade {
         return mediaPlayer != null;
     }
 
-    public void start() {
+    void start() {
         if (isInPlaybackState()) {
             if (surfaceHolderRequester == null) {
                 logPlayerNotAttachedWarning("start()");
@@ -207,7 +207,7 @@ public class AndroidMediaPlayerFacade {
         }
     }
 
-    public int getDuration() {
+    int getDuration() {
         if (isInPlaybackState()) {
             return mediaPlayer.getDuration();
         }
@@ -215,24 +215,24 @@ public class AndroidMediaPlayerFacade {
         return -1;
     }
 
-    public int getCurrentPosition() {
+    int getCurrentPosition() {
         if (isInPlaybackState()) {
             return mediaPlayer.getCurrentPosition();
         }
         return 0;
     }
 
-    public void seekTo(int msec) {
+    void seekTo(int msec) {
         if (isInPlaybackState()) {
             mediaPlayer.seekTo(msec);
         }
     }
 
-    public boolean isPlaying() {
+    boolean isPlaying() {
         return isInPlaybackState() && mediaPlayer.isPlaying();
     }
 
-    public int getBufferPercentage() {
+    int getBufferPercentage() {
         if (hasPlayer()) {
             return currentBufferPercentage;
         }
@@ -252,7 +252,7 @@ public class AndroidMediaPlayerFacade {
         }
     }
 
-    public List<PlayerAudioTrack> getAudioTracks() {
+    List<PlayerAudioTrack> getAudioTracks() {
         if (mediaPlayer == null) {
             throw new NullPointerException("You can only call getAudioTracks() when video is prepared.");
         }
@@ -270,7 +270,7 @@ public class AndroidMediaPlayerFacade {
         return audioTracks;
     }
 
-    public void selectAudioTrack(int audioTrackIndex) {
+    void selectAudioTrack(int audioTrackIndex) {
         if (mediaPlayer == null) {
             throw new NullPointerException("You can only call selectAudioTrack() when video is prepared.");
         }
@@ -306,7 +306,7 @@ public class AndroidMediaPlayerFacade {
         return INVALID_AUDIO_TRACK_INDEX;
     }
 
-    public void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener) {
+    void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener) {
         mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
     }
 }

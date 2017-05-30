@@ -1,5 +1,6 @@
 package com.novoda.noplayer.mediaplayer;
 
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -23,7 +24,7 @@ import com.novoda.notils.logger.simple.Log;
 
 import java.util.List;
 
-public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Player {
+public final class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Player {
 
     private static final VideoPosition NO_SEEK_TO_POSITION = VideoPosition.INVALID;
     private static final MediaPlayerInformation MEDIA_PLAYER_INFORMATION = new MediaPlayerInformation();
@@ -46,7 +47,12 @@ public class AndroidMediaPlayerImpl extends PlayerListenersHolder implements Pla
     private StateChangedListener stateChangedListener;
     private CheckBufferHeartbeatCallback heartbeatCallback;
 
-    public AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer, MediaPlayerForwarder forwarder) {
+    public static AndroidMediaPlayerImpl newInstance(Context context) {
+        AndroidMediaPlayerFacade androidMediaPlayer = new AndroidMediaPlayerFacade(context);
+        return new AndroidMediaPlayerImpl(androidMediaPlayer, new MediaPlayerForwarder());
+    }
+
+    private AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer, MediaPlayerForwarder forwarder) {
         this.mediaPlayer = mediaPlayer;
         handler = new Handler(Looper.getMainLooper());
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
