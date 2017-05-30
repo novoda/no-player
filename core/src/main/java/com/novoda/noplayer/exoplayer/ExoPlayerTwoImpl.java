@@ -207,7 +207,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     public void attach(PlayerView playerView) {
         videoContainer = VideoContainer.with(playerView.getContainerView());
         playerView.simplePlayerView().setPlayer(exoPlayer);
-        // TODO : Set SubtitleView on the facade.
     }
 
     @Override
