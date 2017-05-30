@@ -12,7 +12,7 @@ class ExoPlayerVideoRendererEventListener implements VideoRendererEventListener 
 
     private final List<ExoPlayerForwarder> forwarders;
 
-    private int videoWidth;
+    private int videoWidth;  //TODO remove state
     private int videoHeight;
 
     ExoPlayerVideoRendererEventListener(List<ExoPlayerForwarder> forwarders) {
