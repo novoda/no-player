@@ -76,7 +76,7 @@ public final class AndroidMediaPlayerImpl extends PlayerListenersHolder implemen
             @Override
             public void onPrepared(PlayerState playerState) {
                 loadTimeout.cancel();
-                mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener); //TODO move in forwarder ?
+                mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
             }
         });
         addErrorListener(new ErrorListener() {
