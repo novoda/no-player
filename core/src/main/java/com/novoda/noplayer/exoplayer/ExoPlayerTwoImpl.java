@@ -15,6 +15,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.ContentType;
@@ -220,8 +221,17 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     }
 
     @Override
-    public void selectAudioTrack(int audioTrackIndex) {
-        //TODO: Select the audio track on the facade.
+    public void selectAudioTrack(PlayerAudioTrack audioTrack) {
+        MappingTrackSelector.MappedTrackInfo trackInfo = trackSelector.getCurrentMappedTrackInfo();
+        TrackGroupArray trackGroups = trackInfo.getTrackGroups(TRACK_TYPE_AUDIO);
+        FixedTrackSelection.Factory factory = new FixedTrackSelection.Factory();
+
+        MappingTrackSelector.SelectionOverride selectionOverride = new MappingTrackSelector.SelectionOverride(
+                factory,
+                audioTrack.groupIndex(),
+                audioTrack.trackIndex()
+        );
+        trackSelector.setSelectionOverride(TRACK_TYPE_AUDIO, trackGroups, selectionOverride);
     }
 
     @Override
@@ -243,6 +253,8 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
                 for (int formatIndex = 0; formatIndex < trackGroup.length; formatIndex++) {
                     Format format = trackGroup.getFormat(formatIndex);
                     PlayerAudioTrack playerAudioTrack = new PlayerAudioTrack(
+                            groupIndex,
+                            formatIndex,
                             format.id,
                             format.language,
                             format.sampleMimeType,
@@ -258,7 +270,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     }
 
     private boolean trackSwitchingSupported(TrackGroupArray trackGroups, MappingTrackSelector.MappedTrackInfo trackInfo, int groupIndex) {
-        return trackGroups.get(groupIndex).length > 1
+        return trackGroups.get(groupIndex).length > 0
                 && trackInfo.getAdaptiveSupport(TRACK_TYPE_AUDIO, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
     }
 

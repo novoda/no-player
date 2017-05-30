@@ -259,8 +259,8 @@ public final class AndroidMediaPlayerImpl extends PlayerListenersHolder implemen
     }
 
     @Override
-    public void selectAudioTrack(int audioTrackIndex) {
-        mediaPlayer.selectAudioTrack(audioTrackIndex);
+    public void selectAudioTrack(PlayerAudioTrack audioTrack) {
+        mediaPlayer.selectAudioTrack(audioTrack);
     }
 
     @Override

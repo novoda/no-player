@@ -2,18 +2,30 @@ package com.novoda.noplayer;
 
 public class PlayerAudioTrack {
 
+    private final int groupIndex;
+    private final int trackIndex;
     private final String trackId;
     private final String language;
     private final String mimeType;
     private final int numberOfChannels;
     private final int frequency;
 
-    public PlayerAudioTrack(String trackId, String language, String mimeType, int numberOfChannels, int frequency) {
+    public PlayerAudioTrack(int groupIndex, int trackIndex, String trackId, String language, String mimeType, int numberOfChannels, int frequency) {
+        this.groupIndex = groupIndex;
+        this.trackIndex = trackIndex;
         this.trackId = trackId;
         this.language = language;
         this.mimeType = mimeType;
         this.numberOfChannels = numberOfChannels;
         this.frequency = frequency;
+    }
+
+    public int groupIndex() {
+        return groupIndex;
+    }
+
+    public int trackIndex() {
+        return trackIndex;
     }
 
     public String trackId() {
@@ -47,6 +59,12 @@ public class PlayerAudioTrack {
 
         PlayerAudioTrack that = (PlayerAudioTrack) o;
 
+        if (groupIndex != that.groupIndex) {
+            return false;
+        }
+        if (trackIndex != that.trackIndex) {
+            return false;
+        }
         if (numberOfChannels != that.numberOfChannels) {
             return false;
         }
@@ -60,12 +78,13 @@ public class PlayerAudioTrack {
             return false;
         }
         return mimeType != null ? mimeType.equals(that.mimeType) : that.mimeType == null;
-
     }
 
     @Override
     public int hashCode() {
-        int result = trackId != null ? trackId.hashCode() : 0;
+        int result = groupIndex;
+        result = 31 * result + trackIndex;
+        result = 31 * result + (trackId != null ? trackId.hashCode() : 0);
         result = 31 * result + (language != null ? language.hashCode() : 0);
         result = 31 * result + (mimeType != null ? mimeType.hashCode() : 0);
         result = 31 * result + numberOfChannels;

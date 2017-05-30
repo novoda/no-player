@@ -262,20 +262,22 @@ class AndroidMediaPlayerFacade {
 
     private ArrayList<PlayerAudioTrack> getOnlyAudioTracks() {
         ArrayList<PlayerAudioTrack> audioTracks = new ArrayList<>();
-        for (MediaPlayer.TrackInfo trackInfo : mediaPlayer.getTrackInfo()) {
+        MediaPlayer.TrackInfo[] trackInfos = mediaPlayer.getTrackInfo();
+        for (int i = 0; i < trackInfos.length; i++) {
+            MediaPlayer.TrackInfo trackInfo = trackInfos[i];
             if (trackInfo.getTrackType() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
-                audioTracks.add(new PlayerAudioTrack(String.valueOf(trackInfo.hashCode()), trackInfo.getLanguage(), "", -1, -1));
+                audioTracks.add(new PlayerAudioTrack(0, i, String.valueOf(trackInfo.hashCode()), trackInfo.getLanguage(), "", -1, -1));
             }
         }
         return audioTracks;
     }
 
-    void selectAudioTrack(int audioTrackIndex) {
+    void selectAudioTrack(PlayerAudioTrack playerAudioTrack) {
         if (mediaPlayer == null) {
             throw new NullPointerException("You can only call selectAudioTrack() when video is prepared.");
         }
 
-        int absoluteAudioTrackIndex = getAbsoluteAudioTrackIndex(audioTrackIndex);
+        int absoluteAudioTrackIndex = getAbsoluteAudioTrackIndex(playerAudioTrack.trackIndex());
 
         if (absoluteAudioTrackIndex != INVALID_AUDIO_TRACK_INDEX) {
             mediaPlayer.selectTrack(absoluteAudioTrackIndex);
