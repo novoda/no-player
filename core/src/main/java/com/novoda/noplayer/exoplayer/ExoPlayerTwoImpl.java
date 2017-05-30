@@ -174,6 +174,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void loadVideoWithTimeout(Uri uri, ContentType contentType, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback) {
+        // TODO: Add a timeout to the video loading.
         loadVideo(uri, contentType);
     }
 
