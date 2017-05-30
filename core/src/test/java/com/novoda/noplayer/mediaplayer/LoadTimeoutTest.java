@@ -3,6 +3,7 @@ package com.novoda.noplayer.mediaplayer;
 import android.os.Handler;
 
 import com.novoda.noplayer.Clock;
+import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.Timeout;
 

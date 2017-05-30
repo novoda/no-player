@@ -1,12 +1,8 @@
-package com.novoda.noplayer.mediaplayer;
+package com.novoda.noplayer;
 
 import android.os.Handler;
 
-import com.novoda.noplayer.Clock;
-import com.novoda.noplayer.Player;
-import com.novoda.noplayer.Timeout;
-
-class LoadTimeout {
+public class LoadTimeout {
 
     private static final int DELAY_MILLIS = 1000;
 
@@ -17,7 +13,7 @@ class LoadTimeout {
     private long endTime;
     private Player.LoadTimeoutCallback loadTimeoutCallback;
 
-    LoadTimeout(Clock clock, Handler handler) {
+    public LoadTimeout(Clock clock, Handler handler) {
         this.clock = clock;
         this.handler = handler;
     }

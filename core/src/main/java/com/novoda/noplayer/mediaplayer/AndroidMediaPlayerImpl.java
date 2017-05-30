@@ -8,6 +8,7 @@ import android.os.Looper;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
+import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
@@ -49,16 +50,17 @@ public final class AndroidMediaPlayerImpl extends PlayerListenersHolder implemen
 
     public static AndroidMediaPlayerImpl newInstance(Context context) {
         AndroidMediaPlayerFacade androidMediaPlayer = new AndroidMediaPlayerFacade(context);
-        return new AndroidMediaPlayerImpl(androidMediaPlayer, new MediaPlayerForwarder());
+        LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
+        return new AndroidMediaPlayerImpl(androidMediaPlayer, new MediaPlayerForwarder(), loadTimeout);
     }
 
-    private AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer, MediaPlayerForwarder forwarder) {
+    private AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer, MediaPlayerForwarder forwarder, LoadTimeout loadTimeoutParam) {
         this.mediaPlayer = mediaPlayer;
+        this.loadTimeout = loadTimeoutParam;
         handler = new Handler(Looper.getMainLooper());
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
         heart = Heart.newInstance(onHeartbeat);
 
-        loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
 
         forwarder.bind(getPreparedListeners(), this);
         forwarder.bind(getBufferStateListeners(), getErrorListeners(), this);

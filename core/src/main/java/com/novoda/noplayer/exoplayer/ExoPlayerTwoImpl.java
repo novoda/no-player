@@ -14,10 +14,13 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
+import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
+import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
@@ -37,6 +40,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     private final MediaSourceFactory mediaSourceFactory;
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
+    private final LoadTimeout loadTimeout;
 
     private VideoContainer videoContainer = VideoContainer.empty();
     private int videoWidth;
@@ -49,12 +53,17 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
         SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(context), trackSelector, new DefaultLoadControl());
-        return new ExoPlayerTwoImpl(exoPlayer, mediaSourceFactory, new ExoPlayerForwarder());
+        LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
+        return new ExoPlayerTwoImpl(exoPlayer, mediaSourceFactory, new ExoPlayerForwarder(), loadTimeout);
     }
 
-    private ExoPlayerTwoImpl(SimpleExoPlayer exoPlayer, MediaSourceFactory mediaSourceFactory, ExoPlayerForwarder exoPlayerForwarder) {
+    private ExoPlayerTwoImpl(SimpleExoPlayer exoPlayer,
+                             MediaSourceFactory mediaSourceFactory,
+                             ExoPlayerForwarder exoPlayerForwarder,
+                             LoadTimeout loadTimeoutParam) {
         this.exoPlayer = exoPlayer;
         this.mediaSourceFactory = mediaSourceFactory;
+        this.loadTimeout = loadTimeoutParam;
         forwarder = exoPlayerForwarder;
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
         heart = Heart.newInstance(onHeartbeat);
@@ -65,6 +74,18 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         forwarder.bind(getVideoSizeChangedListeners());
         forwarder.bind(getBitrateChangedListeners());
         forwarder.bind(getInfoListeners());
+        addPreparedListener(new PreparedListener() {
+            @Override
+            public void onPrepared(PlayerState playerState) {
+                loadTimeout.cancel();
+            }
+        });
+        addErrorListener(new ErrorListener() {
+            @Override
+            public void onError(Player player, PlayerError error) {
+                loadTimeout.cancel();
+            }
+        });
         addVideoSizeChangedListener(new VideoSizeChangedListener() {
             @Override
             public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
@@ -147,6 +168,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     public void release() {
         getPlayerReleaseListener().onPlayerPreRelease(this);
         getStateChangedListeners().onVideoReleased();
+        loadTimeout.cancel();
         heart.stopBeatingHeart();
         exoPlayer.release();
         videoContainer.hide();
@@ -172,6 +194,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void loadVideoWithTimeout(Uri uri, ContentType contentType, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback) {
+        loadTimeout.start(timeout, loadTimeoutCallback);
         loadVideo(uri, contentType);
     }
 
