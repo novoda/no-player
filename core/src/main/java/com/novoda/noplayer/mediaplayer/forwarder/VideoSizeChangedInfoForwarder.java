@@ -1,0 +1,27 @@
+package com.novoda.noplayer.mediaplayer.forwarder;
+
+import android.media.MediaPlayer;
+
+import com.novoda.noplayer.listeners.InfoListeners;
+
+import java.util.HashMap;
+
+class VideoSizeChangedInfoForwarder implements MediaPlayer.OnVideoSizeChangedListener {
+
+    private final InfoListeners infoListeners;
+
+    public VideoSizeChangedInfoForwarder(InfoListeners infoListeners) {
+        this.infoListeners = infoListeners;
+    }
+
+    @Override
+    public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
+
+        callingMethodParameters.put("mp", String.valueOf(mp));
+        callingMethodParameters.put("width", String.valueOf(width));
+        callingMethodParameters.put("height", String.valueOf(height));
+
+        infoListeners.onNewInfo("onVideoSizeChanged", callingMethodParameters);
+    }
+}

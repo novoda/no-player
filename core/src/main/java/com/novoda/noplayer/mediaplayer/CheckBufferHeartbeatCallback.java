@@ -4,9 +4,7 @@ import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.VideoPosition;
 
-@SuppressWarnings("PMD.RedundantFieldInitializer")
-        // we're being very explicit with our default field values, not a bad thing!
-class CheckBufferHeartbeatCallback implements Heart.Heartbeat.Callback<Player> {
+public class CheckBufferHeartbeatCallback implements Heart.Heartbeat.Callback<Player> {
 
     private static final int FORCED_BUFFERING_BEATS_THRESHOLD = 4;
     private final BufferListener bufferListener;
