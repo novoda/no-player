@@ -192,8 +192,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
 
-        exoPlayer.setPlayWhenReady(true);
-
         MediaSource mediaSource = mediaSourceFactory.create(
                 contentType,
                 uri,

@@ -15,16 +15,16 @@ class BufferInfoForwarder implements CheckBufferHeartbeatCallback.BufferListener
 
     @Override
     public void onBufferStart() {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onBufferStart", keyValuePairs);
+        infoListeners.onNewInfo("onBufferStart", callingMethodParameters);
 
     }
 
     @Override
     public void onBufferComplete() {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onBufferStart", keyValuePairs);
+        infoListeners.onNewInfo("onBufferStart", callingMethodParameters);
     }
 }

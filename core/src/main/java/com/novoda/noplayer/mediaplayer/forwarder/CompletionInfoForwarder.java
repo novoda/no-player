@@ -16,9 +16,10 @@ class CompletionInfoForwarder implements MediaPlayer.OnCompletionListener {
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("mp", String.valueOf(mp));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onCompletion", keyValuePairs);
+        callingMethodParameters.put("mp", String.valueOf(mp));
+
+        infoListeners.onNewInfo("onCompletion", callingMethodParameters);
     }
 }

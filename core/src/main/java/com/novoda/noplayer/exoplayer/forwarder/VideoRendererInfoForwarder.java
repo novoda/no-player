@@ -19,63 +19,70 @@ class VideoRendererInfoForwarder implements VideoRendererEventListener {
 
     @Override
     public void onDroppedFrames(int count, long elapsedMs) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("count", String.valueOf(count));
-        keyValuePairs.put("elapsedMs", String.valueOf(elapsedMs));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onDroppedFrames", keyValuePairs);
+        callingMethodParameters.put("count", String.valueOf(count));
+        callingMethodParameters.put("elapsedMs", String.valueOf(elapsedMs));
+
+        infoListeners.onNewInfo("onDroppedFrames", callingMethodParameters);
     }
 
     @Override
     public void onVideoEnabled(DecoderCounters counters) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("counters", String.valueOf(counters));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onVideoEnabled", keyValuePairs);
+        callingMethodParameters.put("counters", String.valueOf(counters));
+
+        infoListeners.onNewInfo("onVideoEnabled", callingMethodParameters);
     }
 
     @Override
     public void onVideoDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("decoderName", String.valueOf(decoderName));
-        keyValuePairs.put("initializedTimestampMs", String.valueOf(initializedTimestampMs));
-        keyValuePairs.put("initializationDurationMs", String.valueOf(initializationDurationMs));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onVideoDecoderInitialized", keyValuePairs);
+        callingMethodParameters.put("decoderName", String.valueOf(decoderName));
+        callingMethodParameters.put("initializedTimestampMs", String.valueOf(initializedTimestampMs));
+        callingMethodParameters.put("initializationDurationMs", String.valueOf(initializationDurationMs));
+
+        infoListeners.onNewInfo("onVideoDecoderInitialized", callingMethodParameters);
     }
 
     @Override
     public void onVideoInputFormatChanged(Format format) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("format", String.valueOf(format));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onVideoInputFormatChanged", keyValuePairs);
+        callingMethodParameters.put("format", String.valueOf(format));
+
+        infoListeners.onNewInfo("onVideoInputFormatChanged", callingMethodParameters);
     }
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("width", String.valueOf(width));
-        keyValuePairs.put("height", String.valueOf(height));
-        keyValuePairs.put("unappliedRotationDegrees", String.valueOf(unappliedRotationDegrees));
-        keyValuePairs.put("pixelWidthHeightRatio", String.valueOf(pixelWidthHeightRatio));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onVideoSizeChanged", keyValuePairs);
+        callingMethodParameters.put("width", String.valueOf(width));
+        callingMethodParameters.put("height", String.valueOf(height));
+        callingMethodParameters.put("unappliedRotationDegrees", String.valueOf(unappliedRotationDegrees));
+        callingMethodParameters.put("pixelWidthHeightRatio", String.valueOf(pixelWidthHeightRatio));
+
+        infoListeners.onNewInfo("onVideoSizeChanged", callingMethodParameters);
     }
 
     @Override
     public void onRenderedFirstFrame(Surface surface) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("surface", String.valueOf(surface));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onRenderedFirstFrame", keyValuePairs);
+        callingMethodParameters.put("surface", String.valueOf(surface));
+
+        infoListeners.onNewInfo("onRenderedFirstFrame", callingMethodParameters);
     }
 
     @Override
     public void onVideoDisabled(DecoderCounters counters) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("counters", String.valueOf(counters));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onVideoDisabled", keyValuePairs);
+        callingMethodParameters.put("counters", String.valueOf(counters));
+
+        infoListeners.onNewInfo("onVideoDisabled", callingMethodParameters);
     }
 }

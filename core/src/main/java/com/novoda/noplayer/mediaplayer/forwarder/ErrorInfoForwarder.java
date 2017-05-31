@@ -16,12 +16,13 @@ class ErrorInfoForwarder implements MediaPlayer.OnErrorListener {
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("mp", String.valueOf(mp));
-        keyValuePairs.put("what", String.valueOf(what));
-        keyValuePairs.put("extra", String.valueOf(extra));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onError", keyValuePairs);
+        callingMethodParameters.put("mp", String.valueOf(mp));
+        callingMethodParameters.put("what", String.valueOf(what));
+        callingMethodParameters.put("extra", String.valueOf(extra));
+
+        infoListeners.onNewInfo("onError", callingMethodParameters);
         return false;
     }
 }

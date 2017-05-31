@@ -30,7 +30,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        player = new PlayerFactory(this, PrioritisedPlayers.prioritiseMediaPlayer()).create();
+        // TODO: Add switch in UI to avoid redeploy.
+        player = new PlayerFactory(this, PrioritisedPlayers.prioritiseExoPlayer()).create();
         player.addPreparedListener(new Player.PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
