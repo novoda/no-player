@@ -65,14 +65,16 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         forwarder.bind(getVideoSizeChangedListeners());
         forwarder.bind(getBitrateChangedListeners());
         forwarder.bind(getInfoListeners());
-        addVideoSizeChangedListener(new VideoSizeChangedListener() {
-            @Override
-            public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-                videoWidth = width;
-                videoHeight = height;
-            }
-        });
+        addVideoSizeChangedListener(videoSizeChangedListener);
     }
+
+    private final VideoSizeChangedListener videoSizeChangedListener = new VideoSizeChangedListener() {
+        @Override
+        public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+            videoWidth = width;
+            videoHeight = height;
+        }
+    };
 
     @Override
     public boolean isPlaying() {
@@ -159,8 +161,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
 
-        exoPlayer.setPlayWhenReady(true);
-
         MediaSource mediaSource = mediaSourceFactory.create(
                 contentType,
                 uri,
@@ -172,6 +172,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void loadVideoWithTimeout(Uri uri, ContentType contentType, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback) {
+        // TODO: Add a timeout to the video loading.
         loadVideo(uri, contentType);
     }
 

@@ -10,7 +10,7 @@ import java.io.IOException;
 
 class BitrateForwarder implements AdaptiveMediaSourceEventListener {
 
-    private Bitrate videoBitrate = Bitrate.fromBitsPerSecond(0);  //Check if same logic in MediaPlayer
+    private Bitrate videoBitrate = Bitrate.fromBitsPerSecond(0);
     private Bitrate audioBitrate = Bitrate.fromBitsPerSecond(0);
 
     private final BitrateChangedListeners bitrateChangedListeners;
