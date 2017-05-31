@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+        // TODO: Add switch in UI to avoid redeploy.
         player = new PlayerFactory(this, PrioritisedPlayers.prioritiseExoPlayer()).create();
         player.addPreparedListener(new Player.PreparedListener() {
             @Override
