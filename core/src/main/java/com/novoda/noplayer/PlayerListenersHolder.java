@@ -1,7 +1,7 @@
 package com.novoda.noplayer;
 
 import com.novoda.noplayer.Player.BitrateChangedListener;
-import com.novoda.noplayer.exoplayer.InfoListener;
+import com.novoda.noplayer.exoplayer.forwarder.InfoListener;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;
 import com.novoda.noplayer.listeners.BufferStateListeners;
 import com.novoda.noplayer.listeners.CompletionListeners;

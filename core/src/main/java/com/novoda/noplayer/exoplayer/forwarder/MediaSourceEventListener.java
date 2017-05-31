@@ -1,4 +1,4 @@
-package com.novoda.noplayer.exoplayer;
+package com.novoda.noplayer.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
@@ -6,13 +6,14 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
 
-    private final List<ExoPlayerForwarder> forwarders;
+    private final List<AdaptiveMediaSourceEventListener> listeners = new CopyOnWriteArrayList<>();
 
-    MediaSourceEventListener(List<ExoPlayerForwarder> forwarders) {
-        this.forwarders = forwarders;
+    public void add(AdaptiveMediaSourceEventListener listener) {
+        listeners.add(listener);
     }
 
     @Override
@@ -25,8 +26,8 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                               long mediaStartTimeMs,
                               long mediaEndTimeMs,
                               long elapsedRealtimeMs) {
-        for (ExoPlayerForwarder forwarder : forwarders) {
-            forwarder.onLoadStarted(
+        for (AdaptiveMediaSourceEventListener listener : listeners) {
+            listener.onLoadStarted(
                     dataSpec,
                     dataType,
                     trackType,
@@ -52,8 +53,8 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                                 long elapsedRealtimeMs,
                                 long loadDurationMs,
                                 long bytesLoaded) {
-        for (ExoPlayerForwarder forwarder : forwarders) {
-            forwarder.onLoadCompleted(
+        for (AdaptiveMediaSourceEventListener listener : listeners) {
+            listener.onLoadCompleted(
                     dataSpec,
                     dataType,
                     trackType,
@@ -81,8 +82,8 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                                long elapsedRealtimeMs,
                                long loadDurationMs,
                                long bytesLoaded) {
-        for (ExoPlayerForwarder forwarder : forwarders) {
-            forwarder.onLoadCanceled(
+        for (AdaptiveMediaSourceEventListener listener : listeners) {
+            listener.onLoadCanceled(
                     dataSpec,
                     dataType,
                     trackType,
@@ -112,8 +113,8 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                             long bytesLoaded,
                             IOException error,
                             boolean wasCanceled) {
-        for (ExoPlayerForwarder forwarder : forwarders) {
-            forwarder.onLoadError(
+        for (AdaptiveMediaSourceEventListener listener : listeners) {
+            listener.onLoadError(
                     dataSpec,
                     dataType,
                     trackType,
@@ -133,8 +134,8 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
 
     @Override
     public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {
-        for (ExoPlayerForwarder forwarder : forwarders) {
-            forwarder.onUpstreamDiscarded(trackType, mediaStartTimeMs, mediaEndTimeMs);
+        for (AdaptiveMediaSourceEventListener listener : listeners) {
+            listener.onUpstreamDiscarded(trackType, mediaStartTimeMs, mediaEndTimeMs);
         }
     }
 
@@ -144,8 +145,8 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
                                           int trackSelectionReason,
                                           Object trackSelectionData,
                                           long mediaTimeMs) {
-        for (ExoPlayerForwarder forwarder : forwarders) {
-            forwarder.onDownstreamFormatChanged(trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaTimeMs);
+        for (AdaptiveMediaSourceEventListener listener : listeners) {
+            listener.onDownstreamFormatChanged(trackType, trackFormat, trackSelectionReason, trackSelectionData, mediaTimeMs);
         }
     }
 }

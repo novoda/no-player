@@ -1,6 +1,6 @@
 package com.novoda.noplayer;
 
-import com.novoda.noplayer.exoplayer.InfoListener;
+import com.novoda.noplayer.exoplayer.forwarder.InfoListener;
 
 public interface PlayerListeners {
 
