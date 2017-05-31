@@ -51,16 +51,19 @@ public final class AndroidMediaPlayerImpl extends PlayerListenersHolder implemen
     public static AndroidMediaPlayerImpl newInstance(Context context) {
         AndroidMediaPlayerFacade androidMediaPlayer = new AndroidMediaPlayerFacade(context);
         LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
-        return new AndroidMediaPlayerImpl(androidMediaPlayer, new MediaPlayerForwarder(), loadTimeout);
+        Heart heart = Heart.newInstance();
+        return new AndroidMediaPlayerImpl(androidMediaPlayer, new MediaPlayerForwarder(), loadTimeout, heart);
     }
 
-    private AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer, MediaPlayerForwarder forwarder, LoadTimeout loadTimeoutParam) {
+    private AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer,
+                                   MediaPlayerForwarder forwarder,
+                                   LoadTimeout loadTimeoutParam,
+                                   Heart heart) {
         this.mediaPlayer = mediaPlayer;
         this.loadTimeout = loadTimeoutParam;
+        this.heart = heart;
+        heart.bind(new Heart.Heartbeat<>(getHeartbeatCallbacks(), this));
         handler = new Handler(Looper.getMainLooper());
-        Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
-        heart = Heart.newInstance(onHeartbeat);
-
 
         forwarder.bind(getPreparedListeners(), this);
         forwarder.bind(getBufferStateListeners(), getErrorListeners(), this);

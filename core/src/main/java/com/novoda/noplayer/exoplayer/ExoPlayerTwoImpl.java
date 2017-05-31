@@ -59,25 +59,27 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
         Handler handler = new Handler(Looper.getMainLooper());
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
+        Heart heart = Heart.newInstance();
 
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
         SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(context), trackSelector, new DefaultLoadControl());
         LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
-        return new ExoPlayerTwoImpl(exoPlayer, mediaSourceFactory, new ExoPlayerForwarder(), loadTimeout, trackSelector);
+        return new ExoPlayerTwoImpl(exoPlayer, mediaSourceFactory, new ExoPlayerForwarder(), loadTimeout, trackSelector, heart);
     }
 
     private ExoPlayerTwoImpl(SimpleExoPlayer exoPlayer,
                              MediaSourceFactory mediaSourceFactory,
                              ExoPlayerForwarder exoPlayerForwarder,
                              LoadTimeout loadTimeoutParam,
-                             DefaultTrackSelector trackSelector) {
+                             DefaultTrackSelector trackSelector,
+                             Heart heart) {
         this.exoPlayer = exoPlayer;
         this.mediaSourceFactory = mediaSourceFactory;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.trackSelector = trackSelector;
-        Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
-        heart = Heart.newInstance(onHeartbeat);
+        this.heart = heart;
+        heart.bind(new Heart.Heartbeat<>(getHeartbeatCallbacks(), this));
         forwarder.bind(getPreparedListeners(), this);
         forwarder.bind(getCompletionListeners());
         forwarder.bind(getErrorListeners(), this);
