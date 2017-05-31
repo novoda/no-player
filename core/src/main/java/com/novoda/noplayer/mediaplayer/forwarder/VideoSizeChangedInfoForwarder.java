@@ -16,11 +16,12 @@ class VideoSizeChangedInfoForwarder implements MediaPlayer.OnVideoSizeChangedLis
 
     @Override
     public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("mp", String.valueOf(mp));
-        keyValuePairs.put("width", String.valueOf(width));
-        keyValuePairs.put("height", String.valueOf(height));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onVideoSizeChanged", keyValuePairs);
+        callingMethodParameters.put("mp", String.valueOf(mp));
+        callingMethodParameters.put("width", String.valueOf(width));
+        callingMethodParameters.put("height", String.valueOf(height));
+
+        infoListeners.onNewInfo("onVideoSizeChanged", callingMethodParameters);
     }
 }

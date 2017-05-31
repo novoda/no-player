@@ -7,6 +7,15 @@ import java.util.Map;
  */
 public interface InfoListener {
 
-    void onNewInfo(String callingMethod, Map<String, String> keyValuePairs);
+    /**
+     * All event listeners attached to implementations of Player will
+     * forward information through this to provide debugging
+     * information to client applications.
+     *
+     * @param callingMethod       The method name from where this call originated.
+     * @param callingMethodParams Parameter name and value pairs from where this call originated.
+     *                            Pass only string representations not whole objects.
+     */
+    void onNewInfo(String callingMethod, Map<String, String> callingMethodParams);
 
 }
