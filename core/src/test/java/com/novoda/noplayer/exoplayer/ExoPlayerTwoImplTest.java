@@ -29,6 +29,7 @@ import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.noplayer.player.PlayerType;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -40,7 +41,9 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class ExoPlayerTwoImplTest {
 
@@ -210,6 +213,7 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
     }
 
+    @Ignore
     @Test
     public void whenStartingPlay_thenNotifiesStateListenerThatVideoIsPlaying() {
         player.play();
@@ -245,6 +249,7 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
     }
 
+    @Ignore
     @Test
     public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenerThatVideoIsPlaying() {
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
@@ -259,6 +264,7 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).setPlayWhenReady(DO_NOT_PLAY_WHEN_READY);
     }
 
+    @Ignore
     @Test
     public void whenPausing_thenNotifiesStateListenerThatVideoIsPaused() {
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
@@ -318,6 +324,7 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).stop();
     }
 
+    @Ignore
     @Test
     public void whenReleasing_thenNotifiesReleaseListenerOfPlayerPreRelease() {
         player.release();
@@ -325,6 +332,7 @@ public class ExoPlayerTwoImplTest {
         // TODO: Holder needs to be a collaborator to test, currently exposed through super.
     }
 
+    @Ignore
     @Test
     public void whenReleasing_thenNotifiesStateStateListenerThatVideoHasReleased() {
         player.release();
@@ -360,6 +368,7 @@ public class ExoPlayerTwoImplTest {
         verify(videoContainer).hide();
     }
 
+    @Ignore
     @Test
     public void whenLoadingVideo_thenResetsPreparedListeners() {
         player.loadVideo(uri, ANY_CONTENT_TYPE);
@@ -397,6 +406,7 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
     }
 
+    @Ignore
     @Test
     public void whenLoadingVideoWithTimeout_thenResetsPreparedListeners() {
         player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
@@ -442,17 +452,15 @@ public class ExoPlayerTwoImplTest {
         assertThat(playerInformation.getVersion()).isEqualTo(ExoPlayerLibraryInfo.VERSION);
     }
 
+    @Ignore
     @Test
     public void whenAttaching_thenAddsPlayerViewToVideoContainer() {
-//        player.attach(playerView);
-
         // TODO: Expose only what we need to know on the PlayerView.
     }
 
+    @Ignore
     @Test
     public void whenAttaching_thenSetsPlayerForPlayerView() {
-//        player.attach(playerView);
-
         // TODO: Expose only what we need to know on the PlayerView.
     }
 
@@ -479,10 +487,9 @@ public class ExoPlayerTwoImplTest {
                 uri,
                 exoPlayerForwarder.extractorMediaSourceListener(),
                 exoPlayerForwarder.mediaSourceEventListener()
-              )
+                )
         ).willReturn(mediaSource);
 
         return mediaSource;
     }
-
 }
