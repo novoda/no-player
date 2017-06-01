@@ -2,10 +2,10 @@ package com.novoda.noplayer;
 
 import android.net.Uri;
 
-import com.novoda.noplayer.exoplayer.forwarder.Bitrate;
 import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;
+import java.util.Map;
 
 public interface Player extends PlayerState, PlayerListeners {
 
@@ -94,6 +94,23 @@ public interface Player extends PlayerState, PlayerListeners {
     interface VideoSizeChangedListener {
 
         void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
+    }
+
+    /**
+     * A listener for debugging information.
+     */
+    interface InfoListener {
+
+        /**
+         * All event listeners attached to implementations of Player will
+         * forward information through this to provide debugging
+         * information to client applications.
+         *
+         * @param callingMethod       The method name from where this call originated.
+         * @param callingMethodParams Parameter name and value pairs from where this call originated.
+         *                            Pass only string representations not whole objects.
+         */
+        void onNewInfo(String callingMethod, Map<String, String> callingMethodParams);
     }
 
     interface LoadTimeoutCallback {

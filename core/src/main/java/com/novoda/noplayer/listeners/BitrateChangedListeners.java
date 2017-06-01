@@ -1,7 +1,7 @@
 package com.novoda.noplayer.listeners;
 
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.exoplayer.forwarder.Bitrate;
+import com.novoda.noplayer.Bitrate;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;

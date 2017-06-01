@@ -277,7 +277,7 @@ class AndroidMediaPlayerFacade {
             throw new NullPointerException("You can only call selectAudioTrack() when video is prepared.");
         }
 
-        int absoluteAudioTrackIndex = getAbsoluteAudioTrackIndex(playerAudioTrack.trackIndex());
+        int absoluteAudioTrackIndex = getAbsoluteAudioTrackIndex(playerAudioTrack.groupIndex());
 
         if (absoluteAudioTrackIndex != INVALID_AUDIO_TRACK_INDEX) {
             mediaPlayer.selectTrack(absoluteAudioTrackIndex);

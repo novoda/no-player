@@ -1,7 +1,6 @@
 package com.novoda.noplayer;
 
 import com.novoda.noplayer.Player.BitrateChangedListener;
-import com.novoda.noplayer.exoplayer.forwarder.InfoListener;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;
 import com.novoda.noplayer.listeners.BufferStateListeners;
 import com.novoda.noplayer.listeners.CompletionListeners;
@@ -89,12 +88,12 @@ public class PlayerListenersHolder implements PlayerListeners {
     }
 
     @Override
-    public void addInfoListener(InfoListener infoListener) {
+    public void addInfoListener(Player.InfoListener infoListener) {
         infoListeners.add(infoListener);
     }
 
     @Override
-    public void removeInfoListener(InfoListener infoListener) {
+    public void removeInfoListener(Player.InfoListener infoListener) {
         infoListeners.remove(infoListener);
     }
 

@@ -61,7 +61,6 @@ public final class AndroidMediaPlayerImpl extends PlayerListenersHolder implemen
         Heart.Heartbeat<Player> onHeartbeat = new Heart.Heartbeat<>(getHeartbeatCallbacks(), this);
         heart = Heart.newInstance(onHeartbeat);
 
-
         forwarder.bind(getPreparedListeners(), this);
         forwarder.bind(getBufferStateListeners(), getErrorListeners(), this);
         forwarder.bind(getCompletionListeners());
