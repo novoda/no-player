@@ -35,7 +35,7 @@ import java.util.List;
 public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     private static final boolean RESET_POSITION = true;
-    private static final boolean RESET_STATE = false;
+    private static final boolean DO_NOT_RESET_STATE = false;
 
     private final SimpleExoPlayer exoPlayer;
     private final MediaSourceFactory mediaSourceFactory;
@@ -201,7 +201,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
                 forwarder.extractorMediaSourceListener(),
                 forwarder.mediaSourceEventListener()
         );
-        exoPlayer.prepare(mediaSource, RESET_POSITION, RESET_STATE);
+        exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
     }
 
     @Override
