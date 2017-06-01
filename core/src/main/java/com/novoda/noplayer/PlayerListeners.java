@@ -1,7 +1,5 @@
 package com.novoda.noplayer;
 
-import com.novoda.noplayer.exoplayer.forwarder.InfoListener;
-
 public interface PlayerListeners {
 
     void addErrorListener(Player.ErrorListener errorListener);
@@ -24,9 +22,9 @@ public interface PlayerListeners {
 
     void removeStateChangedListener(Player.StateChangedListener stateChangedListener);
 
-    void addInfoListener(InfoListener infoListener);
+    void addInfoListener(Player.InfoListener infoListener);
 
-    void removeInfoListener(InfoListener infoListener);
+    void removeInfoListener(Player.InfoListener infoListener);
 
     void addBitrateChangedListener(Player.BitrateChangedListener bitrateChangedListener);
 

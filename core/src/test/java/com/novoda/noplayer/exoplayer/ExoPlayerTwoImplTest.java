@@ -389,13 +389,6 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenLoadingVideo_thenSetsPlayWhenReadyToTrue() {
-        player.loadVideo(uri, ANY_CONTENT_TYPE);
-
-        verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
-    }
-
-    @Test
     public void givenMediaSource_whenLoadingVideo_thenPreparesInternalExoPlayer() {
         MediaSource mediaSource = givenMediaSource();
 
@@ -430,13 +423,6 @@ public class ExoPlayerTwoImplTest {
         player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
         verify(internalExoPlayer).setVideoDebugListener(exoPlayerForwarder.videoRendererEventListener());
-    }
-
-    @Test
-    public void whenLoadingVideoWithTimeout_thenSetsPlayWhenReadyToTrue() {
-        player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
-
-        verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
     }
 
     @Test

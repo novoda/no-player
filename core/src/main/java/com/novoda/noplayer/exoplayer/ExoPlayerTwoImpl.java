@@ -64,7 +64,16 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(context), trackSelector, new DefaultLoadControl());
         LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
         VideoContainer videoContainer = VideoContainer.empty();
-        return new ExoPlayerTwoImpl(exoPlayer, mediaSourceFactory, new ExoPlayerForwarder(), loadTimeout, exoPlayerAudioTrackSelector, heart, videoContainer);
+
+        return new ExoPlayerTwoImpl(
+                exoPlayer,
+                mediaSourceFactory,
+                new ExoPlayerForwarder(),
+                loadTimeout,
+                exoPlayerAudioTrackSelector,
+                heart,
+                videoContainer
+        );
     }
 
     ExoPlayerTwoImpl(SimpleExoPlayer exoPlayer,
@@ -196,8 +205,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         showContainer();
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
-
-        exoPlayer.setPlayWhenReady(true);
 
         MediaSource mediaSource = mediaSourceFactory.create(
                 contentType,

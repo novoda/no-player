@@ -39,5 +39,4 @@ public class ExoPlayerTrackSelector {
         return trackGroups.get(groupIndex).length > 0
                 && trackInfo.getAdaptiveSupport(TRACK_TYPE_AUDIO, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
     }
-
 }

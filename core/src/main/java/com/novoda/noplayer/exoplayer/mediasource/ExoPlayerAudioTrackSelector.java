@@ -26,7 +26,7 @@ public class ExoPlayerAudioTrackSelector {
         MappingTrackSelector.SelectionOverride selectionOverride = new MappingTrackSelector.SelectionOverride(
                 trackSelectionFactory,
                 audioTrack.groupIndex(),
-                audioTrack.trackIndex()
+                audioTrack.formatIndex()
         );
         trackSelector.setSelectionOverride(trackGroups, selectionOverride);
     }

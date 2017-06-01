@@ -1,26 +1,26 @@
 package com.novoda.noplayer.listeners;
 
-import com.novoda.noplayer.exoplayer.forwarder.InfoListener;
+import com.novoda.noplayer.Player;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public class InfoListeners implements InfoListener {
+public class InfoListeners implements Player.InfoListener {
 
-    private final Set<InfoListener> listeners = new CopyOnWriteArraySet<>();
+    private final Set<Player.InfoListener> listeners = new CopyOnWriteArraySet<>();
 
-    public void add(InfoListener listener) {
+    public void add(Player.InfoListener listener) {
         listeners.add(listener);
     }
 
-    public void remove(InfoListener listener) {
+    public void remove(Player.InfoListener listener) {
         listeners.remove(listener);
     }
 
     @Override
     public void onNewInfo(String callingMethod, Map<String, String> callingMethodParams) {
-        for (InfoListener listener : listeners) {
+        for (Player.InfoListener listener : listeners) {
             listener.onNewInfo(callingMethod, callingMethodParams);
         }
     }

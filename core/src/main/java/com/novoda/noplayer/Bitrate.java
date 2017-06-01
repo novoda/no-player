@@ -1,4 +1,4 @@
-package com.novoda.noplayer.exoplayer.forwarder;
+package com.novoda.noplayer;
 
 public final class Bitrate {
 

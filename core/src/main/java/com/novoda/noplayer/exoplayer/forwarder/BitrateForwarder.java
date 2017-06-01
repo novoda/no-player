@@ -4,6 +4,7 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.upstream.DataSpec;
+import com.novoda.noplayer.Bitrate;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;
 
 import java.io.IOException;
