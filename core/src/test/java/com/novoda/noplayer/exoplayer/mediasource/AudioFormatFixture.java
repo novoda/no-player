@@ -20,61 +20,61 @@ class AudioFormatFixture {
     private int selectionFlags = 0;
     private String language = "english";
 
-    public static AudioFormatFixture anAudioFormat() {
+    static AudioFormatFixture anAudioFormat() {
         return new AudioFormatFixture();
     }
 
-    public AudioFormatFixture withId(String id) {
+    AudioFormatFixture withId(String id) {
         this.id = id;
         return this;
     }
 
-    public AudioFormatFixture withSampleMimeType(String sampleMimeType) {
+    AudioFormatFixture withSampleMimeType(String sampleMimeType) {
         this.sampleMimeType = sampleMimeType;
         return this;
     }
 
-    public AudioFormatFixture withCodecs(String codecs) {
+    AudioFormatFixture withCodecs(String codecs) {
         this.codecs = codecs;
         return this;
     }
 
-    public AudioFormatFixture withBitrate(int bitrate) {
+    AudioFormatFixture withBitrate(int bitrate) {
         this.bitrate = bitrate;
         return this;
     }
 
-    public AudioFormatFixture withMaxInputSize(int maxInputSize) {
+    AudioFormatFixture withMaxInputSize(int maxInputSize) {
         this.maxInputSize = maxInputSize;
         return this;
     }
 
-    public AudioFormatFixture withChannelCount(int channelCount) {
+    AudioFormatFixture withChannelCount(int channelCount) {
         this.channelCount = channelCount;
         return this;
     }
 
-    public AudioFormatFixture withSampleRate(int sampleRate) {
+    AudioFormatFixture withSampleRate(int sampleRate) {
         this.sampleRate = sampleRate;
         return this;
     }
 
-    public AudioFormatFixture withInitializationData(List<byte[]> initializationData) {
+    AudioFormatFixture withInitializationData(List<byte[]> initializationData) {
         this.initializationData = initializationData;
         return this;
     }
 
-    public AudioFormatFixture withDrmInitData(DrmInitData drmInitData) {
+    AudioFormatFixture withDrmInitData(DrmInitData drmInitData) {
         this.drmInitData = drmInitData;
         return this;
     }
 
-    public AudioFormatFixture withSelectionFlags(int selectionFlags) {
+    AudioFormatFixture withSelectionFlags(int selectionFlags) {
         this.selectionFlags = selectionFlags;
         return this;
     }
 
-    public AudioFormatFixture withLanguage(String language) {
+    AudioFormatFixture withLanguage(String language) {
         this.language = language;
         return this;
     }
