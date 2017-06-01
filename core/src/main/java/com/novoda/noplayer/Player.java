@@ -31,7 +31,7 @@ public interface Player extends PlayerState, PlayerListeners {
 
     void attach(PlayerView playerView);
 
-    void selectAudioTrack(int audioTrackIndex);
+    void selectAudioTrack(PlayerAudioTrack audioTrack);
 
     List<PlayerAudioTrack> getAudioTracks();
 
