@@ -8,12 +8,9 @@ import android.os.Looper;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
@@ -34,8 +31,6 @@ import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;
-
-import static com.google.android.exoplayer2.C.TRACK_TYPE_AUDIO;
 
 public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
@@ -225,11 +220,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     @Override
     public List<PlayerAudioTrack> getAudioTracks() {
         return trackSelector.getAudioTracks();
-    }
-
-    private boolean trackSwitchingSupported(TrackGroupArray trackGroups, MappingTrackSelector.MappedTrackInfo trackInfo, int groupIndex) {
-        return trackGroups.get(groupIndex).length > 0
-                && trackInfo.getAdaptiveSupport(TRACK_TYPE_AUDIO, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
     }
 
     private void showContainer() {
