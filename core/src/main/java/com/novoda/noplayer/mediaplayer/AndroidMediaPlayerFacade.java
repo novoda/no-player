@@ -26,7 +26,7 @@ final class AndroidMediaPlayerFacade {
     private static final Map<String, String> NO_HEADERS = null;
 
     private final Context context;
-    private final AndroidMediaPlayerTrackSelector trackSelector;
+    private final AndroidMediaPlayerAudioTrackSelector trackSelector;
 
     private int currentState = STATE_IDLE;
 
@@ -40,11 +40,11 @@ final class AndroidMediaPlayerFacade {
     private SurfaceHolderRequester surfaceHolderRequester;
 
     static AndroidMediaPlayerFacade newInstance(Context context) {
-        AndroidMediaPlayerTrackSelector trackSelector = new AndroidMediaPlayerTrackSelector();
+        AndroidMediaPlayerAudioTrackSelector trackSelector = new AndroidMediaPlayerAudioTrackSelector();
         return new AndroidMediaPlayerFacade(context, trackSelector);
     }
 
-    private AndroidMediaPlayerFacade(Context context, AndroidMediaPlayerTrackSelector trackSelector) {
+    private AndroidMediaPlayerFacade(Context context, AndroidMediaPlayerAudioTrackSelector trackSelector) {
         this.context = context;
         this.trackSelector = trackSelector;
         currentState = STATE_IDLE;
