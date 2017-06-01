@@ -32,6 +32,7 @@ import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
+import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.ArrayList;

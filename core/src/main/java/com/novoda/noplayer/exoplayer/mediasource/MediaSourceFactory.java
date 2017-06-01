@@ -1,4 +1,4 @@
-package com.novoda.noplayer.exoplayer;
+package com.novoda.noplayer.exoplayer.mediasource;
 
 import android.net.Uri;
 import android.os.Handler;
@@ -13,20 +13,20 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.novoda.noplayer.ContentType;
 
-class MediaSourceFactory {
+public class MediaSourceFactory {
 
     private final DataSource.Factory mediaDataSourceFactory;
     private final Handler handler;
 
-    MediaSourceFactory(DataSource.Factory mediaDataSourceFactory, Handler handler) {
+    public MediaSourceFactory(DataSource.Factory mediaDataSourceFactory, Handler handler) {
         this.mediaDataSourceFactory = mediaDataSourceFactory;
         this.handler = handler;
     }
 
-    MediaSource create(ContentType contentType,
-                       Uri uri,
-                       ExtractorMediaSource.EventListener eventListener,
-                       AdaptiveMediaSourceEventListener mediaSourceEventListener) {
+    public MediaSource create(ContentType contentType,
+                              Uri uri,
+                              ExtractorMediaSource.EventListener eventListener,
+                              AdaptiveMediaSourceEventListener mediaSourceEventListener) {
         switch (contentType) {
             case HLS:
                 return new HlsMediaSource(uri, mediaDataSourceFactory, handler, mediaSourceEventListener);
