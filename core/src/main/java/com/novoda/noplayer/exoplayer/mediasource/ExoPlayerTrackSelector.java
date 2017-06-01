@@ -16,11 +16,10 @@ public class ExoPlayerTrackSelector {
     }
 
     TrackGroupArray getAudioTrackGroups() {
-        MappingTrackSelector.MappedTrackInfo trackInfo = getTrackInfo();
-        return trackInfo.getTrackGroups(TRACK_TYPE_AUDIO);
+        return trackInfo().getTrackGroups(TRACK_TYPE_AUDIO);
     }
 
-    private MappingTrackSelector.MappedTrackInfo getTrackInfo() {
+    private MappingTrackSelector.MappedTrackInfo trackInfo() {
         MappingTrackSelector.MappedTrackInfo trackInfo = trackSelector.getCurrentMappedTrackInfo();
 
         if (trackInfo == null) {
@@ -34,9 +33,7 @@ public class ExoPlayerTrackSelector {
     }
 
     boolean supportsTrackSwitching(TrackGroupArray trackGroups, int groupIndex) {
-        MappingTrackSelector.MappedTrackInfo trackInfo = getTrackInfo();
-
         return trackGroups.get(groupIndex).length > 0
-                && trackInfo.getAdaptiveSupport(TRACK_TYPE_AUDIO, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
+                && trackInfo().getAdaptiveSupport(TRACK_TYPE_AUDIO, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
     }
 }
