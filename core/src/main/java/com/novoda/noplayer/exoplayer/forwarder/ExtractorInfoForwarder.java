@@ -16,9 +16,10 @@ class ExtractorInfoForwarder implements ExtractorMediaSource.EventListener {
 
     @Override
     public void onLoadError(IOException error) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("error", String.valueOf(error));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onLoadError", keyValuePairs);
+        callingMethodParameters.put("error", String.valueOf(error));
+
+        infoListeners.onNewInfo("onLoadError", callingMethodParameters);
     }
 }

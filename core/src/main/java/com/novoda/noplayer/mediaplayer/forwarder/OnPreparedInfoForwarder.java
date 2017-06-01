@@ -16,9 +16,10 @@ class OnPreparedInfoForwarder implements MediaPlayer.OnPreparedListener {
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        HashMap<String, String> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("mp", String.valueOf(mp));
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onPrepared", keyValuePairs);
+        callingMethodParameters.put("mp", String.valueOf(mp));
+
+        infoListeners.onNewInfo("onPrepared", callingMethodParameters);
     }
 }
