@@ -15,7 +15,7 @@ import com.novoda.notils.logger.simple.Log;
 public class MainActivity extends Activity {
 
     private static final String URI_VIDEO_MP4 = "http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-85.mp4";
-    private static final String URI_VIDEO_MPD = "https://storage.googleapis.com/content-samples/multi-audio/multi-audio.mpd";
+    private static final String URI_VIDEO_MPD = "https://storage.googleapis.com/content-samples/multi-audio/manifest.mpd";
 
     private Player player;
     private PlayerView playerView;
