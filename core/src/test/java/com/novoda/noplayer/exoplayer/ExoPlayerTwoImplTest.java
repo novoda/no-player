@@ -213,12 +213,10 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
     }
 
-    @Ignore
+    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenStartingPlay_thenNotifiesStateListenerThatVideoIsPlaying() {
         player.play();
-
-        // TODO: Holder needs to be a collaborator to test, currently exposed through super.
     }
 
     @Test
@@ -249,12 +247,10 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
     }
 
-    @Ignore
+    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenerThatVideoIsPlaying() {
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
-
-        // TODO: Holder needs to be a collaborator to test, currently exposed through super.
     }
 
     @Test
@@ -264,12 +260,10 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).setPlayWhenReady(DO_NOT_PLAY_WHEN_READY);
     }
 
-    @Ignore
+    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenPausing_thenNotifiesStateListenerThatVideoIsPaused() {
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
-
-        // TODO: Holder needs to be a collaborator to test, currently exposed through super.
     }
 
     @Test
@@ -324,20 +318,16 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).stop();
     }
 
-    @Ignore
+    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenReleasing_thenNotifiesReleaseListenerOfPlayerPreRelease() {
         player.release();
-
-        // TODO: Holder needs to be a collaborator to test, currently exposed through super.
     }
 
-    @Ignore
+    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenReleasing_thenNotifiesStateStateListenerThatVideoHasReleased() {
         player.release();
-
-        // TODO: Holder needs to be a collaborator to test, currently exposed through super.
     }
 
     @Test
@@ -368,12 +358,10 @@ public class ExoPlayerTwoImplTest {
         verify(videoContainer).hide();
     }
 
-    @Ignore
+    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenLoadingVideo_thenResetsPreparedListeners() {
         player.loadVideo(uri, ANY_CONTENT_TYPE);
-
-        // TODO: Holder needs to be a collaborator to test, currently exposed through super.
     }
 
     @Test
@@ -406,12 +394,10 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
     }
 
-    @Ignore
+    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenLoadingVideoWithTimeout_thenResetsPreparedListeners() {
         player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
-
-        // TODO: Holder needs to be a collaborator to test, currently exposed through super.
     }
 
     @Test
@@ -452,16 +438,16 @@ public class ExoPlayerTwoImplTest {
         assertThat(playerInformation.getVersion()).isEqualTo(ExoPlayerLibraryInfo.VERSION);
     }
 
-    @Ignore
+    @Ignore("VideoContainer is switched out in ExoPlayerTwoImpl, need to detect that it has been swapped.")
     @Test
     public void whenAttaching_thenAddsPlayerViewToVideoContainer() {
-        // TODO: Expose only what we need to know on the PlayerView.
+        player.attach(mock(PlayerView.class));
     }
 
-    @Ignore
+    @Ignore("SimplePlayerView is a final class, we should probably pass something else to test this.")
     @Test
     public void whenAttaching_thenSetsPlayerForPlayerView() {
-        // TODO: Expose only what we need to know on the PlayerView.
+        player.attach(mock(PlayerView.class));
     }
 
     @Test
