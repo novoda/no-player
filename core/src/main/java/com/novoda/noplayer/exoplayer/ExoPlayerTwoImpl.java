@@ -8,12 +8,9 @@ import android.os.Looper;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
@@ -35,8 +32,6 @@ import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;
 
-import static com.google.android.exoplayer2.C.TRACK_TYPE_AUDIO;
-
 public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     private static final boolean RESET_POSITION = true;
@@ -49,7 +44,8 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     private final Heart heart;
     private final LoadTimeout loadTimeout;
 
-    private VideoContainer videoContainer = VideoContainer.empty();
+    private VideoContainer videoContainer;
+
     private int videoWidth;
     private int videoHeight;
 
@@ -63,21 +59,25 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         ExoPlayerTrackSelector exoPlayerTrackSelector = new ExoPlayerTrackSelector(trackSelector);
         SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(context), trackSelector, new DefaultLoadControl());
         LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
-        return new ExoPlayerTwoImpl(exoPlayer, mediaSourceFactory, new ExoPlayerForwarder(), loadTimeout, exoPlayerTrackSelector, heart);
+        VideoContainer videoContainer = VideoContainer.empty();
+        return new ExoPlayerTwoImpl(exoPlayer, mediaSourceFactory, new ExoPlayerForwarder(), loadTimeout, exoPlayerTrackSelector, heart, videoContainer);
     }
 
-    private ExoPlayerTwoImpl(SimpleExoPlayer exoPlayer,
-                             MediaSourceFactory mediaSourceFactory,
-                             ExoPlayerForwarder exoPlayerForwarder,
-                             LoadTimeout loadTimeoutParam,
-                             ExoPlayerTrackSelector trackSelector,
-                             Heart heart) {
+    ExoPlayerTwoImpl(SimpleExoPlayer exoPlayer,
+                     MediaSourceFactory mediaSourceFactory,
+                     ExoPlayerForwarder exoPlayerForwarder,
+                     LoadTimeout loadTimeoutParam,
+                     ExoPlayerTrackSelector trackSelector,
+                     Heart heart,
+                     VideoContainer videoContainer) {
         this.exoPlayer = exoPlayer;
         this.mediaSourceFactory = mediaSourceFactory;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.trackSelector = trackSelector;
         this.heart = heart;
+        this.videoContainer = videoContainer;
+
         heart.bind(new Heart.Heartbeat<>(getHeartbeatCallbacks(), this));
         forwarder.bind(getPreparedListeners(), this);
         forwarder.bind(getCompletionListeners());
@@ -193,6 +193,8 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
 
+        exoPlayer.setPlayWhenReady(true);
+
         MediaSource mediaSource = mediaSourceFactory.create(
                 contentType,
                 uri,
@@ -227,11 +229,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     @Override
     public List<PlayerAudioTrack> getAudioTracks() {
         return trackSelector.getAudioTracks();
-    }
-
-    private boolean trackSwitchingSupported(TrackGroupArray trackGroups, MappingTrackSelector.MappedTrackInfo trackInfo, int groupIndex) {
-        return trackGroups.get(groupIndex).length > 0
-                && trackInfo.getAdaptiveSupport(TRACK_TYPE_AUDIO, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
     }
 
     private void showContainer() {
