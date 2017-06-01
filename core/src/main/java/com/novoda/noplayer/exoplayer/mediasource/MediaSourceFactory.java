@@ -29,18 +29,29 @@ public class MediaSourceFactory {
                               AdaptiveMediaSourceEventListener mediaSourceEventListener) {
         switch (contentType) {
             case HLS:
-                return new HlsMediaSource(uri, mediaDataSourceFactory, handler, mediaSourceEventListener);
+                return new HlsMediaSource(
+                        uri,
+                        mediaDataSourceFactory,
+                        handler,
+                        mediaSourceEventListener
+                );
             case H264:
+                DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
                 return new ExtractorMediaSource(
                         uri,
                         mediaDataSourceFactory,
-                        new DefaultExtractorsFactory(),
+                        extractorsFactory,
                         handler,
                         eventListener
                 );
             case DASH:
-                return new DashMediaSource(uri, mediaDataSourceFactory,
-                                           new DefaultDashChunkSource.Factory(mediaDataSourceFactory), handler, mediaSourceEventListener
+                DefaultDashChunkSource.Factory chunkSourceFactory = new DefaultDashChunkSource.Factory(mediaDataSourceFactory);
+                return new DashMediaSource(
+                        uri,
+                        mediaDataSourceFactory,
+                        chunkSourceFactory,
+                        handler,
+                        mediaSourceEventListener
                 );
             default:
                 throw new UnsupportedOperationException("Content type: " + contentType + " is not supported.");
