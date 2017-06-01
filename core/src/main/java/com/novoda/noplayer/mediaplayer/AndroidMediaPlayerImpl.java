@@ -49,7 +49,7 @@ public final class AndroidMediaPlayerImpl extends PlayerListenersHolder implemen
     private CheckBufferHeartbeatCallback heartbeatCallback;
 
     public static AndroidMediaPlayerImpl newInstance(Context context) {
-        AndroidMediaPlayerFacade androidMediaPlayer = new AndroidMediaPlayerFacade(context);
+        AndroidMediaPlayerFacade androidMediaPlayer = AndroidMediaPlayerFacade.newInstance(context);
         LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
         return new AndroidMediaPlayerImpl(androidMediaPlayer, new MediaPlayerForwarder(), loadTimeout);
     }
