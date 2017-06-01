@@ -16,7 +16,7 @@ import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
-import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;
 import com.novoda.noplayer.listeners.BufferStateListeners;
@@ -83,7 +83,7 @@ public class ExoPlayerTwoImplTest {
     @Mock
     private LoadTimeout loadTimeout;
     @Mock
-    private ExoPlayerTrackSelector trackSelector;
+    private ExoPlayerAudioTrackSelector trackSelector;
     @Mock
     private Heart heart;
     @Mock
