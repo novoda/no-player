@@ -24,14 +24,17 @@ public class Heart {
         this.heartbeatFrequency = heartbeatFrequencyInMillis;
     }
 
+    public void bind(Heartbeat onHeartbeat) {
+        this.heartbeatAction = onHeartbeat;
+    }
+
     public void startBeatingHeart() {
+        if (heartbeatAction == null) {
+            throw new IllegalStateException("You must call bind() with a valid non-null " + Heartbeat.class.getSimpleName());
+        }
         stopBeatingHeart();
         beating = true;
         handler.post(heartbeat);
-    }
-
-    public void bind(Heartbeat onHeartbeat) {
-        this.heartbeatAction = onHeartbeat;
     }
 
     private final Runnable heartbeat = new Runnable() {
@@ -52,6 +55,9 @@ public class Heart {
     }
 
     public void forceBeat() {
+        if (heartbeatAction == null) {
+            throw new IllegalStateException("You must call bind() with a valid non-null " + Heartbeat.class.getSimpleName());
+        }
         handler.post(heartbeatAction);
     }
 
@@ -75,9 +81,8 @@ public class Heart {
         }
 
         public interface Callback<T> {
+
             void onBeat(T object);
         }
-
     }
-
 }
