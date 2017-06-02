@@ -560,7 +560,6 @@ public class AndroidMediaPlayerImplTest {
     @Test
     public void whenGettingAudioTracks_thenDelegatesToMediaPlayer() {
         given(mediaPlayer.getAudioTracks()).willReturn(AUDIO_TRACKS);
-
         List<PlayerAudioTrack> audioTracks = player.getAudioTracks();
 
         assertThat(audioTracks).isEqualTo(AUDIO_TRACKS);
