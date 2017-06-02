@@ -92,7 +92,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
         @Override
         public void onVideoPaused() {
-            //We don't care
+            // We don't care
         }
 
         @Override
