@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -20,6 +21,7 @@ import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoContainer;
@@ -47,6 +49,7 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     private VideoContainer videoContainer = VideoContainer.empty();
     private int videoWidth;
     private int videoHeight;
+    private SurfaceHolderRequester surfaceHolderRequester;
 
     public static ExoPlayerTwoImpl newInstance(Context context) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
@@ -134,8 +137,15 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     public void play() {
         showContainer();
         heart.startBeatingHeart();
-        exoPlayer.setPlayWhenReady(true);
-        getStateChangedListeners().onVideoPlaying();
+        surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
+            @Override
+            public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
+                exoPlayer.clearVideoSurfaceHolder(surfaceHolder);
+                exoPlayer.setVideoSurfaceHolder(surfaceHolder);
+                exoPlayer.setPlayWhenReady(true);
+                getStateChangedListeners().onVideoPlaying();
+            }
+        });
     }
 
     @Override
@@ -209,7 +219,9 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     @Override
     public void attach(PlayerView playerView) {
         videoContainer = VideoContainer.with(playerView.getContainerView());
-        playerView.simplePlayerView().setPlayer(exoPlayer);
+        surfaceHolderRequester = playerView.getSurfaceHolderRequester();
+        addStateChangedListener(playerView.getStateChangedListener());
+        addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
     }
 
     @Override
