@@ -35,7 +35,7 @@ public interface Player extends PlayerState {
 
     List<PlayerAudioTrack> getAudioTracks();
 
-    PlayerListenersHolder getListenerHolder();
+    PlayerListenersHolder getListenersHolder();
 
     interface PreReleaseListener {
 
