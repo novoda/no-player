@@ -132,43 +132,43 @@ public class PlayerListenersHolder implements PlayerListeners {
         videoSizeChangedListeners.remove(videoSizeChangedListener);
     }
 
-    protected final ErrorListeners getErrorListeners() {
+    public final ErrorListeners getErrorListeners() {
         return errorListeners;
     }
 
-    protected final PreparedListeners getPreparedListeners() {
+    public final PreparedListeners getPreparedListeners() {
         return preparedListeners;
     }
 
-    protected final BufferStateListeners getBufferStateListeners() {
+    public final BufferStateListeners getBufferStateListeners() {
         return bufferStateListeners;
     }
 
-    protected final CompletionListeners getCompletionListeners() {
+    public final CompletionListeners getCompletionListeners() {
         return completionListeners;
     }
 
-    protected final StateChangedListeners getStateChangedListeners() {
+    public final StateChangedListeners getStateChangedListeners() {
         return stateChangedListeners;
     }
 
-    protected final InfoListeners getInfoListeners() {
+    public final InfoListeners getInfoListeners() {
         return infoListeners;
     }
 
-    protected final Player.PreReleaseListener getPlayerReleaseListener() {
+    public final Player.PreReleaseListener getPlayerReleaseListener() {
         return playerReleaseListener;
     }
 
-    protected final HeartbeatCallbacks<Player> getHeartbeatCallbacks() {
+    public final HeartbeatCallbacks<Player> getHeartbeatCallbacks() {
         return heartbeatCallbacks;
     }
 
-    protected final VideoSizeChangedListeners getVideoSizeChangedListeners() {
+    public final VideoSizeChangedListeners getVideoSizeChangedListeners() {
         return videoSizeChangedListeners;
     }
 
-    protected final BitrateChangedListeners getBitrateChangedListeners() {
+    public final BitrateChangedListeners getBitrateChangedListeners() {
         return bitrateChangedListeners;
     }
 }

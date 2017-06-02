@@ -7,7 +7,7 @@ import com.novoda.noplayer.player.PlayerInformation;
 import java.util.List;
 import java.util.Map;
 
-public interface Player extends PlayerState, PlayerListeners {
+public interface Player extends PlayerState {
 
     void play();
 
@@ -35,6 +35,8 @@ public interface Player extends PlayerState, PlayerListeners {
 
     List<PlayerAudioTrack> getAudioTracks();
 
+    PlayerListenersHolder getListenerHolder();
+
     interface PreReleaseListener {
 
         PreReleaseListener NULL_IMPL = new PreReleaseListener() {
@@ -52,7 +54,6 @@ public interface Player extends PlayerState, PlayerListeners {
         String getType();
 
         Throwable getCause();
-
     }
 
     interface ErrorListener {

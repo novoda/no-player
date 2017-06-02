@@ -10,6 +10,7 @@ import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
+import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoContainer;
@@ -40,7 +41,9 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class ExoPlayerTwoImplTest {
 
@@ -92,6 +95,8 @@ public class ExoPlayerTwoImplTest {
     private Uri uri;
     @Mock
     private PlayerView playerView;
+    @Mock
+    private PlayerListenersHolder listenersHolder;
 
     private Player player;
 
@@ -99,6 +104,7 @@ public class ExoPlayerTwoImplTest {
     public void setUp() {
         player = new ExoPlayerTwoImpl(
                 internalExoPlayer,
+                listenersHolder,
                 mediaSourceFactory,
                 exoPlayerForwarder,
                 loadTimeout,
@@ -479,10 +485,9 @@ public class ExoPlayerTwoImplTest {
                 uri,
                 exoPlayerForwarder.extractorMediaSourceListener(),
                 exoPlayerForwarder.mediaSourceEventListener()
-              )
+                )
         ).willReturn(mediaSource);
 
         return mediaSource;
     }
-
 }
