@@ -25,13 +25,13 @@ public class Heart {
     }
 
     public void bind(Heartbeat onHeartbeat) {
-        if (onHeartbeat == null) {
-            throw new IllegalArgumentException("A non-null" + Heartbeat.class.getSimpleName() + " is required.");
-        }
         this.heartbeatAction = onHeartbeat;
     }
 
     public void startBeatingHeart() {
+        if (heartbeatAction == null) {
+            throw new IllegalStateException("You must call bind() with a valid non-null " + Heartbeat.class.getSimpleName());
+        }
         stopBeatingHeart();
         beating = true;
         handler.post(heartbeat);
@@ -55,6 +55,9 @@ public class Heart {
     }
 
     public void forceBeat() {
+        if (heartbeatAction == null) {
+            throw new IllegalStateException("You must call bind() with a valid non-null " + Heartbeat.class.getSimpleName());
+        }
         handler.post(heartbeatAction);
     }
 
