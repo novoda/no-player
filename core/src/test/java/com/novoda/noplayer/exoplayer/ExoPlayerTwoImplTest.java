@@ -269,8 +269,6 @@ public class ExoPlayerTwoImplTest {
         givenPlayerIsAttached();
         player.play();
 
-        SurfaceHolder surfaceHolder = whenSurfaceHolderIsReady();
-
         InOrder inOrder = inOrder(internalExoPlayer);
         inOrder.verify(internalExoPlayer).clearVideoSurfaceHolder(surfaceHolder);
         inOrder.verify(internalExoPlayer).setVideoSurfaceHolder(surfaceHolder);
@@ -544,14 +542,5 @@ public class ExoPlayerTwoImplTest {
 
     private void givenPlayerIsAttached() {
         player.attach(playerView);
-    }
-
-    private SurfaceHolder whenSurfaceHolderIsReady() {
-        ArgumentCaptor<SurfaceHolderRequester.Callback> argumentCaptor = ArgumentCaptor.forClass(SurfaceHolderRequester.Callback.class);
-        verify(surfaceHolderRequester).requestSurfaceHolder(argumentCaptor.capture());
-        SurfaceHolderRequester.Callback callback = argumentCaptor.getValue();
-        SurfaceHolder surfaceHolder = mock(SurfaceHolder.class);
-        callback.onSurfaceHolderReady(surfaceHolder);
-        return surfaceHolder;
     }
 }
