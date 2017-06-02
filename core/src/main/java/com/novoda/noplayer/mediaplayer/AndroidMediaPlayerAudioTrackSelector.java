@@ -6,7 +6,7 @@ import com.novoda.noplayer.PlayerAudioTrack;
 
 import java.util.ArrayList;
 
-class AndroidMediaPlayerTrackSelector {
+class AndroidMediaPlayerAudioTrackSelector {
 
     private static final int NO_FORMAT = 0;
 
