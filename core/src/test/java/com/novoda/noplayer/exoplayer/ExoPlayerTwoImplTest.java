@@ -146,12 +146,12 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenCreatingExoPlayerTwoImpl_thenCallsBindForHeart() {
+    public void whenCreatingExoPlayerTwoImpl_thenBindsHeart() {
         verify(heart).bind(any(Heart.Heartbeat.class));
     }
 
     @Test
-    public void whenCreatingExoPlayerTwoImpl_thenCallsBindForAllListeners() {
+    public void whenCreatingExoPlayerTwoImpl_thenBindsListenersToForwarder() {
         verify(exoPlayerForwarder).bind(eq(listenersHolder.getPreparedListeners()), eq(player));
         verify(exoPlayerForwarder).bind(eq(listenersHolder.getCompletionListeners()));
         verify(exoPlayerForwarder).bind(eq(listenersHolder.getErrorListeners()), eq(player));
