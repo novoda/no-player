@@ -99,7 +99,7 @@ public class ExoPlayerTwoImplTest {
     private PlayerView playerView;
     @Mock
     private PlayerListenersHolder listenersHolder;
-
+    
     @Mock
     private ErrorListeners errorListeners;
     @Mock
@@ -256,7 +256,7 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenStartingPlay_thenNotifiesStateListenerThatVideoIsPlaying() {
+    public void whenStartingPlay_thenNotifiesStateListenersThatVideoIsPlaying() {
         player.play();
 
         verify(stateChangedListeners).onVideoPlaying();
@@ -291,7 +291,7 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenerThatVideoIsPlaying() {
+    public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenersThatVideoIsPlaying() {
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
         verify(stateChangedListeners).onVideoPlaying();
@@ -305,7 +305,7 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenPausing_thenNotifiesStateListenerThatVideoIsPaused() {
+    public void whenPausing_thenNotifiesStateListenersThatVideoIsPaused() {
         player.pause();
 
         verify(stateChangedListeners).onVideoPaused();
@@ -364,14 +364,14 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenReleasing_thenNotifiesReleaseListenerOfPlayerPreRelease() {
+    public void whenReleasing_thenNotifiesReleaseListenersOfPlayerPreRelease() {
         player.release();
 
         verify(preReleaseListener).onPlayerPreRelease(player);
     }
 
     @Test
-    public void whenReleasing_thenNotifiesStateStateListenerThatVideoHasReleased() {
+    public void whenReleasing_thenNotifiesStateStateListenersThatVideoHasReleased() {
         player.release();
 
         verify(stateChangedListeners).onVideoReleased();
