@@ -12,7 +12,6 @@ import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.Timeout;
-import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
@@ -90,8 +89,6 @@ public class ExoPlayerTwoImplTest {
     @Mock
     private Heart heart;
     @Mock
-    private VideoContainer videoContainer;
-    @Mock
     private Uri uri;
     @Mock
     private PlayerView playerView;
@@ -106,8 +103,7 @@ public class ExoPlayerTwoImplTest {
                 exoPlayerForwarder,
                 loadTimeout,
                 trackSelector,
-                heart,
-                videoContainer
+                heart
         );
     }
 
@@ -198,13 +194,6 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenStartingPlay_thenShowsVideoContainer() {
-        player.play();
-
-        verify(videoContainer).show();
-    }
-
-    @Test
     public void whenStartingPlay_thenStartsBeatingHeart() {
         player.play();
 
@@ -229,13 +218,6 @@ public class ExoPlayerTwoImplTest {
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
         verify(internalExoPlayer).seekTo(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS).inMillis());
-    }
-
-    @Test
-    public void whenStartingPlayAtVideoPosition_thenShowsVideoContainer() {
-        player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
-
-        verify(videoContainer).show();
     }
 
     @Test
@@ -356,24 +338,10 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).release();
     }
 
-    @Test
-    public void whenReleasing_thenHidesVideoContainer() {
-        player.release();
-
-        verify(videoContainer).hide();
-    }
-
     @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenLoadingVideo_thenResetsPreparedListeners() {
         player.loadVideo(uri, ANY_CONTENT_TYPE);
-    }
-
-    @Test
-    public void whenLoadingVideo_thenShowsVideoContainer() {
-        player.loadVideo(uri, ANY_CONTENT_TYPE);
-
-        verify(videoContainer).show();
     }
 
     @Test
@@ -403,13 +371,6 @@ public class ExoPlayerTwoImplTest {
     @Test
     public void whenLoadingVideoWithTimeout_thenResetsPreparedListeners() {
         player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
-    }
-
-    @Test
-    public void whenLoadingVideoWithTimeout_thenShowsVideoContainer() {
-        player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
-
-        verify(videoContainer).show();
     }
 
     @Test
