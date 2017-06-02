@@ -15,7 +15,6 @@ import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
-import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.listeners.BufferStateListeners;
@@ -93,8 +92,6 @@ public class AndroidMediaPlayerImplTest {
     @Mock
     private CheckBufferHeartbeatCallback bufferHeartbeatCallback;
     @Mock
-    private VideoContainer videoContainer;
-    @Mock
     private BuggyVideoDriverPreventer buggyVideoDriverPreventer;
     @Mock
     private PreparedListeners preparedListeners;
@@ -143,7 +140,7 @@ public class AndroidMediaPlayerImplTest {
         given(forwarder.onSizeChangedListener()).willReturn(onSizeChangedListener);
         given(forwarder.onHeartbeatListener()).willReturn(bufferListener);
 
-        player = new AndroidMediaPlayerImpl(mediaPlayer, listenersHolder, forwarder, loadTimeout, heart, handler, bufferHeartbeatCallback, videoContainer, buggyVideoDriverPreventer);
+        player = new AndroidMediaPlayerImpl(mediaPlayer, listenersHolder, forwarder, loadTimeout, heart, handler, bufferHeartbeatCallback, buggyVideoDriverPreventer);
     }
 
     @Test
@@ -224,13 +221,6 @@ public class AndroidMediaPlayerImplTest {
     }
 
     @Test
-    public void whenStartingPlay_thenShowsVideoContainer() {
-        player.play();
-
-        verify(videoContainer).show();
-    }
-
-    @Test
     public void whenStartingPlay_thenStartsBeatingHeart() {
         player.play();
 
@@ -249,16 +239,6 @@ public class AndroidMediaPlayerImplTest {
         player.play();
 
         verify(stateChangedListeners).onVideoPlaying();
-    }
-
-    @Test
-    public void whenStartingPlayAtVideoPosition_thenShowsVideoContainer() {
-        VideoPosition videoPosition = VideoPosition.BEGINNING;
-        given(mediaPlayer.getCurrentPosition()).willReturn(videoPosition.inImpreciseMillis());
-
-        player.play(videoPosition);
-
-        verify(videoContainer).show();
     }
 
     @Test
@@ -289,15 +269,6 @@ public class AndroidMediaPlayerImplTest {
         player.play(videoPosition);
 
         verify(stateChangedListeners).onVideoPlaying();
-    }
-
-    @Test
-    public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenShowsVideoContainer() {
-        VideoPosition differentPosition = givenPositionThatDiffersFromPlayheadPosition();
-
-        player.play(differentPosition);
-
-        verify(videoContainer).show();
     }
 
     @Test
@@ -399,13 +370,6 @@ public class AndroidMediaPlayerImplTest {
     }
 
     @Test
-    public void whenLoadingVideo_thenShowsVideoContainer() {
-        player.loadVideo(URI, ContentType.HLS);
-
-        verify(videoContainer).show();
-    }
-
-    @Test
     public void whenLoadingVideo_thenNotifiesBufferStateListenersThatBufferStarted() {
         player.loadVideo(URI, ContentType.HLS);
 
@@ -417,13 +381,6 @@ public class AndroidMediaPlayerImplTest {
         player.loadVideo(URI, ContentType.HLS);
 
         verify(mediaPlayer).prepareVideo(URI);
-    }
-
-    @Test
-    public void whenLoadingVideoWithTimeout_thenShowsVideoContainer() {
-        player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
-
-        verify(videoContainer).show();
     }
 
     @Test
@@ -639,13 +596,6 @@ public class AndroidMediaPlayerImplTest {
     }
 
     @Test
-    public void whenResettingPlayer_thenShowsVideoContainer() {
-        player.reset();
-
-        verify(videoContainer).show();
-    }
-
-    @Test
     public void whenReleasingPlayer_thenCancelsTimeout() {
         player.release();
 
@@ -709,13 +659,6 @@ public class AndroidMediaPlayerImplTest {
         player.release();
 
         verify(listenersHolder).removeHeartbeatCallback(bufferHeartbeatCallback);
-    }
-
-    @Test
-    public void whenReleasingPlayer_thenHidesVideoContainer() {
-        player.release();
-
-        verify(videoContainer).hide();
     }
 
     private VideoPosition givenPositionThatDiffersFromPlayheadPosition() {

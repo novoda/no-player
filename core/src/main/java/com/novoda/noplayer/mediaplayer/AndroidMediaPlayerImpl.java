@@ -16,7 +16,6 @@ import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.Timeout;
-import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
@@ -45,7 +44,7 @@ public final class AndroidMediaPlayerImpl implements Player {
     private VideoPosition seekToPosition = NO_SEEK_TO_POSITION;
 
     private boolean seekingWithIntentToPlay;
-    private VideoContainer videoContainer;
+
     private VideoSizeChangedListener videoSizeChangedListener;
     private StateChangedListener stateChangedListener;
     private CheckBufferHeartbeatCallback heartbeatCallback;
@@ -60,7 +59,6 @@ public final class AndroidMediaPlayerImpl implements Player {
                 Heart.newInstance(),
                 new Handler(Looper.getMainLooper()),
                 new CheckBufferHeartbeatCallback(),
-                VideoContainer.empty(),
                 BuggyVideoDriverPreventer.newInstance()
         );
     }
@@ -72,7 +70,6 @@ public final class AndroidMediaPlayerImpl implements Player {
                            Heart heart,
                            Handler handler,
                            CheckBufferHeartbeatCallback bufferHeartbeatCallback,
-                           VideoContainer videoContainer,
                            BuggyVideoDriverPreventer buggyVideoDriverPreventer) {
         this.mediaPlayer = mediaPlayer;
         this.listenersHolder = listenersHolder;
@@ -80,7 +77,6 @@ public final class AndroidMediaPlayerImpl implements Player {
         this.heart = heart;
         this.handler = handler;
         this.heartbeatCallback = bufferHeartbeatCallback;
-        this.videoContainer = videoContainer;
         this.buggyVideoDriverPreventer = buggyVideoDriverPreventer;
         heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
 
@@ -133,7 +129,6 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void play() {
-        videoContainer.show();
         heart.startBeatingHeart();
         mediaPlayer.start();
         listenersHolder.getStateChangedListeners().onVideoPlaying();
@@ -151,11 +146,8 @@ public final class AndroidMediaPlayerImpl implements Player {
     /**
      * Workaround to fix some devices (nexus 7 2013 in particular) from natively crashing the mediaplayer
      * by starting the mediaplayer before seeking it.
-     *
-     * @param initialPlayPosition
      */
     private void initialSeekWorkaround(final VideoPosition initialPlayPosition) {
-        videoContainer.show();
         listenersHolder.getBufferStateListeners().onBufferStarted();
         initialisePlaybackForSeeking();
         handler.postDelayed(new Runnable() {
@@ -199,7 +191,6 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void loadVideo(Uri uri, ContentType contentType) {
-        videoContainer.show();
         listenersHolder.getBufferStateListeners().onBufferStarted();
         mediaPlayer.prepareVideo(uri);
     }
@@ -256,7 +247,6 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void attach(PlayerView playerView) {
-        videoContainer = VideoContainer.with(playerView.getContainerView());
         mediaPlayer.setSurfaceHolderRequester(playerView.getSurfaceHolderRequester());
         buggyVideoDriverPreventer.preventVideoDriverBug(this, playerView.getContainerView());
         videoSizeChangedListener = playerView.getVideoSizeChangedListener();
@@ -287,17 +277,11 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void reset() {
-        releasePlayer();
-        videoContainer.show();
+        release();
     }
 
     @Override
     public void release() {
-        releasePlayer();
-        videoContainer.hide();
-    }
-
-    private void releasePlayer() {
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         listenersHolder.getPlayerReleaseListener().onPlayerPreRelease(this);
