@@ -25,6 +25,7 @@ import com.novoda.noplayer.listeners.CompletionListeners;
 import com.novoda.noplayer.listeners.ErrorListeners;
 import com.novoda.noplayer.listeners.InfoListeners;
 import com.novoda.noplayer.listeners.PreparedListeners;
+import com.novoda.noplayer.listeners.StateChangedListeners;
 import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.noplayer.player.PlayerType;
@@ -99,10 +100,39 @@ public class ExoPlayerTwoImplTest {
     @Mock
     private PlayerListenersHolder listenersHolder;
 
+    @Mock
+    private ErrorListeners errorListeners;
+    @Mock
+    private PreparedListeners preparedListeners;
+    @Mock
+    private BufferStateListeners bufferStateListeners;
+    @Mock
+    private CompletionListeners completionListeners;
+    @Mock
+    private StateChangedListeners stateChangedListeners;
+    @Mock
+    private InfoListeners infoListeners;
+    @Mock
+    private VideoSizeChangedListeners videoSizeChangedListeners;
+    @Mock
+    private BitrateChangedListeners bitrateChangedListeners;
+    @Mock
+    Player.PreReleaseListener preReleaseListener;
+
     private Player player;
 
     @Before
     public void setUp() {
+        given(listenersHolder.getErrorListeners()).willReturn(errorListeners);
+        given(listenersHolder.getPreparedListeners()).willReturn(preparedListeners);
+        given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListeners);
+        given(listenersHolder.getCompletionListeners()).willReturn(completionListeners);
+        given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListeners);
+        given(listenersHolder.getInfoListeners()).willReturn(infoListeners);
+        given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListeners);
+        given(listenersHolder.getBitrateChangedListeners()).willReturn(bitrateChangedListeners);
+        given(listenersHolder.getPlayerReleaseListener()).willReturn(preReleaseListener);
+
         player = new ExoPlayerTwoImpl(
                 internalExoPlayer,
                 listenersHolder,
@@ -132,31 +162,34 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void givenBoundPreparedListeners_whenCallingOnPrepared_thenCallsLoadTimeoutCancel() {
-        ArgumentCaptor<PreparedListeners> argumentCaptor = ArgumentCaptor.forClass(PreparedListeners.class);
+    public void givenBoundPreparedListeners_whenCallingOnPrepared_thenCancelsTimeout() {
+        ArgumentCaptor<Player.PreparedListener> argumentCaptor = ArgumentCaptor.forClass(Player.PreparedListener.class);
 
-        verify(exoPlayerForwarder).bind(argumentCaptor.capture(), eq(player));
-        argumentCaptor.getValue().onPrepared(player);
+        verify(listenersHolder).addPreparedListener(argumentCaptor.capture());
+        Player.PreparedListener preparedListener = argumentCaptor.getValue();
+        preparedListener.onPrepared(player);
 
         verify(loadTimeout).cancel();
     }
 
     @Test
-    public void givenBoundErrorListeners_whenCallingOnError_thenCallsLoadTimeoutCancel() {
-        ArgumentCaptor<ErrorListeners> argumentCaptor = ArgumentCaptor.forClass(ErrorListeners.class);
+    public void givenBoundErrorListeners_whenCallingOnError_thenCancelsTimeout() {
+        ArgumentCaptor<Player.ErrorListener> argumentCaptor = ArgumentCaptor.forClass(Player.ErrorListener.class);
 
-        verify(exoPlayerForwarder).bind(argumentCaptor.capture(), eq(player));
-        argumentCaptor.getValue().onError(player, mock(Player.PlayerError.class));
+        verify(listenersHolder).addErrorListener(argumentCaptor.capture());
+        Player.ErrorListener errorListener = argumentCaptor.getValue();
+        errorListener.onError(player, mock(Player.PlayerError.class));
 
         verify(loadTimeout).cancel();
     }
 
     @Test
     public void givenBoundVideoChangedListeners_whenCallingOnVideoSizeChanged_thenVideoWidthAndHeightMatches() {
-        ArgumentCaptor<VideoSizeChangedListeners> argumentCaptor = ArgumentCaptor.forClass(VideoSizeChangedListeners.class);
+        ArgumentCaptor<Player.VideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
+        verify(listenersHolder).addVideoSizeChangedListener(argumentCaptor.capture());
 
-        verify(exoPlayerForwarder).bind(argumentCaptor.capture());
-        argumentCaptor.getValue().onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
+        Player.VideoSizeChangedListener videoSizeChangedListener = argumentCaptor.getValue();
+        videoSizeChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
 
         int actualWidth = player.getVideoWidth();
         int actualHeight = player.getVideoHeight();
@@ -175,7 +208,7 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void givenExoPlayerIsPlaying_whenGettingPlayheadPosition_thenReturnsCurrentPosition() {
+    public void whenGettingPlayheadPosition_thenReturnsCurrentPosition() {
         given(internalExoPlayer.getCurrentPosition()).willReturn(TWO_MINUTES_IN_MILLIS);
 
         VideoPosition playheadPosition = player.getPlayheadPosition();
@@ -184,7 +217,7 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void givenExoPlayerIsPlaying_whenGettingMediaDuration_thenReturnsDuration() {
+    public void whenGettingMediaDuration_thenReturnsDuration() {
         given(internalExoPlayer.getDuration()).willReturn(TEN_MINUTES_IN_MILLIS);
 
         VideoDuration videoDuration = player.getMediaDuration();
@@ -193,7 +226,7 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void givenExoPlayerIsBuffering_whenGettingBufferPercentage_thenReturnsBufferPercentage() {
+    public void whenGettingBufferPercentage_thenReturnsBufferPercentage() {
         given(internalExoPlayer.getBufferedPercentage()).willReturn(TEN_PERCENT);
 
         int bufferPercentage = player.getBufferPercentage();
@@ -222,10 +255,11 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
     }
 
-    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenStartingPlay_thenNotifiesStateListenerThatVideoIsPlaying() {
         player.play();
+
+        verify(stateChangedListeners).onVideoPlaying();
     }
 
     @Test
@@ -256,10 +290,11 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
     }
 
-    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenerThatVideoIsPlaying() {
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
+
+        verify(stateChangedListeners).onVideoPlaying();
     }
 
     @Test
@@ -269,10 +304,11 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).setPlayWhenReady(DO_NOT_PLAY_WHEN_READY);
     }
 
-    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenPausing_thenNotifiesStateListenerThatVideoIsPaused() {
-        player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
+        player.pause();
+
+        verify(stateChangedListeners).onVideoPaused();
     }
 
     @Test
@@ -327,16 +363,18 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).stop();
     }
 
-    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenReleasing_thenNotifiesReleaseListenerOfPlayerPreRelease() {
         player.release();
+
+        verify(preReleaseListener).onPlayerPreRelease(player);
     }
 
-    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenReleasing_thenNotifiesStateStateListenerThatVideoHasReleased() {
         player.release();
+
+        verify(stateChangedListeners).onVideoReleased();
     }
 
     @Test
@@ -367,10 +405,11 @@ public class ExoPlayerTwoImplTest {
         verify(videoContainer).hide();
     }
 
-    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenLoadingVideo_thenResetsPreparedListeners() {
         player.loadVideo(uri, ANY_CONTENT_TYPE);
+
+        verify(preparedListeners).reset();
     }
 
     @Test
@@ -403,10 +442,11 @@ public class ExoPlayerTwoImplTest {
         verify(internalExoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
     }
 
-    @Ignore("Holder needs to be a collaborator to test, currently exposed through super.")
     @Test
     public void whenLoadingVideoWithTimeout_thenResetsPreparedListeners() {
         player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+
+        verify(preparedListeners).reset();
     }
 
     @Test

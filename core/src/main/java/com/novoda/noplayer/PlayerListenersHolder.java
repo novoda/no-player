@@ -113,43 +113,43 @@ public class PlayerListenersHolder {
         videoSizeChangedListeners.remove(videoSizeChangedListener);
     }
 
-    public final ErrorListeners getErrorListeners() {
+    public ErrorListeners getErrorListeners() {
         return errorListeners;
     }
 
-    public final PreparedListeners getPreparedListeners() {
+    public PreparedListeners getPreparedListeners() {
         return preparedListeners;
     }
 
-    public final BufferStateListeners getBufferStateListeners() {
+    public BufferStateListeners getBufferStateListeners() {
         return bufferStateListeners;
     }
 
-    public final CompletionListeners getCompletionListeners() {
+    public CompletionListeners getCompletionListeners() {
         return completionListeners;
     }
 
-    public final StateChangedListeners getStateChangedListeners() {
+    public StateChangedListeners getStateChangedListeners() {
         return stateChangedListeners;
     }
 
-    public final InfoListeners getInfoListeners() {
+    public InfoListeners getInfoListeners() {
         return infoListeners;
     }
 
-    public final Player.PreReleaseListener getPlayerReleaseListener() {
+    public Player.PreReleaseListener getPlayerReleaseListener() {
         return playerReleaseListener;
     }
 
-    public final HeartbeatCallbacks<Player> getHeartbeatCallbacks() {
+    public HeartbeatCallbacks<Player> getHeartbeatCallbacks() {
         return heartbeatCallbacks;
     }
 
-    public final VideoSizeChangedListeners getVideoSizeChangedListeners() {
+    public VideoSizeChangedListeners getVideoSizeChangedListeners() {
         return videoSizeChangedListeners;
     }
 
-    public final BitrateChangedListeners getBitrateChangedListeners() {
+    public BitrateChangedListeners getBitrateChangedListeners() {
         return bitrateChangedListeners;
     }
 }
