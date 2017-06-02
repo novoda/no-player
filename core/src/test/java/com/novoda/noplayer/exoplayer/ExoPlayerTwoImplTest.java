@@ -270,7 +270,7 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void givenPlayerIsAttached_whenStartingPlay_thenNotifiesStateListenerThatVideoIsPlaying() {
+    public void givenPlayerIsAttached_whenStartingPlay_thenNotifiesStateListenersThatVideoIsPlaying() {
         givenPlayerIsAttached();
 
         player.play();
@@ -306,7 +306,7 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void givenPlayerIsAttached_whenStartingPlayAtVideoPosition_thenNotifiesStateListenerThatVideoIsPlaying() {
+    public void givenPlayerIsAttached_whenStartingPlayAtVideoPosition_thenNotifiesStateListenersThatVideoIsPlaying() {
         givenPlayerIsAttached();
 
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
@@ -322,7 +322,7 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenPausing_thenNotifiesStateListenerThatVideoIsPaused() {
+    public void whenPausing_thenNotifiesStateListenersThatVideoIsPaused() {
         player.pause();
 
         verify(stateChangedListeners).onVideoPaused();
@@ -381,14 +381,14 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenReleasing_thenNotifiesReleaseListenerOfPlayerPreRelease() {
+    public void whenReleasing_thenNotifiesReleaseListenersOfPlayerPreRelease() {
         player.release();
 
         verify(preReleaseListener).onPlayerPreRelease(player);
     }
 
     @Test
-    public void whenReleasing_thenNotifiesStateStateListenerThatVideoHasReleased() {
+    public void whenReleasing_thenNotifiesStateStateListenersThatVideoHasReleased() {
         player.release();
 
         verify(stateChangedListeners).onVideoReleased();
