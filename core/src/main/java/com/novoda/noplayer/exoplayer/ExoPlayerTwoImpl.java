@@ -25,7 +25,6 @@ import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.Timeout;
-import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
@@ -48,11 +47,10 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     private final Heart heart;
     private final LoadTimeout loadTimeout;
 
-    private VideoContainer videoContainer;
+    private SurfaceHolderRequester surfaceHolderRequester;
 
     private int videoWidth;
     private int videoHeight;
-    private SurfaceHolderRequester surfaceHolderRequester;
 
     public static ExoPlayerTwoImpl newInstance(Context context) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
@@ -66,16 +64,13 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         ExoPlayerAudioTrackSelector exoPlayerAudioTrackSelector = new ExoPlayerAudioTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
         SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(context), trackSelector, new DefaultLoadControl());
         LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
-        VideoContainer videoContainer = VideoContainer.empty();
-
         return new ExoPlayerTwoImpl(
                 exoPlayer,
                 mediaSourceFactory,
                 new ExoPlayerForwarder(),
                 loadTimeout,
                 exoPlayerAudioTrackSelector,
-                heart,
-                videoContainer
+                heart
         );
     }
 
@@ -84,15 +79,13 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
                      ExoPlayerForwarder exoPlayerForwarder,
                      LoadTimeout loadTimeoutParam,
                      ExoPlayerAudioTrackSelector trackSelector,
-                     Heart heart,
-                     VideoContainer videoContainer) {
+                     Heart heart) {
         this.exoPlayer = exoPlayer;
         this.mediaSourceFactory = mediaSourceFactory;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.trackSelector = trackSelector;
         this.heart = heart;
-        this.videoContainer = videoContainer;
 
         heart.bind(new Heart.Heartbeat<>(getHeartbeatCallbacks(), this));
         forwarder.bind(getPreparedListeners(), this);
@@ -155,7 +148,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void play() {
-        showContainer();
         heart.startBeatingHeart();
         surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
             @Override
@@ -206,13 +198,11 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         exoPlayer.release();
-        videoContainer.hide();
     }
 
     @Override
     public void loadVideo(Uri uri, ContentType contentType) {
         getPreparedListeners().reset();
-        showContainer();
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
 
@@ -238,7 +228,6 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
 
     @Override
     public void attach(PlayerView playerView) {
-        videoContainer = VideoContainer.with(playerView.getContainerView());
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
         addStateChangedListener(playerView.getStateChangedListener());
         addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
@@ -252,9 +241,5 @@ public class ExoPlayerTwoImpl extends PlayerListenersHolder implements Player {
     @Override
     public List<PlayerAudioTrack> getAudioTracks() {
         return trackSelector.getAudioTracks();
-    }
-
-    private void showContainer() {
-        videoContainer.show();
     }
 }
