@@ -152,13 +152,13 @@ public class ExoPlayerTwoImplTest {
 
     @Test
     public void whenCreatingExoPlayerTwoImpl_thenCallsBindForAllListeners() {
-        verify(exoPlayerForwarder).bind(any(PreparedListeners.class), eq(player));
-        verify(exoPlayerForwarder).bind(any(CompletionListeners.class));
-        verify(exoPlayerForwarder).bind(any(ErrorListeners.class), eq(player));
-        verify(exoPlayerForwarder).bind(any(BufferStateListeners.class));
-        verify(exoPlayerForwarder).bind(any(VideoSizeChangedListeners.class));
-        verify(exoPlayerForwarder).bind(any(BitrateChangedListeners.class));
-        verify(exoPlayerForwarder).bind(any(InfoListeners.class));
+        verify(exoPlayerForwarder).bind(eq(listenersHolder.getPreparedListeners()), eq(player));
+        verify(exoPlayerForwarder).bind(eq(listenersHolder.getCompletionListeners()));
+        verify(exoPlayerForwarder).bind(eq(listenersHolder.getErrorListeners()), eq(player));
+        verify(exoPlayerForwarder).bind(eq(listenersHolder.getBufferStateListeners()));
+        verify(exoPlayerForwarder).bind(eq(listenersHolder.getVideoSizeChangedListeners()));
+        verify(exoPlayerForwarder).bind(eq(listenersHolder.getBitrateChangedListeners()));
+        verify(exoPlayerForwarder).bind(eq(listenersHolder.getInfoListeners()));
     }
 
     @Test
