@@ -57,11 +57,11 @@ public final class AndroidMediaPlayerImpl implements Player {
         return new AndroidMediaPlayerImpl(androidMediaPlayer, listenersHolder, new MediaPlayerForwarder(), loadTimeout, heart);
     }
 
-    private AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer,
-                                   PlayerListenersHolder listenersHolder,
-                                   MediaPlayerForwarder forwarder,
-                                   LoadTimeout loadTimeoutParam,
-                                   Heart heart) {
+    AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer,
+                           PlayerListenersHolder listenersHolder,
+                           MediaPlayerForwarder forwarder,
+                           LoadTimeout loadTimeoutParam,
+                           Heart heart) {
         this.mediaPlayer = mediaPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
@@ -116,6 +116,14 @@ public final class AndroidMediaPlayerImpl implements Player {
     };
 
     @Override
+    public void play() {
+        videoContainer.show();
+        heart.startBeatingHeart();
+        mediaPlayer.start();
+        listenersHolder.getStateChangedListeners().onVideoPlaying();
+    }
+
+    @Override
     public void play(VideoPosition position) {
         if (getPlayheadPosition().equals(position)) {
             play();
@@ -131,7 +139,7 @@ public final class AndroidMediaPlayerImpl implements Player {
      * @param initialPlayPosition
      */
     private void initialSeekWorkaround(final VideoPosition initialPlayPosition) {
-        show();
+        videoContainer.show();
         listenersHolder.getBufferStateListeners().onBufferStarted();
         initialisePlaybackForSeeking();
         handler.postDelayed(new Runnable() {
@@ -158,48 +166,24 @@ public final class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public void play() {
-        show();
-        startBeatingHeart();
-        mediaPlayer.start();
-        listenersHolder.getStateChangedListeners().onVideoPlaying();
-    }
-
-    @Override
     public void seekTo(VideoPosition position) {
         seekToPosition = position;
         mediaPlayer.seekTo(position.inImpreciseMillis());
-    }
-
-    private void startBeatingHeart() {
-        heart.startBeatingHeart();
-    }
-
-    private void show() {
-        videoContainer.show();
     }
 
     @Override
     public void pause() {
         mediaPlayer.pause();
         if (heart.isBeating()) {
-            stopBeatingHeart();
+            heart.stopBeatingHeart();
             heart.forceBeat();
         }
-        internalPause();
-    }
-
-    private void stopBeatingHeart() {
-        heart.stopBeatingHeart();
-    }
-
-    private void internalPause() {
         listenersHolder.getStateChangedListeners().onVideoPaused();
     }
 
     @Override
     public void loadVideo(Uri uri, ContentType contentType) {
-        show();
+        videoContainer.show();
         listenersHolder.getBufferStateListeners().onBufferStarted();
         mediaPlayer.prepareVideo(uri);
     }
@@ -281,20 +265,20 @@ public final class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public void reset() {
-        release();
-        show();
-    }
-
-    @Override
     public void stop() {
         mediaPlayer.stop();
     }
 
     @Override
+    public void reset() {
+        release();
+        videoContainer.show();
+    }
+
+    @Override
     public void release() {
         loadTimeout.cancel();
-        stopBeatingHeart();
+        heart.stopBeatingHeart();
         listenersHolder.getPlayerReleaseListener().onPlayerPreRelease(this);
         mediaPlayer.release();
         listenersHolder.getStateChangedListeners().onVideoReleased();
