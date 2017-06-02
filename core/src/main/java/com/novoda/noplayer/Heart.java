@@ -8,23 +8,30 @@ public class Heart {
     private static final long HEART_BEAT_FREQUENCY_IN_MILLIS = 500;
 
     private final Handler handler;
-    private final Heartbeat heartbeatAction;
     private final long heartbeatFrequency;
+
+    private Heartbeat heartbeatAction;
 
     private boolean beating;
 
-    public static Heart newInstance(Heartbeat onHeartbeat) {
+    public static Heart newInstance() {
         Handler handler = new Handler(Looper.getMainLooper());
-        return new Heart(handler, onHeartbeat, HEART_BEAT_FREQUENCY_IN_MILLIS);
+        return new Heart(handler, HEART_BEAT_FREQUENCY_IN_MILLIS);
     }
 
-    Heart(Handler handler, Heartbeat onHeartbeat, long heartbeatFrequencyInMillis) {
+    Heart(Handler handler, long heartbeatFrequencyInMillis) {
         this.handler = handler;
-        this.heartbeatAction = onHeartbeat;
         this.heartbeatFrequency = heartbeatFrequencyInMillis;
     }
 
+    public void bind(Heartbeat onHeartbeat) {
+        this.heartbeatAction = onHeartbeat;
+    }
+
     public void startBeatingHeart() {
+        if (heartbeatAction == null) {
+            throw new IllegalStateException("You must call bind() with a valid non-null " + Heartbeat.class.getSimpleName());
+        }
         stopBeatingHeart();
         beating = true;
         handler.post(heartbeat);
@@ -48,6 +55,9 @@ public class Heart {
     }
 
     public void forceBeat() {
+        if (heartbeatAction == null) {
+            throw new IllegalStateException("You must call bind() with a valid non-null " + Heartbeat.class.getSimpleName());
+        }
         handler.post(heartbeatAction);
     }
 
@@ -71,9 +81,8 @@ public class Heart {
         }
 
         public interface Callback<T> {
+
             void onBeat(T object);
         }
-
     }
-
 }
