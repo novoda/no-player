@@ -1,6 +1,7 @@
 package com.novoda.noplayer.exoplayer;
 
 import android.net.Uri;
+import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -9,8 +10,10 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.Player.StateChangedListener;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
@@ -33,13 +36,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.Answer;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -92,11 +98,29 @@ public class ExoPlayerTwoImplTest {
     private Uri uri;
     @Mock
     private PlayerView playerView;
+    @Mock
+    private SurfaceHolderRequester surfaceHolderRequester;
+    @Mock
+    private SurfaceHolder surfaceHolder;
+    @Mock
+    private StateChangedListener stateChangeListener;
 
     private Player player;
 
     @Before
     public void setUp() {
+        given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
+        given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
+
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                SurfaceHolderRequester.Callback callback = invocation.getArgument(0);
+                callback.onSurfaceHolderReady(surfaceHolder);
+                return null;
+            }
+        }).when(surfaceHolderRequester).requestSurfaceHolder(any(SurfaceHolderRequester.Callback.class));
+
         player = new ExoPlayerTwoImpl(
                 internalExoPlayer,
                 mediaSourceFactory,
@@ -194,14 +218,18 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenStartingPlay_thenStartsBeatingHeart() {
+    public void givenPlayerIsAttached_whenStartingPlay_thenStartsBeatingHeart() {
+        givenPlayerIsAttached();
+
         player.play();
 
         verify(heart).startBeatingHeart();
     }
 
     @Test
-    public void whenStartingPlay_thenSetsPlayWhenReadyToTrue() {
+    public void givenPlayerIsAttached_whenStartingPlay_thenSetsPlayWhenReadyToTrue() {
+        givenPlayerIsAttached();
+
         player.play();
 
         verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
@@ -214,21 +242,27 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenStartingPlayAtVideoPosition_thenSeeksToPosition() {
+    public void givenPlayerIsAttached_whenStartingPlayAtVideoPosition_thenSeeksToPosition() {
+        givenPlayerIsAttached();
+
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
         verify(internalExoPlayer).seekTo(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS).inMillis());
     }
 
     @Test
-    public void whenStartingPlayAtVideoPosition_thenStartsBeatingHeart() {
+    public void givenPlayerIsAttached_whenStartingPlayAtVideoPosition_thenStartsBeatingHeart() {
+        givenPlayerIsAttached();
+
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
         verify(heart).startBeatingHeart();
     }
 
     @Test
-    public void whenStartingPlayAtVideoPosition_thenSetsPlayWhenReadyToTrue() {
+    public void givenPlayerIsAttached_whenStartingPlayAtVideoPosition_thenSetsPlayWhenReadyToTrue() {
+        givenPlayerIsAttached();
+
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
         verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
@@ -443,5 +477,9 @@ public class ExoPlayerTwoImplTest {
         ).willReturn(mediaSource);
 
         return mediaSource;
+    }
+
+    private void givenPlayerIsAttached() {
+        player.attach(playerView);
     }
 }
