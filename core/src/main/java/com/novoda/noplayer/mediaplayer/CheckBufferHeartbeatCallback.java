@@ -7,12 +7,12 @@ import com.novoda.noplayer.VideoPosition;
 public class CheckBufferHeartbeatCallback implements Heart.Heartbeat.Callback<Player> {
 
     private static final int FORCED_BUFFERING_BEATS_THRESHOLD = 4;
-    private final BufferListener bufferListener;
 
+    private BufferListener bufferListener = BufferListener.NULL_IMPL;
     private VideoPosition previousPosition = VideoPosition.INVALID;
     private int beatsPlayed;
 
-    CheckBufferHeartbeatCallback(BufferListener bufferListener) {
+    public void bind(BufferListener bufferListener) {
         this.bufferListener = bufferListener;
     }
 
@@ -62,5 +62,17 @@ public class CheckBufferHeartbeatCallback implements Heart.Heartbeat.Callback<Pl
         void onBufferStart();
 
         void onBufferComplete();
+
+        BufferListener NULL_IMPL = new BufferListener() {
+            @Override
+            public void onBufferStart() {
+                // do nothing
+            }
+
+            @Override
+            public void onBufferComplete() {
+                // do nothing
+            }
+        };
     }
 }

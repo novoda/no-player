@@ -37,37 +37,52 @@ public final class AndroidMediaPlayerImpl implements Player {
     private final Heart heart;
     private final PlayerListenersHolder listenersHolder;
     private final LoadTimeout loadTimeout;
+    private final BuggyVideoDriverPreventer buggyVideoDriverPreventer;
 
     private int videoWidth;
+
     private int videoHeight;
-
     private VideoPosition seekToPosition = NO_SEEK_TO_POSITION;
-    private boolean seekingWithIntentToPlay;
 
-    private VideoContainer videoContainer = VideoContainer.empty();
+    private boolean seekingWithIntentToPlay;
+    private VideoContainer videoContainer;
     private VideoSizeChangedListener videoSizeChangedListener;
     private StateChangedListener stateChangedListener;
     private CheckBufferHeartbeatCallback heartbeatCallback;
 
     public static AndroidMediaPlayerImpl newInstance(Context context) {
-        AndroidMediaPlayerFacade androidMediaPlayer = AndroidMediaPlayerFacade.newInstance(context);
         LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
-        Heart heart = Heart.newInstance();
-        PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
-        return new AndroidMediaPlayerImpl(androidMediaPlayer, listenersHolder, new MediaPlayerForwarder(), loadTimeout, heart);
+        return new AndroidMediaPlayerImpl(
+                AndroidMediaPlayerFacade.newInstance(context),
+                new PlayerListenersHolder(),
+                new MediaPlayerForwarder(),
+                loadTimeout,
+                Heart.newInstance(),
+                new Handler(Looper.getMainLooper()),
+                new CheckBufferHeartbeatCallback(),
+                VideoContainer.empty(),
+                BuggyVideoDriverPreventer.newInstance()
+        );
     }
 
     AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer,
                            PlayerListenersHolder listenersHolder,
                            MediaPlayerForwarder forwarder,
                            LoadTimeout loadTimeoutParam,
-                           Heart heart) {
+                           Heart heart,
+                           Handler handler,
+                           CheckBufferHeartbeatCallback bufferHeartbeatCallback,
+                           VideoContainer videoContainer,
+                           BuggyVideoDriverPreventer buggyVideoDriverPreventer) {
         this.mediaPlayer = mediaPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
         this.heart = heart;
+        this.handler = handler;
+        this.heartbeatCallback = bufferHeartbeatCallback;
+        this.videoContainer = videoContainer;
+        this.buggyVideoDriverPreventer = buggyVideoDriverPreventer;
         heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
-        handler = new Handler(Looper.getMainLooper());
 
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
         forwarder.bind(listenersHolder.getBufferStateListeners(), listenersHolder.getErrorListeners(), this);
@@ -76,11 +91,12 @@ public final class AndroidMediaPlayerImpl implements Player {
         forwarder.bind(listenersHolder.getInfoListeners());
 
         mediaPlayer.setOnPreparedListener(forwarder.onPreparedListener());
-        listenersHolder.addHeartbeatCallback(new CheckBufferHeartbeatCallback(forwarder.onHeartbeatListener()));
         mediaPlayer.setOnCompletionListener(forwarder.onCompletionListener());
         mediaPlayer.setOnErrorListener(forwarder.onErrorListener());
         mediaPlayer.setOnSizeChangedListener(forwarder.onSizeChangedListener());
 
+        bufferHeartbeatCallback.bind(forwarder.onHeartbeatListener());
+        listenersHolder.addHeartbeatCallback(bufferHeartbeatCallback);
         listenersHolder.addPreparedListener(new PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
@@ -204,6 +220,10 @@ public final class AndroidMediaPlayerImpl implements Player {
         }
     }
 
+    private boolean isSeeking() {
+        return !seekToPosition.equals(NO_SEEK_TO_POSITION);
+    }
+
     @Override
     public VideoDuration getMediaDuration() {
         try {
@@ -217,10 +237,6 @@ public final class AndroidMediaPlayerImpl implements Player {
     @Override
     public int getBufferPercentage() {
         return mediaPlayer.getBufferPercentage();
-    }
-
-    private boolean isSeeking() {
-        return !seekToPosition.equals(NO_SEEK_TO_POSITION);
     }
 
     @Override
@@ -242,11 +258,11 @@ public final class AndroidMediaPlayerImpl implements Player {
     public void attach(PlayerView playerView) {
         videoContainer = VideoContainer.with(playerView.getContainerView());
         mediaPlayer.setSurfaceHolderRequester(playerView.getSurfaceHolderRequester());
-        BuggyVideoDriverPreventer.newInstance(playerView.getContainerView(), this).preventVideoDriverBug();
+        buggyVideoDriverPreventer.preventVideoDriverBug(this, playerView.getContainerView());
         videoSizeChangedListener = playerView.getVideoSizeChangedListener();
         listenersHolder.addVideoSizeChangedListener(videoSizeChangedListener);
         stateChangedListener = playerView.getStateChangedListener();
-        listenersHolder.getStateChangedListeners().add(stateChangedListener);
+        listenersHolder.addStateChangedListener(stateChangedListener);
     }
 
     @Override
@@ -271,12 +287,17 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void reset() {
-        release();
+        releasePlayer();
         videoContainer.show();
     }
 
     @Override
     public void release() {
+        releasePlayer();
+        videoContainer.hide();
+    }
+
+    private void releasePlayer() {
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         listenersHolder.getPlayerReleaseListener().onPlayerPreRelease(this);
@@ -288,6 +309,5 @@ public final class AndroidMediaPlayerImpl implements Player {
         videoSizeChangedListener = null;
         stateChangedListener = null;
         heartbeatCallback = null;
-        videoContainer.hide();
     }
 }

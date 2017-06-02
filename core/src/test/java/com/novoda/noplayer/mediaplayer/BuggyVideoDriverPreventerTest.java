@@ -4,9 +4,9 @@ import android.view.View;
 
 import com.novoda.noplayer.Player;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -27,14 +27,18 @@ public class BuggyVideoDriverPreventerTest {
     @Mock
     private PlayerChecker playerChecker;
 
-    @InjectMocks
     private BuggyVideoDriverPreventer buggyVideoDriverPreventer;
+
+    @Before
+    public void setUp() {
+        buggyVideoDriverPreventer = new BuggyVideoDriverPreventer(playerChecker);
+    }
 
     @Test
     public void givenVideoDriverIsNotBuggy_whenPreventingVideoDriverBug_thenNothingHappens() {
         when(playerChecker.getPlayerType()).thenReturn(AndroidMediaPlayerType.NU);
 
-        buggyVideoDriverPreventer.preventVideoDriverBug();
+        buggyVideoDriverPreventer.preventVideoDriverBug(player, videoContainer);
 
         verifyZeroInteractions(videoContainer);
     }
@@ -43,7 +47,7 @@ public class BuggyVideoDriverPreventerTest {
     public void givenVideoDriverCanBeBuggy_whenPreventingVideoDriverBug_thenABuggyDriverLayoutListenerIsAddedToTheVideoContainer() {
         when(playerChecker.getPlayerType()).thenReturn(AndroidMediaPlayerType.AWESOME);
 
-        buggyVideoDriverPreventer.preventVideoDriverBug();
+        buggyVideoDriverPreventer.preventVideoDriverBug(player, videoContainer);
 
         verify(videoContainer).addOnLayoutChangeListener(any(OnPotentialBuggyDriverLayoutListener.class));
     }
