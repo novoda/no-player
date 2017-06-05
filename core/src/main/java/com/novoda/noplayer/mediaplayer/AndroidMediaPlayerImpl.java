@@ -16,7 +16,6 @@ import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.Timeout;
-import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
@@ -44,7 +43,6 @@ public final class AndroidMediaPlayerImpl implements Player {
     private VideoPosition seekToPosition = NO_SEEK_TO_POSITION;
     private boolean seekingWithIntentToPlay;
 
-    private VideoContainer videoContainer = VideoContainer.empty();
     private VideoSizeChangedListener videoSizeChangedListener;
     private StateChangedListener stateChangedListener;
     private CheckBufferHeartbeatCallback heartbeatCallback;
@@ -127,11 +125,8 @@ public final class AndroidMediaPlayerImpl implements Player {
     /**
      * Workaround to fix some devices (nexus 7 2013 in particular) from natively crashing the mediaplayer
      * by starting the mediaplayer before seeking it.
-     *
-     * @param initialPlayPosition
      */
     private void initialSeekWorkaround(final VideoPosition initialPlayPosition) {
-        show();
         listenersHolder.getBufferStateListeners().onBufferStarted();
         initialisePlaybackForSeeking();
         handler.postDelayed(new Runnable() {
@@ -159,7 +154,6 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void play() {
-        show();
         startBeatingHeart();
         mediaPlayer.start();
         listenersHolder.getStateChangedListeners().onVideoPlaying();
@@ -173,10 +167,6 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     private void startBeatingHeart() {
         heart.startBeatingHeart();
-    }
-
-    private void show() {
-        videoContainer.show();
     }
 
     @Override
@@ -199,7 +189,6 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void loadVideo(Uri uri, ContentType contentType) {
-        show();
         listenersHolder.getBufferStateListeners().onBufferStarted();
         mediaPlayer.prepareVideo(uri);
     }
@@ -256,7 +245,6 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void attach(PlayerView playerView) {
-        videoContainer = VideoContainer.with(playerView.getContainerView());
         mediaPlayer.setSurfaceHolderRequester(playerView.getSurfaceHolderRequester());
         BuggyVideoDriverPreventer.newInstance(playerView.getContainerView(), this).preventVideoDriverBug();
         videoSizeChangedListener = playerView.getVideoSizeChangedListener();
@@ -283,7 +271,6 @@ public final class AndroidMediaPlayerImpl implements Player {
     @Override
     public void reset() {
         release();
-        show();
     }
 
     @Override
@@ -304,6 +291,5 @@ public final class AndroidMediaPlayerImpl implements Player {
         videoSizeChangedListener = null;
         stateChangedListener = null;
         heartbeatCallback = null;
-        videoContainer.hide();
     }
 }

@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.novoda.noplayer.exoplayer.AspectRatioChangeCalculator;
 import com.novoda.notils.caster.Views;
@@ -18,7 +17,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     private final AspectRatioChangeCalculator aspectRatioChangeCalculator;
 
     private AspectRatioFrameLayout videoFrame;
-    private SimpleExoPlayerView playerView;
     private SurfaceView surfaceView;
     private SubtitleView subtitleView;
     private View shutterView;
@@ -37,12 +35,11 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
-        videoFrame = Views.findById(this, R.id.exo_content_frame);
-        playerView = Views.findById(this, R.id.simple_player_view);
-        shutterView = Views.findById(this, R.id.exo_shutter);
-        surfaceView = (SurfaceView) playerView.getVideoSurfaceView();
+        videoFrame = Views.findById(this, R.id.video_frame);
+        shutterView = Views.findById(this, R.id.shutter);
+        surfaceView = Views.findById(this, R.id.surface_view);
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
-        subtitleView = playerView.getSubtitleView();
+        subtitleView = Views.findById(this, R.id.subtitles_layout);
     }
 
     @Override
@@ -71,11 +68,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     }
 
     @Override
-    public SimpleExoPlayerView simplePlayerView() {
-        return playerView;
-    }
-
-    @Override
     public void showSubtitles() {
         subtitleView.setVisibility(VISIBLE);
     }
@@ -83,11 +75,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     @Override
     public void hideSubtitles() {
         subtitleView.setVisibility(GONE);
-    }
-
-    @Override
-    public void removeControls() {
-        playerView.setUseController(false);
     }
 
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
@@ -105,7 +92,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
         @Override
         public void onVideoPaused() {
-            //We don't care
+            // We don't care
         }
 
         @Override

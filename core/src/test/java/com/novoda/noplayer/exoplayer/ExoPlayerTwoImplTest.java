@@ -1,6 +1,7 @@
 package com.novoda.noplayer.exoplayer;
 
 import android.net.Uri;
+import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -9,11 +10,12 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.Player.StateChangedListener;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
-import com.novoda.noplayer.VideoContainer;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
@@ -31,18 +33,22 @@ import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.noplayer.player.PlayerType;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.Answer;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -92,14 +98,19 @@ public class ExoPlayerTwoImplTest {
     @Mock
     private Heart heart;
     @Mock
-    private VideoContainer videoContainer;
-    @Mock
     private Uri uri;
     @Mock
     private PlayerView playerView;
     @Mock
+    private SurfaceHolderRequester surfaceHolderRequester;
+    @Mock
+    private SurfaceHolder surfaceHolder;
+    @Mock
+    private StateChangedListener stateChangeListener;
+    @Mock
+    private Player.VideoSizeChangedListener videoSizeChangedListener;
+    @Mock
     private PlayerListenersHolder listenersHolder;
-    
     @Mock
     private ErrorListeners errorListeners;
     @Mock
@@ -123,6 +134,17 @@ public class ExoPlayerTwoImplTest {
 
     @Before
     public void setUp() {
+        given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
+        given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
+        given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                SurfaceHolderRequester.Callback callback = invocation.getArgument(0);
+                callback.onSurfaceHolderReady(surfaceHolder);
+                return null;
+            }
+        }).when(surfaceHolderRequester).requestSurfaceHolder(any(SurfaceHolderRequester.Callback.class));
         given(listenersHolder.getErrorListeners()).willReturn(errorListeners);
         given(listenersHolder.getPreparedListeners()).willReturn(preparedListeners);
         given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListeners);
@@ -140,8 +162,7 @@ public class ExoPlayerTwoImplTest {
                 exoPlayerForwarder,
                 loadTimeout,
                 trackSelector,
-                heart,
-                videoContainer
+                heart
         );
     }
 
@@ -235,63 +256,73 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenStartingPlay_thenShowsVideoContainer() {
-        player.play();
+    public void givenPlayerIsAttached_whenStartingPlay_thenStartsBeatingHeart() {
+        givenPlayerIsAttached();
 
-        verify(videoContainer).show();
-    }
-
-    @Test
-    public void whenStartingPlay_thenStartsBeatingHeart() {
         player.play();
 
         verify(heart).startBeatingHeart();
     }
 
     @Test
-    public void whenStartingPlay_thenSetsPlayWhenReadyToTrue() {
+    public void givenPlayerIsPlaying_whenSurfaceHolderIsReady_thenClearsAndSetsVideoSurfaceHolder() {
+        givenPlayerIsAttached();
+        player.play();
+
+        InOrder inOrder = inOrder(internalExoPlayer);
+        inOrder.verify(internalExoPlayer).clearVideoSurfaceHolder(surfaceHolder);
+        inOrder.verify(internalExoPlayer).setVideoSurfaceHolder(surfaceHolder);
+    }
+
+    @Test
+    public void givenPlayerIsAttached_whenStartingPlay_thenSetsPlayWhenReadyToTrue() {
+        givenPlayerIsAttached();
+
         player.play();
 
         verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
     }
 
     @Test
-    public void whenStartingPlay_thenNotifiesStateListenersThatVideoIsPlaying() {
+    public void givenPlayerIsAttached_whenStartingPlay_thenNotifiesStateListenersThatVideoIsPlaying() {
+        givenPlayerIsAttached();
+
         player.play();
 
         verify(stateChangedListeners).onVideoPlaying();
     }
 
     @Test
-    public void whenStartingPlayAtVideoPosition_thenSeeksToPosition() {
+    public void givenPlayerIsAttached_whenStartingPlayAtVideoPosition_thenSeeksToPosition() {
+        givenPlayerIsAttached();
+
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
         verify(internalExoPlayer).seekTo(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS).inMillis());
     }
 
     @Test
-    public void whenStartingPlayAtVideoPosition_thenShowsVideoContainer() {
-        player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
+    public void givenPlayerIsAttached_whenStartingPlayAtVideoPosition_thenStartsBeatingHeart() {
+        givenPlayerIsAttached();
 
-        verify(videoContainer).show();
-    }
-
-    @Test
-    public void whenStartingPlayAtVideoPosition_thenStartsBeatingHeart() {
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
         verify(heart).startBeatingHeart();
     }
 
     @Test
-    public void whenStartingPlayAtVideoPosition_thenSetsPlayWhenReadyToTrue() {
+    public void givenPlayerIsAttached_whenStartingPlayAtVideoPosition_thenSetsPlayWhenReadyToTrue() {
+        givenPlayerIsAttached();
+
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
         verify(internalExoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
     }
 
     @Test
-    public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenersThatVideoIsPlaying() {
+    public void givenPlayerIsAttached_whenStartingPlayAtVideoPosition_thenNotifiesStateListenersThatVideoIsPlaying() {
+        givenPlayerIsAttached();
+
         player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
         verify(stateChangedListeners).onVideoPlaying();
@@ -399,24 +430,10 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenReleasing_thenHidesVideoContainer() {
-        player.release();
-
-        verify(videoContainer).hide();
-    }
-
-    @Test
     public void whenLoadingVideo_thenResetsPreparedListeners() {
         player.loadVideo(uri, ANY_CONTENT_TYPE);
 
         verify(preparedListeners).reset();
-    }
-
-    @Test
-    public void whenLoadingVideo_thenShowsVideoContainer() {
-        player.loadVideo(uri, ANY_CONTENT_TYPE);
-
-        verify(videoContainer).show();
     }
 
     @Test
@@ -450,13 +467,6 @@ public class ExoPlayerTwoImplTest {
     }
 
     @Test
-    public void whenLoadingVideoWithTimeout_thenShowsVideoContainer() {
-        player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
-
-        verify(videoContainer).show();
-    }
-
-    @Test
     public void whenLoadingVideoWithTimeout_thenAddsPlayerEventListener() {
         player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
@@ -487,16 +497,18 @@ public class ExoPlayerTwoImplTest {
         assertThat(playerInformation.getVersion()).isEqualTo(ExoPlayerLibraryInfo.VERSION);
     }
 
-    @Ignore("VideoContainer is switched out in ExoPlayerTwoImpl, need to detect that it has been swapped.")
     @Test
-    public void whenAttaching_thenAddsPlayerViewToVideoContainer() {
-        player.attach(mock(PlayerView.class));
+    public void whenAttaching_thenAddsStateChangedListenerToListenersHolder() {
+        player.attach(playerView);
+
+        verify(listenersHolder).addStateChangedListener(playerView.getStateChangedListener());
     }
 
-    @Ignore("SimplePlayerView is a final class, we should probably pass something else to test this.")
     @Test
-    public void whenAttaching_thenSetsPlayerForPlayerView() {
-        player.attach(mock(PlayerView.class));
+    public void whenAttaching_thenAddsVideoSizeChangedListenerToListenersHolder() {
+        player.attach(playerView);
+
+        verify(listenersHolder).addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
     }
 
     @Test
@@ -526,5 +538,9 @@ public class ExoPlayerTwoImplTest {
         ).willReturn(mediaSource);
 
         return mediaSource;
+    }
+
+    private void givenPlayerIsAttached() {
+        player.attach(playerView);
     }
 }
