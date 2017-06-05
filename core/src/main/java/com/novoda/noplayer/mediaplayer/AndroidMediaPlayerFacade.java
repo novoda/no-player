@@ -44,7 +44,7 @@ class AndroidMediaPlayerFacade {
         return new AndroidMediaPlayerFacade(context, trackSelector);
     }
 
-    private AndroidMediaPlayerFacade(Context context, AndroidMediaPlayerAudioTrackSelector trackSelector) {
+    AndroidMediaPlayerFacade(Context context, AndroidMediaPlayerAudioTrackSelector trackSelector) {
         this.context = context;
         this.trackSelector = trackSelector;
         currentState = STATE_IDLE;
