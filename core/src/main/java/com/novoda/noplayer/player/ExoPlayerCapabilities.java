@@ -17,5 +17,4 @@ class ExoPlayerCapabilities implements PlayerCapabilities {
     public boolean supports(DrmType drmType) {
         return SUPPORTED_DRM_TYPES.contains(drmType);
     }
-
 }

@@ -23,7 +23,6 @@ public class PlayerFactory {
     private final ExoPlayerCreator exoPlayerCreator;
     private final MediaPlayerCreator mediaPlayerCreator;
 
-
     public PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
         this(context, prioritizedPlayerTypes, new ExoPlayerCreator(), new MediaPlayerCreator());
     }
@@ -93,7 +92,6 @@ public class PlayerFactory {
         UnableToCreatePlayerException(String reason) {
             super(reason);
         }
-
     }
 
     static class ExoPlayerCreator {
@@ -107,7 +105,6 @@ public class PlayerFactory {
         private RendererFactory createRendererFactory(Context context, DrmSessionCreator drmSessionCreator) {
             return new RendererFactory(context, drmSessionCreator);
         }
-
     }
 
     static class MediaPlayerCreator {
@@ -116,7 +113,5 @@ public class PlayerFactory {
             AndroidMediaPlayerFacade androidMediaPlayer = new AndroidMediaPlayerFacade(context);
             return new AndroidMediaPlayerImpl(androidMediaPlayer);
         }
-
     }
-
 }

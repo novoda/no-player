@@ -57,7 +57,6 @@ public class PlayerFactoryTest {
         }
 
         abstract PrioritizedPlayerTypes prioritizedPlayerTypes();
-
     }
 
     public static class GivenMediaPlayerPrioritized extends Base {
@@ -101,7 +100,6 @@ public class PlayerFactoryTest {
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
-
     }
 
     public static class GivenExoPlayerPlayerPrioritized extends Base {
@@ -145,7 +143,5 @@ public class PlayerFactoryTest {
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
-
     }
-
 }
