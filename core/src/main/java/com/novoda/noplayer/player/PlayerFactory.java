@@ -45,7 +45,7 @@ public class PlayerFactory {
                 return createPlayerForType(player, drmType, drmHandler);
             }
         }
-        throw UnableToCreatePlayerException.unknownDrmType(drmType);
+        throw UnableToCreatePlayerException.unhandledDrmType(drmType);
     }
 
     private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler) {
@@ -56,7 +56,7 @@ public class PlayerFactory {
                 DrmSessionCreator drmSessionCreator = createDrmSessionCreatorFor(drmType, drmHandler);
                 return exoPlayerCreator.createExoPlayer(context, drmSessionCreator);
             default:
-                throw UnableToCreatePlayerException.unknownPlayerType(playerType);
+                throw UnableToCreatePlayerException.unhandledPlayerType(playerType);
         }
     }
 
@@ -78,7 +78,7 @@ public class PlayerFactory {
 
     static class UnableToCreatePlayerException extends RuntimeException {
 
-        static UnableToCreatePlayerException unknownDrmType(DrmType drmType) {
+        static UnableToCreatePlayerException unhandledDrmType(DrmType drmType) {
             return new UnableToCreatePlayerException("Unhandled DrmType: " + drmType);
         }
 
@@ -86,7 +86,7 @@ public class PlayerFactory {
             return new UnableToCreatePlayerException("No DrmHandler for DrmType: " + drmType);
         }
 
-        static UnableToCreatePlayerException unknownPlayerType(PlayerType playerType) {
+        static UnableToCreatePlayerException unhandledPlayerType(PlayerType playerType) {
             return new UnableToCreatePlayerException("Unhandled player type: " + playerType.name());
         }
 
