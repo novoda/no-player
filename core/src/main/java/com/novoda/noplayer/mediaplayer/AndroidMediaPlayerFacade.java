@@ -187,7 +187,7 @@ class AndroidMediaPlayerFacade {
     }
 
     void start() {
-        if (isInPlaybackState()) {
+        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             if (surfaceHolderRequester == null) {
                 logPlayerNotAttachedWarning("start()");
                 return;
@@ -208,14 +208,14 @@ class AndroidMediaPlayerFacade {
     }
 
     void pause() {
-        if (isInPlaybackState() && mediaPlayer.isPlaying()) {
+        if (isPlaying()) {
             mediaPlayer.pause();
             currentState = PAUSED;
         }
     }
 
     int getDuration() {
-        if (isInPlaybackState()) {
+        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             return mediaPlayer.getDuration();
         }
 
@@ -223,20 +223,20 @@ class AndroidMediaPlayerFacade {
     }
 
     int getCurrentPosition() {
-        if (isInPlaybackState()) {
+        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             return mediaPlayer.getCurrentPosition();
         }
         return 0;
     }
 
     void seekTo(int msec) {
-        if (isInPlaybackState()) {
+        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             mediaPlayer.seekTo(msec);
         }
     }
 
     boolean isPlaying() {
-        return isInPlaybackState() && mediaPlayer.isPlaying();
+        return playbackStateChecker.isPlaying(mediaPlayer, currentState);
     }
 
     int getBufferPercentage() {
@@ -244,11 +244,6 @@ class AndroidMediaPlayerFacade {
             return currentBufferPercentage;
         }
         return 0;
-    }
-
-    private boolean isInPlaybackState() {
-        return hasPlayer()
-                && playbackStateChecker.isInPlaybackState(currentState);
     }
 
     void stop() {
