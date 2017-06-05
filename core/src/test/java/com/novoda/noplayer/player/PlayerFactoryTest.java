@@ -68,7 +68,7 @@ public class PlayerFactoryTest {
         }
 
         @Test
-        public void givenMediaPlayerPrioritized_whenCreatingPlayer_thenReturnsMediaPlayer() {
+        public void whenCreatingPlayer_thenReturnsMediaPlayer() {
             Player player = playerFactory.create();
 
             assertThat(player).isEqualTo(MEDIA_PLAYER);
@@ -112,7 +112,7 @@ public class PlayerFactoryTest {
         }
 
         @Test
-        public void givenExoPlayerPrioritized_whenCreatingPlayer_thenReturnsExoPlayer() {
+        public void whenCreatingPlayer_thenReturnsExoPlayer() {
             Player player = playerFactory.create();
 
             assertThat(player).isEqualTo(EXO_PLAYER);
