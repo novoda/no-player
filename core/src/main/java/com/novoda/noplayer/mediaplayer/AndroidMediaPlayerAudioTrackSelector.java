@@ -5,17 +5,18 @@ import android.media.MediaPlayer;
 import com.novoda.noplayer.PlayerAudioTrack;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class AndroidMediaPlayerAudioTrackSelector {
 
     private static final int NO_FORMAT = 0;
 
-    ArrayList<PlayerAudioTrack> getAudioTracks(MediaPlayer mediaPlayer) {
+    List<PlayerAudioTrack> getAudioTracks(MediaPlayer mediaPlayer) {
         if (mediaPlayer == null) {
             throw new NullPointerException("You can only call getAudioTracks() when video is prepared.");
         }
 
-        ArrayList<PlayerAudioTrack> audioTracks = new ArrayList<>();
+        List<PlayerAudioTrack> audioTracks = new ArrayList<>();
         MediaPlayer.TrackInfo[] trackInfos = mediaPlayer.getTrackInfo();
 
         for (int i = 0; i < trackInfos.length; i++) {
@@ -34,5 +35,4 @@ class AndroidMediaPlayerAudioTrackSelector {
 
         mediaPlayer.selectTrack(playerAudioTrack.groupIndex());
     }
-
 }
