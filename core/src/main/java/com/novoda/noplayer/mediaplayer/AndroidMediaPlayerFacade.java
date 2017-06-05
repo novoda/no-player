@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-final class AndroidMediaPlayerFacade {
+class AndroidMediaPlayerFacade {
 
     private static final int STATE_ERROR = -1;
     private static final int STATE_IDLE = 0;

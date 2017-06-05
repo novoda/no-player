@@ -13,24 +13,20 @@ import com.novoda.noplayer.Player;
  */
 class BuggyVideoDriverPreventer {
 
-    private final View videoContainer;
-    private final Player player;
     private final PlayerChecker playerChecker;
 
-    public static BuggyVideoDriverPreventer newInstance(View videoContainer, Player player) {
+    public static BuggyVideoDriverPreventer newInstance() {
         PlayerChecker playerChecker = PlayerChecker.newInstance();
-        return new BuggyVideoDriverPreventer(videoContainer, player, playerChecker);
+        return new BuggyVideoDriverPreventer(playerChecker);
     }
 
-    BuggyVideoDriverPreventer(View videoContainer, Player player, PlayerChecker playerChecker) {
-        this.videoContainer = videoContainer;
-        this.player = player;
+    BuggyVideoDriverPreventer(PlayerChecker playerChecker) {
         this.playerChecker = playerChecker;
     }
 
-    public void preventVideoDriverBug() {
+    void preventVideoDriverBug(Player player, View containerView) {
         if (videoDriverCanBeBuggy()) {
-            attemptToCorrectMediaPlayerStatus();
+            attemptToCorrectMediaPlayerStatus(player, containerView);
         }
     }
 
@@ -38,8 +34,8 @@ class BuggyVideoDriverPreventer {
         return playerChecker.getPlayerType() == AndroidMediaPlayerType.AWESOME;
     }
 
-    private void attemptToCorrectMediaPlayerStatus() {
-        videoContainer.addOnLayoutChangeListener(new OnPotentialBuggyDriverLayoutListener(player));
+    private void attemptToCorrectMediaPlayerStatus(Player player, View containerView) {
+        containerView.addOnLayoutChangeListener(new OnPotentialBuggyDriverLayoutListener(player));
     }
 
 }

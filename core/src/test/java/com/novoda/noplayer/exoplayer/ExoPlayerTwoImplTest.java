@@ -32,6 +32,9 @@ import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.noplayer.player.PlayerType;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -81,6 +84,8 @@ public class ExoPlayerTwoImplTest {
 
         }
     };
+    private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
+    private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -522,9 +527,10 @@ public class ExoPlayerTwoImplTest {
 
     @Test
     public void whenGettingAudioTracks_thenDelegatesToTrackSelector() {
-        player.getAudioTracks();
+        given(trackSelector.getAudioTracks()).willReturn(AUDIO_TRACKS);
+        List<PlayerAudioTrack> audioTracks = player.getAudioTracks();
 
-        verify(trackSelector).getAudioTracks();
+        assertThat(audioTracks).isEqualTo(AUDIO_TRACKS);
     }
 
     private MediaSource givenMediaSource() {
@@ -534,7 +540,7 @@ public class ExoPlayerTwoImplTest {
                 uri,
                 exoPlayerForwarder.extractorMediaSourceListener(),
                 exoPlayerForwarder.mediaSourceEventListener()
-                )
+              )
         ).willReturn(mediaSource);
 
         return mediaSource;
