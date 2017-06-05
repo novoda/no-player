@@ -16,19 +16,12 @@ import java.util.Map;
 
 class AndroidMediaPlayerFacade {
 
-    private static final int STATE_ERROR = -1;
-    private static final int STATE_IDLE = 0;
-    private static final int STATE_PREPARING = 1;
-    private static final int STATE_PREPARED = 2;
-    private static final int STATE_PLAYING = 3;
-    private static final int STATE_PAUSED = 4;
-    private static final int STATE_PLAYBACK_COMPLETED = 5;
     private static final Map<String, String> NO_HEADERS = null;
 
     private final Context context;
     private final AndroidMediaPlayerAudioTrackSelector trackSelector;
 
-    private int currentState = STATE_IDLE;
+    private PlaybackState currentState;
 
     private MediaPlayer mediaPlayer;
     private MediaPlayer.OnCompletionListener onCompletionListener;
@@ -41,13 +34,13 @@ class AndroidMediaPlayerFacade {
 
     static AndroidMediaPlayerFacade newInstance(Context context) {
         AndroidMediaPlayerAudioTrackSelector trackSelector = new AndroidMediaPlayerAudioTrackSelector();
-        return new AndroidMediaPlayerFacade(context, trackSelector);
+        return new AndroidMediaPlayerFacade(context, trackSelector, PlaybackState.IDLE);
     }
 
-    AndroidMediaPlayerFacade(Context context, AndroidMediaPlayerAudioTrackSelector trackSelector) {
+    AndroidMediaPlayerFacade(Context context, AndroidMediaPlayerAudioTrackSelector trackSelector, PlaybackState state) {
         this.context = context;
         this.trackSelector = trackSelector;
-        currentState = STATE_IDLE;
+        currentState = state;
     }
 
     void setSurfaceHolderRequester(SurfaceHolderRequester surfaceHolderRequester) {
@@ -65,7 +58,7 @@ class AndroidMediaPlayerFacade {
                 requestAudioFocus();
                 release();
                 try {
-                    currentState = STATE_PREPARING;
+                    currentState = PlaybackState.PREPARING;
                     mediaPlayer = createMediaPlayer(surfaceHolder, videoUri);
                     mediaPlayer.prepareAsync();
                 } catch (IOException | IllegalArgumentException | IllegalStateException ex) {
@@ -99,7 +92,7 @@ class AndroidMediaPlayerFacade {
 
     private void reportCreationError(Exception ex, Uri videoUri) {
         Log.w(ex, "Unable to open content: " + videoUri);
-        currentState = STATE_ERROR;
+        currentState = PlaybackState.ERROR;
         internalErrorListener.onError(mediaPlayer, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
     }
 
@@ -116,7 +109,7 @@ class AndroidMediaPlayerFacade {
     private final MediaPlayer.OnPreparedListener internalPeparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
-            currentState = STATE_PREPARED;
+            currentState = PlaybackState.PREPARED;
 
             if (onPreparedListener != null) {
                 onPreparedListener.onPrepared(mediaPlayer);
@@ -127,7 +120,7 @@ class AndroidMediaPlayerFacade {
     private final MediaPlayer.OnCompletionListener internalCompletionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
-            currentState = STATE_PLAYBACK_COMPLETED;
+            currentState = PlaybackState.COMPLETED;
             if (onCompletionListener != null) {
                 onCompletionListener.onCompletion(mediaPlayer);
             }
@@ -138,7 +131,7 @@ class AndroidMediaPlayerFacade {
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
             Log.d("Error: " + what + "," + extra);
-            currentState = STATE_ERROR;
+            currentState = PlaybackState.ERROR;
             if (onErrorListener != null) {
                 return onErrorListener.onError(mediaPlayer, what, extra);
             }
@@ -174,7 +167,7 @@ class AndroidMediaPlayerFacade {
             mediaPlayer.reset();
             mediaPlayer.release();
             mediaPlayer = null;
-            currentState = STATE_IDLE;
+            currentState = PlaybackState.IDLE;
         }
     }
 
@@ -192,7 +185,7 @@ class AndroidMediaPlayerFacade {
                 @Override
                 public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
                     mediaPlayer.setDisplay(surfaceHolder);
-                    currentState = STATE_PLAYING;
+                    currentState = PlaybackState.PLAYING;
                     mediaPlayer.start();
                 }
             });
@@ -206,7 +199,7 @@ class AndroidMediaPlayerFacade {
     void pause() {
         if (isInPlaybackState() && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-            currentState = STATE_PAUSED;
+            currentState = PlaybackState.PAUSED;
         }
     }
 
@@ -244,9 +237,7 @@ class AndroidMediaPlayerFacade {
 
     private boolean isInPlaybackState() {
         return hasPlayer()
-                && currentState != STATE_ERROR
-                && currentState != STATE_IDLE
-                && currentState != STATE_PREPARING;
+                && currentState.isInPlaybackState();
     }
 
     void stop() {
