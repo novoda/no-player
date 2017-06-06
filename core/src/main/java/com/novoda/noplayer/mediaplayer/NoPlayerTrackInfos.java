@@ -2,15 +2,15 @@ package com.novoda.noplayer.mediaplayer;
 
 import java.util.List;
 
-class TrackInfosWrapper {
+class NoPlayerTrackInfos {
 
-    private final List<TrackInfoWrapper> trackInfos;
+    private final List<NoPlayerTrackInfo> trackInfos;
 
-    TrackInfosWrapper(List<TrackInfoWrapper> trackInfos) {
+    NoPlayerTrackInfos(List<NoPlayerTrackInfo> trackInfos) {
         this.trackInfos = trackInfos;
     }
 
-    TrackInfoWrapper get(int index) {
+    NoPlayerTrackInfo get(int index) {
         return trackInfos.get(index);
     }
 
@@ -27,7 +27,7 @@ class TrackInfosWrapper {
             return false;
         }
 
-        TrackInfosWrapper that = (TrackInfosWrapper) o;
+        NoPlayerTrackInfos that = (NoPlayerTrackInfos) o;
 
         return trackInfos != null ? trackInfos.equals(that.trackInfos) : that.trackInfos == null;
     }

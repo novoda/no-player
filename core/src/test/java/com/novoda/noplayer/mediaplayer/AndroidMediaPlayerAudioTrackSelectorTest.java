@@ -37,9 +37,9 @@ public class AndroidMediaPlayerAudioTrackSelectorTest {
     private static final String NO_MIME_TYPE = "";
     private static final String ANY_LANGUAGE = "english";
 
-    private static final TrackInfoWrapper AUDIO_TRACK_INFO = mock(TrackInfoWrapper.class);
-    private static final TrackInfoWrapper VIDEO_TRACK_INFO = mock(TrackInfoWrapper.class);
-    private static final TrackInfoWrapper UNKNOWN_TRACK_INFO = mock(TrackInfoWrapper.class);
+    private static final NoPlayerTrackInfo AUDIO_TRACK_INFO = mock(NoPlayerTrackInfo.class);
+    private static final NoPlayerTrackInfo VIDEO_TRACK_INFO = mock(NoPlayerTrackInfo.class);
+    private static final NoPlayerTrackInfo UNKNOWN_TRACK_INFO = mock(NoPlayerTrackInfo.class);
 
     @Mock
     private TrackInfosFactory trackInfosFactory;
@@ -96,14 +96,14 @@ public class AndroidMediaPlayerAudioTrackSelectorTest {
         given(UNKNOWN_TRACK_INFO.type()).willReturn(MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_UNKNOWN);
         given(UNKNOWN_TRACK_INFO.language()).willReturn(ANY_LANGUAGE);
 
-        TrackInfosWrapper trackInfosWrapper = new TrackInfosWrapper(
+        NoPlayerTrackInfos noPlayerTrackInfos = new NoPlayerTrackInfos(
                 Arrays.asList(
                         VIDEO_TRACK_INFO,
                         UNKNOWN_TRACK_INFO,
                         AUDIO_TRACK_INFO
                 )
         );
-        given(trackInfosFactory.createFrom(mediaPlayer)).willReturn(trackInfosWrapper);
+        given(trackInfosFactory.createFrom(mediaPlayer)).willReturn(noPlayerTrackInfos);
     }
 
     private List<PlayerAudioTrack> expectedAudioTrack() {

@@ -7,14 +7,14 @@ import java.util.List;
 
 class TrackInfosFactory {
 
-    TrackInfosWrapper createFrom(MediaPlayer mediaPlayer) {
+    NoPlayerTrackInfos createFrom(MediaPlayer mediaPlayer) {
         MediaPlayer.TrackInfo[] mediaPlayerTrackInfos = mediaPlayer.getTrackInfo();
 
-        List<TrackInfoWrapper> trackInfos = new ArrayList<>(mediaPlayerTrackInfos.length);
+        List<NoPlayerTrackInfo> trackInfos = new ArrayList<>(mediaPlayerTrackInfos.length);
         for (MediaPlayer.TrackInfo mediaPlayerTrackInfo : mediaPlayerTrackInfos) {
-            trackInfos.add(new TrackInfoWrapper(mediaPlayerTrackInfo));
+            trackInfos.add(new NoPlayerTrackInfo(mediaPlayerTrackInfo));
         }
 
-        return new TrackInfosWrapper(trackInfos);
+        return new NoPlayerTrackInfos(trackInfos);
     }
 }

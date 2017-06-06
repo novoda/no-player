@@ -2,11 +2,11 @@ package com.novoda.noplayer.mediaplayer;
 
 import android.media.MediaPlayer;
 
-class TrackInfoWrapper {
+class NoPlayerTrackInfo {
 
     private final MediaPlayer.TrackInfo trackInfo;
 
-    TrackInfoWrapper(MediaPlayer.TrackInfo trackInfo) {
+    NoPlayerTrackInfo(MediaPlayer.TrackInfo trackInfo) {
         this.trackInfo = trackInfo;
     }
 

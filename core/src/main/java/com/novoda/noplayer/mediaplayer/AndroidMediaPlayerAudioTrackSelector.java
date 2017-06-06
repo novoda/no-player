@@ -26,10 +26,10 @@ class AndroidMediaPlayerAudioTrackSelector {
         }
 
         List<PlayerAudioTrack> audioTracks = new ArrayList<>();
-        TrackInfosWrapper trackInfos = trackInfosFactory.createFrom(mediaPlayer);
+        NoPlayerTrackInfos trackInfos = trackInfosFactory.createFrom(mediaPlayer);
 
         for (int i = 0; i < trackInfos.size(); i++) {
-            TrackInfoWrapper trackInfo = trackInfos.get(i);
+            NoPlayerTrackInfo trackInfo = trackInfos.get(i);
             if (trackInfo.type() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
                 audioTracks.add(
                         new PlayerAudioTrack(
