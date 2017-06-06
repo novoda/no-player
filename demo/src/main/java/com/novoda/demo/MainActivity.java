@@ -9,7 +9,7 @@ import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.player.PlayerFactory;
-import com.novoda.noplayer.player.PrioritisedPlayers;
+import com.novoda.noplayer.player.PrioritizedPlayerTypes;
 
 public class MainActivity extends Activity {
 
@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        player = new PlayerFactory(this, PrioritisedPlayers.prioritiseExoPlayer()).create();
+        player = new PlayerFactory(this, PrioritizedPlayerTypes.prioritizeExoPlayer()).create();
         player.addPreparedListener(new Player.PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
