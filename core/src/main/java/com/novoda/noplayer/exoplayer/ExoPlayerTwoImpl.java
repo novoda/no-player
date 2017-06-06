@@ -218,6 +218,13 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
+    public void detach(PlayerView playerView) {
+        surfaceHolderRequester = null;
+        listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
+        listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+    }
+
+    @Override
     public void selectAudioTrack(PlayerAudioTrack audioTrack) {
         exoPlayer.selectAudioTrack(audioTrack);
     }

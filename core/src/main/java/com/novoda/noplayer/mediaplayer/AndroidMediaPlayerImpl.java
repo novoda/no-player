@@ -45,8 +45,6 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     private boolean seekingWithIntentToPlay;
 
-    private VideoSizeChangedListener videoSizeChangedListener;
-    private StateChangedListener stateChangedListener;
     private CheckBufferHeartbeatCallback heartbeatCallback;
 
     public static AndroidMediaPlayerImpl newInstance(Context context) {
@@ -249,10 +247,15 @@ public final class AndroidMediaPlayerImpl implements Player {
     public void attach(PlayerView playerView) {
         mediaPlayer.setSurfaceHolderRequester(playerView.getSurfaceHolderRequester());
         buggyVideoDriverPreventer.preventVideoDriverBug(this, playerView.getContainerView());
-        videoSizeChangedListener = playerView.getVideoSizeChangedListener();
-        listenersHolder.addVideoSizeChangedListener(videoSizeChangedListener);
-        stateChangedListener = playerView.getStateChangedListener();
-        listenersHolder.addStateChangedListener(stateChangedListener);
+        listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
+    }
+
+    @Override
+    public void detach(PlayerView playerView) {
+        mediaPlayer.setSurfaceHolderRequester(null);
+        listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
+        listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
     }
 
     @Override
@@ -281,11 +284,7 @@ public final class AndroidMediaPlayerImpl implements Player {
         heart.stopBeatingHeart();
         mediaPlayer.release();
         listenersHolder.getStateChangedListeners().onVideoStopped();
-        listenersHolder.removeVideoSizeChangedListener(videoSizeChangedListener);
-        listenersHolder.removeStateChangedListener(stateChangedListener);
         listenersHolder.removeHeartbeatCallback(heartbeatCallback);
-        videoSizeChangedListener = null;
-        stateChangedListener = null;
         heartbeatCallback = null;
     }
 }

@@ -29,6 +29,8 @@ public interface Player extends PlayerState {
 
     void attach(PlayerView playerView);
 
+    void detach(PlayerView playerView);
+
     void selectAudioTrack(PlayerAudioTrack audioTrack);
 
     List<PlayerAudioTrack> getAudioTracks();
