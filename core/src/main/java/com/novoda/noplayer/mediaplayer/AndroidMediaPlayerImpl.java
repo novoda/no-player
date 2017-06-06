@@ -272,7 +272,7 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void stop() {
-        mediaPlayer.stop();
+        release();
     }
 
     @Override

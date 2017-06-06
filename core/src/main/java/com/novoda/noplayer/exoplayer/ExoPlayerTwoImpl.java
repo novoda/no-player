@@ -175,7 +175,7 @@ public class ExoPlayerTwoImpl implements Player {
 
     @Override
     public void stop() {
-        exoPlayer.stop();
+        reset();
     }
 
     @Override
