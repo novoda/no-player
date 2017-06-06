@@ -308,7 +308,6 @@ public class AndroidMediaPlayerFacadeTest {
     @Test
     public void givenMediaPlayerIsPrepared_whenStarting_thenStartsMediaPlayer() {
         givenMediaPlayerIsPrepared();
-        reset(mediaPlayer);
 
         facade.start();
 
