@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.VisibleForTesting;
 import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.PlayerAudioTrack;
@@ -99,6 +100,8 @@ class AndroidMediaPlayerFacade {
         return mediaPlayer;
     }
 
+    // TODO: Tracked in https://github.com/novoda/no-player/issues/35
+    @VisibleForTesting
     protected MediaPlayer createMediaPlayer() {
         return new MediaPlayer();
     }
