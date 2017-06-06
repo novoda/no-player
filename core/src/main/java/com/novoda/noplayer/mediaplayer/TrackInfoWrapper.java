@@ -6,15 +6,15 @@ class TrackInfoWrapper {
 
     private final MediaPlayer.TrackInfo trackInfo;
 
-    public TrackInfoWrapper(MediaPlayer.TrackInfo trackInfo) {
+    TrackInfoWrapper(MediaPlayer.TrackInfo trackInfo) {
         this.trackInfo = trackInfo;
     }
 
-    public int type() {
+    int type() {
         return trackInfo.getTrackType();
     }
 
-    public String language() {
+    String language() {
         return trackInfo.getLanguage();
     }
 }

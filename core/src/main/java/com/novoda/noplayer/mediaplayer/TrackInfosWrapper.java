@@ -1,23 +1,12 @@
 package com.novoda.noplayer.mediaplayer;
 
-import android.media.MediaPlayer;
-
-import java.util.ArrayList;
 import java.util.List;
 
 class TrackInfosWrapper {
 
     private final List<TrackInfoWrapper> trackInfos;
 
-    static TrackInfosWrapper from(MediaPlayer.TrackInfo[] mediaPlayerTrackInfos) {
-        List<TrackInfoWrapper> trackInfos = new ArrayList<>(mediaPlayerTrackInfos.length);
-        for (MediaPlayer.TrackInfo mediaPlayerTrackInfo : mediaPlayerTrackInfos) {
-            trackInfos.add(new TrackInfoWrapper(mediaPlayerTrackInfo));
-        }
-        return new TrackInfosWrapper(trackInfos);
-    }
-
-    private TrackInfosWrapper(List<TrackInfoWrapper> trackInfos) {
+    TrackInfosWrapper(List<TrackInfoWrapper> trackInfos) {
         this.trackInfos = trackInfos;
     }
 

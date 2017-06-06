@@ -11,13 +11,19 @@ class AndroidMediaPlayerAudioTrackSelector {
 
     private static final int NO_FORMAT = 0;
 
+    private final TrackInfosFactory trackInfosFactory;
+
+    AndroidMediaPlayerAudioTrackSelector(TrackInfosFactory trackInfosFactory) {
+        this.trackInfosFactory = trackInfosFactory;
+    }
+
     List<PlayerAudioTrack> getAudioTracks(MediaPlayer mediaPlayer) {
         if (mediaPlayer == null) {
             throw new NullPointerException("You can only call getAudioTracks() when video is prepared.");
         }
 
         List<PlayerAudioTrack> audioTracks = new ArrayList<>();
-        TrackInfosWrapper trackInfos = TrackInfosWrapper.from(mediaPlayer.getTrackInfo());
+        TrackInfosWrapper trackInfos = trackInfosFactory.createFrom(mediaPlayer);
 
         for (int i = 0; i < trackInfos.size(); i++) {
             TrackInfoWrapper trackInfo = trackInfos.get(i);
