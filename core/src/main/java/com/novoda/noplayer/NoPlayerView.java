@@ -96,7 +96,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         }
 
         @Override
-        public void onVideoReleased() {
+        public void onVideoStopped() {
             shutterView.setVisibility(VISIBLE);
         }
     };

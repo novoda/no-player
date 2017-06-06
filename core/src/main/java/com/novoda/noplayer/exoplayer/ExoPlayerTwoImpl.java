@@ -83,7 +83,7 @@ public class ExoPlayerTwoImpl implements Player {
 
         heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
-        forwarder.bind(listenersHolder.getCompletionListeners());
+        forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
         forwarder.bind(listenersHolder.getErrorListeners(), this);
         forwarder.bind(listenersHolder.getBufferStateListeners());
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
@@ -184,7 +184,7 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     private void reset() {
-        listenersHolder.getStateChangedListeners().onVideoReleased();
+        listenersHolder.getStateChangedListeners().onVideoStopped();
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         exoPlayer.release();

@@ -78,6 +78,17 @@ public class ExoPlayerTwoImplTest {
         public ExpectedException thrown = ExpectedException.none();
 
         @Test
+        public void whenCreatingExoplayerTwoImpl_thenBindsListenersToForwarder() {
+            verify(forwarder).bind(preparedListeners, player);
+            verify(forwarder).bind(completionListeners, stateChangedListeners);
+            verify(forwarder).bind(errorListeners, player);
+            verify(forwarder).bind(bufferStateListeners);
+            verify(forwarder).bind(videoSizeChangedListeners);
+            verify(forwarder).bind(bitrateChangedListeners);
+            verify(forwarder).bind(infoListeners);
+        }
+
+        @Test
         public void whenLoadingVideo_thenBindsHeart() {
 
             player.loadVideo(uri, ANY_CONTENT_TYPE);
@@ -147,7 +158,7 @@ public class ExoPlayerTwoImplTest {
 
             player.release();
 
-            verify(stateChangedListeners).onVideoReleased();
+            verify(stateChangedListeners).onVideoStopped();
         }
 
         @Test
@@ -179,7 +190,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, ANY_CONTENT_TYPE);
 
-            verify(exoPlayerFacade).loadVideo(uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
+            verify(exoPlayerFacade).loadVideo(uri, ANY_CONTENT_TYPE, forwarder);
         }
 
         @Test
@@ -187,7 +198,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
+            verify(exoPlayerFacade).loadVideo(uri, ANY_CONTENT_TYPE, forwarder);
         }
 
         @Test
@@ -357,7 +368,7 @@ public class ExoPlayerTwoImplTest {
         public MockitoRule mockitoRule = MockitoJUnit.rule();
 
         @Mock
-        ExoPlayerForwarder exoPlayerForwarder;
+        ExoPlayerForwarder forwarder;
         @Mock
         LoadTimeout loadTimeout;
         @Mock
@@ -423,7 +434,7 @@ public class ExoPlayerTwoImplTest {
             player = new ExoPlayerTwoImpl(
                     exoPlayerFacade,
                     listenersHolder,
-                    exoPlayerForwarder,
+                    forwarder,
                     loadTimeout,
                     heart
             );

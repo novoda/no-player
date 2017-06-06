@@ -70,7 +70,7 @@ public interface Player extends PlayerState {
 
         void onVideoPaused();
 
-        void onVideoReleased();
+        void onVideoStopped();
     }
 
     interface BitrateChangedListener {

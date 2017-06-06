@@ -82,7 +82,7 @@ public final class AndroidMediaPlayerImpl implements Player {
 
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
         forwarder.bind(listenersHolder.getBufferStateListeners(), listenersHolder.getErrorListeners(), this);
-        forwarder.bind(listenersHolder.getCompletionListeners());
+        forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
         forwarder.bind(listenersHolder.getInfoListeners());
 
@@ -280,7 +280,7 @@ public final class AndroidMediaPlayerImpl implements Player {
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         mediaPlayer.release();
-        listenersHolder.getStateChangedListeners().onVideoReleased();
+        listenersHolder.getStateChangedListeners().onVideoStopped();
         listenersHolder.removeVideoSizeChangedListener(videoSizeChangedListener);
         listenersHolder.removeStateChangedListener(stateChangedListener);
         listenersHolder.removeHeartbeatCallback(heartbeatCallback);

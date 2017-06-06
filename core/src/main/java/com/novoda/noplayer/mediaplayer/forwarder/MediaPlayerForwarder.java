@@ -9,6 +9,7 @@ import com.novoda.noplayer.listeners.CompletionListeners;
 import com.novoda.noplayer.listeners.ErrorListeners;
 import com.novoda.noplayer.listeners.InfoListeners;
 import com.novoda.noplayer.listeners.PreparedListeners;
+import com.novoda.noplayer.listeners.StateChangedListeners;
 import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 import com.novoda.noplayer.mediaplayer.CheckBufferHeartbeatCallback;
 
@@ -38,8 +39,9 @@ public class MediaPlayerForwarder {
         errorListener.add(new ErrorForwarder(bufferStateListeners, errorListeners, player));
     }
 
-    public void bind(CompletionListeners completionListeners) {
+    public void bind(CompletionListeners completionListeners, final StateChangedListeners stateChangedListeners) {
         completionListener.add(new CompletionForwarder(completionListeners));
+        completionListener.add(new CompletionStateChangedForwarder(stateChangedListeners));
     }
 
     public void bind(VideoSizeChangedListeners videoSizeChangedListeners) {

@@ -8,6 +8,7 @@ import com.novoda.noplayer.listeners.CompletionListeners;
 import com.novoda.noplayer.listeners.ErrorListeners;
 import com.novoda.noplayer.listeners.InfoListeners;
 import com.novoda.noplayer.listeners.PreparedListeners;
+import com.novoda.noplayer.listeners.StateChangedListeners;
 import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 
 public class ExoPlayerForwarder {
@@ -44,8 +45,9 @@ public class ExoPlayerForwarder {
         exoPlayerEventListener.add(new OnPrepareForwarder(preparedListeners, playerState));
     }
 
-    public void bind(CompletionListeners completionListeners) {
+    public void bind(CompletionListeners completionListeners, StateChangedListeners stateChangedListeners) {
         exoPlayerEventListener.add(new OnCompletionForwarder(completionListeners));
+        exoPlayerEventListener.add(new OnCompletionStateChangedForwarder(stateChangedListeners));
     }
 
     public void bind(ErrorListeners errorListeners, Player player) {

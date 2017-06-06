@@ -149,7 +149,7 @@ public class AndroidMediaPlayerImplTest {
     public void whenCreatingAndroidMediaPlayerImpl_thenBindsListenersToForwarder() {
         verify(forwarder).bind(preparedListeners, player);
         verify(forwarder).bind(bufferStateListeners, errorListeners, player);
-        verify(forwarder).bind(completionListeners);
+        verify(forwarder).bind(completionListeners, stateChangedListeners);
         verify(forwarder).bind(videoSizeChangedListeners);
         verify(forwarder).bind(infoListeners);
     }
@@ -551,7 +551,7 @@ public class AndroidMediaPlayerImplTest {
     public void whenReleasingPlayer_thenNotifiesStateChangedListenerOfVideoReleased() {
         player.release();
 
-        verify(stateChangedListeners).onVideoReleased();
+        verify(stateChangedListeners).onVideoStopped();
     }
 
     @Test

@@ -32,9 +32,9 @@ public class StateChangedListeners implements Player.StateChangedListener {
     }
 
     @Override
-    public void onVideoReleased() {
+    public void onVideoStopped() {
         for (Player.StateChangedListener listener : listeners) {
-            listener.onVideoReleased();
+            listener.onVideoStopped();
         }
     }
 }
