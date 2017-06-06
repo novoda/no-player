@@ -184,7 +184,6 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     private void reset() {
-        listenersHolder.getPlayerReleaseListener().onPlayerPreRelease(this);
         listenersHolder.getStateChangedListeners().onVideoReleased();
         loadTimeout.cancel();
         heart.stopBeatingHeart();

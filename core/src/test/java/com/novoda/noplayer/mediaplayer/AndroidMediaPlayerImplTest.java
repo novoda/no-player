@@ -108,8 +108,6 @@ public class AndroidMediaPlayerImplTest {
     @Mock
     private StateChangedListeners stateChangedListeners;
     @Mock
-    private Player.PreReleaseListener playerReleaseListener;
-    @Mock
     private MediaPlayer.OnPreparedListener onPreparedListener;
     @Mock
     private MediaPlayer.OnCompletionListener onCompletionListener;
@@ -132,7 +130,6 @@ public class AndroidMediaPlayerImplTest {
         given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListeners);
         given(listenersHolder.getInfoListeners()).willReturn(infoListeners);
         given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListeners);
-        given(listenersHolder.getPlayerReleaseListener()).willReturn(playerReleaseListener);
 
         given(forwarder.onPreparedListener()).willReturn(onPreparedListener);
         given(forwarder.onCompletionListener()).willReturn(onCompletionListener);
@@ -541,13 +538,6 @@ public class AndroidMediaPlayerImplTest {
         player.release();
 
         verify(heart).stopBeatingHeart();
-    }
-
-    @Test
-    public void whenReleasingPlayer_thenNotifiesPlayerReleaseListenerOfPlayerPreReleases() {
-        player.release();
-
-        verify(playerReleaseListener).onPlayerPreRelease(player);
     }
 
     @Test

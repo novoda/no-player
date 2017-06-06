@@ -279,7 +279,6 @@ public final class AndroidMediaPlayerImpl implements Player {
     public void release() {
         loadTimeout.cancel();
         heart.stopBeatingHeart();
-        listenersHolder.getPlayerReleaseListener().onPlayerPreRelease(this);
         mediaPlayer.release();
         listenersHolder.getStateChangedListeners().onVideoReleased();
         listenersHolder.removeVideoSizeChangedListener(videoSizeChangedListener);

@@ -143,14 +143,6 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenReleasing_thenNotifiesReleaseListenersOfPlayerPreRelease() {
-
-            player.release();
-
-            verify(preReleaseListener).onPlayerPreRelease(player);
-        }
-
-        @Test
         public void whenReleasing_thenNotifiesStateStateListenersThatVideoHasReleased() {
 
             player.release();
@@ -401,8 +393,6 @@ public class ExoPlayerTwoImplTest {
         @Mock
         BitrateChangedListeners bitrateChangedListeners;
         @Mock
-        Player.PreReleaseListener preReleaseListener;
-        @Mock
         ExoPlayerFacade exoPlayerFacade;
 
         Player player;
@@ -429,7 +419,6 @@ public class ExoPlayerTwoImplTest {
             given(listenersHolder.getInfoListeners()).willReturn(infoListeners);
             given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListeners);
             given(listenersHolder.getBitrateChangedListeners()).willReturn(bitrateChangedListeners);
-            given(listenersHolder.getPlayerReleaseListener()).willReturn(preReleaseListener);
 
             player = new ExoPlayerTwoImpl(
                     exoPlayerFacade,

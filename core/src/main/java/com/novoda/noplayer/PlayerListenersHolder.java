@@ -23,8 +23,6 @@ public class PlayerListenersHolder {
 
     private final HeartbeatCallbacks<Player> heartbeatCallbacks;
 
-    private Player.PreReleaseListener playerReleaseListener = Player.PreReleaseListener.NULL_IMPL;
-
     public PlayerListenersHolder() {
         errorListeners = new ErrorListeners();
         preparedListeners = new PreparedListeners();
@@ -93,10 +91,6 @@ public class PlayerListenersHolder {
         bitrateChangedListeners.remove(bitrateChangedListener);
     }
 
-    public void setPreReleaseListener(Player.PreReleaseListener playerReleaseListener) {
-        this.playerReleaseListener = playerReleaseListener;
-    }
-
     public void addHeartbeatCallback(Heart.Heartbeat.Callback<Player> callback) {
         heartbeatCallbacks.registerCallback(callback);
     }
@@ -135,10 +129,6 @@ public class PlayerListenersHolder {
 
     public InfoListeners getInfoListeners() {
         return infoListeners;
-    }
-
-    public Player.PreReleaseListener getPlayerReleaseListener() {
-        return playerReleaseListener;
     }
 
     public HeartbeatCallbacks<Player> getHeartbeatCallbacks() {

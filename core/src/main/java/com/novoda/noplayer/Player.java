@@ -35,18 +35,6 @@ public interface Player extends PlayerState {
 
     PlayerListenersHolder getListenersHolder();
 
-    interface PreReleaseListener {
-
-        PreReleaseListener NULL_IMPL = new PreReleaseListener() {
-            @Override
-            public void onPlayerPreRelease(Player player) {
-                // No-op
-            }
-        };
-
-        void onPlayerPreRelease(Player player);
-    }
-
     interface PlayerError {
 
         String getType();
