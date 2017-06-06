@@ -10,9 +10,9 @@ import java.util.List;
 class AndroidMediaPlayerAudioTrackSelector {
 
     private static final int NO_FORMAT = 0;
-    private static final String NO_MIME_TYPE = "";
     private static final int NO_CHANNELS = -1;
     private static final int NO_FREQUENCY = -1;
+    private static final String NO_MIME_TYPE = "";
 
     private final TrackInfosFactory trackInfosFactory;
 
