@@ -4,7 +4,6 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.annotation.VisibleForTesting;
 import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.PlayerAudioTrack;
@@ -16,9 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.IDLE;
-import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.PAUSED;
-import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.PLAYING;
+import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.*;
 
 class AndroidMediaPlayerFacade {
 
@@ -39,20 +36,27 @@ class AndroidMediaPlayerFacade {
     private MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
 
     private SurfaceHolderRequester surfaceHolderRequester;
+    private MediaPlayerCreator mediaPlayerCreator;
 
     static AndroidMediaPlayerFacade newInstance(Context context) {
         TrackInfosFactory trackInfosFactory = new TrackInfosFactory();
         AndroidMediaPlayerAudioTrackSelector trackSelector = new AndroidMediaPlayerAudioTrackSelector(trackInfosFactory);
         PlaybackStateChecker playbackStateChecker = new PlaybackStateChecker();
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        return new AndroidMediaPlayerFacade(context, audioManager, trackSelector, playbackStateChecker);
+        MediaPlayerCreator mediaPlayerCreator = new MediaPlayerCreator();
+        return new AndroidMediaPlayerFacade(context, audioManager, trackSelector, playbackStateChecker, mediaPlayerCreator);
     }
 
-    AndroidMediaPlayerFacade(Context context, AudioManager audioManager, AndroidMediaPlayerAudioTrackSelector trackSelector, PlaybackStateChecker playbackStateChecker) {
+    AndroidMediaPlayerFacade(Context context,
+                             AudioManager audioManager,
+                             AndroidMediaPlayerAudioTrackSelector trackSelector,
+                             PlaybackStateChecker playbackStateChecker,
+                             MediaPlayerCreator mediaPlayerCreator) {
         this.context = context;
         this.audioManager = audioManager;
         this.trackSelector = trackSelector;
         this.playbackStateChecker = playbackStateChecker;
+        this.mediaPlayerCreator = mediaPlayerCreator;
     }
 
     void setSurfaceHolderRequester(SurfaceHolderRequester surfaceHolderRequester) {
@@ -84,7 +88,7 @@ class AndroidMediaPlayerFacade {
     }
 
     private MediaPlayer createAndBindMediaPlayer(SurfaceHolder surfaceHolder, Uri videoUri) throws IOException {
-        MediaPlayer mediaPlayer = createMediaPlayer();
+        MediaPlayer mediaPlayer = mediaPlayerCreator.createMediaPlayer();
         mediaPlayer.setOnPreparedListener(internalPreparedListener);
         mediaPlayer.setOnVideoSizeChangedListener(internalSizeChangedListener);
         mediaPlayer.setOnCompletionListener(internalCompletionListener);
@@ -98,12 +102,6 @@ class AndroidMediaPlayerFacade {
         currentBufferPercentage = 0;
 
         return mediaPlayer;
-    }
-
-    // TODO: Tracked in https://github.com/novoda/no-player/issues/35
-    @VisibleForTesting
-    protected MediaPlayer createMediaPlayer() {
-        return new MediaPlayer();
     }
 
     private void reportCreationError(Exception ex, Uri videoUri) {

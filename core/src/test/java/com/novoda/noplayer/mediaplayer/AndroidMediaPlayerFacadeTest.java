@@ -68,6 +68,8 @@ public class AndroidMediaPlayerFacadeTest {
     @Mock
     private PlaybackStateChecker playbackStateChecker;
     @Mock
+    private MediaPlayerCreator mediaPlayerCreator;
+    @Mock
     private MediaPlayer mediaPlayer;
     @Mock
     private AudioManager audioManager;
@@ -90,18 +92,9 @@ public class AndroidMediaPlayerFacadeTest {
     public void setUp() {
         setShowLogs(false);
 
-        facade = new AndroidMediaPlayerFacade(
-                context,
-                audioManager,
-                trackSelector,
-                playbackStateChecker
-        ) {
-            @Override
-            protected MediaPlayer createMediaPlayer() {
-                return mediaPlayer;
-            }
-        };
+        facade = new AndroidMediaPlayerFacade(context, audioManager, trackSelector, playbackStateChecker, mediaPlayerCreator);
 
+        given(mediaPlayerCreator.createMediaPlayer()).willReturn(mediaPlayer);
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class))).willReturn(IS_IN_PLAYBACK_STATE);
 
         doAnswer(new Answer<Void>() {
