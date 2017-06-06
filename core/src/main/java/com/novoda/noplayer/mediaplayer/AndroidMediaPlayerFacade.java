@@ -4,31 +4,32 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.VisibleForTesting;
 import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
+import com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.notils.logger.simple.Log;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.IDLE;
+import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.PAUSED;
+import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.PLAYING;
+
 class AndroidMediaPlayerFacade {
 
-    private static final int STATE_ERROR = -1;
-    private static final int STATE_IDLE = 0;
-    private static final int STATE_PREPARING = 1;
-    private static final int STATE_PREPARED = 2;
-    private static final int STATE_PLAYING = 3;
-    private static final int STATE_PAUSED = 4;
-    private static final int STATE_PLAYBACK_COMPLETED = 5;
     private static final Map<String, String> NO_HEADERS = null;
 
     private final Context context;
+    private final AudioManager audioManager;
     private final AndroidMediaPlayerAudioTrackSelector trackSelector;
+    private final PlaybackStateChecker playbackStateChecker;
 
-    private int currentState = STATE_IDLE;
+    private PlaybackState currentState = IDLE;
 
     private MediaPlayer mediaPlayer;
     private MediaPlayer.OnCompletionListener onCompletionListener;
@@ -41,13 +42,16 @@ class AndroidMediaPlayerFacade {
 
     static AndroidMediaPlayerFacade newInstance(Context context) {
         AndroidMediaPlayerAudioTrackSelector trackSelector = new AndroidMediaPlayerAudioTrackSelector();
-        return new AndroidMediaPlayerFacade(context, trackSelector);
+        PlaybackStateChecker playbackStateChecker = new PlaybackStateChecker();
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        return new AndroidMediaPlayerFacade(context, audioManager, trackSelector, playbackStateChecker);
     }
 
-    private AndroidMediaPlayerFacade(Context context, AndroidMediaPlayerAudioTrackSelector trackSelector) {
+    AndroidMediaPlayerFacade(Context context, AudioManager audioManager, AndroidMediaPlayerAudioTrackSelector trackSelector, PlaybackStateChecker playbackStateChecker) {
         this.context = context;
+        this.audioManager = audioManager;
         this.trackSelector = trackSelector;
-        currentState = STATE_IDLE;
+        this.playbackStateChecker = playbackStateChecker;
     }
 
     void setSurfaceHolderRequester(SurfaceHolderRequester surfaceHolderRequester) {
@@ -65,8 +69,8 @@ class AndroidMediaPlayerFacade {
                 requestAudioFocus();
                 release();
                 try {
-                    currentState = STATE_PREPARING;
-                    mediaPlayer = createMediaPlayer(surfaceHolder, videoUri);
+                    currentState = PlaybackState.PREPARING;
+                    mediaPlayer = createAndBindMediaPlayer(surfaceHolder, videoUri);
                     mediaPlayer.prepareAsync();
                 } catch (IOException | IllegalArgumentException | IllegalStateException ex) {
                     reportCreationError(ex, videoUri);
@@ -76,12 +80,11 @@ class AndroidMediaPlayerFacade {
     }
 
     private void requestAudioFocus() {
-        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 
-    private MediaPlayer createMediaPlayer(SurfaceHolder surfaceHolder, Uri videoUri) throws IOException {
-        MediaPlayer mediaPlayer = new MediaPlayer();
+    private MediaPlayer createAndBindMediaPlayer(SurfaceHolder surfaceHolder, Uri videoUri) throws IOException {
+        MediaPlayer mediaPlayer = createMediaPlayer();
         mediaPlayer.setOnPreparedListener(internalPeparedListener);
         mediaPlayer.setOnVideoSizeChangedListener(internalSizeChangedListener);
         mediaPlayer.setOnCompletionListener(internalCompletionListener);
@@ -97,9 +100,15 @@ class AndroidMediaPlayerFacade {
         return mediaPlayer;
     }
 
+    // TODO: Tracked in https://github.com/novoda/no-player/issues/35
+    @VisibleForTesting
+    protected MediaPlayer createMediaPlayer() {
+        return new MediaPlayer();
+    }
+
     private void reportCreationError(Exception ex, Uri videoUri) {
         Log.w(ex, "Unable to open content: " + videoUri);
-        currentState = STATE_ERROR;
+        currentState = PlaybackState.ERROR;
         internalErrorListener.onError(mediaPlayer, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
     }
 
@@ -116,7 +125,7 @@ class AndroidMediaPlayerFacade {
     private final MediaPlayer.OnPreparedListener internalPeparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
-            currentState = STATE_PREPARED;
+            currentState = PlaybackState.PREPARED;
 
             if (onPreparedListener != null) {
                 onPreparedListener.onPrepared(mediaPlayer);
@@ -127,7 +136,7 @@ class AndroidMediaPlayerFacade {
     private final MediaPlayer.OnCompletionListener internalCompletionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
-            currentState = STATE_PLAYBACK_COMPLETED;
+            currentState = PlaybackState.COMPLETED;
             if (onCompletionListener != null) {
                 onCompletionListener.onCompletion(mediaPlayer);
             }
@@ -138,7 +147,7 @@ class AndroidMediaPlayerFacade {
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
             Log.d("Error: " + what + "," + extra);
-            currentState = STATE_ERROR;
+            currentState = PlaybackState.ERROR;
             if (onErrorListener != null) {
                 return onErrorListener.onError(mediaPlayer, what, extra);
             }
@@ -174,7 +183,7 @@ class AndroidMediaPlayerFacade {
             mediaPlayer.reset();
             mediaPlayer.release();
             mediaPlayer = null;
-            currentState = STATE_IDLE;
+            currentState = PlaybackState.IDLE;
         }
     }
 
@@ -183,7 +192,7 @@ class AndroidMediaPlayerFacade {
     }
 
     void start() {
-        if (isInPlaybackState()) {
+        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             if (surfaceHolderRequester == null) {
                 logPlayerNotAttachedWarning("start()");
                 return;
@@ -192,7 +201,7 @@ class AndroidMediaPlayerFacade {
                 @Override
                 public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
                     mediaPlayer.setDisplay(surfaceHolder);
-                    currentState = STATE_PLAYING;
+                    currentState = PLAYING;
                     mediaPlayer.start();
                 }
             });
@@ -204,14 +213,14 @@ class AndroidMediaPlayerFacade {
     }
 
     void pause() {
-        if (isInPlaybackState() && mediaPlayer.isPlaying()) {
+        if (isPlaying()) {
             mediaPlayer.pause();
-            currentState = STATE_PAUSED;
+            currentState = PAUSED;
         }
     }
 
     int getDuration() {
-        if (isInPlaybackState()) {
+        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             return mediaPlayer.getDuration();
         }
 
@@ -219,20 +228,20 @@ class AndroidMediaPlayerFacade {
     }
 
     int getCurrentPosition() {
-        if (isInPlaybackState()) {
+        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             return mediaPlayer.getCurrentPosition();
         }
         return 0;
     }
 
     void seekTo(int msec) {
-        if (isInPlaybackState()) {
+        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             mediaPlayer.seekTo(msec);
         }
     }
 
     boolean isPlaying() {
-        return isInPlaybackState() && mediaPlayer.isPlaying();
+        return playbackStateChecker.isPlaying(mediaPlayer, currentState);
     }
 
     int getBufferPercentage() {
@@ -240,13 +249,6 @@ class AndroidMediaPlayerFacade {
             return currentBufferPercentage;
         }
         return 0;
-    }
-
-    private boolean isInPlaybackState() {
-        return hasPlayer()
-                && currentState != STATE_ERROR
-                && currentState != STATE_IDLE
-                && currentState != STATE_PREPARING;
     }
 
     void stop() {
