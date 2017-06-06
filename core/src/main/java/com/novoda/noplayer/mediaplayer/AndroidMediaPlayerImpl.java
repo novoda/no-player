@@ -270,7 +270,7 @@ public final class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public PlayerListenersHolder getListenersHolder() {
+    public PlayerListenersHolder getListeners() {
         return listenersHolder;
     }
 

@@ -235,7 +235,7 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public PlayerListenersHolder getListenersHolder() {
+    public PlayerListenersHolder getListeners() {
         return listenersHolder;
     }
 }
