@@ -45,7 +45,11 @@ import org.mockito.junit.MockitoRule;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class AndroidMediaPlayerImplTest {
 
@@ -520,69 +524,77 @@ public class AndroidMediaPlayerImplTest {
     }
 
     @Test
-    public void whenStoppingPlayer_thenStopsMediaPlayer() {
+    public void whenStopping_thenPlayerResourcesAreReleased_andNotListeners() {
+
         player.stop();
 
-        verify(mediaPlayer).stop();
-    }
-
-    @Test
-    public void whenReleasingPlayer_thenCancelsTimeout() {
-        player.release();
-
+        verify(stateChangedListeners).onVideoStopped();
         verify(loadTimeout).cancel();
-    }
-
-    @Test
-    public void whenReleasingPlayer_thenStopsBeatingHeart() {
-        player.release();
-
         verify(heart).stopBeatingHeart();
-    }
-
-    @Test
-    public void whenReleasingPlayer_thenReleasesMediaPlayer() {
-        player.release();
-
         verify(mediaPlayer).release();
+        verify(listenersHolder, never()).clear();
     }
 
     @Test
-    public void whenReleasingPlayer_thenNotifiesStateChangedListenerOfVideoReleased() {
+    public void whenReleasing_thenPlayerResourcesAreReleased() {
+
         player.release();
 
         verify(stateChangedListeners).onVideoStopped();
+        verify(loadTimeout).cancel();
+        verify(heart).stopBeatingHeart();
+        verify(mediaPlayer).release();
+        verify(listenersHolder).clear();
     }
 
     @Test
-    public void givenPlayerIsAttached_whenReleasingPlayer_thenRemovesVideoSizeChangedListener() {
-        PlayerView playerView = mock(PlayerView.class);
-        Player.VideoSizeChangedListener videoSizeChangedListener = mock(Player.VideoSizeChangedListener.class);
-        given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
-        player.attach(playerView);
+    public void givenPlayerHasPlayedVideo_whenLoadingVideo_thenPlayerIsReleased_andNotListeners() {
+        given(mediaPlayer.hasPlayedContent()).willReturn(true);
 
-        player.release();
+        player.loadVideo(URI, ContentType.HLS);
 
-        verify(listenersHolder).removeVideoSizeChangedListener(videoSizeChangedListener);
+        verify(stateChangedListeners).onVideoStopped();
+        verify(loadTimeout).cancel();
+        verify(heart).stopBeatingHeart();
+        verify(mediaPlayer).release();
+        verify(listenersHolder, never()).clear();
     }
 
     @Test
-    public void givenPlayerIsAttached_whenReleasingPlayer_thenRemovesStateChangedListener() {
-        PlayerView playerView = mock(PlayerView.class);
-        Player.StateChangedListener stateChangedListener = mock(Player.StateChangedListener.class);
-        given(playerView.getStateChangedListener()).willReturn(stateChangedListener);
-        player.attach(playerView);
+    public void givenPlayerHasPlayedVideo_whenLoadingVideoWithTimeout_thenPlayerResourcesAreReleased_andNotListeners() {
+        given(mediaPlayer.hasPlayedContent()).willReturn(true);
 
-        player.release();
+        player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-        verify(listenersHolder).removeStateChangedListener(stateChangedListener);
+        verify(stateChangedListeners).onVideoStopped();
+        verify(loadTimeout).cancel();
+        verify(heart).stopBeatingHeart();
+        verify(mediaPlayer).release();
+        verify(listenersHolder, never()).clear();
     }
 
     @Test
-    public void whenReleasingPlayer_thenRemovesHearbeatCallback() {
-        player.release();
+    public void givenPlayerHasNotPlayedVideo_whenLoadingVideo_thenPlayerResourcesAreNotReleased() {
+        given(mediaPlayer.hasPlayedContent()).willReturn(false);
 
-        verify(listenersHolder).removeHeartbeatCallback(bufferHeartbeatCallback);
+        player.loadVideo(URI, ContentType.HLS);
+
+        verify(stateChangedListeners, never()).onVideoStopped();
+        verify(loadTimeout, never()).cancel();
+        verify(heart, never()).stopBeatingHeart();
+        verify(mediaPlayer, never()).release();
+    }
+
+    @Test
+    public void givenPlayerHasNotPlayedVideo_whenLoadingVideoWithTimeout_thenPlayerResourcesAreNotReleased() {
+        given(mediaPlayer.hasPlayedContent()).willReturn(false);
+
+        player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+
+        verify(stateChangedListeners, never()).onVideoStopped();
+        verify(loadTimeout, never()).cancel();
+        verify(heart, never()).stopBeatingHeart();
+        verify(mediaPlayer, never()).release();
     }
 
     private VideoPosition givenPositionThatDiffersFromPlayheadPosition() {
@@ -597,5 +609,4 @@ public class AndroidMediaPlayerImplTest {
         inOrder.verify(mediaPlayer).pause();
         inOrder.verifyNoMoreInteractions();
     }
-
 }

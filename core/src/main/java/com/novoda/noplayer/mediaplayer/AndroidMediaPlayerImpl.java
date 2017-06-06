@@ -8,6 +8,7 @@ import android.os.Looper;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
+import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
@@ -189,6 +190,9 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void loadVideo(Uri uri, ContentType contentType) {
+        if (mediaPlayer.hasPlayedContent()) {
+            reset();
+        }
         listenersHolder.getBufferStateListeners().onBufferStarted();
         mediaPlayer.prepareVideo(uri);
     }
@@ -270,21 +274,25 @@ public final class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public PlayerListenersHolder getListeners() {
+    public Listeners getListeners() {
         return listenersHolder;
     }
 
     @Override
     public void stop() {
-        release();
+        reset();
     }
 
     @Override
     public void release() {
+        reset();
+        listenersHolder.clear();
+    }
+
+    private void reset() {
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         mediaPlayer.release();
         listenersHolder.getStateChangedListeners().onVideoStopped();
-        listenersHolder.removeHeartbeatCallback(bufferHeartbeatCallback);
     }
 }

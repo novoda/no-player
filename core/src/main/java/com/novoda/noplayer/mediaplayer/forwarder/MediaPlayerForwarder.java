@@ -29,7 +29,7 @@ public class MediaPlayerForwarder {
         videoSizeChangedListener = new VideoSizeChangedListener();
     }
 
-    public void bind(PreparedListeners preparedListeners, final PlayerState playerState) {
+    public void bind(PreparedListeners preparedListeners, PlayerState playerState) {
         preparedListener.add(new OnPreparedForwarder(preparedListeners, playerState));
     }
 
@@ -39,7 +39,7 @@ public class MediaPlayerForwarder {
         errorListener.add(new ErrorForwarder(bufferStateListeners, errorListeners, player));
     }
 
-    public void bind(CompletionListeners completionListeners, final StateChangedListeners stateChangedListeners) {
+    public void bind(CompletionListeners completionListeners, StateChangedListeners stateChangedListeners) {
         completionListener.add(new CompletionForwarder(completionListeners));
         completionListener.add(new CompletionStateChangedForwarder(stateChangedListeners));
     }
@@ -48,7 +48,7 @@ public class MediaPlayerForwarder {
         videoSizeChangedListener.add(new VideoSizeChangedForwarder(videoSizeChangedListeners));
     }
 
-    public void bind(final InfoListeners infoListeners) {
+    public void bind(InfoListeners infoListeners) {
         preparedListener.add(new OnPreparedInfoForwarder(infoListeners));
         heartBeatListener.add(new BufferInfoForwarder(infoListeners));
         completionListener.add(new CompletionInfoForwarder(infoListeners));

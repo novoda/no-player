@@ -187,10 +187,6 @@ class AndroidMediaPlayerFacade {
         }
     }
 
-    private boolean hasPlayer() {
-        return mediaPlayer != null;
-    }
-
     void start() {
         if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             if (surfaceHolderRequester == null) {
@@ -267,5 +263,13 @@ class AndroidMediaPlayerFacade {
 
     void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener) {
         mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
+    }
+
+    public boolean hasPlayedContent() {
+        return hasPlayer();
+    }
+
+    private boolean hasPlayer() {
+        return mediaPlayer != null;
     }
 }
