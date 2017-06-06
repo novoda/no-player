@@ -17,12 +17,12 @@ class AndroidMediaPlayerAudioTrackSelector {
         }
 
         List<PlayerAudioTrack> audioTracks = new ArrayList<>();
-        MediaPlayer.TrackInfo[] trackInfos = mediaPlayer.getTrackInfo();
+        TrackInfosWrapper trackInfos = TrackInfosWrapper.from(mediaPlayer.getTrackInfo());
 
-        for (int i = 0; i < trackInfos.length; i++) {
-            MediaPlayer.TrackInfo trackInfo = trackInfos[i];
-            if (trackInfo.getTrackType() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
-                audioTracks.add(new PlayerAudioTrack(i, NO_FORMAT, String.valueOf(trackInfo.hashCode()), trackInfo.getLanguage(), "", -1, -1));
+        for (int i = 0; i < trackInfos.size(); i++) {
+            TrackInfoWrapper trackInfo = trackInfos.get(i);
+            if (trackInfo.type() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
+                audioTracks.add(new PlayerAudioTrack(i, NO_FORMAT, String.valueOf(trackInfo.hashCode()), trackInfo.language(), "", -1, -1));
             }
         }
         return audioTracks;
