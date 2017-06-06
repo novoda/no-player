@@ -256,6 +256,7 @@ public final class AndroidMediaPlayerImpl implements Player {
         mediaPlayer.setSurfaceHolderRequester(null);
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        buggyVideoDriverPreventer.clear(playerView.getContainerView());
     }
 
     @Override

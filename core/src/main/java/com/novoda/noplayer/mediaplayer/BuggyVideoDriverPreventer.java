@@ -8,12 +8,14 @@ import com.novoda.noplayer.Player;
  * The intent for this component is to workaround a buggy video driver affecting AwesomePlayer on Nexus 5.
  * After inserting the headphones the screen goes black, causing layout changes, after recovering
  * from the freeze subsequent calls to {@link android.media.MediaPlayer#pause()} are ignored, the internal status machine got corrupted.
- *
+ * <p>
  * It can be workaround by forcing {@link android.media.MediaPlayer#start()} when it was already playing.
  */
 class BuggyVideoDriverPreventer {
 
     private final PlayerChecker playerChecker;
+
+    private OnPotentialBuggyDriverLayoutListener preventerListener;
 
     public static BuggyVideoDriverPreventer newInstance() {
         PlayerChecker playerChecker = PlayerChecker.newInstance();
@@ -35,7 +37,12 @@ class BuggyVideoDriverPreventer {
     }
 
     private void attemptToCorrectMediaPlayerStatus(Player player, View containerView) {
-        containerView.addOnLayoutChangeListener(new OnPotentialBuggyDriverLayoutListener(player));
+        preventerListener = new OnPotentialBuggyDriverLayoutListener(player);
+        containerView.addOnLayoutChangeListener(preventerListener);
     }
 
+    public void clear(View containerView) {
+        containerView.removeOnLayoutChangeListener(preventerListener);
+        preventerListener = null;
+    }
 }
