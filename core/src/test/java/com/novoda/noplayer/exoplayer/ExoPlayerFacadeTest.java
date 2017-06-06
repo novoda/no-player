@@ -57,7 +57,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenResetting_thenReleasesUnderlyingPlayer() {
 
-            facade.reset();
+            facade.release();
 
             verify(exoPlayer, never()).release();
         }
@@ -170,7 +170,7 @@ public class ExoPlayerFacadeTest {
 
         @Test
         public void whenResetting_thenReleasesUnderlyingPlayer() {
-            facade.reset();
+            facade.release();
 
             verify(exoPlayer).release();
         }

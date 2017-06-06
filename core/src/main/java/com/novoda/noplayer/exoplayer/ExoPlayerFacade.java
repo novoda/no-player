@@ -75,7 +75,7 @@ class ExoPlayerFacade {
         exoPlayer.seekTo(position.inMillis());
     }
 
-    public void reset() {
+    public void release() {
         if (exoPlayer != null) {
             exoPlayer.release();
             exoPlayer = null;
