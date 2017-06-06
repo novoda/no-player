@@ -10,6 +10,9 @@ import java.util.List;
 class AndroidMediaPlayerAudioTrackSelector {
 
     private static final int NO_FORMAT = 0;
+    private static final String NO_MIME_TYPE = "";
+    private static final int NO_CHANNELS = -1;
+    private static final int NO_FREQUENCY = -1;
 
     private final TrackInfosFactory trackInfosFactory;
 
@@ -28,7 +31,16 @@ class AndroidMediaPlayerAudioTrackSelector {
         for (int i = 0; i < trackInfos.size(); i++) {
             TrackInfoWrapper trackInfo = trackInfos.get(i);
             if (trackInfo.type() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
-                audioTracks.add(new PlayerAudioTrack(i, NO_FORMAT, String.valueOf(trackInfo.hashCode()), trackInfo.language(), "", -1, -1));
+                audioTracks.add(
+                        new PlayerAudioTrack(
+                                i,
+                                NO_FORMAT,
+                                String.valueOf(trackInfo.hashCode()),
+                                trackInfo.language(),
+                                NO_MIME_TYPE,
+                                NO_CHANNELS,
+                                NO_FREQUENCY)
+                );
             }
         }
         return audioTracks;
