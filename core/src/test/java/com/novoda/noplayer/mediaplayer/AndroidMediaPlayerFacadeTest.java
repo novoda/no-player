@@ -94,6 +94,7 @@ public class AndroidMediaPlayerFacadeTest {
 
         facade = new AndroidMediaPlayerFacade(
                 context,
+                audioManager,
                 trackSelector,
                 playbackStateChecker
         ) {
@@ -103,7 +104,6 @@ public class AndroidMediaPlayerFacadeTest {
             }
         };
 
-        given(context.getSystemService(Context.AUDIO_SERVICE)).willReturn(audioManager);
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class))).willReturn(IS_IN_PLAYBACK_STATE);
 
         doAnswer(new Answer<Void>() {

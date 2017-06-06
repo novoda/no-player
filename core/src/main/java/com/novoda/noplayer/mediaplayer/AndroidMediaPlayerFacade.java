@@ -24,6 +24,7 @@ class AndroidMediaPlayerFacade {
     private static final Map<String, String> NO_HEADERS = null;
 
     private final Context context;
+    private final AudioManager audioManager;
     private final AndroidMediaPlayerAudioTrackSelector trackSelector;
     private final PlaybackStateChecker playbackStateChecker;
 
@@ -41,11 +42,13 @@ class AndroidMediaPlayerFacade {
     static AndroidMediaPlayerFacade newInstance(Context context) {
         AndroidMediaPlayerAudioTrackSelector trackSelector = new AndroidMediaPlayerAudioTrackSelector();
         PlaybackStateChecker playbackStateChecker = new PlaybackStateChecker();
-        return new AndroidMediaPlayerFacade(context, trackSelector, playbackStateChecker);
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        return new AndroidMediaPlayerFacade(context, audioManager, trackSelector, playbackStateChecker);
     }
 
-    AndroidMediaPlayerFacade(Context context, AndroidMediaPlayerAudioTrackSelector trackSelector, PlaybackStateChecker playbackStateChecker) {
+    AndroidMediaPlayerFacade(Context context, AudioManager audioManager, AndroidMediaPlayerAudioTrackSelector trackSelector, PlaybackStateChecker playbackStateChecker) {
         this.context = context;
+        this.audioManager = audioManager;
         this.trackSelector = trackSelector;
         this.playbackStateChecker = playbackStateChecker;
     }
@@ -76,8 +79,7 @@ class AndroidMediaPlayerFacade {
     }
 
     private void requestAudioFocus() {
-        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 
     private MediaPlayer createAndBindMediaPlayer(SurfaceHolder surfaceHolder, Uri videoUri) throws IOException {
