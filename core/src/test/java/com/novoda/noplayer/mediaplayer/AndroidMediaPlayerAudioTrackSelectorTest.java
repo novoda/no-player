@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import static com.novoda.noplayer.mediaplayer.ExceptionMatcher.matches;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -57,7 +58,7 @@ public class AndroidMediaPlayerAudioTrackSelectorTest {
 
     @Test
     public void givenNullMediaPlayer_whenGettingAudioTracks_thenThrowsNullPointer() {
-        thrown.expect(ExceptionMatcher.message("You can only call getAudioTracks() when video is prepared."));
+        thrown.expect(ExceptionMatcher.matches("You can only call getAudioTracks() when video is prepared.", NullPointerException.class));
 
         trackSelector.getAudioTracks(null);
     }
@@ -73,7 +74,7 @@ public class AndroidMediaPlayerAudioTrackSelectorTest {
 
     @Test
     public void givenNullMediaPlayer_whenSelectingAudioTrack_thenThrowsNullPointer() {
-        thrown.expect(ExceptionMatcher.message("You can only call selectAudioTrack() when video is prepared."));
+        thrown.expect(matches("You can only call selectAudioTrack() when video is prepared.", NullPointerException.class));
 
         trackSelector.selectAudioTrack(null, mock(PlayerAudioTrack.class));
     }
