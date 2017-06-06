@@ -114,4 +114,8 @@ class ExoPlayerFacade {
     public List<PlayerAudioTrack> getAudioTracks() {
         return trackSelector.getAudioTracks();
     }
+
+    public boolean hasPlayedContent() {
+        return exoPlayer != null;
+    }
 }

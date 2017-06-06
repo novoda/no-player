@@ -174,17 +174,16 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public void reset() {
-        // TODO: Reset the player, so that it can be used by another video source.
-    }
-
-    @Override
     public void stop() {
         exoPlayer.stop();
     }
 
     @Override
     public void release() {
+        reset();
+    }
+
+    private void reset() {
         listenersHolder.getPlayerReleaseListener().onPlayerPreRelease(this);
         listenersHolder.getStateChangedListeners().onVideoReleased();
         loadTimeout.cancel();
@@ -194,9 +193,9 @@ public class ExoPlayerTwoImpl implements Player {
 
     @Override
     public void loadVideo(Uri uri, ContentType contentType) {
-//        if (exoPlayer.hasPlayedContent()) {
-//            reset();
-//        }
+        if (exoPlayer.hasPlayedContent()) {
+            reset();
+        }
         listenersHolder.getPreparedListeners().resetPreparedState();
         exoPlayer.loadVideo(uri, contentType, forwarder);
     }

@@ -17,8 +17,6 @@ public interface Player extends PlayerState {
 
     void seekTo(VideoPosition position);
 
-    void reset();
-
     void stop();
 
     void release();
