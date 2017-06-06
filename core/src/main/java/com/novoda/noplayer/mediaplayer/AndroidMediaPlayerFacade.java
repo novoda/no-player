@@ -61,8 +61,7 @@ class AndroidMediaPlayerFacade {
 
     void prepareVideo(final Uri videoUri) {
         if (surfaceHolderRequester == null) {
-            logPlayerNotAttachedWarning("prepareVideo()");
-            return;
+            throw new IllegalStateException("Must set a SurfaceHolderRequester before preparing video");
         }
         surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
             @Override
@@ -86,7 +85,7 @@ class AndroidMediaPlayerFacade {
 
     private MediaPlayer createAndBindMediaPlayer(SurfaceHolder surfaceHolder, Uri videoUri) throws IOException {
         MediaPlayer mediaPlayer = createMediaPlayer();
-        mediaPlayer.setOnPreparedListener(internalPeparedListener);
+        mediaPlayer.setOnPreparedListener(internalPreparedListener);
         mediaPlayer.setOnVideoSizeChangedListener(internalSizeChangedListener);
         mediaPlayer.setOnCompletionListener(internalCompletionListener);
         mediaPlayer.setOnErrorListener(internalErrorListener);
@@ -117,20 +116,21 @@ class AndroidMediaPlayerFacade {
         @Override
         public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
             if (onSizeChangedListener == null) {
-                return;
+                throw new IllegalStateException("Should bind a OnVideoSizeChangedListener. Cannot forward events.");
             }
             onSizeChangedListener.onVideoSizeChanged(mp, width, height);
         }
     };
 
-    private final MediaPlayer.OnPreparedListener internalPeparedListener = new MediaPlayer.OnPreparedListener() {
+    private final MediaPlayer.OnPreparedListener internalPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
             currentState = PlaybackState.PREPARED;
 
-            if (onPreparedListener != null) {
-                onPreparedListener.onPrepared(mediaPlayer);
+            if (onPreparedListener == null) {
+                throw new IllegalStateException("Should bind a OnPreparedListener. Cannot forward events.");
             }
+            onPreparedListener.onPrepared(mediaPlayer);
         }
     };
 
@@ -138,9 +138,10 @@ class AndroidMediaPlayerFacade {
         @Override
         public void onCompletion(MediaPlayer mp) {
             currentState = PlaybackState.COMPLETED;
-            if (onCompletionListener != null) {
-                onCompletionListener.onCompletion(mediaPlayer);
+            if (onCompletionListener == null) {
+                throw new IllegalStateException("Should bind a OnCompletionListener. Cannot forward events.");
             }
+            onCompletionListener.onCompletion(mediaPlayer);
         }
     };
 
@@ -149,10 +150,10 @@ class AndroidMediaPlayerFacade {
         public boolean onError(MediaPlayer mp, int what, int extra) {
             Log.d("Error: " + what + "," + extra);
             currentState = PlaybackState.ERROR;
-            if (onErrorListener != null) {
-                return onErrorListener.onError(mediaPlayer, what, extra);
+            if (onErrorListener == null) {
+                throw new IllegalStateException("Should bind a OnErrorListener. Cannot forward events.");
             }
-            return true;
+            return onErrorListener.onError(mediaPlayer, what, extra);
         }
     };
 
@@ -195,8 +196,7 @@ class AndroidMediaPlayerFacade {
     void start() {
         if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             if (surfaceHolderRequester == null) {
-                logPlayerNotAttachedWarning("start()");
-                return;
+                throw new IllegalStateException("Must set a SurfaceHolderRequester before starting video");
             }
             surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
                 @Override
@@ -207,10 +207,6 @@ class AndroidMediaPlayerFacade {
                 }
             });
         }
-    }
-
-    private void logPlayerNotAttachedWarning(String action) {
-        Log.w(String.format("Attempt to %s the video has been ignored because the Player has not been attached to a PlayerView", action));
     }
 
     void pause() {
