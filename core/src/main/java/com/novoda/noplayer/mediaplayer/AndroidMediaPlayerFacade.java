@@ -41,7 +41,8 @@ class AndroidMediaPlayerFacade {
     private SurfaceHolderRequester surfaceHolderRequester;
 
     static AndroidMediaPlayerFacade newInstance(Context context) {
-        AndroidMediaPlayerAudioTrackSelector trackSelector = new AndroidMediaPlayerAudioTrackSelector();
+        TrackInfosFactory trackInfosFactory = new TrackInfosFactory();
+        AndroidMediaPlayerAudioTrackSelector trackSelector = new AndroidMediaPlayerAudioTrackSelector(trackInfosFactory);
         PlaybackStateChecker playbackStateChecker = new PlaybackStateChecker();
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         return new AndroidMediaPlayerFacade(context, audioManager, trackSelector, playbackStateChecker);
