@@ -17,6 +17,10 @@ public class BufferStateListeners implements Player.BufferStateListener {
         listeners.remove(listener);
     }
 
+    public void clear() {
+        listeners.clear();
+    }
+
     @Override
     public void onBufferStarted() {
         for (Player.BufferStateListener listener : listeners) {
@@ -30,5 +34,4 @@ public class BufferStateListeners implements Player.BufferStateListener {
             listener.onBufferCompleted();
         }
     }
-
 }

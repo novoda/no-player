@@ -17,6 +17,10 @@ public class CompletionListeners implements Player.CompletionListener {
         listeners.remove(listener);
     }
 
+    public void clear() {
+        listeners.clear();
+    }
+
     @Override
     public void onCompletion() {
         for (Player.CompletionListener listener : listeners) {

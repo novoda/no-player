@@ -1,7 +1,7 @@
 package com.novoda.noplayer.listeners;
 
-import com.novoda.noplayer.Player;
 import com.novoda.noplayer.Bitrate;
+import com.novoda.noplayer.Player;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -16,6 +16,10 @@ public class BitrateChangedListeners implements Player.BitrateChangedListener {
 
     public void remove(Player.BitrateChangedListener listener) {
         listeners.remove(listener);
+    }
+
+    public void clear() {
+        listeners.clear();
     }
 
     @Override

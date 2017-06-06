@@ -17,6 +17,10 @@ public class VideoSizeChangedListeners implements Player.VideoSizeChangedListene
         listeners.remove(listener);
     }
 
+    public void clear() {
+        listeners.clear();
+    }
+
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         for (Player.VideoSizeChangedListener listener : listeners) {

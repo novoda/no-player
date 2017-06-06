@@ -30,9 +30,9 @@ public class PlayerListenersHolder implements Listeners {
         completionListeners = new CompletionListeners();
         stateChangedListeners = new StateChangedListeners();
         infoListeners = new InfoListeners();
-        heartbeatCallbacks = new HeartbeatCallbacks<>();
         videoSizeChangedListeners = new VideoSizeChangedListeners();
         bitrateChangedListeners = new BitrateChangedListeners();
+        heartbeatCallbacks = new HeartbeatCallbacks<>();
     }
 
     @Override
@@ -168,5 +168,17 @@ public class PlayerListenersHolder implements Listeners {
     @Override
     public BitrateChangedListeners getBitrateChangedListeners() {
         return bitrateChangedListeners;
+    }
+
+    public void clear() {
+        errorListeners.clear();
+        preparedListeners.clear();
+        bufferStateListeners.clear();
+        completionListeners.clear();
+        stateChangedListeners.clear();
+        infoListeners.clear();
+        videoSizeChangedListeners.clear();
+        bitrateChangedListeners.clear();
+        heartbeatCallbacks.clear();
     }
 }

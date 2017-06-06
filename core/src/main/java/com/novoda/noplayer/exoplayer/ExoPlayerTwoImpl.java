@@ -181,6 +181,7 @@ public class ExoPlayerTwoImpl implements Player {
     @Override
     public void release() {
         reset();
+        listenersHolder.clear();
     }
 
     private void reset() {

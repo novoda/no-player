@@ -20,6 +20,10 @@ public class PreparedListeners implements Player.PreparedListener {
         listeners.remove(listener);
     }
 
+    public void clear() {
+        listeners.clear();
+    }
+
     @Override
     public void onPrepared(PlayerState playerState) {
         if (hasNotPreviouslyPrepared()) {
