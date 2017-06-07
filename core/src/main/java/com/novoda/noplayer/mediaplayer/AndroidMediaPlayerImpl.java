@@ -40,10 +40,8 @@ public final class AndroidMediaPlayerImpl implements Player {
     private final PlayerListenersHolder listenersHolder;
     private final LoadTimeout loadTimeout;
     private final BuggyVideoDriverPreventer buggyVideoDriverPreventer;
-    private final CheckBufferHeartbeatCallback bufferHeartbeatCallback;
 
     private int videoWidth;
-
     private int videoHeight;
     private VideoPosition seekToPosition = NO_SEEK_TO_POSITION;
 
@@ -77,7 +75,6 @@ public final class AndroidMediaPlayerImpl implements Player {
         this.loadTimeout = loadTimeoutParam;
         this.heart = heart;
         this.handler = handler;
-        this.bufferHeartbeatCallback = bufferHeartbeatCallback;
         this.buggyVideoDriverPreventer = buggyVideoDriverPreventer;
         heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
 
@@ -92,9 +89,9 @@ public final class AndroidMediaPlayerImpl implements Player {
         mediaPlayer.setOnErrorListener(forwarder.onErrorListener());
         mediaPlayer.setOnSizeChangedListener(forwarder.onSizeChangedListener());
 
-        this.bufferHeartbeatCallback.bind(forwarder.onHeartbeatListener());
+        bufferHeartbeatCallback.bind(forwarder.onHeartbeatListener());
 
-        listenersHolder.addHeartbeatCallback(this.bufferHeartbeatCallback);
+        listenersHolder.addHeartbeatCallback(bufferHeartbeatCallback);
         listenersHolder.addPreparedListener(new PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
