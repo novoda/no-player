@@ -242,6 +242,22 @@ public class ExoPlayerTwoImplTest {
 
             assertThat(isPlaying).isFalse();
         }
+
+        @Test
+        public void whenDetachingPlayerView_thenRemovesVideoSizeChangedListener() {
+
+            player.detach(playerView);
+
+            verify(listenersHolder).removeVideoSizeChangedListener(videoSizeChangedListener);
+        }
+
+        @Test
+        public void whenDetachingPlayerView_thenRemovesStateChangedListener() {
+
+            player.detach(playerView);
+
+            verify(listenersHolder).removeStateChangedListener(stateChangeListener);
+        }
     }
 
     public static class GivenAttachedAndVideoIsLoaded extends Base {
