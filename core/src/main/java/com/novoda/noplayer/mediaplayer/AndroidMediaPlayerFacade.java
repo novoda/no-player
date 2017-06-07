@@ -168,11 +168,10 @@ class AndroidMediaPlayerFacade {
     }
 
     void start(SurfaceHolder surfaceHolder) {
-        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
-            mediaPlayer.setDisplay(surfaceHolder);
-            currentState = PLAYING;
-            mediaPlayer.start();
-        }
+        assertIsInPlaybackState();
+        mediaPlayer.setDisplay(surfaceHolder);
+        currentState = PLAYING;
+        mediaPlayer.start();
     }
 
     void pause() {
@@ -183,24 +182,18 @@ class AndroidMediaPlayerFacade {
     }
 
     int getDuration() {
-        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
-            return mediaPlayer.getDuration();
-        }
-
-        return -1;
+        assertIsInPlaybackState();
+        return mediaPlayer.getDuration();
     }
 
     int getCurrentPosition() {
-        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
-            return mediaPlayer.getCurrentPosition();
-        }
-        return 0;
+        assertIsInPlaybackState();
+        return mediaPlayer.getCurrentPosition();
     }
 
     void seekTo(int msec) {
-        if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
-            mediaPlayer.seekTo(msec);
-        }
+        assertIsInPlaybackState();
+        mediaPlayer.seekTo(msec);
     }
 
     boolean isPlaying() {
@@ -208,28 +201,34 @@ class AndroidMediaPlayerFacade {
     }
 
     int getBufferPercentage() {
-        if (hasPlayer()) {
-            return currentBufferPercentage;
-        }
-        return 0;
+        assertIsInPlaybackState();
+        return currentBufferPercentage;
     }
 
     void stop() {
-        if (hasPlayer()) {
-            mediaPlayer.stop();
-        }
+        assertIsInPlaybackState();
+        mediaPlayer.stop();
     }
 
     List<PlayerAudioTrack> getAudioTracks() {
+        assertIsInPlaybackState();
         return trackSelector.getAudioTracks(mediaPlayer);
     }
 
     void selectAudioTrack(PlayerAudioTrack playerAudioTrack) {
+        assertIsInPlaybackState();
         trackSelector.selectAudioTrack(mediaPlayer, playerAudioTrack);
     }
 
     void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener) {
+        assertIsInPlaybackState();
         mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
+    }
+
+    private void assertIsInPlaybackState() {
+        if (!playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
+            throw new IllegalStateException("Video must be loaded and not in an error state before trying to interact with the player");
+        }
     }
 
     public boolean hasPlayedContent() {
