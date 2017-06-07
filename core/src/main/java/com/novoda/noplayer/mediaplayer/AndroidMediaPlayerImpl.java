@@ -86,10 +86,12 @@ public final class AndroidMediaPlayerImpl implements Player {
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
         forwarder.bind(listenersHolder.getInfoListeners());
 
-        mediaPlayer.setOnPreparedListener(forwarder.onPreparedListener());
-        mediaPlayer.setOnCompletionListener(forwarder.onCompletionListener());
-        mediaPlayer.setOnErrorListener(forwarder.onErrorListener());
-        mediaPlayer.setOnSizeChangedListener(forwarder.onSizeChangedListener());
+        mediaPlayer.setListeners(
+                forwarder.onPreparedListener(),
+                forwarder.onCompletionListener(),
+                forwarder.onErrorListener(),
+                forwarder.onSizeChangedListener()
+        );
 
         bufferHeartbeatCallback.bind(forwarder.onHeartbeatListener());
         listenersHolder.addHeartbeatCallback(bufferHeartbeatCallback);

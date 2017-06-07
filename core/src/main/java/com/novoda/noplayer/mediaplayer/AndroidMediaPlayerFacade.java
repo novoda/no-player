@@ -33,7 +33,7 @@ class AndroidMediaPlayerFacade {
     private MediaPlayer.OnPreparedListener onPreparedListener;
     private int currentBufferPercentage;
     private MediaPlayer.OnErrorListener onErrorListener;
-    private MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
+    private MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener;
 
     private SurfaceHolderRequester surfaceHolderRequester;
     private MediaPlayerCreator mediaPlayerCreator;
@@ -113,10 +113,10 @@ class AndroidMediaPlayerFacade {
     private final MediaPlayer.OnVideoSizeChangedListener internalSizeChangedListener = new MediaPlayer.OnVideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-            if (onSizeChangedListener == null) {
+            if (onVideoSizeChangedListener == null) {
                 throw new IllegalStateException("Should bind a OnVideoSizeChangedListener. Cannot forward events.");
             }
-            onSizeChangedListener.onVideoSizeChanged(mp, width, height);
+            onVideoSizeChangedListener.onVideoSizeChanged(mp, width, height);
         }
     };
 
@@ -162,20 +162,14 @@ class AndroidMediaPlayerFacade {
         }
     };
 
-    void setOnPreparedListener(MediaPlayer.OnPreparedListener listener) {
-        onPreparedListener = listener;
-    }
-
-    void setOnCompletionListener(MediaPlayer.OnCompletionListener listener) {
-        onCompletionListener = listener;
-    }
-
-    void setOnErrorListener(MediaPlayer.OnErrorListener listener) {
-        onErrorListener = listener;
-    }
-
-    void setOnSizeChangedListener(MediaPlayer.OnVideoSizeChangedListener listener) {
-        onSizeChangedListener = listener;
+    void setListeners(MediaPlayer.OnPreparedListener onPreparedListener,
+                      MediaPlayer.OnCompletionListener onCompletionListener,
+                      MediaPlayer.OnErrorListener onErrorListener,
+                      MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener) {
+        this.onPreparedListener = onPreparedListener;
+        this.onCompletionListener = onCompletionListener;
+        this.onErrorListener = onErrorListener;
+        this.onVideoSizeChangedListener = onVideoSizeChangedListener;
     }
 
     void release() {
