@@ -10,6 +10,15 @@ import java.util.List;
 class AndroidMediaPlayerAudioTrackSelector {
 
     private static final int NO_FORMAT = 0;
+    private static final int NO_CHANNELS = -1;
+    private static final int NO_FREQUENCY = -1;
+    private static final String NO_MIME_TYPE = "";
+
+    private final TrackInfosFactory trackInfosFactory;
+
+    AndroidMediaPlayerAudioTrackSelector(TrackInfosFactory trackInfosFactory) {
+        this.trackInfosFactory = trackInfosFactory;
+    }
 
     List<PlayerAudioTrack> getAudioTracks(MediaPlayer mediaPlayer) {
         if (mediaPlayer == null) {
@@ -17,12 +26,21 @@ class AndroidMediaPlayerAudioTrackSelector {
         }
 
         List<PlayerAudioTrack> audioTracks = new ArrayList<>();
-        MediaPlayer.TrackInfo[] trackInfos = mediaPlayer.getTrackInfo();
+        NoPlayerTrackInfos trackInfos = trackInfosFactory.createFrom(mediaPlayer);
 
-        for (int i = 0; i < trackInfos.length; i++) {
-            MediaPlayer.TrackInfo trackInfo = trackInfos[i];
-            if (trackInfo.getTrackType() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
-                audioTracks.add(new PlayerAudioTrack(i, NO_FORMAT, String.valueOf(trackInfo.hashCode()), trackInfo.getLanguage(), "", -1, -1));
+        for (int i = 0; i < trackInfos.size(); i++) {
+            NoPlayerTrackInfo trackInfo = trackInfos.get(i);
+            if (trackInfo.type() == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
+                audioTracks.add(
+                        new PlayerAudioTrack(
+                                i,
+                                NO_FORMAT,
+                                String.valueOf(trackInfo.hashCode()),
+                                trackInfo.language(),
+                                NO_MIME_TYPE,
+                                NO_CHANNELS,
+                                NO_FREQUENCY)
+                );
             }
         }
         return audioTracks;
