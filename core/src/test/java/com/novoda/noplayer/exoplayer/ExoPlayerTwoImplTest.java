@@ -155,35 +155,15 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenReleasing_thenNotifiesStateStateListenersThatVideoHasReleased() {
+        public void whenReleasing_thenPlayerResourcesAreReleased() {
 
             player.release();
 
             verify(stateChangedListeners).onVideoStopped();
-        }
-
-        @Test
-        public void whenReleasing_thenCancelsLoadTimeout() {
-
-            player.release();
-
             verify(loadTimeout).cancel();
-        }
-
-        @Test
-        public void whenReleasing_thenStopsBeatingHeart() {
-
-            player.release();
-
             verify(heart).stopBeatingHeart();
-        }
-
-        @Test
-        public void whenReleasing_thenResetsFacade() {
-
-            player.release();
-
             verify(exoPlayerFacade).release();
+            verify(listenersHolder).clear();
         }
 
         @Test
