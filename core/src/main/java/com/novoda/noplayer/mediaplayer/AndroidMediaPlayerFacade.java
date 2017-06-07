@@ -4,21 +4,19 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.annotation.VisibleForTesting;
 import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState;
+import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.notils.logger.simple.Log;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.IDLE;
-import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.PAUSED;
-import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.PLAYING;
+import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.*;
 
 class AndroidMediaPlayerFacade {
 
@@ -32,27 +30,34 @@ class AndroidMediaPlayerFacade {
     private PlaybackState currentState = IDLE;
 
     private MediaPlayer mediaPlayer;
-    private MediaPlayer.OnCompletionListener onCompletionListener;
-    private MediaPlayer.OnPreparedListener onPreparedListener;
+    private MediaPlayer.OnCompletionListener onCompletionForwarder;
+    private MediaPlayer.OnPreparedListener onPreparedForwarder;
     private int currentBufferPercentage;
-    private MediaPlayer.OnErrorListener onErrorListener;
-    private MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
+    private MediaPlayer.OnErrorListener onErrorForwarder;
+    private MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedForwarder;
 
     private SurfaceHolderRequester surfaceHolderRequester;
+    private MediaPlayerCreator mediaPlayerCreator;
 
     static AndroidMediaPlayerFacade newInstance(Context context) {
         TrackInfosFactory trackInfosFactory = new TrackInfosFactory();
         AndroidMediaPlayerAudioTrackSelector trackSelector = new AndroidMediaPlayerAudioTrackSelector(trackInfosFactory);
         PlaybackStateChecker playbackStateChecker = new PlaybackStateChecker();
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        return new AndroidMediaPlayerFacade(context, audioManager, trackSelector, playbackStateChecker);
+        MediaPlayerCreator mediaPlayerCreator = new MediaPlayerCreator();
+        return new AndroidMediaPlayerFacade(context, audioManager, trackSelector, playbackStateChecker, mediaPlayerCreator);
     }
 
-    AndroidMediaPlayerFacade(Context context, AudioManager audioManager, AndroidMediaPlayerAudioTrackSelector trackSelector, PlaybackStateChecker playbackStateChecker) {
+    AndroidMediaPlayerFacade(Context context,
+                             AudioManager audioManager,
+                             AndroidMediaPlayerAudioTrackSelector trackSelector,
+                             PlaybackStateChecker playbackStateChecker,
+                             MediaPlayerCreator mediaPlayerCreator) {
         this.context = context;
         this.audioManager = audioManager;
         this.trackSelector = trackSelector;
         this.playbackStateChecker = playbackStateChecker;
+        this.mediaPlayerCreator = mediaPlayerCreator;
     }
 
     void setSurfaceHolderRequester(SurfaceHolderRequester surfaceHolderRequester) {
@@ -61,8 +66,7 @@ class AndroidMediaPlayerFacade {
 
     void prepareVideo(final Uri videoUri) {
         if (surfaceHolderRequester == null) {
-            logPlayerNotAttachedWarning("prepareVideo()");
-            return;
+            throw new IllegalStateException("Must set a SurfaceHolderRequester before preparing video");
         }
         surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
             @Override
@@ -85,8 +89,8 @@ class AndroidMediaPlayerFacade {
     }
 
     private MediaPlayer createAndBindMediaPlayer(SurfaceHolder surfaceHolder, Uri videoUri) throws IOException {
-        MediaPlayer mediaPlayer = createMediaPlayer();
-        mediaPlayer.setOnPreparedListener(internalPeparedListener);
+        MediaPlayer mediaPlayer = mediaPlayerCreator.createMediaPlayer();
+        mediaPlayer.setOnPreparedListener(internalPreparedListener);
         mediaPlayer.setOnVideoSizeChangedListener(internalSizeChangedListener);
         mediaPlayer.setOnCompletionListener(internalCompletionListener);
         mediaPlayer.setOnErrorListener(internalErrorListener);
@@ -101,12 +105,6 @@ class AndroidMediaPlayerFacade {
         return mediaPlayer;
     }
 
-    // TODO: Tracked in https://github.com/novoda/no-player/issues/35
-    @VisibleForTesting
-    protected MediaPlayer createMediaPlayer() {
-        return new MediaPlayer();
-    }
-
     private void reportCreationError(Exception ex, Uri videoUri) {
         Log.w(ex, "Unable to open content: " + videoUri);
         currentState = PlaybackState.ERROR;
@@ -116,21 +114,22 @@ class AndroidMediaPlayerFacade {
     private final MediaPlayer.OnVideoSizeChangedListener internalSizeChangedListener = new MediaPlayer.OnVideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-            if (onSizeChangedListener == null) {
-                return;
+            if (onVideoSizeChangedForwarder == null) {
+                throw new IllegalStateException("Should bind a OnVideoSizeChangedListener. Cannot forward events.");
             }
-            onSizeChangedListener.onVideoSizeChanged(mp, width, height);
+            onVideoSizeChangedForwarder.onVideoSizeChanged(mp, width, height);
         }
     };
 
-    private final MediaPlayer.OnPreparedListener internalPeparedListener = new MediaPlayer.OnPreparedListener() {
+    private final MediaPlayer.OnPreparedListener internalPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
             currentState = PlaybackState.PREPARED;
 
-            if (onPreparedListener != null) {
-                onPreparedListener.onPrepared(mediaPlayer);
+            if (onPreparedForwarder == null) {
+                throw new IllegalStateException("Should bind a OnPreparedListener. Cannot forward events.");
             }
+            onPreparedForwarder.onPrepared(mediaPlayer);
         }
     };
 
@@ -138,9 +137,10 @@ class AndroidMediaPlayerFacade {
         @Override
         public void onCompletion(MediaPlayer mp) {
             currentState = PlaybackState.COMPLETED;
-            if (onCompletionListener != null) {
-                onCompletionListener.onCompletion(mediaPlayer);
+            if (onCompletionForwarder == null) {
+                throw new IllegalStateException("Should bind a OnCompletionListener. Cannot forward events.");
             }
+            onCompletionForwarder.onCompletion(mediaPlayer);
         }
     };
 
@@ -149,10 +149,10 @@ class AndroidMediaPlayerFacade {
         public boolean onError(MediaPlayer mp, int what, int extra) {
             Log.d("Error: " + what + "," + extra);
             currentState = PlaybackState.ERROR;
-            if (onErrorListener != null) {
-                return onErrorListener.onError(mediaPlayer, what, extra);
+            if (onErrorForwarder == null) {
+                throw new IllegalStateException("Should bind a OnErrorListener. Cannot forward events.");
             }
-            return true;
+            return onErrorForwarder.onError(mediaPlayer, what, extra);
         }
     };
 
@@ -163,20 +163,11 @@ class AndroidMediaPlayerFacade {
         }
     };
 
-    void setOnPreparedListener(MediaPlayer.OnPreparedListener listener) {
-        onPreparedListener = listener;
-    }
-
-    void setOnCompletionListener(MediaPlayer.OnCompletionListener listener) {
-        onCompletionListener = listener;
-    }
-
-    void setOnErrorListener(MediaPlayer.OnErrorListener listener) {
-        onErrorListener = listener;
-    }
-
-    void setOnSizeChangedListener(MediaPlayer.OnVideoSizeChangedListener listener) {
-        onSizeChangedListener = listener;
+    void setForwarder(MediaPlayerForwarder forwarder) {
+        this.onPreparedForwarder = forwarder.onPreparedListener();
+        this.onCompletionForwarder = forwarder.onCompletionListener();
+        this.onErrorForwarder = forwarder.onErrorListener();
+        this.onVideoSizeChangedForwarder = forwarder.onSizeChangedListener();
     }
 
     void release() {
@@ -195,8 +186,7 @@ class AndroidMediaPlayerFacade {
     void start() {
         if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             if (surfaceHolderRequester == null) {
-                logPlayerNotAttachedWarning("start()");
-                return;
+                throw new IllegalStateException("Must set a SurfaceHolderRequester before starting video");
             }
             surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
                 @Override
@@ -207,10 +197,6 @@ class AndroidMediaPlayerFacade {
                 }
             });
         }
-    }
-
-    private void logPlayerNotAttachedWarning(String action) {
-        Log.w(String.format("Attempt to %s the video has been ignored because the Player has not been attached to a PlayerView", action));
     }
 
     void pause() {

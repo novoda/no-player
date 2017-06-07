@@ -8,6 +8,7 @@ import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
+import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -15,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
@@ -30,11 +31,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class AndroidMediaPlayerFacadeTest {
 
@@ -62,6 +59,8 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Mock
     private Context context;
@@ -69,6 +68,8 @@ public class AndroidMediaPlayerFacadeTest {
     private AndroidMediaPlayerAudioTrackSelector trackSelector;
     @Mock
     private PlaybackStateChecker playbackStateChecker;
+    @Mock
+    private MediaPlayerCreator mediaPlayerCreator;
     @Mock
     private MediaPlayer mediaPlayer;
     @Mock
@@ -85,6 +86,8 @@ public class AndroidMediaPlayerFacadeTest {
     private MediaPlayer.OnErrorListener errorListener;
     @Mock
     private MediaPlayer.OnCompletionListener completionListener;
+    @Mock
+    private MediaPlayerForwarder forwarder;
 
     private AndroidMediaPlayerFacade facade;
 
@@ -92,20 +95,10 @@ public class AndroidMediaPlayerFacadeTest {
     public void setUp() {
         setShowLogs(false);
 
-        facade = new AndroidMediaPlayerFacade(
-                context,
-                audioManager,
-                trackSelector,
-                playbackStateChecker
-        ) {
-            @Override
-            protected MediaPlayer createMediaPlayer() {
-                return mediaPlayer;
-            }
-        };
+        facade = new AndroidMediaPlayerFacade(context, audioManager, trackSelector, playbackStateChecker, mediaPlayerCreator);
 
+        given(mediaPlayerCreator.createMediaPlayer()).willReturn(mediaPlayer);
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class))).willReturn(IS_IN_PLAYBACK_STATE);
-
         doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
@@ -116,16 +109,18 @@ public class AndroidMediaPlayerFacadeTest {
         }).when(surfaceHolderRequester).requestSurfaceHolder(any(SurfaceHolderRequester.Callback.class));
 
         facade.setSurfaceHolderRequester(surfaceHolderRequester);
-        facade.setOnPreparedListener(preparedListener);
-        facade.setOnSizeChangedListener(videoSizeChangedListener);
-        facade.setOnCompletionListener(completionListener);
-        facade.setOnErrorListener(errorListener);
+        given(forwarder.onPreparedListener()).willReturn(preparedListener);
+        given(forwarder.onCompletionListener()).willReturn(completionListener);
+        given(forwarder.onErrorListener()).willReturn(errorListener);
+        given(forwarder.onSizeChangedListener()).willReturn(videoSizeChangedListener);
+        facade.setForwarder(forwarder);
     }
 
-    @Ignore("We should forward to listeners / make logs testable / throw exception.")
     @Test
-    public void givenNoBoundSurfaceHolderRequester_whenPreparing_thenLogsNotAttachedWarning() {
-
+    public void givenNoBoundSurfaceHolderRequester_whenPreparing_thenThrowsIllegalArgumentException() {
+        thrown.expect(ExceptionMatcher.matches("Must set a SurfaceHolderRequester before preparing video", IllegalStateException.class));
+        facade.setSurfaceHolderRequester(null);
+        givenMediaPlayerIsPrepared();
     }
 
     @Test
@@ -187,10 +182,19 @@ public class AndroidMediaPlayerFacadeTest {
         verify(mediaPlayer).prepareAsync();
     }
 
-    @Ignore("We should forward to listeners / make logs testable / throw exception.")
     @Test
-    public void givenException_whenPreparing_thenLogsCreationError() {
+    public void givenExceptionPreparingMediaPlayer_whenPreparingMediaPlayer_thenForwardsOnError() {
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                throw new IllegalStateException("cannot prepare async");
+            }
+        }).when(mediaPlayer).prepareAsync();
 
+        givenMediaPlayerIsPrepared();
+        whenErroring();
+
+        verify(errorListener).onError(mediaPlayer, ANY_ERROR_WHAT, ANY_ERROR_EXTRA);
     }
 
     @Test
@@ -203,61 +207,69 @@ public class AndroidMediaPlayerFacadeTest {
         verify(preparedListener).onPrepared(mediaPlayer);
     }
 
-    @Ignore("Should we throw when a listener is not attached?")
     @Test
-    public void givenNoBoundPreparedListener_andMediaPlayerIsPrepared_whenPrepared_thenDoesNotForwardOnPrepared() {
-
+    public void givenNoBoundPreparedListener_andMediaPlayerIsPrepared_whenPrepared_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches("Should bind a OnPreparedListener. Cannot forward events.", IllegalStateException.class));
+        given(forwarder.onPreparedListener()).willReturn(null);
+        facade.setForwarder(forwarder);
+        givenMediaPlayerIsPrepared();
     }
 
     @Test
     public void givenBoundVideoSizeChangedListener_andMediaPlayerOnPrepared_whenVideoSizeChanges_thenForwardsSizeChanges() {
         givenMediaPlayerIsPrepared();
 
-        ArgumentCaptor<MediaPlayer.OnVideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnVideoSizeChangedListener.class);
-        verify(mediaPlayer).setOnVideoSizeChangedListener(argumentCaptor.capture());
-        argumentCaptor.getValue().onVideoSizeChanged(mediaPlayer, ANY_WIDTH, ANY_HEIGHT);
+        whenVideoSizeChanges();
 
         verify(videoSizeChangedListener).onVideoSizeChanged(eq(mediaPlayer), eq(ANY_WIDTH), eq(ANY_HEIGHT));
     }
 
-    @Ignore("Should we throw when a listener is not attached?")
     @Test
-    public void givenNoBoundVideoSizeChangedListener_andMediaPlayerIsPrepared_whenVideoSizeChanged_thenDoesNotForwardOnSizeChanges() {
+    public void givenNoBoundVideoSizeChangedListener_andMediaPlayerIsPrepared_whenVideoSizeChanges_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches("Should bind a OnVideoSizeChangedListener. Cannot forward events.", IllegalStateException.class));
+        given(forwarder.onSizeChangedListener()).willReturn(null);
+        facade.setForwarder(forwarder);
+        givenMediaPlayerIsPrepared();
 
+        whenVideoSizeChanges();
     }
 
     @Test
     public void givenBoundCompletionListener_andMediaPlayerIsPrepared_whenCompleted_thenForwardsCompleted() {
         givenMediaPlayerIsPrepared();
 
-        ArgumentCaptor<MediaPlayer.OnCompletionListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnCompletionListener.class);
-        verify(mediaPlayer).setOnCompletionListener(argumentCaptor.capture());
-        argumentCaptor.getValue().onCompletion(mediaPlayer);
+        whenCompleted();
 
         verify(completionListener).onCompletion(mediaPlayer);
     }
 
-    @Ignore("Should we throw when a listener is not attached?")
     @Test
-    public void givenNoBoundCompletionListener_andMediaPlayerIsPrepared_whenCompleted_thenDoesNotForwardCompleted() {
+    public void givenNoBoundCompletionListener_andMediaPlayerIsPrepared_whenCompleted_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches("Should bind a OnCompletionListener. Cannot forward events.", IllegalStateException.class));
+        given(forwarder.onCompletionListener()).willReturn(null);
+        facade.setForwarder(forwarder);
+        givenMediaPlayerIsPrepared();
 
+        whenCompleted();
     }
 
     @Test
     public void givenBoundErrorListener_andMediaPlayerIsPrepared_whenErroring_thenForwardsError() {
         givenMediaPlayerIsPrepared();
 
-        ArgumentCaptor<MediaPlayer.OnErrorListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnErrorListener.class);
-        verify(mediaPlayer).setOnErrorListener(argumentCaptor.capture());
-        argumentCaptor.getValue().onError(mediaPlayer, ANY_ERROR_WHAT, ANY_ERROR_EXTRA);
+        whenErroring();
 
         verify(errorListener).onError(mediaPlayer, ANY_ERROR_WHAT, ANY_ERROR_EXTRA);
     }
 
-    @Ignore("Should we throw when a listener is not attached?")
     @Test
-    public void givenNoBoundErrorListener_andMediaPlayerIsPrepared_whenErroring_thenDoesNotForwardError() {
+    public void givenNoBoundErrorListener_andMediaPlayerIsPrepared_whenErroring_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches("Should bind a OnErrorListener. Cannot forward events.", IllegalStateException.class));
+        given(forwarder.onErrorListener()).willReturn(null);
+        facade.setForwarder(forwarder);
+        givenMediaPlayerIsPrepared();
 
+        whenErroring();
     }
 
     @Test
@@ -282,10 +294,13 @@ public class AndroidMediaPlayerFacadeTest {
         verify(mediaPlayer).release();
     }
 
-    @Ignore("We should forward to listeners / make logs testable / throw exception.")
     @Test
-    public void givenNoBoundSurfaceHolderRequester_whenStarting_thenLogsNotAttachedWarning() {
+    public void givenNoBoundSurfaceHolderRequester_whenStarting_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches("Must set a SurfaceHolderRequester before preparing video", IllegalStateException.class));
+        facade.setSurfaceHolderRequester(null);
+        givenMediaPlayerIsPrepared();
 
+        facade.start();
     }
 
     @Test
@@ -477,5 +492,23 @@ public class AndroidMediaPlayerFacadeTest {
         ArgumentCaptor<MediaPlayer.OnPreparedListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnPreparedListener.class);
         verify(mediaPlayer).setOnPreparedListener(argumentCaptor.capture());
         argumentCaptor.getValue().onPrepared(mediaPlayer);
+    }
+
+    private void whenVideoSizeChanges() {
+        ArgumentCaptor<MediaPlayer.OnVideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnVideoSizeChangedListener.class);
+        verify(mediaPlayer).setOnVideoSizeChangedListener(argumentCaptor.capture());
+        argumentCaptor.getValue().onVideoSizeChanged(mediaPlayer, ANY_WIDTH, ANY_HEIGHT);
+    }
+
+    private void whenCompleted() {
+        ArgumentCaptor<MediaPlayer.OnCompletionListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnCompletionListener.class);
+        verify(mediaPlayer).setOnCompletionListener(argumentCaptor.capture());
+        argumentCaptor.getValue().onCompletion(mediaPlayer);
+    }
+
+    private void whenErroring() {
+        ArgumentCaptor<MediaPlayer.OnErrorListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnErrorListener.class);
+        verify(mediaPlayer).setOnErrorListener(argumentCaptor.capture());
+        argumentCaptor.getValue().onError(mediaPlayer, ANY_ERROR_WHAT, ANY_ERROR_EXTRA);
     }
 }

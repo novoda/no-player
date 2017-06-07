@@ -159,10 +159,7 @@ public class AndroidMediaPlayerImplTest {
 
     @Test
     public void whenCreatingAndroidMediaPlayerImpl_thenBindsListenersToMediaPlayer() {
-        verify(mediaPlayer).setOnPreparedListener(onPreparedListener);
-        verify(mediaPlayer).setOnCompletionListener(onCompletionListener);
-        verify(mediaPlayer).setOnErrorListener(onErrorListener);
-        verify(mediaPlayer).setOnSizeChangedListener(onSizeChangedListener);
+        verify(mediaPlayer).setForwarder(forwarder);
     }
 
     @Test
