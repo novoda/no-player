@@ -39,6 +39,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
 
+import static android.provider.CalendarContract.CalendarCache.URI;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -273,6 +274,56 @@ public class ExoPlayerTwoImplTest {
             player.detach(playerView);
 
             verify(listenersHolder).removeStateChangedListener(stateChangeListener);
+        }
+
+        @Test
+        public void givenPlayerHasPlayedVideo_whenLoadingVideo_thenPlayerIsReleased_andNotListeners() {
+            given(exoPlayerFacade.hasPlayedContent()).willReturn(true);
+
+            player.loadVideo(URI, ContentType.HLS);
+
+            verify(stateChangedListeners).onVideoStopped();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(exoPlayerFacade).release();
+            verify(listenersHolder, never()).clear();
+        }
+
+        @Test
+        public void givenPlayerHasPlayedVideo_whenLoadingVideoWithTimeout_thenPlayerResourcesAreReleased_andNotListeners() {
+            given(exoPlayerFacade.hasPlayedContent()).willReturn(true);
+
+            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+
+            verify(stateChangedListeners).onVideoStopped();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(exoPlayerFacade).release();
+            verify(listenersHolder, never()).clear();
+        }
+
+        @Test
+        public void givenPlayerHasNotPlayedVideo_whenLoadingVideo_thenPlayerResourcesAreNotReleased() {
+            given(exoPlayerFacade.hasPlayedContent()).willReturn(false);
+
+            player.loadVideo(URI, ContentType.HLS);
+
+            verify(stateChangedListeners, never()).onVideoStopped();
+            verify(loadTimeout, never()).cancel();
+            verify(heart, never()).stopBeatingHeart();
+            verify(exoPlayerFacade, never()).release();
+        }
+
+        @Test
+        public void givenPlayerHasNotPlayedVideo_whenLoadingVideoWithTimeout_thenPlayerResourcesAreNotReleased() {
+            given(exoPlayerFacade.hasPlayedContent()).willReturn(false);
+
+            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+
+            verify(stateChangedListeners, never()).onVideoStopped();
+            verify(loadTimeout, never()).cancel();
+            verify(heart, never()).stopBeatingHeart();
+            verify(exoPlayerFacade, never()).release();
         }
     }
 
