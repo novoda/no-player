@@ -507,6 +507,36 @@ public class AndroidMediaPlayerImplTest {
     }
 
     @Test
+    public void whenDetachingPlayerView_thenRemovesVideoSizeChangedListener() {
+        PlayerView playerView = mock(PlayerView.class);
+        Player.VideoSizeChangedListener videoSizeChangedListener = mock(Player.VideoSizeChangedListener.class);
+        given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
+        player.detach(playerView);
+
+        verify(listenersHolder).removeVideoSizeChangedListener(videoSizeChangedListener);
+    }
+
+    @Test
+    public void whenDetachingPlayerView_thenRemovesStateChangedListener() {
+        PlayerView playerView = mock(PlayerView.class);
+        Player.StateChangedListener stateChangedListener = mock(Player.StateChangedListener.class);
+        given(playerView.getStateChangedListener()).willReturn(stateChangedListener);
+        player.detach(playerView);
+
+        verify(listenersHolder).removeStateChangedListener(stateChangedListener);
+    }
+
+    @Test
+    public void whenDetachingPlayerView_thenClearsVideoDriverBugPreventer() {
+        PlayerView playerView = mock(PlayerView.class);
+        View containerView = mock(View.class);
+        given(playerView.getContainerView()).willReturn(containerView);
+        player.detach(playerView);
+
+        verify(buggyVideoDriverPreventer).clear(containerView);
+    }
+
+    @Test
     public void whenSelectingAudioTrack_thenDelegatesToMediaPlayer() {
         PlayerAudioTrack audioTrack = mock(PlayerAudioTrack.class);
 
