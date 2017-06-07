@@ -91,4 +91,17 @@ public class PlayerAudioTrack {
         result = 31 * result + frequency;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "PlayerAudioTrack{" +
+                "groupIndex=" + groupIndex +
+                ", formatIndex=" + formatIndex +
+                ", trackId='" + trackId + '\'' +
+                ", language='" + language + '\'' +
+                ", mimeType='" + mimeType + '\'' +
+                ", numberOfChannels=" + numberOfChannels +
+                ", frequency=" + frequency +
+                '}';
+    }
 }
