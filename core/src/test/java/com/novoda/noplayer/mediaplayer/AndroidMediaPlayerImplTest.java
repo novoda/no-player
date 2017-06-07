@@ -4,6 +4,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.novoda.noplayer.ContentType;
@@ -13,7 +14,6 @@ import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
@@ -119,9 +119,11 @@ public class AndroidMediaPlayerImplTest {
     private MediaPlayer.OnErrorListener onErrorListener;
     @Mock
     private MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
-
+    @Mock
+    private SurfaceHolder surfaceHolder;
     @Mock
     private CheckBufferHeartbeatCallback.BufferListener bufferListener;
+
     private AndroidMediaPlayerImpl player;
 
     @Before
@@ -232,7 +234,7 @@ public class AndroidMediaPlayerImplTest {
     public void whenStartingPlay_thenMediaPlayerStarts() {
         player.play();
 
-        verify(mediaPlayer).start();
+        verify(mediaPlayer).start(surfaceHolder);
     }
 
     @Test
@@ -259,7 +261,7 @@ public class AndroidMediaPlayerImplTest {
 
         player.play(videoPosition);
 
-        verify(mediaPlayer).start();
+        verify(mediaPlayer).start(surfaceHolder);
     }
 
     @Test
@@ -381,7 +383,7 @@ public class AndroidMediaPlayerImplTest {
     public void whenLoadingVideo_thenPreparesVideo() {
         player.loadVideo(URI, ContentType.HLS);
 
-        verify(mediaPlayer).prepareVideo(URI);
+        verify(mediaPlayer).prepareVideo(URI, surfaceHolder);
     }
 
     @Test
@@ -395,7 +397,7 @@ public class AndroidMediaPlayerImplTest {
     public void whenLoadingVideoWithTimeout_thenPreparesVideo() {
         player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-        verify(mediaPlayer).prepareVideo(URI);
+        verify(mediaPlayer).prepareVideo(URI, surfaceHolder);
     }
 
     @Test
@@ -464,16 +466,6 @@ public class AndroidMediaPlayerImplTest {
 
         assertThat(playerInformation.getPlayerType()).isEqualTo(PlayerType.MEDIA_PLAYER);
         assertThat(playerInformation.getVersion()).isEqualTo(Build.VERSION.RELEASE);
-    }
-
-    @Test
-    public void whenAttachingPlayerView_thenSetsSurfaceHolderRequesterToMediaPlayer() {
-        PlayerView playerView = mock(PlayerView.class);
-        SurfaceHolderRequester surfaceHolderRequester = mock(SurfaceHolderRequester.class);
-        given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
-        player.attach(playerView);
-
-        verify(mediaPlayer).setSurfaceHolderRequester(surfaceHolderRequester);
     }
 
     @Test
@@ -635,7 +627,7 @@ public class AndroidMediaPlayerImplTest {
     private void thenInitialisesPlaybackForSeeking() {
         InOrder inOrder = inOrder(mediaPlayer);
 
-        inOrder.verify(mediaPlayer).start();
+        inOrder.verify(mediaPlayer).start(surfaceHolder);
         inOrder.verify(mediaPlayer).pause();
         inOrder.verifyNoMoreInteractions();
     }
