@@ -8,6 +8,7 @@ import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState;
+import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.notils.logger.simple.Log;
 
 import java.io.IOException;
@@ -30,11 +31,11 @@ class AndroidMediaPlayerFacade {
     private PlaybackState currentState = IDLE;
 
     private MediaPlayer mediaPlayer;
-    private MediaPlayer.OnCompletionListener onCompletionListener;
-    private MediaPlayer.OnPreparedListener onPreparedListener;
+    private MediaPlayer.OnCompletionListener onCompletionForwarder;
+    private MediaPlayer.OnPreparedListener onPreparedForwarder;
     private int currentBufferPercentage;
-    private MediaPlayer.OnErrorListener onErrorListener;
-    private MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
+    private MediaPlayer.OnErrorListener onErrorForwarder;
+    private MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedForwarder;
 
     private MediaPlayerCreator mediaPlayerCreator;
 
@@ -101,10 +102,10 @@ class AndroidMediaPlayerFacade {
     private final MediaPlayer.OnVideoSizeChangedListener internalSizeChangedListener = new MediaPlayer.OnVideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-            if (onSizeChangedListener == null) {
+            if (onVideoSizeChangedForwarder == null) {
                 throw new IllegalStateException("Should bind a OnVideoSizeChangedListener. Cannot forward events.");
             }
-            onSizeChangedListener.onVideoSizeChanged(mp, width, height);
+            onVideoSizeChangedForwarder.onVideoSizeChanged(mp, width, height);
         }
     };
 
@@ -113,10 +114,10 @@ class AndroidMediaPlayerFacade {
         public void onPrepared(MediaPlayer mp) {
             currentState = PlaybackState.PREPARED;
 
-            if (onPreparedListener == null) {
+            if (onPreparedForwarder == null) {
                 throw new IllegalStateException("Should bind a OnPreparedListener. Cannot forward events.");
             }
-            onPreparedListener.onPrepared(mediaPlayer);
+            onPreparedForwarder.onPrepared(mediaPlayer);
         }
     };
 
@@ -124,10 +125,10 @@ class AndroidMediaPlayerFacade {
         @Override
         public void onCompletion(MediaPlayer mp) {
             currentState = PlaybackState.COMPLETED;
-            if (onCompletionListener == null) {
+            if (onCompletionForwarder == null) {
                 throw new IllegalStateException("Should bind a OnCompletionListener. Cannot forward events.");
             }
-            onCompletionListener.onCompletion(mediaPlayer);
+            onCompletionForwarder.onCompletion(mediaPlayer);
         }
     };
 
@@ -136,10 +137,10 @@ class AndroidMediaPlayerFacade {
         public boolean onError(MediaPlayer mp, int what, int extra) {
             Log.d("Error: " + what + "," + extra);
             currentState = PlaybackState.ERROR;
-            if (onErrorListener == null) {
+            if (onErrorForwarder == null) {
                 throw new IllegalStateException("Should bind a OnErrorListener. Cannot forward events.");
             }
-            return onErrorListener.onError(mediaPlayer, what, extra);
+            return onErrorForwarder.onError(mediaPlayer, what, extra);
         }
     };
 
@@ -150,20 +151,11 @@ class AndroidMediaPlayerFacade {
         }
     };
 
-    void setOnPreparedListener(MediaPlayer.OnPreparedListener listener) {
-        onPreparedListener = listener;
-    }
-
-    void setOnCompletionListener(MediaPlayer.OnCompletionListener listener) {
-        onCompletionListener = listener;
-    }
-
-    void setOnErrorListener(MediaPlayer.OnErrorListener listener) {
-        onErrorListener = listener;
-    }
-
-    void setOnSizeChangedListener(MediaPlayer.OnVideoSizeChangedListener listener) {
-        onSizeChangedListener = listener;
+    void setForwarder(MediaPlayerForwarder forwarder) {
+        this.onPreparedForwarder = forwarder.onPreparedListener();
+        this.onCompletionForwarder = forwarder.onCompletionListener();
+        this.onErrorForwarder = forwarder.onErrorListener();
+        this.onVideoSizeChangedForwarder = forwarder.onSizeChangedListener();
     }
 
     void release() {

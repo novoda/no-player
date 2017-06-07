@@ -72,14 +72,74 @@ public class AndroidMediaPlayerImplTest {
         private static final int ANY_ROTATION_DEGREES = 0;
         private static final int ANY_PIXEL_WIDTH_HEIGHT = 1;
         private static final int ONE_SECOND_IN_MILLIS = 1000;
-
         private static final boolean IS_PLAYING = true;
         private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
         private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
 
-        @Test
-        public void whenCreatingAndroidMediaPlayerImpl_thenBindsHeart() {
-            verify(heart).bind(any(Heart.Heartbeat.class));
+        @Rule
+        public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+        @Mock
+        private AndroidMediaPlayerFacade mediaPlayer;
+        @Mock
+        private PlayerListenersHolder listenersHolder;
+        @Mock
+        private MediaPlayerForwarder forwarder;
+        @Mock
+        private LoadTimeout loadTimeout;
+        @Mock
+        private Heart heart;
+        @Mock
+        private Handler handler;
+        @Mock
+        private CheckBufferHeartbeatCallback bufferHeartbeatCallback;
+        @Mock
+        private BuggyVideoDriverPreventer buggyVideoDriverPreventer;
+        @Mock
+        private PreparedListeners preparedListeners;
+        @Mock
+        private BufferStateListeners bufferStateListeners;
+        @Mock
+        private ErrorListeners errorListeners;
+        @Mock
+        private CompletionListeners completionListeners;
+        @Mock
+        private VideoSizeChangedListeners videoSizeChangedListeners;
+        @Mock
+        private InfoListeners infoListeners;
+        @Mock
+        private StateChangedListeners stateChangedListeners;
+        @Mock
+        private MediaPlayer.OnPreparedListener onPreparedListener;
+        @Mock
+        private MediaPlayer.OnCompletionListener onCompletionListener;
+        @Mock
+        private MediaPlayer.OnErrorListener onErrorListener;
+        @Mock
+        private MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
+
+        @Mock
+        private CheckBufferHeartbeatCallback.BufferListener bufferListener;
+        private AndroidMediaPlayerImpl player;
+
+        @Before
+        public void setUp() {
+            Log.setShowLogs(false);
+            given(listenersHolder.getPreparedListeners()).willReturn(preparedListeners);
+            given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListeners);
+            given(listenersHolder.getErrorListeners()).willReturn(errorListeners);
+            given(listenersHolder.getCompletionListeners()).willReturn(completionListeners);
+            given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListeners);
+            given(listenersHolder.getInfoListeners()).willReturn(infoListeners);
+            given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListeners);
+
+            given(forwarder.onPreparedListener()).willReturn(onPreparedListener);
+            given(forwarder.onCompletionListener()).willReturn(onCompletionListener);
+            given(forwarder.onErrorListener()).willReturn(onErrorListener);
+            given(forwarder.onSizeChangedListener()).willReturn(onSizeChangedListener);
+            given(forwarder.onHeartbeatListener()).willReturn(bufferListener);
+
+            player = new AndroidMediaPlayerImpl(mediaPlayer, listenersHolder, forwarder, loadTimeout, heart, handler, bufferHeartbeatCallback, buggyVideoDriverPreventer);
         }
 
         @Test
@@ -93,10 +153,7 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenCreatingAndroidMediaPlayerImpl_thenBindsListenersToMediaPlayer() {
-            verify(mediaPlayer).setOnPreparedListener(onPreparedListener);
-            verify(mediaPlayer).setOnCompletionListener(onCompletionListener);
-            verify(mediaPlayer).setOnErrorListener(onErrorListener);
-            verify(mediaPlayer).setOnSizeChangedListener(onSizeChangedListener);
+            verify(mediaPlayer).setForwarder(forwarder);
         }
 
         @Test
@@ -118,6 +175,11 @@ public class AndroidMediaPlayerImplTest {
             preparedListener.onPrepared(player);
 
             verify(loadTimeout).cancel();
+        }
+
+        @Test
+        public void whenCreatingAndroidMediaPlayerImpl_thenBindsHeart() {
+            verify(heart).bind(any(Heart.Heartbeat.class));
         }
 
         @Test
