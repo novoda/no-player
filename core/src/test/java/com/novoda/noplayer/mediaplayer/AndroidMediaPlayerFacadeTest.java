@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
+import utils.ExceptionMatcher;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
@@ -31,7 +32,11 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 
 public class AndroidMediaPlayerFacadeTest {
 
@@ -108,19 +113,11 @@ public class AndroidMediaPlayerFacadeTest {
             }
         }).when(surfaceHolderRequester).requestSurfaceHolder(any(SurfaceHolderRequester.Callback.class));
 
-        facade.setSurfaceHolderRequester(surfaceHolderRequester);
         given(forwarder.onPreparedListener()).willReturn(preparedListener);
         given(forwarder.onCompletionListener()).willReturn(completionListener);
         given(forwarder.onErrorListener()).willReturn(errorListener);
         given(forwarder.onSizeChangedListener()).willReturn(videoSizeChangedListener);
         facade.setForwarder(forwarder);
-    }
-
-    @Test
-    public void givenNoBoundSurfaceHolderRequester_whenPreparing_thenThrowsIllegalArgumentException() {
-        thrown.expect(ExceptionMatcher.matches("Must set a SurfaceHolderRequester before preparing video", IllegalStateException.class));
-        facade.setSurfaceHolderRequester(null);
-        givenMediaPlayerIsPrepared();
     }
 
     @Test
@@ -140,8 +137,8 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void whenPreparingMultipleTimes_thenReleasesMediaPlayer() {
-        facade.prepareVideo(ANY_URI);
-        facade.prepareVideo(ANY_URI);
+        facade.prepareVideo(ANY_URI, surfaceHolder);
+        facade.prepareVideo(ANY_URI, surfaceHolder);
 
         verify(mediaPlayer).reset();
         verify(mediaPlayer).release();
@@ -199,7 +196,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void givenBoundPreparedListener_andMediaPlayerIsPrepared_whenPrepared_thenForwardsOnPrepared() {
-        facade.prepareVideo(ANY_URI);
+        facade.prepareVideo(ANY_URI, surfaceHolder);
         ArgumentCaptor<MediaPlayer.OnPreparedListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnPreparedListener.class);
         verify(mediaPlayer).setOnPreparedListener(argumentCaptor.capture());
         argumentCaptor.getValue().onPrepared(mediaPlayer);
@@ -295,27 +292,18 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
-    public void givenNoBoundSurfaceHolderRequester_whenStarting_thenThrowsIllegalStateException() {
-        thrown.expect(ExceptionMatcher.matches("Must set a SurfaceHolderRequester before preparing video", IllegalStateException.class));
-        facade.setSurfaceHolderRequester(null);
-        givenMediaPlayerIsPrepared();
-
-        facade.start();
-    }
-
-    @Test
     public void givenMediaPlayerIsPrepared_whenStarting_thenSetsDisplay() {
         givenMediaPlayerIsPrepared();
         reset(mediaPlayer);
 
-        facade.start();
+        facade.start(surfaceHolder);
 
         verify(mediaPlayer).setDisplay(surfaceHolder);
     }
 
     @Test
     public void givenMediaPlayerIsNotPrepared_whenStarting_thenNeverSetsDisplay() {
-        facade.start();
+        facade.start(surfaceHolder);
 
         verify(mediaPlayer, never()).setDisplay(surfaceHolder);
     }
@@ -324,14 +312,14 @@ public class AndroidMediaPlayerFacadeTest {
     public void givenMediaPlayerIsPrepared_whenStarting_thenStartsMediaPlayer() {
         givenMediaPlayerIsPrepared();
 
-        facade.start();
+        facade.start(surfaceHolder);
 
         verify(mediaPlayer).start();
     }
 
     @Test
     public void givenMediaPlayerIsNotPrepared_whenStarting_thenNeverStartsMediaPlayer() {
-        facade.start();
+        facade.start(surfaceHolder);
 
         verify(mediaPlayer, never()).start();
     }
@@ -488,7 +476,7 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     private void givenMediaPlayerIsPrepared() {
-        facade.prepareVideo(ANY_URI);
+        facade.prepareVideo(ANY_URI, surfaceHolder);
         ArgumentCaptor<MediaPlayer.OnPreparedListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnPreparedListener.class);
         verify(mediaPlayer).setOnPreparedListener(argumentCaptor.capture());
         argumentCaptor.getValue().onPrepared(mediaPlayer);

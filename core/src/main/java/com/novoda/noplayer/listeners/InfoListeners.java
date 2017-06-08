@@ -18,6 +18,10 @@ public class InfoListeners implements Player.InfoListener {
         listeners.remove(listener);
     }
 
+    public void clear() {
+        listeners.clear();
+    }
+
     @Override
     public void onNewInfo(String callingMethod, Map<String, String> callingMethodParams) {
         for (Player.InfoListener listener : listeners) {

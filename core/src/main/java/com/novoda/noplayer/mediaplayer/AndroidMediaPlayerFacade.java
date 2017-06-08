@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.PlayerAudioTrack;
-import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.notils.logger.simple.Log;
@@ -16,7 +15,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.*;
+import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.IDLE;
+import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.PAUSED;
+import static com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState.PLAYING;
 
 class AndroidMediaPlayerFacade {
 
@@ -36,7 +37,6 @@ class AndroidMediaPlayerFacade {
     private MediaPlayer.OnErrorListener onErrorForwarder;
     private MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedForwarder;
 
-    private SurfaceHolderRequester surfaceHolderRequester;
     private MediaPlayerCreator mediaPlayerCreator;
 
     static AndroidMediaPlayerFacade newInstance(Context context) {
@@ -60,28 +60,16 @@ class AndroidMediaPlayerFacade {
         this.mediaPlayerCreator = mediaPlayerCreator;
     }
 
-    void setSurfaceHolderRequester(SurfaceHolderRequester surfaceHolderRequester) {
-        this.surfaceHolderRequester = surfaceHolderRequester;
-    }
-
-    void prepareVideo(final Uri videoUri) {
-        if (surfaceHolderRequester == null) {
-            throw new IllegalStateException("Must set a SurfaceHolderRequester before preparing video");
+    void prepareVideo(Uri videoUri, SurfaceHolder surfaceHolder) {
+        requestAudioFocus();
+        release();
+        try {
+            currentState = PlaybackState.PREPARING;
+            mediaPlayer = createAndBindMediaPlayer(surfaceHolder, videoUri);
+            mediaPlayer.prepareAsync();
+        } catch (IOException | IllegalArgumentException | IllegalStateException ex) {
+            reportCreationError(ex, videoUri);
         }
-        surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
-            @Override
-            public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                requestAudioFocus();
-                release();
-                try {
-                    currentState = PlaybackState.PREPARING;
-                    mediaPlayer = createAndBindMediaPlayer(surfaceHolder, videoUri);
-                    mediaPlayer.prepareAsync();
-                } catch (IOException | IllegalArgumentException | IllegalStateException ex) {
-                    reportCreationError(ex, videoUri);
-                }
-            }
-        });
     }
 
     private void requestAudioFocus() {
@@ -179,23 +167,11 @@ class AndroidMediaPlayerFacade {
         }
     }
 
-    private boolean hasPlayer() {
-        return mediaPlayer != null;
-    }
-
-    void start() {
+    void start(SurfaceHolder surfaceHolder) {
         if (playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
-            if (surfaceHolderRequester == null) {
-                throw new IllegalStateException("Must set a SurfaceHolderRequester before starting video");
-            }
-            surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
-                @Override
-                public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                    mediaPlayer.setDisplay(surfaceHolder);
-                    currentState = PLAYING;
-                    mediaPlayer.start();
-                }
-            });
+            mediaPlayer.setDisplay(surfaceHolder);
+            currentState = PLAYING;
+            mediaPlayer.start();
         }
     }
 
@@ -254,5 +230,13 @@ class AndroidMediaPlayerFacade {
 
     void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener) {
         mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
+    }
+
+    public boolean hasPlayedContent() {
+        return hasPlayer();
+    }
+
+    private boolean hasPlayer() {
+        return mediaPlayer != null;
     }
 }

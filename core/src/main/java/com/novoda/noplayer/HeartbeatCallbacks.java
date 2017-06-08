@@ -11,6 +11,10 @@ public class HeartbeatCallbacks<T> implements Heart.Heartbeat.Callback<T> {
         callbacks.add(callback);
     }
 
+    public void clear() {
+        callbacks.clear();
+    }
+
     @Override
     public void onBeat(T object) {
         for (Heart.Heartbeat.Callback<T> callback : callbacks) {

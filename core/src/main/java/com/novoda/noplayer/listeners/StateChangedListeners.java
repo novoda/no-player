@@ -17,6 +17,10 @@ public class StateChangedListeners implements Player.StateChangedListener {
         listeners.remove(listener);
     }
 
+    public void clear() {
+        listeners.clear();
+    }
+
     @Override
     public void onVideoPlaying() {
         for (Player.StateChangedListener listener : listeners) {
@@ -32,9 +36,9 @@ public class StateChangedListeners implements Player.StateChangedListener {
     }
 
     @Override
-    public void onVideoReleased() {
+    public void onVideoStopped() {
         for (Player.StateChangedListener listener : listeners) {
-            listener.onVideoReleased();
+            listener.onVideoStopped();
         }
     }
 }

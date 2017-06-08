@@ -6,11 +6,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.SurfaceHolder;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -37,14 +32,9 @@ import java.util.List;
 
 public class ExoPlayerTwoImpl implements Player {
 
-    private static final boolean RESET_POSITION = true;
-    private static final boolean DO_NOT_RESET_STATE = false;
-
-    private final SimpleExoPlayer exoPlayer;
+    private final ExoPlayerFacade exoPlayer;
     private final PlayerListenersHolder listenersHolder;
-    private final MediaSourceFactory mediaSourceFactory;
     private final ExoPlayerForwarder forwarder;
-    private final ExoPlayerAudioTrackSelector trackSelector;
     private final Heart heart;
     private final LoadTimeout loadTimeout;
 
@@ -57,43 +47,43 @@ public class ExoPlayerTwoImpl implements Player {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
         Handler handler = new Handler(Looper.getMainLooper());
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
-        Heart heart = Heart.newInstance();
 
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
         ExoPlayerTrackSelector exoPlayerTrackSelector = new ExoPlayerTrackSelector(trackSelector);
         FixedTrackSelection.Factory trackSelectionFactory = new FixedTrackSelection.Factory();
         ExoPlayerAudioTrackSelector exoPlayerAudioTrackSelector = new ExoPlayerAudioTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
-        SimpleExoPlayer exoPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(context), trackSelector, new DefaultLoadControl());
-        LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
+
+        ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context, trackSelector);
+        ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(mediaSourceFactory, exoPlayerAudioTrackSelector, exoPlayerCreator);
+
         PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
+        ExoPlayerForwarder exoPlayerForwarder = new ExoPlayerForwarder();
+        LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
+        Heart heart = Heart.newInstance();
+
         return new ExoPlayerTwoImpl(
-                exoPlayer,
-                listenersHolder, mediaSourceFactory,
-                new ExoPlayerForwarder(),
+                exoPlayerFacade,
+                listenersHolder,
+                exoPlayerForwarder,
                 loadTimeout,
-                exoPlayerAudioTrackSelector,
                 heart
         );
     }
 
-    ExoPlayerTwoImpl(SimpleExoPlayer exoPlayer,
+    ExoPlayerTwoImpl(ExoPlayerFacade exoPlayer,
                      PlayerListenersHolder listenersHolder,
-                     MediaSourceFactory mediaSourceFactory,
                      ExoPlayerForwarder exoPlayerForwarder,
                      LoadTimeout loadTimeoutParam,
-                     ExoPlayerAudioTrackSelector trackSelector,
                      Heart heart) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
-        this.mediaSourceFactory = mediaSourceFactory;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
-        this.trackSelector = trackSelector;
         this.heart = heart;
 
         heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
-        forwarder.bind(listenersHolder.getCompletionListeners());
+        forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
         forwarder.bind(listenersHolder.getErrorListeners(), this);
         forwarder.bind(listenersHolder.getBufferStateListeners());
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
@@ -122,7 +112,7 @@ public class ExoPlayerTwoImpl implements Player {
 
     @Override
     public boolean isPlaying() {
-        return exoPlayer.getPlayWhenReady();
+        return exoPlayer.isPlaying();
     }
 
     @Override
@@ -137,17 +127,17 @@ public class ExoPlayerTwoImpl implements Player {
 
     @Override
     public VideoPosition getPlayheadPosition() {
-        return VideoPosition.fromMillis(exoPlayer.getCurrentPosition());
+        return exoPlayer.getPlayheadPosition();
     }
 
     @Override
     public VideoDuration getMediaDuration() {
-        return VideoDuration.fromMillis(exoPlayer.getDuration());
+        return exoPlayer.getMediaDuration();
     }
 
     @Override
     public int getBufferPercentage() {
-        return exoPlayer.getBufferedPercentage();
+        return exoPlayer.getBufferPercentage();
     }
 
     @Override
@@ -156,9 +146,7 @@ public class ExoPlayerTwoImpl implements Player {
         surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
             @Override
             public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                exoPlayer.clearVideoSurfaceHolder(surfaceHolder);
-                exoPlayer.setVideoSurfaceHolder(surfaceHolder);
-                exoPlayer.setPlayWhenReady(true);
+                exoPlayer.play(surfaceHolder);
                 listenersHolder.getStateChangedListeners().onVideoPlaying();
             }
         });
@@ -172,7 +160,7 @@ public class ExoPlayerTwoImpl implements Player {
 
     @Override
     public void pause() {
-        exoPlayer.setPlayWhenReady(false);
+        exoPlayer.pause();
         listenersHolder.getStateChangedListeners().onVideoPaused();
         if (heart.isBeating()) {
             heart.stopBeatingHeart();
@@ -182,23 +170,22 @@ public class ExoPlayerTwoImpl implements Player {
 
     @Override
     public void seekTo(VideoPosition position) {
-        exoPlayer.seekTo(position.inMillis());
-    }
-
-    @Override
-    public void reset() {
-        // TODO: Reset the player, so that it can be used by another video source.
+        exoPlayer.seekTo(position);
     }
 
     @Override
     public void stop() {
-        exoPlayer.stop();
+        reset();
     }
 
     @Override
     public void release() {
-        listenersHolder.getPlayerReleaseListener().onPlayerPreRelease(this);
-        listenersHolder.getStateChangedListeners().onVideoReleased();
+        reset();
+        listenersHolder.clear();
+    }
+
+    private void reset() {
+        listenersHolder.getStateChangedListeners().onVideoStopped();
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         exoPlayer.release();
@@ -206,17 +193,11 @@ public class ExoPlayerTwoImpl implements Player {
 
     @Override
     public void loadVideo(Uri uri, ContentType contentType) {
-        listenersHolder.getPreparedListeners().reset();
-        exoPlayer.addListener(forwarder.exoPlayerEventListener());
-        exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
-
-        MediaSource mediaSource = mediaSourceFactory.create(
-                contentType,
-                uri,
-                forwarder.extractorMediaSourceListener(),
-                forwarder.mediaSourceEventListener()
-        );
-        exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
+        if (exoPlayer.hasPlayedContent()) {
+            reset();
+        }
+        listenersHolder.getPreparedListeners().resetPreparedState();
+        exoPlayer.loadVideo(uri, contentType, forwarder);
     }
 
     @Override
@@ -238,17 +219,24 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
+    public void detach(PlayerView playerView) {
+        surfaceHolderRequester = null;
+        listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
+        listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+    }
+
+    @Override
     public void selectAudioTrack(PlayerAudioTrack audioTrack) {
-        trackSelector.selectAudioTrack(audioTrack);
+        exoPlayer.selectAudioTrack(audioTrack);
     }
 
     @Override
     public List<PlayerAudioTrack> getAudioTracks() {
-        return trackSelector.getAudioTracks();
+        return exoPlayer.getAudioTracks();
     }
 
     @Override
-    public PlayerListenersHolder getListenersHolder() {
+    public PlayerListenersHolder getListeners() {
         return listenersHolder;
     }
 }

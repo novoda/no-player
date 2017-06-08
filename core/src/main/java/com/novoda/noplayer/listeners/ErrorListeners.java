@@ -17,6 +17,10 @@ public class ErrorListeners implements Player.ErrorListener {
         listeners.remove(listener);
     }
 
+    public void clear() {
+        listeners.clear();
+    }
+
     @Override
     public void onError(Player player, Player.PlayerError error) {
         for (Player.ErrorListener listener : listeners) {

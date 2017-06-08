@@ -17,8 +17,6 @@ public interface Player extends PlayerState {
 
     void seekTo(VideoPosition position);
 
-    void reset();
-
     void stop();
 
     void release();
@@ -31,23 +29,13 @@ public interface Player extends PlayerState {
 
     void attach(PlayerView playerView);
 
+    void detach(PlayerView playerView);
+
     void selectAudioTrack(PlayerAudioTrack audioTrack);
 
     List<PlayerAudioTrack> getAudioTracks();
 
-    PlayerListenersHolder getListenersHolder();
-
-    interface PreReleaseListener {
-
-        PreReleaseListener NULL_IMPL = new PreReleaseListener() {
-            @Override
-            public void onPlayerPreRelease(Player player) {
-                // No-op
-            }
-        };
-
-        void onPlayerPreRelease(Player player);
-    }
+    Listeners getListeners();
 
     interface PlayerError {
 
@@ -84,7 +72,7 @@ public interface Player extends PlayerState {
 
         void onVideoPaused();
 
-        void onVideoReleased();
+        void onVideoStopped();
     }
 
     interface BitrateChangedListener {

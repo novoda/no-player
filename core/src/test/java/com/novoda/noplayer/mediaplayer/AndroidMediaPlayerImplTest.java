@@ -4,6 +4,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.novoda.noplayer.ContentType;
@@ -35,640 +36,704 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.Answer;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
+@RunWith(Enclosed.class)
 public class AndroidMediaPlayerImplTest {
 
-    private static final boolean IS_BEATING = true;
-    private static final boolean IS_NOT_BEATING = false;
+    public static class GivenPlayer extends Base {
 
-    private static final long TWO_MINUTES_IN_MILLIS = 120000;
-    private static final long DELAY_MILLIS = 500;
+        private static final boolean IS_BEATING = true;
+        private static final boolean IS_NOT_BEATING = false;
 
-    private static final int WIDTH = 100;
-    private static final int HEIGHT = 200;
-    private static final int ANY_ROTATION_DEGREES = 0;
-    private static final int ANY_PIXEL_WIDTH_HEIGHT = 1;
-    private static final int TEN_SECONDS = 10;
-    private static final int ONE_SECOND_IN_MILLIS = 1000;
+        private static final long TWO_MINUTES_IN_MILLIS = 120000;
 
-    private static final boolean IS_PLAYING = true;
-    private static final Uri URI = Mockito.mock(Uri.class);
-    private static final Timeout ANY_TIMEOUT = Timeout.fromSeconds(TEN_SECONDS);
-    private static final Player.LoadTimeoutCallback ANY_LOAD_TIMEOUT_CALLBACK = new Player.LoadTimeoutCallback() {
-        @Override
-        public void onLoadTimeout() {
+        private static final int WIDTH = 100;
+        private static final int HEIGHT = 200;
+        private static final int ANY_ROTATION_DEGREES = 0;
+        private static final int ANY_PIXEL_WIDTH_HEIGHT = 1;
+        private static final int ONE_SECOND_IN_MILLIS = 1000;
+        private static final boolean IS_PLAYING = true;
+        private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
+        private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
 
+        @Rule
+        public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+        @Mock
+        private AndroidMediaPlayerFacade mediaPlayer;
+        @Mock
+        private PlayerListenersHolder listenersHolder;
+        @Mock
+        private MediaPlayerForwarder forwarder;
+        @Mock
+        private LoadTimeout loadTimeout;
+        @Mock
+        private Heart heart;
+        @Mock
+        private Handler handler;
+        @Mock
+        private CheckBufferHeartbeatCallback bufferHeartbeatCallback;
+        @Mock
+        private BuggyVideoDriverPreventer buggyVideoDriverPreventer;
+        @Mock
+        private PreparedListeners preparedListeners;
+        @Mock
+        private BufferStateListeners bufferStateListeners;
+        @Mock
+        private ErrorListeners errorListeners;
+        @Mock
+        private CompletionListeners completionListeners;
+        @Mock
+        private VideoSizeChangedListeners videoSizeChangedListeners;
+        @Mock
+        private InfoListeners infoListeners;
+        @Mock
+        private StateChangedListeners stateChangedListeners;
+        @Mock
+        private MediaPlayer.OnPreparedListener onPreparedListener;
+        @Mock
+        private MediaPlayer.OnCompletionListener onCompletionListener;
+        @Mock
+        private MediaPlayer.OnErrorListener onErrorListener;
+        @Mock
+        private MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
+
+        @Mock
+        private CheckBufferHeartbeatCallback.BufferListener bufferListener;
+        private AndroidMediaPlayerImpl player;
+
+        @Before
+        public void setUp() {
+            Log.setShowLogs(false);
+            given(listenersHolder.getPreparedListeners()).willReturn(preparedListeners);
+            given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListeners);
+            given(listenersHolder.getErrorListeners()).willReturn(errorListeners);
+            given(listenersHolder.getCompletionListeners()).willReturn(completionListeners);
+            given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListeners);
+            given(listenersHolder.getInfoListeners()).willReturn(infoListeners);
+            given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListeners);
+
+            given(forwarder.onPreparedListener()).willReturn(onPreparedListener);
+            given(forwarder.onCompletionListener()).willReturn(onCompletionListener);
+            given(forwarder.onErrorListener()).willReturn(onErrorListener);
+            given(forwarder.onSizeChangedListener()).willReturn(onSizeChangedListener);
+            given(forwarder.onHeartbeatListener()).willReturn(bufferListener);
+
+            player = new AndroidMediaPlayerImpl(mediaPlayer, listenersHolder, forwarder, loadTimeout, heart, handler, bufferHeartbeatCallback, buggyVideoDriverPreventer);
         }
-    };
-    private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
-    private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-    @Mock
-    private AndroidMediaPlayerFacade mediaPlayer;
-    @Mock
-    private PlayerListenersHolder listenersHolder;
-    @Mock
-    private MediaPlayerForwarder forwarder;
-    @Mock
-    private LoadTimeout loadTimeout;
-    @Mock
-    private Heart heart;
-    @Mock
-    private Handler handler;
-    @Mock
-    private CheckBufferHeartbeatCallback bufferHeartbeatCallback;
-    @Mock
-    private BuggyVideoDriverPreventer buggyVideoDriverPreventer;
-    @Mock
-    private PreparedListeners preparedListeners;
-    @Mock
-    private BufferStateListeners bufferStateListeners;
-    @Mock
-    private ErrorListeners errorListeners;
-    @Mock
-    private CompletionListeners completionListeners;
-    @Mock
-    private VideoSizeChangedListeners videoSizeChangedListeners;
-    @Mock
-    private InfoListeners infoListeners;
-    @Mock
-    private StateChangedListeners stateChangedListeners;
-    @Mock
-    private Player.PreReleaseListener playerReleaseListener;
-    @Mock
-    private MediaPlayer.OnPreparedListener onPreparedListener;
-    @Mock
-    private MediaPlayer.OnCompletionListener onCompletionListener;
-    @Mock
-    private MediaPlayer.OnErrorListener onErrorListener;
-    @Mock
-    private MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
-
-    @Mock
-    private CheckBufferHeartbeatCallback.BufferListener bufferListener;
-    private AndroidMediaPlayerImpl player;
-
-    @Before
-    public void setUp() {
-        Log.setShowLogs(false);
-        given(listenersHolder.getPreparedListeners()).willReturn(preparedListeners);
-        given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListeners);
-        given(listenersHolder.getErrorListeners()).willReturn(errorListeners);
-        given(listenersHolder.getCompletionListeners()).willReturn(completionListeners);
-        given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListeners);
-        given(listenersHolder.getInfoListeners()).willReturn(infoListeners);
-        given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListeners);
-        given(listenersHolder.getPlayerReleaseListener()).willReturn(playerReleaseListener);
-
-        given(forwarder.onPreparedListener()).willReturn(onPreparedListener);
-        given(forwarder.onCompletionListener()).willReturn(onCompletionListener);
-        given(forwarder.onErrorListener()).willReturn(onErrorListener);
-        given(forwarder.onSizeChangedListener()).willReturn(onSizeChangedListener);
-        given(forwarder.onHeartbeatListener()).willReturn(bufferListener);
-
-        player = new AndroidMediaPlayerImpl(mediaPlayer, listenersHolder, forwarder, loadTimeout, heart, handler, bufferHeartbeatCallback, buggyVideoDriverPreventer);
-    }
-
-    @Test
-    public void whenCreatingAndroidMediaPlayerImpl_thenBindsHeart() {
-        verify(heart).bind(any(Heart.Heartbeat.class));
-    }
-
-    @Test
-    public void whenCreatingAndroidMediaPlayerImpl_thenBindsListenersToForwarder() {
-        verify(forwarder).bind(preparedListeners, player);
-        verify(forwarder).bind(bufferStateListeners, errorListeners, player);
-        verify(forwarder).bind(completionListeners);
-        verify(forwarder).bind(videoSizeChangedListeners);
-        verify(forwarder).bind(infoListeners);
-    }
-
-    @Test
-    public void whenCreatingAndroidMediaPlayerImpl_thenBindsListenersToMediaPlayer() {
-        verify(mediaPlayer).setForwarder(forwarder);
-    }
-
-    @Test
-    public void whenCreatingAndroidMediaPlayerImpl_thenBindsListenerToBufferHeartbeatCallback() {
-        verify(bufferHeartbeatCallback).bind(bufferListener);
-    }
-
-    @Test
-    public void whenCreatingAndroidMediaPlayerImpl_thenBindsHeartbeatCallbackToListenerHolder() {
-        verify(listenersHolder).addHeartbeatCallback(bufferHeartbeatCallback);
-    }
-
-    @Test
-    public void givenBoundPreparedListener_whenCallingOnPrepared_thenCancelsTimeout() {
-        ArgumentCaptor<Player.PreparedListener> preparedListenerCaptor = ArgumentCaptor.forClass(Player.PreparedListener.class);
-        verify(listenersHolder).addPreparedListener(preparedListenerCaptor.capture());
-
-        Player.PreparedListener preparedListener = preparedListenerCaptor.getValue();
-        preparedListener.onPrepared(player);
-
-        verify(loadTimeout).cancel();
-    }
-
-    @Test
-    public void givenBoundPreparedListener_whenCallingOnPrepared_thenSetsOnSeekCompleteListener() {
-        ArgumentCaptor<Player.PreparedListener> preparedListenerCaptor = ArgumentCaptor.forClass(Player.PreparedListener.class);
-        verify(listenersHolder).addPreparedListener(preparedListenerCaptor.capture());
-
-        Player.PreparedListener preparedListener = preparedListenerCaptor.getValue();
-        preparedListener.onPrepared(player);
-
-        verify(mediaPlayer).setOnSeekCompleteListener(any(MediaPlayer.OnSeekCompleteListener.class));
-    }
-
-    @Test
-    public void givenBoundErrorListener_whenCallingOnError_thenCancelsTimeout() {
-        ArgumentCaptor<Player.ErrorListener> errorListenerCaptor = ArgumentCaptor.forClass(Player.ErrorListener.class);
-        verify(listenersHolder).addErrorListener(errorListenerCaptor.capture());
-
-        Player.ErrorListener errorListener = errorListenerCaptor.getValue();
-        errorListener.onError(player, mock(Player.PlayerError.class));
 
-        verify(loadTimeout).cancel();
-    }
-
-    @Test
-    public void givenBoundVideoSizeChangedListener_whenCallingOnVideoSizeChanged_thenVideoWidthAndHeightMatches() {
-        ArgumentCaptor<Player.VideoSizeChangedListener> videoSizeChangedListenerCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
-        verify(listenersHolder).addVideoSizeChangedListener(videoSizeChangedListenerCaptor.capture());
-
-        Player.VideoSizeChangedListener videoSizeChangedListener = videoSizeChangedListenerCaptor.getValue();
-        videoSizeChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
-
-        assertThat(player.getVideoWidth()).isEqualTo(WIDTH);
-        assertThat(player.getVideoHeight()).isEqualTo(HEIGHT);
-    }
-
-    @Test
-    public void whenStartingPlay_thenStartsBeatingHeart() {
-        player.play();
-
-        verify(heart).startBeatingHeart();
-    }
-
-    @Test
-    public void whenStartingPlay_thenMediaPlayerStarts() {
-        player.play();
-
-        verify(mediaPlayer).start();
-    }
+        @Test
+        public void whenCreatingAndroidMediaPlayerImpl_thenBindsListenersToForwarder() {
+            verify(forwarder).bind(preparedListeners, player);
+            verify(forwarder).bind(bufferStateListeners, errorListeners, player);
+            verify(forwarder).bind(completionListeners, stateChangedListeners);
+            verify(forwarder).bind(videoSizeChangedListeners);
+            verify(forwarder).bind(infoListeners);
+        }
 
-    @Test
-    public void whenStartingPlay_thenNotifiesStateListenersThatVideoIsPlaying() {
-        player.play();
+        @Test
+        public void whenCreatingAndroidMediaPlayerImpl_thenBindsListenersToMediaPlayer() {
+            verify(mediaPlayer).setForwarder(forwarder);
+        }
 
-        verify(stateChangedListeners).onVideoPlaying();
-    }
+        @Test
+        public void whenCreatingAndroidMediaPlayerImpl_thenBindsListenerToBufferHeartbeatCallback() {
+            verify(bufferHeartbeatCallback).bind(bufferListener);
+        }
 
-    @Test
-    public void whenStartingPlayAtVideoPosition_thenStartsBeatingHeart() {
-        VideoPosition videoPosition = VideoPosition.BEGINNING;
-        given(mediaPlayer.getCurrentPosition()).willReturn(videoPosition.inImpreciseMillis());
+        @Test
+        public void whenCreatingAndroidMediaPlayerImpl_thenBindsHeartbeatCallbackToListenerHolder() {
+            verify(listenersHolder).addHeartbeatCallback(bufferHeartbeatCallback);
+        }
 
-        player.play(videoPosition);
+        @Test
+        public void givenBoundPreparedListener_whenCallingOnPrepared_thenCancelsTimeout() {
+            ArgumentCaptor<Player.PreparedListener> preparedListenerCaptor = ArgumentCaptor.forClass(Player.PreparedListener.class);
+            verify(listenersHolder).addPreparedListener(preparedListenerCaptor.capture());
 
-        verify(heart).startBeatingHeart();
-    }
+            Player.PreparedListener preparedListener = preparedListenerCaptor.getValue();
+            preparedListener.onPrepared(player);
 
-    @Test
-    public void whenStartingPlayAtVideoPosition_thenMediaPlayerStarts() {
-        VideoPosition videoPosition = VideoPosition.BEGINNING;
-        given(mediaPlayer.getCurrentPosition()).willReturn(videoPosition.inImpreciseMillis());
+            verify(loadTimeout).cancel();
+        }
 
-        player.play(videoPosition);
+        @Test
+        public void whenCreatingAndroidMediaPlayerImpl_thenBindsHeart() {
+            verify(heart).bind(any(Heart.Heartbeat.class));
+        }
 
-        verify(mediaPlayer).start();
-    }
+        @Test
+        public void givenBoundPreparedListener_whenCallingOnPrepared_thenSetsOnSeekCompleteListener() {
+            ArgumentCaptor<Player.PreparedListener> preparedListenerCaptor = ArgumentCaptor.forClass(Player.PreparedListener.class);
+            verify(listenersHolder).addPreparedListener(preparedListenerCaptor.capture());
 
-    @Test
-    public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenersThatVideoIsPlaying() {
-        VideoPosition videoPosition = VideoPosition.BEGINNING;
-        given(mediaPlayer.getCurrentPosition()).willReturn(videoPosition.inImpreciseMillis());
+            Player.PreparedListener preparedListener = preparedListenerCaptor.getValue();
+            preparedListener.onPrepared(player);
 
-        player.play(videoPosition);
+            verify(mediaPlayer).setOnSeekCompleteListener(any(MediaPlayer.OnSeekCompleteListener.class));
+        }
 
-        verify(stateChangedListeners).onVideoPlaying();
-    }
+        @Test
+        public void givenBoundErrorListener_whenCallingOnError_thenCancelsTimeout() {
+            ArgumentCaptor<Player.ErrorListener> errorListenerCaptor = ArgumentCaptor.forClass(Player.ErrorListener.class);
+            verify(listenersHolder).addErrorListener(errorListenerCaptor.capture());
 
-    @Test
-    public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenNotifiesBufferStateListenersThatBufferStarted() {
-        VideoPosition differentPosition = givenPositionThatDiffersFromPlayheadPosition();
+            Player.ErrorListener errorListener = errorListenerCaptor.getValue();
+            errorListener.onError(player, mock(Player.PlayerError.class));
 
-        player.play(differentPosition);
+            verify(loadTimeout).cancel();
+        }
 
-        verify(bufferStateListeners).onBufferStarted();
-    }
+        @Test
+        public void givenBoundVideoSizeChangedListener_whenCallingOnVideoSizeChanged_thenVideoWidthAndHeightMatches() {
+            ArgumentCaptor<Player.VideoSizeChangedListener> videoSizeChangedListenerCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
+            verify(listenersHolder).addVideoSizeChangedListener(videoSizeChangedListenerCaptor.capture());
 
-    @Test
-    public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenInitialisesPlaybackForSeeking() {
-        VideoPosition differentPosition = givenPositionThatDiffersFromPlayheadPosition();
+            Player.VideoSizeChangedListener videoSizeChangedListener = videoSizeChangedListenerCaptor.getValue();
+            videoSizeChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
 
-        player.play(differentPosition);
+            assertThat(player.getVideoWidth()).isEqualTo(WIDTH);
+            assertThat(player.getVideoHeight()).isEqualTo(HEIGHT);
+        }
 
-        thenInitialisesPlaybackForSeeking();
-    }
+        @Test
+        public void givenAndroidMediaPlayerIsPlaying_whenCallingIsPlaying_thenReturnsTrue() {
+            given(mediaPlayer.isPlaying()).willReturn(IS_PLAYING);
 
-    @Test
-    public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenSeeksToVideoPosition() {
-        VideoPosition differentPosition = givenPositionThatDiffersFromPlayheadPosition();
+            boolean isPlaying = player.isPlaying();
 
-        player.play(differentPosition);
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(handler).postDelayed(runnableCaptor.capture(), eq(DELAY_MILLIS));
-        runnableCaptor.getValue().run();
+            assertThat(isPlaying).isTrue();
+        }
 
-        verify(mediaPlayer).seekTo(differentPosition.inImpreciseMillis());
-    }
+        @Test
+        public void whenSeeking_thenSeeksToPosition() {
+            VideoPosition videoPosition = VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS);
 
-    @Test
-    public void givenAndroidMediaPlayerIsPlaying_whenCallingIsPlaying_thenReturnsTrue() {
-        given(mediaPlayer.isPlaying()).willReturn(IS_PLAYING);
+            player.seekTo(videoPosition);
 
-        boolean isPlaying = player.isPlaying();
+            verify(mediaPlayer).seekTo(videoPosition.inImpreciseMillis());
+        }
 
-        assertThat(isPlaying).isTrue();
-    }
+        @Test
+        public void whenPausing_thenPausesMediaPlayer() {
+            player.pause();
 
-    @Test
-    public void whenSeeking_thenSeeksToPosition() {
-        VideoPosition videoPosition = VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS);
+            verify(mediaPlayer).pause();
+        }
 
-        player.seekTo(videoPosition);
+        @Test
+        public void givenHeartIsBeating_whenPausing_thenStopsBeatingHeart() {
+            given(heart.isBeating()).willReturn(IS_BEATING);
 
-        verify(mediaPlayer).seekTo(videoPosition.inImpreciseMillis());
-    }
+            player.pause();
 
-    @Test
-    public void whenPausing_thenPausesMediaPlayer() {
-        player.pause();
+            verify(heart).stopBeatingHeart();
+        }
 
-        verify(mediaPlayer).pause();
-    }
+        @Test
+        public void givenHeartIsBeating_whenPausing_thenForcesHeartBeat() {
+            given(heart.isBeating()).willReturn(IS_BEATING);
 
-    @Test
-    public void givenHeartIsBeating_whenPausing_thenStopsBeatingHeart() {
-        given(heart.isBeating()).willReturn(IS_BEATING);
+            player.pause();
 
-        player.pause();
+            verify(heart).forceBeat();
+        }
 
-        verify(heart).stopBeatingHeart();
-    }
+        @Test
+        public void givenHeartIsNotBeating_whenPausing_thenDoesNotStopBeatingHeart() {
+            given(heart.isBeating()).willReturn(IS_NOT_BEATING);
 
-    @Test
-    public void givenHeartIsBeating_whenPausing_thenForcesHeartBeat() {
-        given(heart.isBeating()).willReturn(IS_BEATING);
+            player.pause();
 
-        player.pause();
+            verify(heart, never()).stopBeatingHeart();
+        }
 
-        verify(heart).forceBeat();
-    }
+        @Test
+        public void givenHeartIsNotBeating_whenPausing_thenDoesNotForceHeartBeat() {
+            given(heart.isBeating()).willReturn(IS_NOT_BEATING);
 
-    @Test
-    public void givenHeartIsNotBeating_whenPausing_thenDoesNotStopBeatingHeart() {
-        given(heart.isBeating()).willReturn(IS_NOT_BEATING);
+            player.pause();
 
-        player.pause();
+            verify(heart, never()).forceBeat();
+        }
 
-        verify(heart, never()).stopBeatingHeart();
-    }
+        @Test
+        public void whenPausing_thenNotifiesStateChangedListenersThatVideoIsPaused() {
+            player.pause();
 
-    @Test
-    public void givenHeartIsNotBeating_whenPausing_thenDoesNotForceHeartBeat() {
-        given(heart.isBeating()).willReturn(IS_NOT_BEATING);
+            verify(stateChangedListeners).onVideoPaused();
+        }
 
-        player.pause();
+        @Test
+        public void givenPlayerIsNotSeeking_whenGettingPlayheadPosition_thenReturnsCurrentMediaPlayerPosition() {
+            given(mediaPlayer.getCurrentPosition()).willReturn(ONE_SECOND_IN_MILLIS);
+            VideoPosition playheadPosition = player.getPlayheadPosition();
 
-        verify(heart, never()).forceBeat();
-    }
+            assertThat(playheadPosition.inMillis()).isEqualTo(ONE_SECOND_IN_MILLIS);
+        }
 
-    @Test
-    public void whenPausing_thenNotifiesStateChangedListenersThatVideoIsPaused() {
-        player.pause();
+        @Test
+        public void givenPlayerIsNotSeeking_andIllegalStateException_whenGettingPlayheadPosition_thenReturnsInvalidVideoPosition() {
+            given(mediaPlayer.getCurrentPosition()).willThrow(IllegalStateException.class);
 
-        verify(stateChangedListeners).onVideoPaused();
-    }
+            VideoPosition videoPosition = player.getPlayheadPosition();
 
-    @Test
-    public void whenLoadingVideo_thenNotifiesBufferStateListenersThatBufferStarted() {
-        player.loadVideo(URI, ContentType.HLS);
+            assertThat(videoPosition).isEqualTo(VideoPosition.INVALID);
+        }
 
-        verify(bufferStateListeners).onBufferStarted();
-    }
+        @Test
+        public void givenPlayerIsSeeking_whenGettingPlayheadPosition_thenReturnsSeekPosition() {
+            VideoPosition seekPosition = VideoPosition.fromSeconds(TEN_SECONDS);
+            player.seekTo(seekPosition);
 
-    @Test
-    public void whenLoadingVideo_thenPreparesVideo() {
-        player.loadVideo(URI, ContentType.HLS);
+            VideoPosition videoPosition = player.getPlayheadPosition();
 
-        verify(mediaPlayer).prepareVideo(URI);
-    }
+            assertThat(videoPosition).isEqualTo(seekPosition);
+        }
 
-    @Test
-    public void whenLoadingVideoWithTimeout_thenNotifiesBufferStateListenersThatBufferStarted() {
-        player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+        @Test
+        public void whenGettingMediaDuration_thenReturnsMediaPlayerDuration() {
+            given(mediaPlayer.getDuration()).willReturn(ONE_SECOND_IN_MILLIS);
+            VideoDuration videoDuration = player.getMediaDuration();
 
-        verify(bufferStateListeners).onBufferStarted();
-    }
+            assertThat(videoDuration).isEqualTo(VideoDuration.fromMillis(ONE_SECOND_IN_MILLIS));
+        }
 
-    @Test
-    public void whenLoadingVideoWithTimeout_thenPreparesVideo() {
-        player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+        @Test
+        public void givenIllegalStateException_whenGettingMediaDuration_thenReturnsInvalidVideoDuration() {
+            given(mediaPlayer.getDuration()).willThrow(IllegalStateException.class);
+            VideoDuration videoDuration = player.getMediaDuration();
 
-        verify(mediaPlayer).prepareVideo(URI);
-    }
+            assertThat(videoDuration).isEqualTo(VideoDuration.INVALID);
+        }
 
-    @Test
-    public void whenLoadingVideoWithTimeout_thenStartsTimeout() {
-        player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+        @Test
+        public void whenGettingBufferPercentage_thenReturnsMediaPlayerBufferPercentage() {
+            int mediaPlayerBufferPercentage = 10;
+            given(mediaPlayer.getBufferPercentage()).willReturn(mediaPlayerBufferPercentage);
 
-        verify(loadTimeout).start(ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
-    }
+            int bufferPercentage = player.getBufferPercentage();
 
-    @Test
-    public void givenPlayerIsNotSeeking_whenGettingPlayheadPosition_thenReturnsCurrentMediaPlayerPosition() {
-        given(mediaPlayer.getCurrentPosition()).willReturn(ONE_SECOND_IN_MILLIS);
-        VideoPosition playheadPosition = player.getPlayheadPosition();
+            assertThat(bufferPercentage).isEqualTo(mediaPlayerBufferPercentage);
+        }
 
-        assertThat(playheadPosition.inMillis()).isEqualTo(ONE_SECOND_IN_MILLIS);
-    }
+        @Test
+        public void whenGettingPlayerInformation_thenReturnsMediaPlayerInformation() {
+            PlayerInformation playerInformation = player.getPlayerInformation();
 
-    @Test
-    public void givenPlayerIsNotSeeking_andIllegalStateException_whenGettingPlayheadPosition_thenReturnsInvalidVideoPosition() {
-        given(mediaPlayer.getCurrentPosition()).willThrow(IllegalStateException.class);
+            assertThat(playerInformation.getPlayerType()).isEqualTo(PlayerType.MEDIA_PLAYER);
+            assertThat(playerInformation.getVersion()).isEqualTo(Build.VERSION.RELEASE);
+        }
 
-        VideoPosition videoPosition = player.getPlayheadPosition();
+        @Test
+        public void whenAttachingPlayerView_thenAddsVideoSizeChangedListener() {
+            PlayerView playerView = mock(PlayerView.class);
+            Player.VideoSizeChangedListener videoSizeChangedListener = mock(Player.VideoSizeChangedListener.class);
+            given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
+            player.attach(playerView);
 
-        assertThat(videoPosition).isEqualTo(VideoPosition.INVALID);
-    }
+            verify(listenersHolder).addVideoSizeChangedListener(videoSizeChangedListener);
+        }
 
-    @Test
-    public void givenPlayerIsSeeking_whenGettingPlayheadPosition_thenReturnsSeekPosition() {
-        VideoPosition seekPosition = VideoPosition.fromSeconds(TEN_SECONDS);
-        player.seekTo(seekPosition);
+        @Test
+        public void whenAttachingPlayerView_thenAddsStateChangedListener() {
+            PlayerView playerView = mock(PlayerView.class);
+            Player.StateChangedListener stateChangedListener = mock(Player.StateChangedListener.class);
+            given(playerView.getStateChangedListener()).willReturn(stateChangedListener);
+            player.attach(playerView);
 
-        VideoPosition videoPosition = player.getPlayheadPosition();
+            verify(listenersHolder).addStateChangedListener(stateChangedListener);
+        }
 
-        assertThat(videoPosition).isEqualTo(seekPosition);
-    }
+        @Test
+        public void whenAttachingPlayerView_thenPreventsVideoDriverBug() {
+            PlayerView playerView = mock(PlayerView.class);
+            View containerView = mock(View.class);
+            given(playerView.getContainerView()).willReturn(containerView);
+            player.attach(playerView);
 
-    @Test
-    public void whenGettingMediaDuration_thenReturnsMediaPlayerDuration() {
-        given(mediaPlayer.getDuration()).willReturn(ONE_SECOND_IN_MILLIS);
-        VideoDuration videoDuration = player.getMediaDuration();
+            verify(buggyVideoDriverPreventer).preventVideoDriverBug(player, containerView);
+        }
 
-        assertThat(videoDuration).isEqualTo(VideoDuration.fromMillis(ONE_SECOND_IN_MILLIS));
-    }
+        @Test
+        public void whenDetachingPlayerView_thenRemovesVideoSizeChangedListener() {
+            PlayerView playerView = mock(PlayerView.class);
+            Player.VideoSizeChangedListener videoSizeChangedListener = mock(Player.VideoSizeChangedListener.class);
+            given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
+            player.detach(playerView);
 
-    @Test
-    public void givenIllegalStateException_whenGettingMediaDuration_thenReturnsInvalidVideoDuration() {
-        given(mediaPlayer.getDuration()).willThrow(IllegalStateException.class);
-        VideoDuration videoDuration = player.getMediaDuration();
+            verify(listenersHolder).removeVideoSizeChangedListener(videoSizeChangedListener);
+        }
 
-        assertThat(videoDuration).isEqualTo(VideoDuration.INVALID);
-    }
+        @Test
+        public void whenDetachingPlayerView_thenRemovesStateChangedListener() {
+            PlayerView playerView = mock(PlayerView.class);
+            Player.StateChangedListener stateChangedListener = mock(Player.StateChangedListener.class);
+            given(playerView.getStateChangedListener()).willReturn(stateChangedListener);
+            player.detach(playerView);
 
-    @Test
-    public void whenGettingBufferPercentage_thenReturnsMediaPlayerBufferPercentage() {
-        int mediaPlayerBufferPercentage = 10;
-        given(mediaPlayer.getBufferPercentage()).willReturn(mediaPlayerBufferPercentage);
+            verify(listenersHolder).removeStateChangedListener(stateChangedListener);
+        }
 
-        int bufferPercentage = player.getBufferPercentage();
+        @Test
+        public void whenDetachingPlayerView_thenClearsVideoDriverBugPreventer() {
+            PlayerView playerView = mock(PlayerView.class);
+            View containerView = mock(View.class);
+            given(playerView.getContainerView()).willReturn(containerView);
+            player.detach(playerView);
 
-        assertThat(bufferPercentage).isEqualTo(mediaPlayerBufferPercentage);
-    }
+            verify(buggyVideoDriverPreventer).clear(containerView);
+        }
 
-    @Test
-    public void whenGettingPlayerInformation_thenReturnsMediaPlayerInformation() {
-        PlayerInformation playerInformation = player.getPlayerInformation();
+        @Test
+        public void whenSelectingAudioTrack_thenDelegatesToMediaPlayer() {
+            PlayerAudioTrack audioTrack = mock(PlayerAudioTrack.class);
 
-        assertThat(playerInformation.getPlayerType()).isEqualTo(PlayerType.MEDIA_PLAYER);
-        assertThat(playerInformation.getVersion()).isEqualTo(Build.VERSION.RELEASE);
-    }
+            player.selectAudioTrack(audioTrack);
 
-    @Test
-    public void whenAttachingPlayerView_thenSetsSurfaceHolderRequesterToMediaPlayer() {
-        PlayerView playerView = mock(PlayerView.class);
-        SurfaceHolderRequester surfaceHolderRequester = mock(SurfaceHolderRequester.class);
-        given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
-        player.attach(playerView);
-
-        verify(mediaPlayer).setSurfaceHolderRequester(surfaceHolderRequester);
-    }
+            verify(mediaPlayer).selectAudioTrack(audioTrack);
+        }
 
-    @Test
-    public void whenAttachingPlayerView_thenAddsVideoSizeChangedListener() {
-        PlayerView playerView = mock(PlayerView.class);
-        Player.VideoSizeChangedListener videoSizeChangedListener = mock(Player.VideoSizeChangedListener.class);
-        given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
-        player.attach(playerView);
-
-        verify(listenersHolder).addVideoSizeChangedListener(videoSizeChangedListener);
-    }
+        @Test
+        public void whenGettingAudioTracks_thenDelegatesToMediaPlayer() {
+            given(mediaPlayer.getAudioTracks()).willReturn(AUDIO_TRACKS);
+            List<PlayerAudioTrack> audioTracks = player.getAudioTracks();
 
-    @Test
-    public void whenAttachingPlayerView_thenAddsStateChangedListener() {
-        PlayerView playerView = mock(PlayerView.class);
-        Player.StateChangedListener stateChangedListener = mock(Player.StateChangedListener.class);
-        given(playerView.getStateChangedListener()).willReturn(stateChangedListener);
-        player.attach(playerView);
-
-        verify(listenersHolder).addStateChangedListener(stateChangedListener);
-    }
+            assertThat(audioTracks).isEqualTo(AUDIO_TRACKS);
+        }
 
-    @Test
-    public void whenAttachingPlayerView_thenPreventsVideoDriverBug() {
-        PlayerView playerView = mock(PlayerView.class);
-        View containerView = mock(View.class);
-        given(playerView.getContainerView()).willReturn(containerView);
-        player.attach(playerView);
-
-        verify(buggyVideoDriverPreventer).preventVideoDriverBug(player, containerView);
-    }
+        @Test
+        public void whenStopping_thenPlayerResourcesAreReleased_andNotListeners() {
 
-    @Test
-    public void whenSelectingAudioTrack_thenDelegatesToMediaPlayer() {
-        PlayerAudioTrack audioTrack = mock(PlayerAudioTrack.class);
+            player.stop();
 
-        player.selectAudioTrack(audioTrack);
+            verify(stateChangedListeners).onVideoStopped();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(mediaPlayer).release();
+            verify(listenersHolder, never()).clear();
+        }
 
-        verify(mediaPlayer).selectAudioTrack(audioTrack);
-    }
+        @Test
+        public void whenReleasing_thenPlayerResourcesAreReleased() {
 
-    @Test
-    public void whenGettingAudioTracks_thenDelegatesToMediaPlayer() {
-        given(mediaPlayer.getAudioTracks()).willReturn(AUDIO_TRACKS);
-        List<PlayerAudioTrack> audioTracks = player.getAudioTracks();
+            player.release();
 
-        assertThat(audioTracks).isEqualTo(AUDIO_TRACKS);
+            verify(stateChangedListeners).onVideoStopped();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(mediaPlayer).release();
+            verify(listenersHolder).clear();
+        }
     }
-
-    @Test
-    public void whenStoppingPlayer_thenStopsMediaPlayer() {
-        player.stop();
 
-        verify(mediaPlayer).stop();
-    }
+    public static class GivenPlayerIsAttached extends Base {
 
-    @Test
-    public void whenResettingPlayer_thenCancelsTimeout() {
-        player.reset();
+        private static final long DELAY_MILLIS = 500;
 
-        verify(loadTimeout).cancel();
-    }
+        @Override
+        public void setUp() {
+            super.setUp();
+            player.attach(playerView);
+        }
 
-    @Test
-    public void whenResettingPlayer_thenStopsBeatingHeart() {
-        player.reset();
+        @Test
+        public void whenLoadingVideo_thenNotifiesBufferStateListenersThatBufferStarted() {
+            player.loadVideo(URI, ContentType.HLS);
 
-        verify(heart).stopBeatingHeart();
-    }
+            verify(bufferStateListeners).onBufferStarted();
+        }
 
-    @Test
-    public void whenResettingPlayer_thenNotifiesPlayerReleaseListenerOfPlayerPreReleases() {
-        player.reset();
+        @Test
+        public void whenLoadingVideo_thenPreparesVideo() {
+            player.loadVideo(URI, ContentType.HLS);
 
-        verify(playerReleaseListener).onPlayerPreRelease(player);
-    }
+            verify(mediaPlayer).prepareVideo(URI, surfaceHolder);
+        }
 
-    @Test
-    public void whenResettingPlayer_thenReleasesMediaPlayer() {
-        player.reset();
+        @Test
+        public void whenLoadingVideoWithTimeout_thenNotifiesBufferStateListenersThatBufferStarted() {
+            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-        verify(mediaPlayer).release();
-    }
+            verify(bufferStateListeners).onBufferStarted();
+        }
 
-    @Test
-    public void whenResettingPlayer_thenNotifiesStateChangedListenerOfVideoReleased() {
-        player.reset();
+        @Test
+        public void whenLoadingVideoWithTimeout_thenPreparesVideo() {
+            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-        verify(stateChangedListeners).onVideoReleased();
-    }
+            verify(mediaPlayer).prepareVideo(URI, surfaceHolder);
+        }
 
-    @Test
-    public void givenPlayerIsAttached_whenResettingPlayer_thenRemovesVideoSizeChangedListener() {
-        PlayerView playerView = mock(PlayerView.class);
-        Player.VideoSizeChangedListener videoSizeChangedListener = mock(Player.VideoSizeChangedListener.class);
-        given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
-        player.attach(playerView);
+        @Test
+        public void whenLoadingVideoWithTimeout_thenStartsTimeout() {
+            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-        player.reset();
+            verify(loadTimeout).start(ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+        }
 
-        verify(listenersHolder).removeVideoSizeChangedListener(videoSizeChangedListener);
-    }
+        @Test
+        public void whenStartingPlay_thenStartsBeatingHeart() {
+            player.play();
 
-    @Test
-    public void givenPlayerIsAttached_whenResettingPlayer_thenRemovesStateChangedListener() {
-        PlayerView playerView = mock(PlayerView.class);
-        Player.StateChangedListener stateChangedListener = mock(Player.StateChangedListener.class);
-        given(playerView.getStateChangedListener()).willReturn(stateChangedListener);
-        player.attach(playerView);
+            verify(heart).startBeatingHeart();
+        }
 
-        player.reset();
+        @Test
+        public void whenStartingPlay_thenMediaPlayerStarts() {
+            player.play();
 
-        verify(listenersHolder).removeStateChangedListener(stateChangedListener);
-    }
+            verify(mediaPlayer).start(surfaceHolder);
+        }
 
-    @Test
-    public void whenResettingPlayer_thenRemovesHearbeatCallback() {
-        player.reset();
+        @Test
+        public void whenStartingPlay_thenNotifiesStateListenersThatVideoIsPlaying() {
+            player.play();
 
-        verify(listenersHolder).removeHeartbeatCallback(bufferHeartbeatCallback);
-    }
+            verify(stateChangedListeners).onVideoPlaying();
+        }
 
-    @Test
-    public void whenReleasingPlayer_thenCancelsTimeout() {
-        player.release();
+        @Test
+        public void whenStartingPlayAtVideoPosition_thenStartsBeatingHeart() {
+            VideoPosition videoPosition = VideoPosition.BEGINNING;
+            given(mediaPlayer.getCurrentPosition()).willReturn(videoPosition.inImpreciseMillis());
 
-        verify(loadTimeout).cancel();
-    }
+            player.play(videoPosition);
 
-    @Test
-    public void whenReleasingPlayer_thenStopsBeatingHeart() {
-        player.release();
+            verify(heart).startBeatingHeart();
+        }
 
-        verify(heart).stopBeatingHeart();
-    }
+        @Test
+        public void whenStartingPlayAtVideoPosition_thenMediaPlayerStarts() {
+            VideoPosition videoPosition = VideoPosition.BEGINNING;
+            given(mediaPlayer.getCurrentPosition()).willReturn(videoPosition.inImpreciseMillis());
 
-    @Test
-    public void whenReleasingPlayer_thenNotifiesPlayerReleaseListenerOfPlayerPreReleases() {
-        player.release();
+            player.play(videoPosition);
 
-        verify(playerReleaseListener).onPlayerPreRelease(player);
-    }
+            verify(mediaPlayer).start(surfaceHolder);
+        }
 
-    @Test
-    public void whenReleasingPlayer_thenReleasesMediaPlayer() {
-        player.release();
+        @Test
+        public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenersThatVideoIsPlaying() {
+            VideoPosition videoPosition = VideoPosition.BEGINNING;
+            given(mediaPlayer.getCurrentPosition()).willReturn(videoPosition.inImpreciseMillis());
 
-        verify(mediaPlayer).release();
-    }
+            player.play(videoPosition);
 
-    @Test
-    public void whenReleasingPlayer_thenNotifiesStateChangedListenerOfVideoReleased() {
-        player.release();
+            verify(stateChangedListeners).onVideoPlaying();
+        }
 
-        verify(stateChangedListeners).onVideoReleased();
-    }
+        @Test
+        public void givenPlayerHasPlayedVideo_whenLoadingVideo_thenPlayerIsReleased_andNotListeners() {
+            given(mediaPlayer.hasPlayedContent()).willReturn(true);
 
-    @Test
-    public void givenPlayerIsAttached_whenReleasingPlayer_thenRemovesVideoSizeChangedListener() {
-        PlayerView playerView = mock(PlayerView.class);
-        Player.VideoSizeChangedListener videoSizeChangedListener = mock(Player.VideoSizeChangedListener.class);
-        given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
-        player.attach(playerView);
+            player.loadVideo(URI, ContentType.HLS);
 
-        player.release();
+            verify(stateChangedListeners).onVideoStopped();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(mediaPlayer).release();
+            verify(listenersHolder, never()).clear();
+        }
 
-        verify(listenersHolder).removeVideoSizeChangedListener(videoSizeChangedListener);
-    }
+        @Test
+        public void givenPlayerHasPlayedVideo_whenLoadingVideoWithTimeout_thenPlayerResourcesAreReleased_andNotListeners() {
+            given(mediaPlayer.hasPlayedContent()).willReturn(true);
 
-    @Test
-    public void givenPlayerIsAttached_whenReleasingPlayer_thenRemovesStateChangedListener() {
-        PlayerView playerView = mock(PlayerView.class);
-        Player.StateChangedListener stateChangedListener = mock(Player.StateChangedListener.class);
-        given(playerView.getStateChangedListener()).willReturn(stateChangedListener);
-        player.attach(playerView);
+            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-        player.release();
+            verify(stateChangedListeners).onVideoStopped();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(mediaPlayer).release();
+            verify(listenersHolder, never()).clear();
+        }
 
-        verify(listenersHolder).removeStateChangedListener(stateChangedListener);
-    }
+        @Test
+        public void givenPlayerHasNotPlayedVideo_whenLoadingVideo_thenPlayerResourcesAreNotReleased() {
+            given(mediaPlayer.hasPlayedContent()).willReturn(false);
 
-    @Test
-    public void whenReleasingPlayer_thenRemovesHearbeatCallback() {
-        player.release();
+            player.loadVideo(URI, ContentType.HLS);
 
-        verify(listenersHolder).removeHeartbeatCallback(bufferHeartbeatCallback);
-    }
+            verify(stateChangedListeners, never()).onVideoStopped();
+            verify(loadTimeout, never()).cancel();
+            verify(heart, never()).stopBeatingHeart();
+            verify(mediaPlayer, never()).release();
+        }
 
-    private VideoPosition givenPositionThatDiffersFromPlayheadPosition() {
-        given(mediaPlayer.getCurrentPosition()).willReturn(VideoPosition.BEGINNING.inImpreciseMillis());
-        return VideoPosition.fromMillis(1);
-    }
+        @Test
+        public void givenPlayerHasNotPlayedVideo_whenLoadingVideoWithTimeout_thenPlayerResourcesAreNotReleased() {
+            given(mediaPlayer.hasPlayedContent()).willReturn(false);
 
-    private void thenInitialisesPlaybackForSeeking() {
-        InOrder inOrder = inOrder(mediaPlayer);
+            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-        inOrder.verify(mediaPlayer).start();
-        inOrder.verify(mediaPlayer).pause();
-        inOrder.verifyNoMoreInteractions();
+            verify(stateChangedListeners, never()).onVideoStopped();
+            verify(loadTimeout, never()).cancel();
+            verify(heart, never()).stopBeatingHeart();
+            verify(mediaPlayer, never()).release();
+        }
+
+        @Test
+        public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenNotifiesBufferStateListenersThatBufferStarted() {
+            VideoPosition differentPosition = givenPositionThatDiffersFromPlayheadPosition();
+
+            player.play(differentPosition);
+
+            verify(bufferStateListeners).onBufferStarted();
+        }
+
+        @Test
+        public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenInitialisesPlaybackForSeeking() {
+            VideoPosition differentPosition = givenPositionThatDiffersFromPlayheadPosition();
+
+            player.play(differentPosition);
+
+            thenInitialisesPlaybackForSeeking();
+        }
+
+        @Test
+        public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenSeeksToVideoPosition() {
+            VideoPosition differentPosition = givenPositionThatDiffersFromPlayheadPosition();
+
+            player.play(differentPosition);
+            ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
+            verify(handler).postDelayed(runnableCaptor.capture(), eq(DELAY_MILLIS));
+            runnableCaptor.getValue().run();
+
+            verify(mediaPlayer).seekTo(differentPosition.inImpreciseMillis());
+        }
+
+        private VideoPosition givenPositionThatDiffersFromPlayheadPosition() {
+            given(mediaPlayer.getCurrentPosition()).willReturn(VideoPosition.BEGINNING.inImpreciseMillis());
+            return VideoPosition.fromMillis(1);
+        }
+
+        private void thenInitialisesPlaybackForSeeking() {
+            InOrder inOrder = inOrder(mediaPlayer);
+
+            inOrder.verify(mediaPlayer).start(surfaceHolder);
+            inOrder.verify(mediaPlayer).pause();
+            inOrder.verifyNoMoreInteractions();
+        }
+    }
+
+    public static abstract class Base {
+
+        static final Uri URI = Mockito.mock(Uri.class);
+        static final int TEN_SECONDS = 10;
+        static final Timeout ANY_TIMEOUT = Timeout.fromSeconds(TEN_SECONDS);
+        static final Player.LoadTimeoutCallback ANY_LOAD_TIMEOUT_CALLBACK = new Player.LoadTimeoutCallback() {
+            @Override
+            public void onLoadTimeout() {
+
+            }
+        };
+
+        @Rule
+        public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+        @Mock
+        AndroidMediaPlayerFacade mediaPlayer;
+        @Mock
+        PlayerListenersHolder listenersHolder;
+        @Mock
+        MediaPlayerForwarder forwarder;
+        @Mock
+        LoadTimeout loadTimeout;
+        @Mock
+        Heart heart;
+        @Mock
+        Handler handler;
+        @Mock
+        CheckBufferHeartbeatCallback bufferHeartbeatCallback;
+        @Mock
+        BuggyVideoDriverPreventer buggyVideoDriverPreventer;
+        @Mock
+        PreparedListeners preparedListeners;
+        @Mock
+        BufferStateListeners bufferStateListeners;
+        @Mock
+        ErrorListeners errorListeners;
+        @Mock
+        CompletionListeners completionListeners;
+        @Mock
+        VideoSizeChangedListeners videoSizeChangedListeners;
+        @Mock
+        InfoListeners infoListeners;
+        @Mock
+        StateChangedListeners stateChangedListeners;
+        @Mock
+        MediaPlayer.OnPreparedListener onPreparedListener;
+        @Mock
+        MediaPlayer.OnCompletionListener onCompletionListener;
+        @Mock
+        MediaPlayer.OnErrorListener onErrorListener;
+        @Mock
+        MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
+        @Mock
+        SurfaceHolder surfaceHolder;
+        @Mock
+        CheckBufferHeartbeatCallback.BufferListener bufferListener;
+        @Mock
+        PlayerView playerView;
+        @Mock
+        Player.StateChangedListener stateChangeListener;
+        @Mock
+        Player.VideoSizeChangedListener videoSizeChangedListener;
+
+        AndroidMediaPlayerImpl player;
+
+        @Before
+        public void setUp() {
+            Log.setShowLogs(false);
+            SurfaceHolderRequester surfaceHolderRequester = mock(SurfaceHolderRequester.class);
+            given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
+            given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
+            given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
+            doAnswer(new Answer<Void>() {
+                @Override
+                public Void answer(InvocationOnMock invocation) throws Throwable {
+                    SurfaceHolderRequester.Callback callback = invocation.getArgument(0);
+                    callback.onSurfaceHolderReady(surfaceHolder);
+                    return null;
+                }
+            }).when(surfaceHolderRequester).requestSurfaceHolder(any(SurfaceHolderRequester.Callback.class));
+
+            given(listenersHolder.getPreparedListeners()).willReturn(preparedListeners);
+            given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListeners);
+            given(listenersHolder.getErrorListeners()).willReturn(errorListeners);
+            given(listenersHolder.getCompletionListeners()).willReturn(completionListeners);
+            given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListeners);
+            given(listenersHolder.getInfoListeners()).willReturn(infoListeners);
+            given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListeners);
+
+            given(forwarder.onPreparedListener()).willReturn(onPreparedListener);
+            given(forwarder.onCompletionListener()).willReturn(onCompletionListener);
+            given(forwarder.onErrorListener()).willReturn(onErrorListener);
+            given(forwarder.onSizeChangedListener()).willReturn(onSizeChangedListener);
+            given(forwarder.onHeartbeatListener()).willReturn(bufferListener);
+
+            player = new AndroidMediaPlayerImpl(mediaPlayer, listenersHolder, forwarder, loadTimeout, heart, handler, bufferHeartbeatCallback, buggyVideoDriverPreventer);
+        }
     }
-
 }
