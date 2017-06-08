@@ -62,6 +62,7 @@ public class AndroidMediaPlayerFacadeTest {
     private static final Uri ANY_URI = mock(Uri.class);
     private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
     private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
+    private static final String ERROR_MESSAGE = "Video must be loaded and not in an error state before trying to interact with the player";
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -304,12 +305,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void givenMediaPlayerIsNotPrepared_whenStarting_thenThrowsIllegalStateException() {
-        thrown.expect(
-                ExceptionMatcher.matches(
-                        "Video must be loaded and not in an error state before trying to interact with the player",
-                        IllegalStateException.class
-                )
-        );
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
 
         facade.start(surfaceHolder);
     }
@@ -359,12 +355,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void givenMediaPlayerIsNotInPlaybackState_whenGettingDuration_thenThrowsIllegalStateException() {
-        thrown.expect(
-                ExceptionMatcher.matches(
-                        "Video must be loaded and not in an error state before trying to interact with the player",
-                        IllegalStateException.class
-                )
-        );
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
 
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
                 .willReturn(IS_NOT_IN_PLAYBACK_STATE);
@@ -386,12 +377,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void givenMediaPlayerIsNotInPlaybackState_whenGettingPosition_thenThrowsIllegalStateException() {
-        thrown.expect(
-                ExceptionMatcher.matches(
-                        "Video must be loaded and not in an error state before trying to interact with the player",
-                        IllegalStateException.class
-                )
-        );
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
 
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
                 .willReturn(IS_NOT_IN_PLAYBACK_STATE);
@@ -412,12 +398,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void givenMediaPlayerIsNotInPlaybackState_whenSeeking_thenThrowsIllegalStateException() {
-        thrown.expect(
-                ExceptionMatcher.matches(
-                        "Video must be loaded and not in an error state before trying to interact with the player",
-                        IllegalStateException.class
-                )
-        );
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
 
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
                 .willReturn(IS_NOT_IN_PLAYBACK_STATE);
@@ -438,12 +419,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void givenNoMediaPlayer_whenGettingBufferPercentage_thenThrowsIllegalStateException() {
-        thrown.expect(
-                ExceptionMatcher.matches(
-                        "Video must be loaded and not in an error state before trying to interact with the player",
-                        IllegalStateException.class
-                )
-        );
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
 
         facade.getBufferPercentage();
     }
@@ -459,12 +435,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void givenNoMediaPlayer_whenStopping_thenThrowsIllegalStateException() {
-        thrown.expect(
-                ExceptionMatcher.matches(
-                        "Video must be loaded and not in an error state before trying to interact with the player",
-                        IllegalStateException.class
-                )
-        );
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
 
         facade.stop();
     }
