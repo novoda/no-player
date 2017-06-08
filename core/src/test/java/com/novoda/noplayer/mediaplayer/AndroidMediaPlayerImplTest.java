@@ -293,15 +293,6 @@ public class AndroidMediaPlayerImplTest {
         }
 
         @Test
-        public void givenPlayerIsNotSeeking_andIllegalStateException_whenGettingPlayheadPosition_thenReturnsInvalidVideoPosition() {
-            given(mediaPlayer.getCurrentPosition()).willThrow(IllegalStateException.class);
-
-            VideoPosition videoPosition = player.getPlayheadPosition();
-
-            assertThat(videoPosition).isEqualTo(VideoPosition.INVALID);
-        }
-
-        @Test
         public void givenPlayerIsSeeking_whenGettingPlayheadPosition_thenReturnsSeekPosition() {
             VideoPosition seekPosition = VideoPosition.fromSeconds(TEN_SECONDS);
             player.seekTo(seekPosition);
@@ -317,14 +308,6 @@ public class AndroidMediaPlayerImplTest {
             VideoDuration videoDuration = player.getMediaDuration();
 
             assertThat(videoDuration).isEqualTo(VideoDuration.fromMillis(ONE_SECOND_IN_MILLIS));
-        }
-
-        @Test
-        public void givenIllegalStateException_whenGettingMediaDuration_thenReturnsInvalidVideoDuration() {
-            given(mediaPlayer.getDuration()).willThrow(IllegalStateException.class);
-            VideoDuration videoDuration = player.getMediaDuration();
-
-            assertThat(videoDuration).isEqualTo(VideoDuration.INVALID);
         }
 
         @Test

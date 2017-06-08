@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
-import utils.ExceptionMatcher;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
@@ -26,6 +25,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
+
+import utils.ExceptionMatcher;
 
 import static com.novoda.notils.logger.simple.Log.setShowLogs;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -61,6 +62,7 @@ public class AndroidMediaPlayerFacadeTest {
     private static final Uri ANY_URI = mock(Uri.class);
     private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
     private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
+    private static final String ERROR_MESSAGE = "Video must be loaded and not in an error state before trying to interact with the player";
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -302,10 +304,10 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
-    public void givenMediaPlayerIsNotPrepared_whenStarting_thenNeverSetsDisplay() {
-        facade.start(surfaceHolder);
+    public void givenMediaPlayerIsNotPrepared_whenStarting_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
 
-        verify(mediaPlayer, never()).setDisplay(surfaceHolder);
+        facade.start(surfaceHolder);
     }
 
     @Test
@@ -315,13 +317,6 @@ public class AndroidMediaPlayerFacadeTest {
         facade.start(surfaceHolder);
 
         verify(mediaPlayer).start();
-    }
-
-    @Test
-    public void givenMediaPlayerIsNotPrepared_whenStarting_thenNeverStartsMediaPlayer() {
-        facade.start(surfaceHolder);
-
-        verify(mediaPlayer, never()).start();
     }
 
     @Test
@@ -359,13 +354,13 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
-    public void givenMediaPlayerIsNotInPlaybackState_whenGettingDuration_thenReturnsMinusOne() {
+    public void givenMediaPlayerIsNotInPlaybackState_whenGettingDuration_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
                 .willReturn(IS_NOT_IN_PLAYBACK_STATE);
 
-        int duration = facade.getDuration();
-
-        assertThat(duration).isEqualTo(MINUS_ONE);
+        facade.getDuration();
     }
 
     @Test
@@ -381,13 +376,13 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
-    public void givenMediaPlayerIsNotInPlaybackState_whenGettingPosition_thenReturnsZero() {
+    public void givenMediaPlayerIsNotInPlaybackState_whenGettingPosition_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
                 .willReturn(IS_NOT_IN_PLAYBACK_STATE);
 
-        int currentPosition = facade.getCurrentPosition();
-
-        assertThat(currentPosition).isEqualTo(ZERO);
+        facade.getCurrentPosition();
     }
 
     @Test
@@ -402,13 +397,13 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
-    public void givenMediaPlayerIsNotInPlaybackState_whenSeeking_thenDoesNotSeek() {
+    public void givenMediaPlayerIsNotInPlaybackState_whenSeeking_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
                 .willReturn(IS_NOT_IN_PLAYBACK_STATE);
 
         facade.seekTo(TEN_SECONDS_IN_MILLIS);
-
-        verify(mediaPlayer, never()).seekTo(TEN_SECONDS_IN_MILLIS);
     }
 
     @Test
@@ -423,10 +418,10 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
-    public void givenNoMediaPlayer_whenGettingBufferPercentage_thenReturnsZero() {
-        int bufferPercentage = facade.getBufferPercentage();
+    public void givenNoMediaPlayer_whenGettingBufferPercentage_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
 
-        assertThat(bufferPercentage).isEqualTo(ZERO);
+        facade.getBufferPercentage();
     }
 
     @Test
@@ -439,10 +434,10 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
-    public void givenNoMediaPlayer_whenStopping_thenDoesNotStop() {
-        facade.stop();
+    public void givenNoMediaPlayer_whenStopping_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
 
-        verify(mediaPlayer, never()).stop();
+        facade.stop();
     }
 
     @Test
