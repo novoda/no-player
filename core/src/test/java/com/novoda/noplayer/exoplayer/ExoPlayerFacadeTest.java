@@ -13,6 +13,9 @@ import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,6 +55,8 @@ public class ExoPlayerFacadeTest {
     public static class GivenVideoNotLoaded extends Base {
 
         private static final VideoPosition ANY_POSITION = VideoPosition.fromMillis(1000);
+        private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
+        private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
 
         @Rule
         public ExpectedException thrown = ExpectedException.none();
@@ -100,10 +105,11 @@ public class ExoPlayerFacadeTest {
 
         @Test
         public void whenGettingAudioTracks_thenDelegatesToTrackSelector() {
+            given(trackSelector.getAudioTracks()).willReturn(AUDIO_TRACKS);
 
-            facade.getAudioTracks();
+            List<PlayerAudioTrack> audioTracks = facade.getAudioTracks();
 
-            verify(trackSelector).getAudioTracks();
+            assertThat(audioTracks).isEqualTo(AUDIO_TRACKS);
         }
 
         @Test
