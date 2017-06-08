@@ -1,5 +1,6 @@
 package com.novoda.noplayer.mediaplayer;
 
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -24,6 +25,7 @@ import com.novoda.noplayer.listeners.InfoListeners;
 import com.novoda.noplayer.listeners.PreparedListeners;
 import com.novoda.noplayer.listeners.StateChangedListeners;
 import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
+import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.noplayer.player.PlayerType;
 import com.novoda.notils.logger.simple.Log;
@@ -57,9 +59,11 @@ public class AndroidMediaPlayerImplTest {
 
         private static final boolean IS_BEATING = true;
         private static final boolean IS_NOT_BEATING = false;
-
+        private static final int WIDTH = 100;
+        private static final int HEIGHT = 200;
+        private static final int ANY_ROTATION_DEGREES = 0;
+        private static final int ANY_PIXEL_WIDTH_HEIGHT = 1;
         private static final long TWO_MINUTES_IN_MILLIS = 120000;
-
         private static final int ONE_SECOND_IN_MILLIS = 1000;
         private static final boolean IS_PLAYING = true;
         private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
@@ -70,6 +74,8 @@ public class AndroidMediaPlayerImplTest {
 
         @Mock
         private AndroidMediaPlayerFacade mediaPlayer;
+        @Mock
+        private MediaPlayerForwarder forwarder;
         @Mock
         private PlayerListenersHolder listenersHolder;
         @Mock
@@ -108,7 +114,95 @@ public class AndroidMediaPlayerImplTest {
             given(listenersHolder.getInfoListeners()).willReturn(infoListeners);
             given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListeners);
 
-            player = new AndroidMediaPlayerImpl(mediaPlayer, listenersHolder, loadTimeout, heart, handler, preventer);
+            given(forwarder.onPreparedListener()).willReturn(onPreparedListener);
+            given(forwarder.onCompletionListener()).willReturn(onCompletionListener);
+            given(forwarder.onErrorListener()).willReturn(onErrorListener);
+            given(forwarder.onSizeChangedListener()).willReturn(onSizeChangedListener);
+            given(forwarder.onHeartbeatListener()).willReturn(bufferListener);
+
+            player = new AndroidMediaPlayerImpl(mediaPlayer, forwarder, listenersHolder, checkBufferHeartbeatCallback, loadTimeout, heart, handler, preventer);
+        }
+
+        @Test
+        public void whenInitialising_thenBindsListenersToForwarder() {
+            player.initialise();
+
+            verify(forwarder).bind(preparedListeners, player);
+            verify(forwarder).bind(bufferStateListeners, errorListeners, player);
+            verify(forwarder).bind(completionListeners, stateChangedListeners);
+            verify(forwarder).bind(videoSizeChangedListeners);
+            verify(forwarder).bind(infoListeners);
+        }
+
+        @Test
+        public void whenInitialising_thenBindsListenerToBufferHeartbeatCallback() {
+            player.initialise();
+
+            verify(checkBufferHeartbeatCallback).bind(bufferListener);
+        }
+
+        @Test
+        public void whenInitialising_thenBindsHeartbeatCallbackToListenerHolder() {
+            player.initialise();
+
+            verify(listenersHolder).addHeartbeatCallback(checkBufferHeartbeatCallback);
+        }
+
+        @Test
+        public void givenInitialised_whenCallingOnPrepared_thenCancelsTimeout() {
+            player.initialise();
+
+            ArgumentCaptor<Player.PreparedListener> preparedListenerCaptor = ArgumentCaptor.forClass(Player.PreparedListener.class);
+            verify(listenersHolder).addPreparedListener(preparedListenerCaptor.capture());
+
+            Player.PreparedListener preparedListener = preparedListenerCaptor.getValue();
+            preparedListener.onPrepared(player);
+
+            verify(loadTimeout).cancel();
+        }
+
+        @Test
+        public void whenInitialising_thenBindsHeart() {
+            player.initialise();
+
+            verify(heart).bind(any(Heart.Heartbeat.class));
+        }
+
+        @Test
+        public void givenInitialised_whenCallingOnPrepared_thenSetsOnSeekCompleteListener() {
+            player.initialise();
+            ArgumentCaptor<Player.PreparedListener> preparedListenerCaptor = ArgumentCaptor.forClass(Player.PreparedListener.class);
+            verify(listenersHolder).addPreparedListener(preparedListenerCaptor.capture());
+
+            Player.PreparedListener preparedListener = preparedListenerCaptor.getValue();
+            preparedListener.onPrepared(player);
+
+            verify(mediaPlayer).setOnSeekCompleteListener(any(MediaPlayer.OnSeekCompleteListener.class));
+        }
+
+        @Test
+        public void givenInitialised_whenCallingOnError_thenCancelsTimeout() {
+            player.initialise();
+            ArgumentCaptor<Player.ErrorListener> errorListenerCaptor = ArgumentCaptor.forClass(Player.ErrorListener.class);
+            verify(listenersHolder).addErrorListener(errorListenerCaptor.capture());
+
+            Player.ErrorListener errorListener = errorListenerCaptor.getValue();
+            errorListener.onError(player, mock(Player.PlayerError.class));
+
+            verify(loadTimeout).cancel();
+        }
+
+        @Test
+        public void givenInitialised_whenCallingOnVideoSizeChanged_thenVideoWidthAndHeightMatches() {
+            player.initialise();
+            ArgumentCaptor<Player.VideoSizeChangedListener> videoSizeChangedListenerCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
+            verify(listenersHolder).addVideoSizeChangedListener(videoSizeChangedListenerCaptor.capture());
+
+            Player.VideoSizeChangedListener videoSizeChangedListener = videoSizeChangedListenerCaptor.getValue();
+            videoSizeChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
+
+            assertThat(player.getVideoWidth()).isEqualTo(WIDTH);
+            assertThat(player.getVideoHeight()).isEqualTo(HEIGHT);
         }
 
         @Test
@@ -533,7 +627,11 @@ public class AndroidMediaPlayerImplTest {
         @Mock
         AndroidMediaPlayerFacade mediaPlayer;
         @Mock
+        MediaPlayerForwarder forwarder;
+        @Mock
         PlayerListenersHolder listenersHolder;
+        @Mock
+        CheckBufferHeartbeatCallback checkBufferHeartbeatCallback;
         @Mock
         LoadTimeout loadTimeout;
         @Mock
@@ -564,6 +662,16 @@ public class AndroidMediaPlayerImplTest {
         Player.StateChangedListener stateChangeListener;
         @Mock
         Player.VideoSizeChangedListener videoSizeChangedListener;
+        @Mock
+        MediaPlayer.OnPreparedListener onPreparedListener;
+        @Mock
+        MediaPlayer.OnCompletionListener onCompletionListener;
+        @Mock
+        MediaPlayer.OnErrorListener onErrorListener;
+        @Mock
+        MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
+        @Mock
+        CheckBufferHeartbeatCallback.BufferListener bufferListener;
 
         AndroidMediaPlayerImpl player;
 
@@ -591,7 +699,7 @@ public class AndroidMediaPlayerImplTest {
             given(listenersHolder.getInfoListeners()).willReturn(infoListeners);
             given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListeners);
 
-            player = new AndroidMediaPlayerImpl(mediaPlayer, listenersHolder, loadTimeout, heart, handler, buggyVideoDriverPreventer);
+            player = new AndroidMediaPlayerImpl(mediaPlayer, forwarder, listenersHolder, checkBufferHeartbeatCallback, loadTimeout, heart, handler, buggyVideoDriverPreventer);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.novoda.noplayer.mediaplayer;
 
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.view.SurfaceHolder;
@@ -11,11 +12,13 @@ import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
+import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
+import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;
@@ -27,7 +30,8 @@ public final class AndroidMediaPlayerImpl implements Player {
     private static final int INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
 
     private final AndroidMediaPlayerFacade mediaPlayer;
-
+    private final MediaPlayerForwarder forwarder;
+    private final CheckBufferHeartbeatCallback bufferHeartbeatCallback;
     private final Handler handler;
     private final Heart heart;
     private final PlayerListenersHolder listenersHolder;
@@ -42,18 +46,68 @@ public final class AndroidMediaPlayerImpl implements Player {
     private SurfaceHolderRequester surfaceHolderRequester;
 
     AndroidMediaPlayerImpl(AndroidMediaPlayerFacade mediaPlayer,
+                           MediaPlayerForwarder forwarder,
                            PlayerListenersHolder listenersHolder,
+                           CheckBufferHeartbeatCallback bufferHeartbeatCallback,
                            LoadTimeout loadTimeoutParam,
                            Heart heart,
                            Handler handler,
                            BuggyVideoDriverPreventer buggyVideoDriverPreventer) {
         this.mediaPlayer = mediaPlayer;
+        this.forwarder = forwarder;
         this.listenersHolder = listenersHolder;
+        this.bufferHeartbeatCallback = bufferHeartbeatCallback;
         this.loadTimeout = loadTimeoutParam;
         this.heart = heart;
         this.handler = handler;
         this.buggyVideoDriverPreventer = buggyVideoDriverPreventer;
     }
+
+    public void initialise() {
+        forwarder.bind(listenersHolder.getPreparedListeners(), this);
+        forwarder.bind(listenersHolder.getBufferStateListeners(), listenersHolder.getErrorListeners(), this);
+        forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
+        forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
+        forwarder.bind(listenersHolder.getInfoListeners());
+
+        bufferHeartbeatCallback.bind(forwarder.onHeartbeatListener());
+
+        heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
+
+        listenersHolder.addHeartbeatCallback(bufferHeartbeatCallback);
+        listenersHolder.addPreparedListener(new Player.PreparedListener() {
+            @Override
+            public void onPrepared(PlayerState playerState) {
+                loadTimeout.cancel();
+                mediaPlayer.setOnSeekCompleteListener(onSeekCompletedListener);
+            }
+        });
+        listenersHolder.addErrorListener(new Player.ErrorListener() {
+            @Override
+            public void onError(Player player, Player.PlayerError error) {
+                loadTimeout.cancel();
+            }
+        });
+        listenersHolder.addVideoSizeChangedListener(new Player.VideoSizeChangedListener() {
+            @Override
+            public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+                videoWidth = width;
+                videoHeight = height;
+            }
+        });
+    }
+
+    private final MediaPlayer.OnSeekCompleteListener onSeekCompletedListener = new MediaPlayer.OnSeekCompleteListener() {
+        @Override
+        public void onSeekComplete(MediaPlayer mp) {
+            seekToPosition = NO_SEEK_TO_POSITION;
+
+            if (seekingWithIntentToPlay || isPlaying()) {
+                seekingWithIntentToPlay = false;
+                play();
+            }
+        }
+    };
 
     @Override
     public void play() {
@@ -108,23 +162,9 @@ public final class AndroidMediaPlayerImpl implements Player {
         surfaceHolderRequester.requestSurfaceHolder(callback);
     }
 
-    void resetSeek() {
-        seekToPosition = NO_SEEK_TO_POSITION;
-
-        if (seekingWithIntentToPlay || isPlaying()) {
-            seekingWithIntentToPlay = false;
-            play();
-        }
-    }
-
     private void seekWithIntentToPlay(VideoPosition position) {
         seekingWithIntentToPlay = true;
         seekTo(position);
-    }
-
-    void updateVideoSize(int width, int height) {
-        this.videoWidth = width;
-        this.videoHeight = height;
     }
 
     @Override
