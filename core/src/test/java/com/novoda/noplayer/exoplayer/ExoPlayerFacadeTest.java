@@ -24,6 +24,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import utils.ExceptionMatcher;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.inOrder;
@@ -114,42 +116,42 @@ public class ExoPlayerFacadeTest {
 
         @Test
         public void whenQueryingPlayheadPosition_thenThrowsIllegalStateException() {
-            thrown.expect(IllegalStateException.class);
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
             facade.getPlayheadPosition();
         }
 
         @Test
         public void whenQueryingMediaDuration_thenThrowsIllegalStateException() {
-            thrown.expect(IllegalStateException.class);
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
             facade.getMediaDuration();
         }
 
         @Test
         public void whenQueryingBufferPercentage_thenThrowsIllegalStateException() {
-            thrown.expect(IllegalStateException.class);
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
             facade.getBufferPercentage();
         }
 
         @Test
         public void whenPausing_thenThrowsIllegalStateException() {
-            thrown.expect(IllegalStateException.class);
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
             facade.pause();
         }
 
         @Test
         public void whenSeeking_thenThrowsIllegalStateException() {
-            thrown.expect(IllegalStateException.class);
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
             facade.seekTo(ANY_POSITION);
         }
 
         @Test
         public void whenStopping_thenThrowsIllegalStateException() {
-            thrown.expect(IllegalStateException.class);
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
             facade.stop();
         }

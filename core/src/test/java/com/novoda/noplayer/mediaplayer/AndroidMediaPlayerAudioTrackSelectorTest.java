@@ -2,6 +2,7 @@ package com.novoda.noplayer.mediaplayer;
 
 import android.media.MediaPlayer;
 
+import utils.ExceptionMatcher;
 import com.novoda.noplayer.PlayerAudioTrack;
 
 import java.util.Arrays;
@@ -16,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import static com.novoda.noplayer.mediaplayer.ExceptionMatcher.matches;
+import static utils.ExceptionMatcher.matches;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
