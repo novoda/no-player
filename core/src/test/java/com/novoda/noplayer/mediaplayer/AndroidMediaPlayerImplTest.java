@@ -94,7 +94,7 @@ public class AndroidMediaPlayerImplTest {
         @Mock
         private CheckBufferHeartbeatCallback bufferHeartbeatCallback;
         @Mock
-        private BuggyVideoDriverPreventer buggyVideoDriverPreventer;
+        private BuggyVideoDriverPreventer preventer;
         @Mock
         private PreparedListeners preparedListeners;
         @Mock
@@ -139,7 +139,7 @@ public class AndroidMediaPlayerImplTest {
             given(forwarder.onSizeChangedListener()).willReturn(onSizeChangedListener);
             given(forwarder.onHeartbeatListener()).willReturn(bufferListener);
 
-            player = new AndroidMediaPlayerImpl(mediaPlayer, listenersHolder, forwarder, loadTimeout, heart, handler, bufferHeartbeatCallback, buggyVideoDriverPreventer);
+            player = AndroidMediaPlayerImpl.newInstance(loadTimeout, forwarder, mediaPlayer, listenersHolder, bufferHeartbeatCallback, heart, preventer, handler);
         }
 
         @Test
@@ -149,11 +149,6 @@ public class AndroidMediaPlayerImplTest {
             verify(forwarder).bind(completionListeners, stateChangedListeners);
             verify(forwarder).bind(videoSizeChangedListeners);
             verify(forwarder).bind(infoListeners);
-        }
-
-        @Test
-        public void whenCreatingAndroidMediaPlayerImpl_thenBindsListenersToMediaPlayer() {
-            verify(mediaPlayer).setForwarder(forwarder);
         }
 
         @Test
@@ -355,7 +350,7 @@ public class AndroidMediaPlayerImplTest {
             given(playerView.getContainerView()).willReturn(containerView);
             player.attach(playerView);
 
-            verify(buggyVideoDriverPreventer).preventVideoDriverBug(player, containerView);
+            verify(preventer).preventVideoDriverBug(player, containerView);
         }
 
         @Test
@@ -385,7 +380,7 @@ public class AndroidMediaPlayerImplTest {
             given(playerView.getContainerView()).willReturn(containerView);
             player.detach(playerView);
 
-            verify(buggyVideoDriverPreventer).clear(containerView);
+            verify(preventer).clear(containerView);
         }
 
         @Test
@@ -716,7 +711,7 @@ public class AndroidMediaPlayerImplTest {
             given(forwarder.onSizeChangedListener()).willReturn(onSizeChangedListener);
             given(forwarder.onHeartbeatListener()).willReturn(bufferListener);
 
-            player = new AndroidMediaPlayerImpl(mediaPlayer, listenersHolder, forwarder, loadTimeout, heart, handler, bufferHeartbeatCallback, buggyVideoDriverPreventer);
+            player = new AndroidMediaPlayerImpl(mediaPlayer, listenersHolder, loadTimeout, heart, handler, buggyVideoDriverPreventer);
         }
     }
 }

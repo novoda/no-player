@@ -49,50 +49,51 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     public static AndroidMediaPlayerImpl newInstance(Context context) {
         LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
-        return new AndroidMediaPlayerImpl(
-                AndroidMediaPlayerFacade.newInstance(context),
-                new PlayerListenersHolder(),
-                new MediaPlayerForwarder(),
-                loadTimeout,
-                Heart.newInstance(),
-                new Handler(Looper.getMainLooper()),
-                new CheckBufferHeartbeatCallback(),
-                BuggyVideoDriverPreventer.newInstance()
-        );
+        MediaPlayerForwarder forwarder = new MediaPlayerForwarder();
+        AndroidMediaPlayerFacade facade = AndroidMediaPlayerFacade.newInstance(context, forwarder);
+        PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
+        CheckBufferHeartbeatCallback bufferHeartbeatCallback = new CheckBufferHeartbeatCallback();
+        Heart heart = Heart.newInstance();
+        BuggyVideoDriverPreventer buggyVideoDriverPreventer = BuggyVideoDriverPreventer.newInstance();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        return newInstance(loadTimeout, forwarder, facade, listenersHolder, bufferHeartbeatCallback, heart, buggyVideoDriverPreventer, handler);
     }
 
-    AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer,
-                           PlayerListenersHolder listenersHolder,
-                           MediaPlayerForwarder forwarder,
-                           LoadTimeout loadTimeoutParam,
-                           Heart heart,
-                           Handler handler,
-                           CheckBufferHeartbeatCallback bufferHeartbeatCallback,
-                           BuggyVideoDriverPreventer buggyVideoDriverPreventer) {
-        this.mediaPlayer = mediaPlayer;
-        this.listenersHolder = listenersHolder;
-        this.loadTimeout = loadTimeoutParam;
-        this.heart = heart;
-        this.handler = handler;
-        this.buggyVideoDriverPreventer = buggyVideoDriverPreventer;
-        heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
+    static AndroidMediaPlayerImpl newInstance(LoadTimeout loadTimeout,
+                                              MediaPlayerForwarder forwarder,
+                                              AndroidMediaPlayerFacade facade,
+                                              PlayerListenersHolder listenersHolder,
+                                              CheckBufferHeartbeatCallback bufferHeartbeatCallback,
+                                              Heart heart,
+                                              BuggyVideoDriverPreventer preventer,
+                                              Handler handler) {
+        AndroidMediaPlayerImpl mediaPlayer = new AndroidMediaPlayerImpl(facade, listenersHolder, loadTimeout, heart, handler, preventer);
+        bindListeners(loadTimeout, forwarder, facade, listenersHolder, bufferHeartbeatCallback, heart, mediaPlayer);
 
-        forwarder.bind(listenersHolder.getPreparedListeners(), this);
-        forwarder.bind(listenersHolder.getBufferStateListeners(), listenersHolder.getErrorListeners(), this);
+        return mediaPlayer;
+    }
+
+    private static void bindListeners(final LoadTimeout loadTimeout,
+                                      MediaPlayerForwarder forwarder,
+                                      final AndroidMediaPlayerFacade facade,
+                                      PlayerListenersHolder listenersHolder,
+                                      CheckBufferHeartbeatCallback bufferHeartbeatCallback,
+                                      Heart heart,
+                                      final AndroidMediaPlayerImpl mediaPlayer) {
+        forwarder.bind(listenersHolder.getPreparedListeners(), mediaPlayer);
+        forwarder.bind(listenersHolder.getBufferStateListeners(), listenersHolder.getErrorListeners(), mediaPlayer);
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
         forwarder.bind(listenersHolder.getInfoListeners());
-
-        mediaPlayer.setForwarder(forwarder);
-
         bufferHeartbeatCallback.bind(forwarder.onHeartbeatListener());
-
+        heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), mediaPlayer));
         listenersHolder.addHeartbeatCallback(bufferHeartbeatCallback);
         listenersHolder.addPreparedListener(new PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
                 loadTimeout.cancel();
-                mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
+                facade.setOnSeekCompleteListener(mediaPlayer.seekToResettingSeekListener);
             }
         });
         listenersHolder.addErrorListener(new ErrorListener() {
@@ -104,10 +105,24 @@ public final class AndroidMediaPlayerImpl implements Player {
         listenersHolder.addVideoSizeChangedListener(new VideoSizeChangedListener() {
             @Override
             public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-                videoWidth = width;
-                videoHeight = height;
+                mediaPlayer.videoWidth = width;
+                mediaPlayer.videoHeight = height;
             }
         });
+    }
+
+    AndroidMediaPlayerImpl(AndroidMediaPlayerFacade mediaPlayer,
+                           PlayerListenersHolder listenersHolder,
+                           LoadTimeout loadTimeoutParam,
+                           Heart heart,
+                           Handler handler,
+                           BuggyVideoDriverPreventer buggyVideoDriverPreventer) {
+        this.mediaPlayer = mediaPlayer;
+        this.listenersHolder = listenersHolder;
+        this.loadTimeout = loadTimeoutParam;
+        this.heart = heart;
+        this.handler = handler;
+        this.buggyVideoDriverPreventer = buggyVideoDriverPreventer;
     }
 
     private final MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener = new MediaPlayer.OnSeekCompleteListener() {
