@@ -79,7 +79,7 @@ public final class AndroidMediaPlayerImpl implements Player {
             @Override
             public void onPrepared(PlayerState playerState) {
                 loadTimeout.cancel();
-                mediaPlayer.setOnSeekCompleteListener(onSeekCompletedListener);
+                mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
             }
         });
         listenersHolder.addErrorListener(new Player.ErrorListener() {
@@ -97,7 +97,7 @@ public final class AndroidMediaPlayerImpl implements Player {
         });
     }
 
-    private final MediaPlayer.OnSeekCompleteListener onSeekCompletedListener = new MediaPlayer.OnSeekCompleteListener() {
+    private final MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener = new MediaPlayer.OnSeekCompleteListener() {
         @Override
         public void onSeekComplete(MediaPlayer mp) {
             seekToPosition = NO_SEEK_TO_POSITION;
