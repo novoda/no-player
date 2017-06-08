@@ -1,20 +1,20 @@
-package com.novoda.noplayer.mediaplayer;
+package utils;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-class ExceptionMatcher extends BaseMatcher<Exception> {
+public class ExceptionMatcher extends BaseMatcher<Exception> {
 
     private final String expectedMessage;
     private final Class<? extends Exception> expectedExceptionClass;
 
+    public static ExceptionMatcher matches(String message, Class<? extends Exception> expectedExceptionClass) {
+        return new ExceptionMatcher(message, expectedExceptionClass);
+    }
+
     private ExceptionMatcher(String expectedMessage, Class<? extends Exception> expectedExceptionClass) {
         this.expectedMessage = expectedMessage;
         this.expectedExceptionClass = expectedExceptionClass;
-    }
-
-    static ExceptionMatcher matches(String message, Class<? extends Exception> expectedExceptionClass) {
-        return new ExceptionMatcher(message, expectedExceptionClass);
     }
 
     @Override
