@@ -27,7 +27,7 @@ class PlaybackStateChecker {
         PREPARED,
         PLAYING,
         PAUSED,
-        COMPLETED;
+        COMPLETED
 
     }
 }

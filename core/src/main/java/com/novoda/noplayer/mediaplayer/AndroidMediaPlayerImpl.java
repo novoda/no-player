@@ -23,7 +23,6 @@ import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
-import com.novoda.notils.logger.simple.Log;
 
 import java.util.List;
 
@@ -224,12 +223,7 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public VideoPosition getPlayheadPosition() {
-        try {
-            return isSeeking() ? seekToPosition : VideoPosition.fromMillis(mediaPlayer.getCurrentPosition());
-        } catch (IllegalStateException e) {
-            Log.e(e, "Cannot get current position:");
-            return VideoPosition.INVALID;
-        }
+        return isSeeking() ? seekToPosition : VideoPosition.fromMillis(mediaPlayer.getCurrentPosition());
     }
 
     private boolean isSeeking() {
@@ -238,12 +232,7 @@ public final class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public VideoDuration getMediaDuration() {
-        try {
-            return VideoDuration.fromMillis(mediaPlayer.getDuration());
-        } catch (IllegalStateException e) {
-            Log.e(e, "Cannot get duration: ");
-            return VideoDuration.INVALID;
-        }
+        return VideoDuration.fromMillis(mediaPlayer.getDuration());
     }
 
     @Override
