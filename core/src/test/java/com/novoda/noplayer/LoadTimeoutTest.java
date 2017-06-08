@@ -22,6 +22,8 @@ public class LoadTimeoutTest {
     private static final long START_TIME = 0L;
     private static final long END_TIME = 1000L;
     private static final int RESCHEDULE_DELAY_MILLIS = 1000;
+    private static final Timeout TIMEOUT_NOT_REACHED = Timeout.fromSeconds(5);
+    private static final Timeout TIMEOUT_REACHED = Timeout.fromSeconds(1);
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -36,8 +38,6 @@ public class LoadTimeoutTest {
     Player.LoadTimeoutCallback loadTimeoutCallback;
 
     private LoadTimeout loadTimeout;
-    private static final Timeout TIMEOUT_NOT_REACHED = Timeout.fromSeconds(5);
-    private static final Timeout TIMEOUT_REACHED = Timeout.fromSeconds(1);
 
     @Before
     public void setUp() {
