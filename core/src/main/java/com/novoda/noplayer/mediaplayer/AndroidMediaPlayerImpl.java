@@ -75,20 +75,20 @@ public final class AndroidMediaPlayerImpl implements Player {
         heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
 
         listenersHolder.addHeartbeatCallback(bufferHeartbeatCallback);
-        listenersHolder.addPreparedListener(new Player.PreparedListener() {
+        listenersHolder.addPreparedListener(new PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
                 loadTimeout.cancel();
                 mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
             }
         });
-        listenersHolder.addErrorListener(new Player.ErrorListener() {
+        listenersHolder.addErrorListener(new ErrorListener() {
             @Override
-            public void onError(Player player, Player.PlayerError error) {
+            public void onError(Player player, PlayerError error) {
                 loadTimeout.cancel();
             }
         });
-        listenersHolder.addVideoSizeChangedListener(new Player.VideoSizeChangedListener() {
+        listenersHolder.addVideoSizeChangedListener(new VideoSizeChangedListener() {
             @Override
             public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
                 videoWidth = width;
