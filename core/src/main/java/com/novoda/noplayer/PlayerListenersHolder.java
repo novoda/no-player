@@ -125,47 +125,38 @@ public class PlayerListenersHolder implements Listeners {
         videoSizeChangedListeners.remove(videoSizeChangedListener);
     }
 
-    @Override
     public ErrorListeners getErrorListeners() {
         return errorListeners;
     }
 
-    @Override
     public PreparedListeners getPreparedListeners() {
         return preparedListeners;
     }
 
-    @Override
     public BufferStateListeners getBufferStateListeners() {
         return bufferStateListeners;
     }
 
-    @Override
     public CompletionListeners getCompletionListeners() {
         return completionListeners;
     }
 
-    @Override
     public StateChangedListeners getStateChangedListeners() {
         return stateChangedListeners;
     }
 
-    @Override
     public InfoListeners getInfoListeners() {
         return infoListeners;
     }
 
-    @Override
     public HeartbeatCallbacks<Player> getHeartbeatCallbacks() {
         return heartbeatCallbacks;
     }
 
-    @Override
     public VideoSizeChangedListeners getVideoSizeChangedListeners() {
         return videoSizeChangedListeners;
     }
 
-    @Override
     public BitrateChangedListeners getBitrateChangedListeners() {
         return bitrateChangedListeners;
     }

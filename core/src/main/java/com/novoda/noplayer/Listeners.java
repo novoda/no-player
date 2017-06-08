@@ -47,21 +47,4 @@ public interface Listeners {
 
     void removeVideoSizeChangedListener(Player.VideoSizeChangedListener videoSizeChangedListener);
 
-    ErrorListeners getErrorListeners();
-
-    PreparedListeners getPreparedListeners();
-
-    BufferStateListeners getBufferStateListeners();
-
-    CompletionListeners getCompletionListeners();
-
-    StateChangedListeners getStateChangedListeners();
-
-    InfoListeners getInfoListeners();
-
-    HeartbeatCallbacks<Player> getHeartbeatCallbacks();
-
-    VideoSizeChangedListeners getVideoSizeChangedListeners();
-
-    BitrateChangedListeners getBitrateChangedListeners();
 }
