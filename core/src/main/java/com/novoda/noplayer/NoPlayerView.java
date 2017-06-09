@@ -9,7 +9,6 @@ import android.widget.FrameLayout;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.novoda.noplayer.exoplayer.AspectRatioChangeCalculator;
-import com.novoda.notils.caster.Views;
 
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
@@ -35,11 +34,11 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
-        videoFrame = Views.findById(this, R.id.video_frame);
-        shutterView = Views.findById(this, R.id.shutter);
-        surfaceView = Views.findById(this, R.id.surface_view);
+        videoFrame = (AspectRatioFrameLayout) findViewById(R.id.video_frame);
+        shutterView = findViewById(R.id.shutter);
+        surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
-        subtitleView = Views.findById(this, R.id.subtitles_layout);
+        subtitleView = (SubtitleView) findViewById(R.id.subtitles_layout);
     }
 
     @Override

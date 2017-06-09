@@ -14,6 +14,7 @@ import com.novoda.noplayer.drm.StreamingDrmSessionCreator;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
+import com.novoda.noplayer.exoplayer.ExoPlayerTwoImplFactory;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
 
@@ -25,7 +26,7 @@ public class PlayerFactory {
     private final MediaPlayerCreator mediaPlayerCreator;
 
     public PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
-        this(context, prioritizedPlayerTypes, new ExoPlayerCreator(), new MediaPlayerCreator());
+        this(context, prioritizedPlayerTypes, ExoPlayerCreator.newInstance(), MediaPlayerCreator.newInstance());
     }
 
     PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes, ExoPlayerCreator exoPlayerCreator, MediaPlayerCreator mediaPlayerCreator) {
@@ -100,15 +101,39 @@ public class PlayerFactory {
 
     static class ExoPlayerCreator {
 
+        private final ExoPlayerTwoImplFactory factory;
+
+        static ExoPlayerCreator newInstance() {
+            ExoPlayerTwoImplFactory factory = new ExoPlayerTwoImplFactory();
+            return new ExoPlayerCreator(factory);
+        }
+
+        ExoPlayerCreator(ExoPlayerTwoImplFactory factory) {
+            this.factory = factory;
+        }
+
         Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator) {
-            return ExoPlayerTwoImpl.newInstance(context, drmSessionCreator);
+            ExoPlayerTwoImpl player = factory.create(context, drmSessionCreator);
+            player.initialise();
+            return player;
         }
     }
 
     static class MediaPlayerCreator {
 
+        private final AndroidMediaPlayerImplFactory factory;
+
+        static MediaPlayerCreator newInstance() {
+            AndroidMediaPlayerImplFactory factory = new AndroidMediaPlayerImplFactory();
+            return new MediaPlayerCreator(factory);
+        }
+
+        MediaPlayerCreator(AndroidMediaPlayerImplFactory factory) {
+            this.factory = factory;
+        }
+
         Player createMediaPlayer(Context context) {
-            AndroidMediaPlayerImpl player = new AndroidMediaPlayerImplFactory().create(context);
+            AndroidMediaPlayerImpl player = factory.create(context);
             player.initialise();
             return player;
         }

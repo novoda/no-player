@@ -23,7 +23,7 @@ import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;
 
-public final class AndroidMediaPlayerImpl implements Player {
+public class AndroidMediaPlayerImpl implements Player {
 
     private static final VideoPosition NO_SEEK_TO_POSITION = VideoPosition.INVALID;
     private static final MediaPlayerInformation MEDIA_PLAYER_INFORMATION = new MediaPlayerInformation();
