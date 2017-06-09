@@ -39,7 +39,8 @@ public class ExoPlayerTwoImpl implements Player {
                      PlayerListenersHolder listenersHolder,
                      ExoPlayerForwarder exoPlayerForwarder,
                      LoadTimeout loadTimeoutParam,
-                     Heart heart, DrmSessionCreator drmSessionCreator) {
+                     Heart heart,
+                     DrmSessionCreator drmSessionCreator) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
