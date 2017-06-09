@@ -24,7 +24,7 @@ class AndroidMediaPlayerFacade {
     private static final Map<String, String> NO_HEADERS = null;
 
     private final Context context;
-    private MediaPlayerForwarder forwarder;
+    private final MediaPlayerForwarder forwarder;
     private final AudioManager audioManager;
     private final AndroidMediaPlayerAudioTrackSelector trackSelector;
     private final PlaybackStateChecker playbackStateChecker;
