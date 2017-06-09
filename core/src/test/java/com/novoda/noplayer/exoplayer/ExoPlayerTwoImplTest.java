@@ -79,7 +79,9 @@ public class ExoPlayerTwoImplTest {
         public ExpectedException thrown = ExpectedException.none();
 
         @Test
-        public void whenCreatingExoplayerTwoImpl_thenBindsListenersToForwarder() {
+        public void whenInitialisingPlayer_thenBindsListenersToForwarder() {
+            player.initialise();
+
             verify(forwarder).bind(preparedListeners, player);
             verify(forwarder).bind(completionListeners, stateChangedListeners);
             verify(forwarder).bind(errorListeners, player);
@@ -90,17 +92,16 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenLoadingVideo_thenBindsHeart() {
-
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
+        public void whenInitialisingPlayer_thenBindsHeart() {
+            player.initialise();
 
             verify(listenersHolder).getHeartbeatCallbacks();
             verify(heart).bind(any(Heart.Heartbeat.class));
         }
 
         @Test
-        public void givenLoadingVideo_whenVideoIsPrepared_thenCancelsTimeout() {
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
+        public void givenPlayerIsInitialised_whenVideoIsPrepared_thenCancelsTimeout() {
+            player.initialise();
 
             ArgumentCaptor<Player.PreparedListener> argumentCaptor = ArgumentCaptor.forClass(Player.PreparedListener.class);
 
@@ -112,8 +113,8 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void givenLoadingVideo_whenVideoHasError_thenCancelsTimeout() {
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
+        public void givenPlayerIsInitialised_whenVideoHasError_thenCancelsTimeout() {
+            player.initialise();
 
             ArgumentCaptor<Player.ErrorListener> argumentCaptor = ArgumentCaptor.forClass(Player.ErrorListener.class);
 
@@ -125,9 +126,9 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void givenLoadingVideo_whenVideoSizeChanges_thenPlayerVideoWidthAndHeightMatches() {
+        public void givenPlayerIsInitialised_andPlayerViewIsAttached_whenVideoSizeChanges_thenPlayerVideoWidthAndHeightMatches() {
+            player.initialise();
             player.attach(playerView);
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
 
             ArgumentCaptor<Player.VideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
             verify(listenersHolder, times(2)).addVideoSizeChangedListener(argumentCaptor.capture());
@@ -143,10 +144,10 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenLoadingVideo_thenAddsPlayerViewVideoSizeChangedListenerToListenersHolder() {
+        public void givenPlayerIsInitialised_whenAttachingPlayerView_thenAddsPlayerViewVideoSizeChangedListenerToListenersHolder() {
+            player.initialise();
+            
             player.attach(playerView);
-
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
 
             ArgumentCaptor<Player.VideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
             verify(listenersHolder, times(2)).addVideoSizeChangedListener(argumentCaptor.capture());
@@ -469,7 +470,7 @@ public class ExoPlayerTwoImplTest {
         @Mock
         ExoPlayerFacade exoPlayerFacade;
 
-        Player player;
+        ExoPlayerTwoImpl player;
 
         @Before
         public void setUp() {

@@ -8,6 +8,7 @@ import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.NoDrmSessionCreator;
 import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
+import com.novoda.noplayer.exoplayer.ExoPlayerTwoImplFactory;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
 
@@ -95,7 +96,9 @@ public class PlayerFactory {
     static class ExoPlayerCreator {
 
         Player createExoPlayer(Context context) {
-            return ExoPlayerTwoImpl.newInstance(context);
+            ExoPlayerTwoImpl player = new ExoPlayerTwoImplFactory().create(context);
+            player.initialise();
+            return player;
         }
     }
 
