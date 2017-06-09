@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.MediaDrmCallback;
@@ -22,7 +23,7 @@ public class StreamingDrmSessionCreator implements DrmSessionCreator {
     }
 
     @Override
-    public DefaultDrmSessionManager<FrameworkMediaCrypto> create() {
+    public DrmSessionManager<FrameworkMediaCrypto> create() {
         Looper eventLooper = Looper.myLooper() != null ? Looper.myLooper() : Looper.getMainLooper();
         Handler mainHandler = new Handler(eventLooper);
         try {
