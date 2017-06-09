@@ -1,6 +1,5 @@
 package com.novoda.demo;
 
-import android.media.MediaDrm;
 import android.net.Uri;
 
 import com.google.android.exoplayer2.C;
@@ -11,6 +10,7 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.novoda.noplayer.drm.DrmRequestException;
 import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.drm.provision.ModularDrmKeyRequest;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ class DataPostingModularDrm implements StreamingModularDrm {
     }
 
     @Override
-    public byte[] executeKeyRequest(MediaDrm.KeyRequest request) throws DrmRequestException {
+    public byte[] executeKeyRequest(ModularDrmKeyRequest request) throws DrmRequestException {
         DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("user-agent");
         try {
             return executePost(dataSourceFactory, url, request.getData());
