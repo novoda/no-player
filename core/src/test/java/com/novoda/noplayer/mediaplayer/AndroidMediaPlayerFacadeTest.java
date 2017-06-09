@@ -9,7 +9,7 @@ import android.view.SurfaceHolder;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
-import com.novoda.utils.Log;
+import com.novoda.utils.NoPlayerLog;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -98,7 +98,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Before
     public void setUp() {
-        Log.setLoggingEnabled(false);
+        NoPlayerLog.setLoggingEnabled(false);
 
         facade = new AndroidMediaPlayerFacade(context, forwarder, audioManager, trackSelector, playbackStateChecker, mediaPlayerCreator);
 

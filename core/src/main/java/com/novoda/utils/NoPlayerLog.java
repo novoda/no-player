@@ -4,7 +4,7 @@ package com.novoda.utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public abstract class Log {
+public abstract class NoPlayerLog {
 
     private static final int DEPTH = 5;
     private static final int CLASS_SUFFIX = 5;

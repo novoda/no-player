@@ -28,7 +28,7 @@ import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.noplayer.player.PlayerType;
-import com.novoda.utils.Log;
+import com.novoda.utils.NoPlayerLog;
 
 import java.util.Collections;
 import java.util.List;
@@ -110,7 +110,7 @@ public class AndroidMediaPlayerImplTest {
 
         @Before
         public void setUp() {
-            Log.setLoggingEnabled(false);
+            NoPlayerLog.setLoggingEnabled(false);
             given(listenersHolder.getPreparedListeners()).willReturn(preparedListeners);
             given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListeners);
             given(listenersHolder.getErrorListeners()).willReturn(errorListeners);
@@ -682,7 +682,7 @@ public class AndroidMediaPlayerImplTest {
 
         @Before
         public void setUp() {
-            Log.setLoggingEnabled(false);
+            NoPlayerLog.setLoggingEnabled(false);
             SurfaceHolderRequester surfaceHolderRequester = mock(SurfaceHolderRequester.class);
             given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
