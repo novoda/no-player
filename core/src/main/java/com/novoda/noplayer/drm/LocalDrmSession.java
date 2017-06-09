@@ -97,6 +97,7 @@ class LocalDrmSession implements DrmSessionManager<FrameworkMediaCrypto>, DrmSes
     }
 
     private void onError(Exception e) {
+        // TODO add listener and callback with exception see DefaultDrmSessionManager onError
         state = STATE_ERROR;
         lastKnownException = e;
     }
