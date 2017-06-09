@@ -15,8 +15,7 @@ import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.player.PlayerFactory;
 import com.novoda.noplayer.player.PrioritizedPlayerTypes;
-import com.novoda.notils.caster.Views;
-import com.novoda.notils.logger.simple.Log;
+import com.novoda.utils.NoPlayerLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +32,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.setShowLogs(true);
+        NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
         playerView = (PlayerView) findViewById(R.id.player_view);
-        audioSelectionButton = Views.findById(this, R.id.button_audio_selection);
+        audioSelectionButton = findViewById(R.id.button_audio_selection);
     }
 
     @Override

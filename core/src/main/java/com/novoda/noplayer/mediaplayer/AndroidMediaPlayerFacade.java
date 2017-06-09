@@ -9,7 +9,7 @@ import android.view.SurfaceHolder;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
-import com.novoda.notils.logger.simple.Log;
+import com.novoda.utils.NoPlayerLog;
 
 import java.io.IOException;
 import java.util.List;
@@ -93,7 +93,7 @@ class AndroidMediaPlayerFacade {
     }
 
     private void reportCreationError(Exception ex, Uri videoUri) {
-        Log.w(ex, "Unable to open content: " + videoUri);
+        NoPlayerLog.w(ex, "Unable to open content: " + videoUri);
         currentState = PlaybackState.ERROR;
         internalErrorListener.onError(mediaPlayer, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
     }
@@ -137,7 +137,7 @@ class AndroidMediaPlayerFacade {
     private final MediaPlayer.OnErrorListener internalErrorListener = new MediaPlayer.OnErrorListener() {
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
-            Log.d("Error: " + what + "," + extra);
+            NoPlayerLog.d("Error: " + what + "," + extra);
             currentState = PlaybackState.ERROR;
             MediaPlayer.OnErrorListener onErrorForwarder = forwarder.onErrorListener();
             if (onErrorForwarder == null) {

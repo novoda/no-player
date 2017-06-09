@@ -3,7 +3,7 @@ package com.novoda.noplayer.mediaplayer.forwarder;
 import android.media.MediaPlayer;
 
 import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
-import com.novoda.notils.logger.simple.Log;
+import com.novoda.utils.NoPlayerLog;
 
 class VideoSizeChangedForwarder implements MediaPlayer.OnVideoSizeChangedListener {
 
@@ -21,7 +21,7 @@ class VideoSizeChangedForwarder implements MediaPlayer.OnVideoSizeChangedListene
         if (bothDimensionsHaveChanged(width, height)) {
             videoSizeChangedListeners.onVideoSizeChanged(width, height, 0, 1);
         } else {
-            Log.w("Video size changed but we have swallowed the event due to only 1 dimension changing");
+            NoPlayerLog.w("Video size changed but we have swallowed the event due to only 1 dimension changing");
         }
         previousWidth = width;
         previousHeight = height;
