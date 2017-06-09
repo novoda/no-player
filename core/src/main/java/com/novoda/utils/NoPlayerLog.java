@@ -6,6 +6,7 @@ import java.io.StringWriter;
 
 public abstract class NoPlayerLog {
 
+    private static final String TAG = "No-Player";
     private static final int DEPTH = 5;
     private static final int CLASS_SUFFIX = 5;
 
@@ -47,90 +48,90 @@ public abstract class NoPlayerLog {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.d("No-Player", logMessage(msg, null));
+        android.util.Log.d(TAG, logMessage(msg, null));
     }
 
     public static void d(Throwable throwable, String msg) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.d("No-Player", logMessage(msg, throwable));
+        android.util.Log.d(TAG, logMessage(msg, throwable));
     }
 
     public static void e(String msg) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.e("No-Player", logMessage(msg, null));
+        android.util.Log.e(TAG, logMessage(msg, null));
     }
 
     public static void e(Throwable throwable, String msg) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.e("No-Player", logMessage(msg, throwable));
+        android.util.Log.e(TAG, logMessage(msg, throwable));
     }
 
     public static void i(String msg) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.i("No-Player", logMessage(msg, null));
+        android.util.Log.i(TAG, logMessage(msg, null));
     }
 
     public static void i(Throwable throwable, String msg) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.i("No-Player", logMessage(msg, throwable));
+        android.util.Log.i(TAG, logMessage(msg, throwable));
     }
 
     public static void v(String msg) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.v("No-Player", logMessage(msg, null));
+        android.util.Log.v(TAG, logMessage(msg, null));
     }
 
     public static void v(Throwable throwable, String msg) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.v("No-Player", logMessage(msg, throwable));
+        android.util.Log.v(TAG, logMessage(msg, throwable));
     }
 
     public static void w(String msg) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.w("No-Player", logMessage(msg, null));
+        android.util.Log.w(TAG, logMessage(msg, null));
     }
 
     public static void w(Throwable throwable, String msg) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.w("No-Player", logMessage(msg, throwable));
+        android.util.Log.w(TAG, logMessage(msg, throwable));
     }
 
     public static void wtf(String msg) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.wtf("No-Player", logMessage(msg, null));
+        android.util.Log.wtf(TAG, logMessage(msg, null));
     }
 
     public static void wtf(Throwable throwable) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.wtf("No-Player", logMessage("", throwable));
+        android.util.Log.wtf(TAG, logMessage("", throwable));
     }
 
     public static void wtf(Throwable throwable, String msg) {
         if (!isEnabled) {
             return;
         }
-        android.util.Log.wtf("No-Player", logMessage(msg, throwable));
+        android.util.Log.wtf(TAG, logMessage(msg, throwable));
     }
 }
