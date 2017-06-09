@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-public class LocalDrmSession implements DrmSessionManager<FrameworkMediaCrypto>, DrmSession<FrameworkMediaCrypto> {
+class LocalDrmSession implements DrmSessionManager<FrameworkMediaCrypto>, DrmSession<FrameworkMediaCrypto> {
 
     private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
 
@@ -31,7 +31,7 @@ public class LocalDrmSession implements DrmSessionManager<FrameworkMediaCrypto>,
     private FrameworkMediaCrypto mediaCrypto;
     private Exception lastKnownException;
 
-    public LocalDrmSession(byte[] keySetIdToRestore) throws UnsupportedDrmException {
+    LocalDrmSession(byte[] keySetIdToRestore) throws UnsupportedDrmException {
         this.keySetIdToRestore = Arrays.copyOf(keySetIdToRestore, keySetIdToRestore.length);
         this.mediaDrm = FrameworkMediaDrm.newInstance(WIDEVINE_MODULAR_UUID);
     }
