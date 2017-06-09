@@ -10,11 +10,14 @@ import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.MediaDrmCallback;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 public class StreamingDrmSessionCreator implements DrmSessionCreator {
 
     private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
+    private static final HashMap<String, String> NO_OPTIONAL_PARAMETERS = null;
+    private static final DefaultDrmSessionManager.EventListener TODO_ERROR_EVENT_LISTENER = null;
 
     private final MediaDrmCallback mediaDrmCallback;
 
@@ -32,9 +35,9 @@ public class StreamingDrmSessionCreator implements DrmSessionCreator {
                     WIDEVINE_MODULAR_UUID,
                     frameworkMediaDrm,
                     mediaDrmCallback,
-                    null,
+                    NO_OPTIONAL_PARAMETERS,
                     mainHandler,
-                    null
+                    TODO_ERROR_EVENT_LISTENER
             );
         } catch (UnsupportedDrmException e) {
             throw new RuntimeException();
