@@ -10,6 +10,7 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
+import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
@@ -93,8 +94,8 @@ class ExoPlayerFacade {
         }
     }
 
-    public void loadVideo(Uri uri, ContentType contentType, ExoPlayerForwarder forwarder) {
-        exoPlayer = exoPlayerCreator.create();
+    public void loadVideo(DrmSessionCreator drmSessionCreator, Uri uri, ContentType contentType, ExoPlayerForwarder forwarder) {
+        exoPlayer = exoPlayerCreator.create(drmSessionCreator);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
         MediaSource mediaSource = mediaSourceFactory.create(

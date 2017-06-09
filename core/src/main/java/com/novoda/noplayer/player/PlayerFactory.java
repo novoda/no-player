@@ -3,10 +3,15 @@ package com.novoda.noplayer.player;
 import android.content.Context;
 
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.NoDrmSessionCreator;
+import com.novoda.noplayer.drm.ProvisioningModularDrmCallback;
+import com.novoda.noplayer.drm.StreamingDrmSessionCreator;
+import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
@@ -47,9 +52,8 @@ public class PlayerFactory {
             case MEDIA_PLAYER:
                 return mediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
-                // TODO handle DRM
-                // DrmSessionCreator drmSessionCreator = createDrmSessionCreatorFor(drmType, drmHandler);
-                return exoPlayerCreator.createExoPlayer(context);
+                DrmSessionCreator drmSessionCreator = createDrmSessionCreatorFor(drmType, drmHandler);
+                return exoPlayerCreator.createExoPlayer(context, drmSessionCreator);
             default:
                 throw UnableToCreatePlayerException.unhandledPlayerType(playerType);
         }
@@ -61,12 +65,15 @@ public class PlayerFactory {
             case WIDEVINE_CLASSIC:
                 return new NoDrmSessionCreator();
             case WIDEVINE_MODULAR_STREAM:
-//                ProvisionExecutor provisionExecutor = ProvisionExecutor.newInstance();
-//                ProvisioningModularDrmCallback mediaDrmCallback = new ProvisioningModularDrmCallback((StreamingModularDrm) drmHandler, provisionExecutor);
-//                return new StreamingDrmSessionCreator(mediaDrmCallback);
-                return new NoDrmSessionCreator();
+                ProvisionExecutor provisionExecutor = ProvisionExecutor.newInstance();
+                ProvisioningModularDrmCallback mediaDrmCallback = new ProvisioningModularDrmCallback(
+                        (StreamingModularDrm) drmHandler,
+                        provisionExecutor
+                );
+                return new StreamingDrmSessionCreator(mediaDrmCallback);
             case WIDEVINE_MODULAR_DOWNLOAD:
-//                return new LocalDrmSessionCreator((DownloadedModularDrm) drmHandler);
+                // TODO
+                // return new LocalDrmSessionCreator((DownloadedModularDrm) drmHandler);
                 return new NoDrmSessionCreator();
             default:
                 throw UnableToCreatePlayerException.noDrmHandlerFor(drmType);
@@ -94,8 +101,8 @@ public class PlayerFactory {
 
     static class ExoPlayerCreator {
 
-        Player createExoPlayer(Context context) {
-            return ExoPlayerTwoImpl.newInstance(context);
+        Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator) {
+            return ExoPlayerTwoImpl.newInstance(context, drmSessionCreator);
         }
     }
 

@@ -14,6 +14,7 @@ import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoPosition;
+import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;
 import com.novoda.noplayer.listeners.BufferStateListeners;
@@ -171,7 +172,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, ANY_CONTENT_TYPE);
 
-            verify(exoPlayerFacade).loadVideo(uri, ANY_CONTENT_TYPE, forwarder);
+            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder);
         }
 
         @Test
@@ -179,7 +180,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(uri, ANY_CONTENT_TYPE, forwarder);
+            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder);
         }
 
         @Test
@@ -467,6 +468,8 @@ public class ExoPlayerTwoImplTest {
         @Mock
         BitrateChangedListeners bitrateChangedListeners;
         @Mock
+        DrmSessionCreator drmSessionCreator;
+        @Mock
         ExoPlayerFacade exoPlayerFacade;
 
         Player player;
@@ -499,7 +502,8 @@ public class ExoPlayerTwoImplTest {
                     listenersHolder,
                     forwarder,
                     loadTimeout,
-                    heart
+                    heart,
+                    drmSessionCreator
             );
         }
     }

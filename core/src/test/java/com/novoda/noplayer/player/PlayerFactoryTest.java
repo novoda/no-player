@@ -5,6 +5,7 @@ import android.content.Context;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
+import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 
@@ -50,7 +51,7 @@ public class PlayerFactoryTest {
 
         @Before
         public void setUp() {
-            given(exoPlayerCreator.createExoPlayer(any(Context.class))).willReturn(EXO_PLAYER);
+            given(exoPlayerCreator.createExoPlayer(any(Context.class), any(DrmSessionCreator.class))).willReturn(EXO_PLAYER);
             given(mediaPlayerCreator.createMediaPlayer(any(Context.class))).willReturn(MEDIA_PLAYER);
             playerFactory = new PlayerFactory(context, prioritizedPlayerTypes(), exoPlayerCreator, mediaPlayerCreator);
         }

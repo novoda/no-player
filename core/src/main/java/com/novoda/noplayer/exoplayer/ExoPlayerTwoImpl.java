@@ -22,6 +22,7 @@ import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
+import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
@@ -37,13 +38,14 @@ public class ExoPlayerTwoImpl implements Player {
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
     private final LoadTimeout loadTimeout;
+    private final DrmSessionCreator drmSessionCreator;
 
     private SurfaceHolderRequester surfaceHolderRequester;
 
     private int videoWidth;
     private int videoHeight;
 
-    public static ExoPlayerTwoImpl newInstance(Context context) {
+    public static ExoPlayerTwoImpl newInstance(Context context, DrmSessionCreator drmSessionCreator) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
         Handler handler = new Handler(Looper.getMainLooper());
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
@@ -66,7 +68,8 @@ public class ExoPlayerTwoImpl implements Player {
                 listenersHolder,
                 exoPlayerForwarder,
                 loadTimeout,
-                heart
+                heart,
+                drmSessionCreator
         );
     }
 
@@ -74,12 +77,13 @@ public class ExoPlayerTwoImpl implements Player {
                      PlayerListenersHolder listenersHolder,
                      ExoPlayerForwarder exoPlayerForwarder,
                      LoadTimeout loadTimeoutParam,
-                     Heart heart) {
+                     Heart heart, DrmSessionCreator drmSessionCreator) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.heart = heart;
+        this.drmSessionCreator = drmSessionCreator;
 
         heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
@@ -197,7 +201,7 @@ public class ExoPlayerTwoImpl implements Player {
             reset();
         }
         listenersHolder.getPreparedListeners().resetPreparedState();
-        exoPlayer.loadVideo(uri, contentType, forwarder);
+        exoPlayer.loadVideo(drmSessionCreator, uri, contentType, forwarder);
     }
 
     @Override
