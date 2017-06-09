@@ -3,6 +3,7 @@ package com.novoda.noplayer.player;
 import android.content.Context;
 
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.drm.DownloadDrmSessionCreator;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmSessionCreator;
@@ -72,9 +73,7 @@ public class PlayerFactory {
                 );
                 return new StreamingDrmSessionCreator(mediaDrmCallback);
             case WIDEVINE_MODULAR_DOWNLOAD:
-                // TODO
-                // return new LocalDrmSessionCreator((DownloadedModularDrm) drmHandler);
-                return new NoDrmSessionCreator();
+                return new DownloadDrmSessionCreator((DownloadedModularDrm) drmHandler);
             default:
                 throw UnableToCreatePlayerException.noDrmHandlerFor(drmType);
         }
