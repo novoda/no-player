@@ -28,7 +28,7 @@ import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.noplayer.player.PlayerType;
-import com.novoda.notils.logger.simple.Log;
+import com.novoda.utils.NoPlayerLog;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +50,12 @@ import org.mockito.stubbing.Answer;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @RunWith(Enclosed.class)
 public class AndroidMediaPlayerImplTest {
@@ -105,7 +110,7 @@ public class AndroidMediaPlayerImplTest {
 
         @Before
         public void setUp() {
-            Log.setShowLogs(false);
+            NoPlayerLog.setLoggingEnabled(false);
             given(listenersHolder.getPreparedListeners()).willReturn(preparedListeners);
             given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListeners);
             given(listenersHolder.getErrorListeners()).willReturn(errorListeners);
@@ -677,7 +682,7 @@ public class AndroidMediaPlayerImplTest {
 
         @Before
         public void setUp() {
-            Log.setShowLogs(false);
+            NoPlayerLog.setLoggingEnabled(false);
             SurfaceHolderRequester surfaceHolderRequester = mock(SurfaceHolderRequester.class);
             given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
