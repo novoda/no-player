@@ -20,7 +20,7 @@ public class PlayerFactory {
     private final MediaPlayerCreator mediaPlayerCreator;
 
     public PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
-        this(context, prioritizedPlayerTypes, new ExoPlayerCreator(), new MediaPlayerCreator());
+        this(context, prioritizedPlayerTypes, ExoPlayerCreator.newInstance(), MediaPlayerCreator.newInstance());
     }
 
     PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes, ExoPlayerCreator exoPlayerCreator, MediaPlayerCreator mediaPlayerCreator) {
@@ -95,8 +95,19 @@ public class PlayerFactory {
 
     static class ExoPlayerCreator {
 
+        private final ExoPlayerTwoImplFactory factory;
+
+        static ExoPlayerCreator newInstance() {
+            ExoPlayerTwoImplFactory factory = new ExoPlayerTwoImplFactory();
+            return new ExoPlayerCreator(factory);
+        }
+
+        ExoPlayerCreator(ExoPlayerTwoImplFactory factory) {
+            this.factory = factory;
+        }
+
         Player createExoPlayer(Context context) {
-            ExoPlayerTwoImpl player = new ExoPlayerTwoImplFactory().create(context);
+            ExoPlayerTwoImpl player = factory.create(context);
             player.initialise();
             return player;
         }
@@ -104,8 +115,19 @@ public class PlayerFactory {
 
     static class MediaPlayerCreator {
 
+        private final AndroidMediaPlayerImplFactory factory;
+
+        static MediaPlayerCreator newInstance() {
+            AndroidMediaPlayerImplFactory factory = new AndroidMediaPlayerImplFactory();
+            return new MediaPlayerCreator(factory);
+        }
+
+        MediaPlayerCreator(AndroidMediaPlayerImplFactory factory) {
+            this.factory = factory;
+        }
+
         Player createMediaPlayer(Context context) {
-            AndroidMediaPlayerImpl player = new AndroidMediaPlayerImplFactory().create(context);
+            AndroidMediaPlayerImpl player = factory.create(context);
             player.initialise();
             return player;
         }

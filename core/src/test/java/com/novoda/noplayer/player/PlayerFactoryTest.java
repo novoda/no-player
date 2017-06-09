@@ -7,6 +7,10 @@ import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
+import com.novoda.noplayer.exoplayer.ExoPlayerTwoImplFactory;
+import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
+import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -23,6 +27,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(Enclosed.class)
 public class PlayerFactoryTest {
@@ -141,6 +146,62 @@ public class PlayerFactoryTest {
             Player player = playerFactory.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
+        }
+    }
+
+    public static class ExoPlayerTwoCreatorTest {
+
+        @Rule
+        public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+        @Mock
+        ExoPlayerTwoImplFactory factory;
+        @Mock
+        ExoPlayerTwoImpl player;
+        @Mock
+        Context context;
+
+        private PlayerFactory.ExoPlayerCreator creator;
+
+        @Before
+        public void setUp() {
+            creator = new PlayerFactory.ExoPlayerCreator(factory);
+            given(factory.create(any(Context.class))).willReturn(player);
+        }
+
+        @Test
+        public void whenCreatingExoPlayerTwo_thenInitialisesPlayer() {
+            creator.createExoPlayer(context);
+
+            verify(player).initialise();
+        }
+    }
+
+    public static class MediaPlayerCreatorTest {
+
+        @Rule
+        public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+        @Mock
+        AndroidMediaPlayerImplFactory factory;
+        @Mock
+        AndroidMediaPlayerImpl player;
+        @Mock
+        Context context;
+
+        private PlayerFactory.MediaPlayerCreator creator;
+
+        @Before
+        public void setUp() {
+            creator = new PlayerFactory.MediaPlayerCreator(factory);
+            given(factory.create(any(Context.class))).willReturn(player);
+        }
+
+        @Test
+        public void whenCreatingMediaPlayer_thenInitialisesPlayer() {
+            creator.createMediaPlayer(context);
+
+            verify(player).initialise();
         }
     }
 }
