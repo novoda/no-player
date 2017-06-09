@@ -48,8 +48,6 @@ public class AndroidMediaPlayerFacadeTest {
     private static final int ANY_ERROR_WHAT = -1;
     private static final int ANY_ERROR_EXTRA = 404;
     private static final int TEN_PERCENT = 10;
-    private static final int MINUS_ONE = -1;
-    private static final int ZERO = 0;
     private static final int TEN_SECONDS_IN_MILLIS = 10000;
 
     private static final boolean SCREEN_ON = true;
@@ -102,7 +100,7 @@ public class AndroidMediaPlayerFacadeTest {
     public void setUp() {
         setShowLogs(false);
 
-        facade = new AndroidMediaPlayerFacade(context, audioManager, trackSelector, playbackStateChecker, mediaPlayerCreator);
+        facade = new AndroidMediaPlayerFacade(context, forwarder, audioManager, trackSelector, playbackStateChecker, mediaPlayerCreator);
 
         given(mediaPlayerCreator.createMediaPlayer()).willReturn(mediaPlayer);
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class))).willReturn(IS_IN_PLAYBACK_STATE);
@@ -119,7 +117,6 @@ public class AndroidMediaPlayerFacadeTest {
         given(forwarder.onCompletionListener()).willReturn(completionListener);
         given(forwarder.onErrorListener()).willReturn(errorListener);
         given(forwarder.onSizeChangedListener()).willReturn(videoSizeChangedListener);
-        facade.setForwarder(forwarder);
     }
 
     @Test
@@ -210,7 +207,6 @@ public class AndroidMediaPlayerFacadeTest {
     public void givenNoBoundPreparedListener_andMediaPlayerIsPrepared_whenPrepared_thenThrowsIllegalStateException() {
         thrown.expect(ExceptionMatcher.matches("Should bind a OnPreparedListener. Cannot forward events.", IllegalStateException.class));
         given(forwarder.onPreparedListener()).willReturn(null);
-        facade.setForwarder(forwarder);
         givenMediaPlayerIsPrepared();
     }
 
@@ -227,7 +223,6 @@ public class AndroidMediaPlayerFacadeTest {
     public void givenNoBoundVideoSizeChangedListener_andMediaPlayerIsPrepared_whenVideoSizeChanges_thenThrowsIllegalStateException() {
         thrown.expect(ExceptionMatcher.matches("Should bind a OnVideoSizeChangedListener. Cannot forward events.", IllegalStateException.class));
         given(forwarder.onSizeChangedListener()).willReturn(null);
-        facade.setForwarder(forwarder);
         givenMediaPlayerIsPrepared();
 
         whenVideoSizeChanges();
@@ -246,7 +241,6 @@ public class AndroidMediaPlayerFacadeTest {
     public void givenNoBoundCompletionListener_andMediaPlayerIsPrepared_whenCompleted_thenThrowsIllegalStateException() {
         thrown.expect(ExceptionMatcher.matches("Should bind a OnCompletionListener. Cannot forward events.", IllegalStateException.class));
         given(forwarder.onCompletionListener()).willReturn(null);
-        facade.setForwarder(forwarder);
         givenMediaPlayerIsPrepared();
 
         whenCompleted();
@@ -265,7 +259,6 @@ public class AndroidMediaPlayerFacadeTest {
     public void givenNoBoundErrorListener_andMediaPlayerIsPrepared_whenErroring_thenThrowsIllegalStateException() {
         thrown.expect(ExceptionMatcher.matches("Should bind a OnErrorListener. Cannot forward events.", IllegalStateException.class));
         given(forwarder.onErrorListener()).willReturn(null);
-        facade.setForwarder(forwarder);
         givenMediaPlayerIsPrepared();
 
         whenErroring();

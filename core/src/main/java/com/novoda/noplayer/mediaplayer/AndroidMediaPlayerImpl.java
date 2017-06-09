@@ -1,10 +1,8 @@
 package com.novoda.noplayer.mediaplayer;
 
-import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.ContentType;
@@ -17,7 +15,6 @@ import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
-import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
@@ -33,7 +30,8 @@ public final class AndroidMediaPlayerImpl implements Player {
     private static final int INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
 
     private final AndroidMediaPlayerFacade mediaPlayer;
-
+    private final MediaPlayerForwarder forwarder;
+    private final CheckBufferHeartbeatCallback bufferHeartbeatCallback;
     private final Handler handler;
     private final Heart heart;
     private final PlayerListenersHolder listenersHolder;
@@ -47,45 +45,34 @@ public final class AndroidMediaPlayerImpl implements Player {
     private boolean seekingWithIntentToPlay;
     private SurfaceHolderRequester surfaceHolderRequester;
 
-    public static AndroidMediaPlayerImpl newInstance(Context context) {
-        LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), new Handler(Looper.getMainLooper()));
-        return new AndroidMediaPlayerImpl(
-                AndroidMediaPlayerFacade.newInstance(context),
-                new PlayerListenersHolder(),
-                new MediaPlayerForwarder(),
-                loadTimeout,
-                Heart.newInstance(),
-                new Handler(Looper.getMainLooper()),
-                new CheckBufferHeartbeatCallback(),
-                BuggyVideoDriverPreventer.newInstance()
-        );
-    }
-
-    AndroidMediaPlayerImpl(final AndroidMediaPlayerFacade mediaPlayer,
-                           PlayerListenersHolder listenersHolder,
+    AndroidMediaPlayerImpl(AndroidMediaPlayerFacade mediaPlayer,
                            MediaPlayerForwarder forwarder,
+                           PlayerListenersHolder listenersHolder,
+                           CheckBufferHeartbeatCallback bufferHeartbeatCallback,
                            LoadTimeout loadTimeoutParam,
                            Heart heart,
                            Handler handler,
-                           CheckBufferHeartbeatCallback bufferHeartbeatCallback,
                            BuggyVideoDriverPreventer buggyVideoDriverPreventer) {
         this.mediaPlayer = mediaPlayer;
+        this.forwarder = forwarder;
         this.listenersHolder = listenersHolder;
+        this.bufferHeartbeatCallback = bufferHeartbeatCallback;
         this.loadTimeout = loadTimeoutParam;
         this.heart = heart;
         this.handler = handler;
         this.buggyVideoDriverPreventer = buggyVideoDriverPreventer;
-        heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
+    }
 
+    public void initialise() {
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
         forwarder.bind(listenersHolder.getBufferStateListeners(), listenersHolder.getErrorListeners(), this);
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
         forwarder.bind(listenersHolder.getInfoListeners());
 
-        mediaPlayer.setForwarder(forwarder);
-
         bufferHeartbeatCallback.bind(forwarder.onHeartbeatListener());
+
+        heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
 
         listenersHolder.addHeartbeatCallback(bufferHeartbeatCallback);
         listenersHolder.addPreparedListener(new PreparedListener() {

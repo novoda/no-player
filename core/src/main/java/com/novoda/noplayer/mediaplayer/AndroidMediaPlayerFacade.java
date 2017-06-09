@@ -24,6 +24,7 @@ class AndroidMediaPlayerFacade {
     private static final Map<String, String> NO_HEADERS = null;
 
     private final Context context;
+    private final MediaPlayerForwarder forwarder;
     private final AudioManager audioManager;
     private final AndroidMediaPlayerAudioTrackSelector trackSelector;
     private final PlaybackStateChecker playbackStateChecker;
@@ -31,29 +32,27 @@ class AndroidMediaPlayerFacade {
     private PlaybackState currentState = IDLE;
 
     private MediaPlayer mediaPlayer;
-    private MediaPlayer.OnCompletionListener onCompletionForwarder;
-    private MediaPlayer.OnPreparedListener onPreparedForwarder;
     private int currentBufferPercentage;
-    private MediaPlayer.OnErrorListener onErrorForwarder;
-    private MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedForwarder;
 
     private MediaPlayerCreator mediaPlayerCreator;
 
-    static AndroidMediaPlayerFacade newInstance(Context context) {
+    static AndroidMediaPlayerFacade newInstance(Context context, MediaPlayerForwarder forwarder) {
         TrackInfosFactory trackInfosFactory = new TrackInfosFactory();
         AndroidMediaPlayerAudioTrackSelector trackSelector = new AndroidMediaPlayerAudioTrackSelector(trackInfosFactory);
         PlaybackStateChecker playbackStateChecker = new PlaybackStateChecker();
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         MediaPlayerCreator mediaPlayerCreator = new MediaPlayerCreator();
-        return new AndroidMediaPlayerFacade(context, audioManager, trackSelector, playbackStateChecker, mediaPlayerCreator);
+        return new AndroidMediaPlayerFacade(context, forwarder, audioManager, trackSelector, playbackStateChecker, mediaPlayerCreator);
     }
 
     AndroidMediaPlayerFacade(Context context,
+                             MediaPlayerForwarder forwarder,
                              AudioManager audioManager,
                              AndroidMediaPlayerAudioTrackSelector trackSelector,
                              PlaybackStateChecker playbackStateChecker,
                              MediaPlayerCreator mediaPlayerCreator) {
         this.context = context;
+        this.forwarder = forwarder;
         this.audioManager = audioManager;
         this.trackSelector = trackSelector;
         this.playbackStateChecker = playbackStateChecker;
@@ -102,6 +101,7 @@ class AndroidMediaPlayerFacade {
     private final MediaPlayer.OnVideoSizeChangedListener internalSizeChangedListener = new MediaPlayer.OnVideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+            MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedForwarder = forwarder.onSizeChangedListener();
             if (onVideoSizeChangedForwarder == null) {
                 throw new IllegalStateException("Should bind a OnVideoSizeChangedListener. Cannot forward events.");
             }
@@ -114,6 +114,7 @@ class AndroidMediaPlayerFacade {
         public void onPrepared(MediaPlayer mp) {
             currentState = PlaybackState.PREPARED;
 
+            MediaPlayer.OnPreparedListener onPreparedForwarder = forwarder.onPreparedListener();
             if (onPreparedForwarder == null) {
                 throw new IllegalStateException("Should bind a OnPreparedListener. Cannot forward events.");
             }
@@ -125,6 +126,7 @@ class AndroidMediaPlayerFacade {
         @Override
         public void onCompletion(MediaPlayer mp) {
             currentState = PlaybackState.COMPLETED;
+            MediaPlayer.OnCompletionListener onCompletionForwarder = forwarder.onCompletionListener();
             if (onCompletionForwarder == null) {
                 throw new IllegalStateException("Should bind a OnCompletionListener. Cannot forward events.");
             }
@@ -137,6 +139,7 @@ class AndroidMediaPlayerFacade {
         public boolean onError(MediaPlayer mp, int what, int extra) {
             Log.d("Error: " + what + "," + extra);
             currentState = PlaybackState.ERROR;
+            MediaPlayer.OnErrorListener onErrorForwarder = forwarder.onErrorListener();
             if (onErrorForwarder == null) {
                 throw new IllegalStateException("Should bind a OnErrorListener. Cannot forward events.");
             }
@@ -150,13 +153,6 @@ class AndroidMediaPlayerFacade {
             currentBufferPercentage = percent;
         }
     };
-
-    void setForwarder(MediaPlayerForwarder forwarder) {
-        this.onPreparedForwarder = forwarder.onPreparedListener();
-        this.onCompletionForwarder = forwarder.onCompletionListener();
-        this.onErrorForwarder = forwarder.onErrorListener();
-        this.onVideoSizeChangedForwarder = forwarder.onSizeChangedListener();
-    }
 
     void release() {
         if (hasPlayer()) {

@@ -6,6 +6,7 @@ import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
+import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
 
 public class PlayerFactory {
 
@@ -41,8 +42,10 @@ public class PlayerFactory {
         }
     }
 
-    private Player createMediaPlayer() {
-        return AndroidMediaPlayerImpl.newInstance(context);
+    private AndroidMediaPlayerImpl createMediaPlayer() {
+        AndroidMediaPlayerImpl player = new AndroidMediaPlayerImplFactory().create(context);
+        player.initialise();
+        return player;
     }
 
     private static class UnableToCreatePlayerException extends RuntimeException {
