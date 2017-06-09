@@ -9,7 +9,7 @@ import android.view.SurfaceHolder;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
-import com.novoda.notils.logger.simple.Log;
+import com.novoda.utils.Log;
 
 import java.io.IOException;
 import java.util.List;

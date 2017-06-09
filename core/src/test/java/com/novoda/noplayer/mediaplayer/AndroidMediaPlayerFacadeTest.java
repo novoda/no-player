@@ -9,6 +9,7 @@ import android.view.SurfaceHolder;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.utils.Log;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -28,7 +29,6 @@ import org.mockito.stubbing.Answer;
 
 import utils.ExceptionMatcher;
 
-import static com.novoda.notils.logger.simple.Log.setShowLogs;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -98,7 +98,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Before
     public void setUp() {
-        setShowLogs(false);
+        Log.setLoggingEnabled(false);
 
         facade = new AndroidMediaPlayerFacade(context, forwarder, audioManager, trackSelector, playbackStateChecker, mediaPlayerCreator);
 
