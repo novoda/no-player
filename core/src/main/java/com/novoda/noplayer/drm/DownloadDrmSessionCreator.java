@@ -17,7 +17,7 @@ public class DownloadDrmSessionCreator implements DrmSessionCreator {
         try {
             return new LocalDrmSession(downloadedModularDrm.getKeySetId());
         } catch (UnsupportedDrmException e) {
-            return null;
+            throw new DrmSessionManagerCreationException(e);
         }
     }
 }

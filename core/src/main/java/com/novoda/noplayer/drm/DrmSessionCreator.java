@@ -6,4 +6,11 @@ import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 public interface DrmSessionCreator {
 
     DrmSessionManager<FrameworkMediaCrypto> create();
+
+    class DrmSessionManagerCreationException extends RuntimeException {
+
+        DrmSessionManagerCreationException(Throwable cause) {
+            super(cause);
+        }
+    }
 }
