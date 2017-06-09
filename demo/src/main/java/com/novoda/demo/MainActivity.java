@@ -14,7 +14,7 @@ import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.player.PlayerFactory;
-import com.novoda.noplayer.player.PrioritisedPlayers;
+import com.novoda.noplayer.player.PrioritizedPlayerTypes;
 import com.novoda.notils.caster.Views;
 import com.novoda.notils.logger.simple.Log;
 
@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         // TODO: Add switch in UI to avoid redeploy.
-        player = new PlayerFactory(this, PrioritisedPlayers.prioritiseExoPlayer()).create();
+        player = new PlayerFactory(this, PrioritizedPlayerTypes.prioritizeExoPlayer()).create();
         player.getListeners().addPreparedListener(new Player.PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
