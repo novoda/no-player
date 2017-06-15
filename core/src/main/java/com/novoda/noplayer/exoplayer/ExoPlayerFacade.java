@@ -6,12 +6,15 @@ import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.text.TextRenderer;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.PlayerAudioTrack;
+import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
 
 import java.util.List;
@@ -22,15 +25,22 @@ class ExoPlayerFacade {
     private static final boolean DO_NOT_RESET_STATE = false;
 
     private final MediaSourceFactory mediaSourceFactory;
-    private final ExoPlayerAudioTrackSelector trackSelector;
+    private final ExoPlayerAudioTrackSelector audioTrackSelector;
+    private final ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
     private final ExoPlayerCreator exoPlayerCreator;
 
     @Nullable
     private SimpleExoPlayer exoPlayer;
+    @Nullable
+    private TextRenderer.Output output;
 
-    ExoPlayerFacade(MediaSourceFactory mediaSourceFactory, ExoPlayerAudioTrackSelector trackSelector, ExoPlayerCreator exoPlayerCreator) {
+    ExoPlayerFacade(MediaSourceFactory mediaSourceFactory,
+                    ExoPlayerAudioTrackSelector audioTrackSelector,
+                    ExoPlayerSubtitleTrackSelector subtitleTrackSelector,
+                    ExoPlayerCreator exoPlayerCreator) {
         this.mediaSourceFactory = mediaSourceFactory;
-        this.trackSelector = trackSelector;
+        this.audioTrackSelector = audioTrackSelector;
+        this.subtitleTrackSelector = subtitleTrackSelector;
         this.exoPlayerCreator = exoPlayerCreator;
     }
 
@@ -104,18 +114,35 @@ class ExoPlayerFacade {
                 forwarder.mediaSourceEventListener()
         );
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
+        exoPlayer.setTextOutput(output);
     }
 
     public void selectAudioTrack(PlayerAudioTrack audioTrack) {
         // TODO check if we can read tracks from exoplayer directly
-        trackSelector.selectAudioTrack(audioTrack);
+        audioTrackSelector.selectAudioTrack(audioTrack);
     }
 
     public List<PlayerAudioTrack> getAudioTracks() {
-        return trackSelector.getAudioTracks();
+        return audioTrackSelector.getAudioTracks();
+    }
+
+    public void setSubtitleRendererOutput(TextRenderer.Output output) {
+        this.output = output;
+    }
+
+    public void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+        subtitleTrackSelector.selectTextTrack(subtitleTrack);
+    }
+
+    public List<PlayerSubtitleTrack> getSubtitleTracks() {
+        return subtitleTrackSelector.getSubtitleTracks();
     }
 
     public boolean hasPlayedContent() {
         return exoPlayer != null;
+    }
+
+    public SimpleExoPlayer getRawExoPlayer() {
+        return exoPlayer;
     }
 }

@@ -306,7 +306,7 @@ public class ExoPlayerFacadeTest {
             facade = new ExoPlayerFacade(
                     mediaSourceFactory,
                     trackSelector,
-                    exoPlayerCreator
+                    exoPlayerSubtitleTrackSelector, exoPlayerCreator
             );
         }
 

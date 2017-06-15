@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import static com.novoda.noplayer.exoplayer.TrackType.AUDIO;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -93,7 +94,7 @@ public class ExoPlayerAudioTrackSelectorTest {
         exoPlayerAudioTrackSelector.selectAudioTrack(AUDIO_TRACK);
 
         ArgumentCaptor<MappingTrackSelector.SelectionOverride> argumentCaptor = ArgumentCaptor.forClass(MappingTrackSelector.SelectionOverride.class);
-        verify(trackSelector).setSelectionOverride(eq(trackGroups), argumentCaptor.capture());
+        verify(trackSelector).setSelectionOverride(AUDIO, eq(trackGroups), argumentCaptor.capture());
         return argumentCaptor;
     }
 
@@ -107,7 +108,7 @@ public class ExoPlayerAudioTrackSelectorTest {
                 )
         );
         given(trackSelector.getAudioTrackGroups()).willReturn(trackGroups);
-        given(trackSelector.supportsTrackSwitching(any(TrackGroupArray.class), anyInt()))
+        given(trackSelector.supportsTrackSwitching(AUDIO, any(TrackGroupArray.class), anyInt()))
                 .willReturn(true)
                 .willReturn(false);
     }

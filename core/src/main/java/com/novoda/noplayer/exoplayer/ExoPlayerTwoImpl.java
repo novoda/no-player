@@ -3,6 +3,8 @@ package com.novoda.noplayer.exoplayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
+import com.google.android.exoplayer2.text.Cue;
+import com.google.android.exoplayer2.text.TextRenderer;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.LoadTimeout;
@@ -10,14 +12,17 @@ import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
 import com.novoda.noplayer.player.PlayerInformation;
 
+import java.util.EnumMap;
 import java.util.List;
 
 public class ExoPlayerTwoImpl implements Player {
@@ -26,6 +31,7 @@ public class ExoPlayerTwoImpl implements Player {
     private final PlayerListenersHolder listenersHolder;
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
+    private final ExoPlayerTrackSelector exoPlayerTrackSelector;
     private final LoadTimeout loadTimeout;
 
     private SurfaceHolderRequester surfaceHolderRequester;
@@ -37,12 +43,14 @@ public class ExoPlayerTwoImpl implements Player {
                      PlayerListenersHolder listenersHolder,
                      ExoPlayerForwarder exoPlayerForwarder,
                      LoadTimeout loadTimeoutParam,
-                     Heart heart) {
+                     Heart heart,
+                     ExoPlayerTrackSelector exoPlayerTrackSelector) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.heart = heart;
+        this.exoPlayerTrackSelector = exoPlayerTrackSelector;
     }
 
     public void initialise() {
@@ -58,6 +66,13 @@ public class ExoPlayerTwoImpl implements Player {
             @Override
             public void onPrepared(PlayerState playerState) {
                 loadTimeout.cancel();
+
+                RendererTrackIndexExtractor rendererTrackIndexExtractor = new RendererTrackIndexExtractor();
+                EnumMap<TrackType, Integer> trackTypeIndexMap = rendererTrackIndexExtractor.extractFrom(
+                        exoPlayerTrackSelector.trackInfo(),
+                        exoPlayer.getRawExoPlayer()
+                );
+                exoPlayerTrackSelector.setTrackRendererIndexes(trackTypeIndexMap);
             }
         });
         listenersHolder.addErrorListener(new ErrorListener() {
@@ -177,10 +192,16 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public void attach(PlayerView playerView) {
+    public void attach(final PlayerView playerView) {
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        exoPlayer.setSubtitleRendererOutput(new TextRenderer.Output() {
+            @Override
+            public void onCues(List<Cue> list) {
+                playerView.setSubtitleCue(list);
+            }
+        });
     }
 
     @Override
@@ -196,8 +217,18 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
+    public void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+        exoPlayer.selectSubtitleTrack(subtitleTrack);
+    }
+
+    @Override
     public List<PlayerAudioTrack> getAudioTracks() {
         return exoPlayer.getAudioTracks();
+    }
+
+    @Override
+    public List<PlayerSubtitleTrack> getSubtitleTracks() {
+        return exoPlayer.getSubtitleTracks();
     }
 
     @Override

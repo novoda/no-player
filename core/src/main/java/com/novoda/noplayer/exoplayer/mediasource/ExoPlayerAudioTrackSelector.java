@@ -10,6 +10,8 @@ import com.novoda.noplayer.PlayerAudioTrack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.novoda.noplayer.exoplayer.TrackType.AUDIO;
+
 public class ExoPlayerAudioTrackSelector {
 
     private final ExoPlayerTrackSelector trackSelector;
@@ -28,7 +30,7 @@ public class ExoPlayerAudioTrackSelector {
                 audioTrack.groupIndex(),
                 audioTrack.formatIndex()
         );
-        trackSelector.setSelectionOverride(trackGroups, selectionOverride);
+        trackSelector.setSelectionOverride(AUDIO, trackGroups, selectionOverride);
     }
 
     public List<PlayerAudioTrack> getAudioTracks() {
@@ -37,7 +39,7 @@ public class ExoPlayerAudioTrackSelector {
         List<PlayerAudioTrack> audioTracks = new ArrayList<>();
 
         for (int groupIndex = 0; groupIndex < trackGroups.length; groupIndex++) {
-            if (trackSelector.supportsTrackSwitching(trackGroups, groupIndex)) {
+            if (trackSelector.supportsTrackSwitching(AUDIO, trackGroups, groupIndex)) {
                 TrackGroup trackGroup = trackGroups.get(groupIndex);
 
                 for (int formatIndex = 0; formatIndex < trackGroup.length; formatIndex++) {

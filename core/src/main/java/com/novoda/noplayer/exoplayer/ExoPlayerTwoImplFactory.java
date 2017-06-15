@@ -13,6 +13,7 @@ import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
 
@@ -27,9 +28,15 @@ public class ExoPlayerTwoImplFactory {
         ExoPlayerTrackSelector exoPlayerTrackSelector = new ExoPlayerTrackSelector(trackSelector);
         FixedTrackSelection.Factory trackSelectionFactory = new FixedTrackSelection.Factory();
         ExoPlayerAudioTrackSelector exoPlayerAudioTrackSelector = new ExoPlayerAudioTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
+        ExoPlayerSubtitleTrackSelector exoPlayerSubtitleTrackSelector = new ExoPlayerSubtitleTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
 
         ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context, trackSelector);
-        ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(mediaSourceFactory, exoPlayerAudioTrackSelector, exoPlayerCreator);
+        ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(
+                mediaSourceFactory,
+                exoPlayerAudioTrackSelector,
+                exoPlayerSubtitleTrackSelector,
+                exoPlayerCreator
+        );
 
         PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
         ExoPlayerForwarder exoPlayerForwarder = new ExoPlayerForwarder();
@@ -41,7 +48,8 @@ public class ExoPlayerTwoImplFactory {
                 listenersHolder,
                 exoPlayerForwarder,
                 loadTimeout,
-                heart
+                heart,
+                exoPlayerTrackSelector
         );
     }
 }

@@ -6,9 +6,12 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.novoda.noplayer.exoplayer.AspectRatioChangeCalculator;
+
+import java.util.List;
 
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
@@ -74,6 +77,11 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     @Override
     public void hideSubtitles() {
         subtitleView.setVisibility(GONE);
+    }
+
+    @Override
+    public void setSubtitleCue(List<Cue> cues) {
+        subtitleView.onCues(cues);
     }
 
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {

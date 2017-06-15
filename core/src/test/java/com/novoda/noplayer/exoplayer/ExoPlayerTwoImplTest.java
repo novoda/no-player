@@ -500,8 +500,8 @@ public class ExoPlayerTwoImplTest {
                     listenersHolder,
                     forwarder,
                     loadTimeout,
-                    heart
-            );
+                    heart,
+                    exoPlayerTrackSelector);
         }
     }
 }

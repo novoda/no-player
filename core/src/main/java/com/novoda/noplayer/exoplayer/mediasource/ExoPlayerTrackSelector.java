@@ -4,22 +4,34 @@ import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.novoda.noplayer.exoplayer.TrackType;
 
-import static com.google.android.exoplayer2.C.TRACK_TYPE_AUDIO;
+import java.util.EnumMap;
+
+import static com.novoda.noplayer.exoplayer.TrackType.AUDIO;
+import static com.novoda.noplayer.exoplayer.TrackType.TEXT;
 
 public class ExoPlayerTrackSelector {
 
     private final DefaultTrackSelector trackSelector;
+
+    private EnumMap<TrackType, Integer> rendererTrackIndex;
 
     public ExoPlayerTrackSelector(DefaultTrackSelector trackSelector) {
         this.trackSelector = trackSelector;
     }
 
     TrackGroupArray getAudioTrackGroups() {
-        return trackInfo().getTrackGroups(TRACK_TYPE_AUDIO);
+        Integer audioRendererIndex = rendererTrackIndex.get(AUDIO);
+        return trackInfo().getTrackGroups(audioRendererIndex);
     }
 
-    private MappingTrackSelector.MappedTrackInfo trackInfo() {
+    TrackGroupArray getSubtitleTrackGroups() {
+        Integer subtitleRendererIndex = rendererTrackIndex.get(TEXT);
+        return trackInfo().getTrackGroups(subtitleRendererIndex);
+    }
+
+    public MappingTrackSelector.MappedTrackInfo trackInfo() {
         MappingTrackSelector.MappedTrackInfo trackInfo = trackSelector.getCurrentMappedTrackInfo();
 
         if (trackInfo == null) {
@@ -28,12 +40,18 @@ public class ExoPlayerTrackSelector {
         return trackInfo;
     }
 
-    void setSelectionOverride(TrackGroupArray trackGroups, MappingTrackSelector.SelectionOverride selectionOverride) {
-        trackSelector.setSelectionOverride(TRACK_TYPE_AUDIO, trackGroups, selectionOverride);
+    void setSelectionOverride(TrackType trackType, TrackGroupArray trackGroups, MappingTrackSelector.SelectionOverride selectionOverride) {
+        Integer rendererIndex = rendererTrackIndex.get(trackType);
+        trackSelector.setSelectionOverride(rendererIndex, trackGroups, selectionOverride);
     }
 
-    boolean supportsTrackSwitching(TrackGroupArray trackGroups, int groupIndex) {
+    boolean supportsTrackSwitching(TrackType trackType, TrackGroupArray trackGroups, int groupIndex) {
+        Integer audioRendererIndex = rendererTrackIndex.get(trackType);
         return trackGroups.get(groupIndex).length > 0
-                && trackInfo().getAdaptiveSupport(TRACK_TYPE_AUDIO, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
+                && trackInfo().getAdaptiveSupport(audioRendererIndex, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
+    }
+
+    public void setTrackRendererIndexes(EnumMap<TrackType, Integer> trackTypeIndexMap) {
+        rendererTrackIndex = new EnumMap<>(trackTypeIndexMap);
     }
 }
