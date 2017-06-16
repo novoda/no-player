@@ -114,7 +114,7 @@ class ExoPlayerFacade {
                 forwarder.mediaSourceEventListener()
         );
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
-        exoPlayer.setTextOutput(output);
+        setExoPlayerTextOutput(output);
     }
 
     public void selectAudioTrack(PlayerAudioTrack audioTrack) {
@@ -128,6 +128,15 @@ class ExoPlayerFacade {
 
     public void setSubtitleRendererOutput(TextRenderer.Output output) {
         this.output = output;
+        setExoPlayerTextOutput(output);
+    }
+
+    private void setExoPlayerTextOutput(TextRenderer.Output output) {
+        if (exoPlayer == null) {
+            return;
+        }
+
+        exoPlayer.setTextOutput(output);
     }
 
     public void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {

@@ -13,6 +13,7 @@ import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSubtitleTrack;
+import com.novoda.noplayer.PlayerSubtitlesView;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
@@ -196,12 +197,6 @@ public class ExoPlayerTwoImpl implements Player {
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
-        exoPlayer.setSubtitleRendererOutput(new TextRenderer.Output() {
-            @Override
-            public void onCues(List<Cue> list) {
-                playerView.setSubtitleCue(list);
-            }
-        });
     }
 
     @Override
@@ -222,18 +217,32 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+    public void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack, final PlayerSubtitlesView playerSubtitlesView) {
+        setSubtitleRenderer(playerSubtitlesView);
         exoPlayer.selectSubtitleTrack(subtitleTrack);
+        playerSubtitlesView.showSubtitles();
     }
 
     @Override
-    public void selectFirstAvailableSubtitlesTrack() {
+    public void selectFirstAvailableSubtitlesTrack(PlayerSubtitlesView playerSubtitlesView) {
+        setSubtitleRenderer(playerSubtitlesView);
         exoPlayer.selectFirstAvailableSubtitlesTrack();
+        playerSubtitlesView.showSubtitles();
+    }
+
+    private void setSubtitleRenderer(final PlayerSubtitlesView playerSubtitlesView) {
+        exoPlayer.setSubtitleRendererOutput(new TextRenderer.Output() {
+            @Override
+            public void onCues(List<Cue> list) {
+                playerSubtitlesView.setSubtitleCue(list);
+            }
+        });
     }
 
     @Override
-    public void clearSubtitleTrack() {
+    public void clearSubtitleTrack(PlayerSubtitlesView playerSubtitlesView) {
         exoPlayer.clearSubtitleTrack();
+        playerSubtitlesView.hideSubtitles();
     }
 
     @Override

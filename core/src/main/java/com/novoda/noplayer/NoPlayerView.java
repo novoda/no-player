@@ -13,7 +13,7 @@ import com.novoda.noplayer.exoplayer.AspectRatioChangeCalculator;
 
 import java.util.List;
 
-public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
+public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView, PlayerSubtitlesView {
 
     private final PlayerViewSurfaceHolder surfaceHolderProvider;
     private final AspectRatioChangeCalculator aspectRatioChangeCalculator;
