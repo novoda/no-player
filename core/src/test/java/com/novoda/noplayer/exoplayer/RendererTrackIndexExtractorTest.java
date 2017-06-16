@@ -67,4 +67,22 @@ public class RendererTrackIndexExtractorTest {
 
         assertThat(trackTypeIntegerMap).isEqualTo(expectedMap);
     }
+
+    @Test
+    public void givenThreeTrackTypes_whenExtractingTrackIndexes_thenReturnsCorrectMap() {
+        given(trackCounter.length()).willReturn(3);
+
+        given(simpleExoPlayer.getRendererType(0)).willReturn(C.TRACK_TYPE_VIDEO);
+        given(simpleExoPlayer.getRendererType(1)).willReturn(C.TRACK_TYPE_AUDIO);
+        given(simpleExoPlayer.getRendererType(2)).willReturn(C.TRACK_TYPE_TEXT);
+
+        Map<TrackType, Integer> expectedMap = new EnumMap<>(TrackType.class);
+        expectedMap.put(TrackType.VIDEO, 0);
+        expectedMap.put(TrackType.AUDIO, 1);
+        expectedMap.put(TrackType.TEXT, 2);
+
+        Map<TrackType, Integer> trackTypeIntegerMap = extractor.extractFrom(trackCounter, simpleExoPlayer);
+
+        assertThat(trackTypeIntegerMap).isEqualTo(expectedMap);
+    }
 }
