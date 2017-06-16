@@ -114,16 +114,20 @@ public class MainActivity extends Activity {
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
-                            if (position == 0) {
-                                player.clearSubtitleTrack();
-                                playerView.hideSubtitles();
-                            } else if (position == 1) {
-                                player.selectFirstAvailableSubtitlesTrack();
-                                playerView.showSubtitles();
-                            } else {
-                                PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 2);
-                                player.selectSubtitleTrack(subtitleTrack);
-                                playerView.showSubtitles();
+                            switch (position) {
+                                case 0:
+                                    player.clearSubtitleTrack();
+                                    playerView.hideSubtitles();
+                                    break;
+                                case 1:
+                                    player.selectFirstAvailableSubtitlesTrack();
+                                    playerView.showSubtitles();
+                                    break;
+                                default:
+                                    PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 2);
+                                    player.selectSubtitleTrack(subtitleTrack);
+                                    playerView.showSubtitles();
+                                    break;
                             }
                         }
                     }).create();
