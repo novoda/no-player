@@ -5,6 +5,7 @@ import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.text.Cue;
+import com.google.android.exoplayer2.text.TextRenderer;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.LoadTimeout;
@@ -31,6 +32,9 @@ import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.noplayer.player.PlayerType;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,7 +42,6 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
@@ -448,19 +451,36 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenSelectingSubtitlesTrack_thenSetsSubtitleCuesOnPlayerSubtitlesView() {
+        public void givenPlayerHasLoadedSubtitleCues_whenSelectingSubtitlesTrack_thenSetsSubtitleCuesOnView() {
+            final List<Cue> cueList = givenPlayerHasLoadedSubtitleCues();
+
             PlayerSubtitleTrack playerSubtitleTrack = PlayerSubtitleTrackFixture.anInstance().build();
 
             player.selectSubtitleTrack(playerSubtitleTrack, playerSubtitlesView);
 
-            verify(playerSubtitlesView).setSubtitleCue(ArgumentMatchers.<Cue>anyList());
+            verify(playerSubtitlesView).setSubtitleCue(cueList);
         }
 
         @Test
-        public void whenSelectingFirstAvailableSubtitlesTrack_thenSetsSubtitleCuesOnPlayerSubtitlesView() {
+        public void givenPlayerHasLoadedSubtitleCues_whenSelectingFirstAvailableSubtitlesTrack_thenSetsSubtitleCuesOnView() {
+            final List<Cue> cueList = givenPlayerHasLoadedSubtitleCues();
+
             player.selectFirstAvailableSubtitleTrack(playerSubtitlesView);
 
-            verify(playerSubtitlesView).setSubtitleCue(ArgumentMatchers.<Cue>anyList());
+            verify(playerSubtitlesView).setSubtitleCue(cueList);
+        }
+
+        private List<Cue> givenPlayerHasLoadedSubtitleCues() {
+            final List<Cue> cueList = Arrays.asList(new Cue("first cue"), new Cue("secondCue"));
+            doAnswer(new Answer() {
+                @Override
+                public Object answer(InvocationOnMock invocation) throws Throwable {
+                    TextRenderer.Output output = invocation.getArgument(0);
+                    output.onCues(cueList);
+                    return null;
+                }
+            }).when(exoPlayerFacade).setSubtitleRendererOutput(any(TextRenderer.Output.class));
+            return cueList;
         }
 
         @Test
