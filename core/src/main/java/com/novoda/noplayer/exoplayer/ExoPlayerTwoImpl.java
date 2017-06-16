@@ -1,6 +1,7 @@
 package com.novoda.noplayer.exoplayer;
 
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.text.Cue;
@@ -13,7 +14,6 @@ import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSubtitleTrack;
-import com.novoda.noplayer.PlayerSubtitlesView;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
@@ -21,6 +21,7 @@ import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
+import com.novoda.noplayer.exoplayer.mediasource.TrackType;
 import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;
@@ -36,6 +37,9 @@ public class ExoPlayerTwoImpl implements Player {
     private final LoadTimeout loadTimeout;
 
     private SurfaceHolderRequester surfaceHolderRequester;
+
+    @Nullable
+    private PlayerView playerView;
 
     private int videoWidth;
     private int videoHeight;
@@ -194,6 +198,7 @@ public class ExoPlayerTwoImpl implements Player {
 
     @Override
     public void attach(PlayerView playerView) {
+        this.playerView = playerView;
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
@@ -204,6 +209,7 @@ public class ExoPlayerTwoImpl implements Player {
         surfaceHolderRequester = null;
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        this.playerView = null;
     }
 
     @Override
@@ -217,32 +223,32 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack, final PlayerSubtitlesView playerSubtitlesView) {
-        setSubtitleRenderer(playerSubtitlesView);
+    public void showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+        setSubtitleRenderer();
         exoPlayer.selectSubtitleTrack(subtitleTrack);
-        playerSubtitlesView.showSubtitles();
+        playerView.showSubtitles();
     }
 
     @Override
-    public void selectFirstAvailableSubtitleTrack(PlayerSubtitlesView playerSubtitlesView) {
-        setSubtitleRenderer(playerSubtitlesView);
+    public void showFirstAvailableSubtitleTrack() {
+        setSubtitleRenderer();
         exoPlayer.selectFirstAvailableSubtitlesTrack();
-        playerSubtitlesView.showSubtitles();
+        playerView.showSubtitles();
     }
 
-    private void setSubtitleRenderer(final PlayerSubtitlesView playerSubtitlesView) {
+    private void setSubtitleRenderer() {
         exoPlayer.setSubtitleRendererOutput(new TextRenderer.Output() {
             @Override
             public void onCues(List<Cue> list) {
-                playerSubtitlesView.setSubtitleCue(list);
+                playerView.setSubtitleCue(list);
             }
         });
     }
 
     @Override
-    public void clearSubtitleTrack(PlayerSubtitlesView playerSubtitlesView) {
+    public void hideSubtitleTrack() {
         exoPlayer.clearSubtitleTrack();
-        playerSubtitlesView.hideSubtitles();
+        playerView.hideSubtitles();
     }
 
     @Override

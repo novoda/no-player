@@ -14,7 +14,6 @@ import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSubtitleTrack;
-import com.novoda.noplayer.PlayerSubtitlesView;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.player.PlayerFactory;
 import com.novoda.noplayer.player.PrioritizedPlayerTypes;
@@ -30,7 +29,6 @@ public class MainActivity extends Activity {
 
     private Player player;
     private PlayerView playerView;
-    private PlayerSubtitlesView playerSubtitlesView;
     private View audioSelectionButton;
     private View subtitleSelectionButton;
 
@@ -40,7 +38,6 @@ public class MainActivity extends Activity {
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
         playerView = (PlayerView) findViewById(R.id.player_view);
-        playerSubtitlesView = (PlayerSubtitlesView) playerView;
         audioSelectionButton = findViewById(R.id.button_audio_selection);
         subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
     }
@@ -101,7 +98,7 @@ public class MainActivity extends Activity {
     private final View.OnClickListener showSubtitleSelectionDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (player.hasAvailableSubtitles()) {
+            if (player.getSubtitleTracks().isEmpty()) {
                 showSubtitleSelectionDialog();
             } else {
                 Toast.makeText(MainActivity.this, "no subtitles available!", Toast.LENGTH_LONG).show();
@@ -119,14 +116,14 @@ public class MainActivity extends Activity {
                         public void onClick(DialogInterface dialog, int position) {
                             switch (position) {
                                 case 0:
-                                    player.clearSubtitleTrack(playerSubtitlesView);
+                                    player.hideSubtitleTrack();
                                     break;
                                 case 1:
-                                    player.selectFirstAvailableSubtitleTrack(playerSubtitlesView);
+                                    player.showFirstAvailableSubtitleTrack();
                                     break;
                                 default:
                                     PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 2);
-                                    player.selectSubtitleTrack(subtitleTrack, playerSubtitlesView);
+                                    player.showSubtitleTrack(subtitleTrack);
                                     break;
                             }
                         }

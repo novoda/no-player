@@ -1,4 +1,4 @@
-package com.novoda.noplayer.exoplayer;
+package com.novoda.noplayer.exoplayer.mediasource;
 
 public enum TrackType {
     AUDIO,

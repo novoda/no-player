@@ -11,7 +11,7 @@ import com.novoda.utils.NoPlayerLog;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.novoda.noplayer.exoplayer.TrackType.TEXT;
+import static com.novoda.noplayer.exoplayer.mediasource.TrackType.TEXT;
 
 public class ExoPlayerSubtitleTrackSelector {
 

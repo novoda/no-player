@@ -4,13 +4,9 @@ import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.novoda.noplayer.exoplayer.TrackType;
 
 import java.util.EnumMap;
 import java.util.Map;
-
-import static com.novoda.noplayer.exoplayer.TrackType.AUDIO;
-import static com.novoda.noplayer.exoplayer.TrackType.TEXT;
 
 public class ExoPlayerTrackSelector {
 
@@ -23,12 +19,12 @@ public class ExoPlayerTrackSelector {
     }
 
     TrackGroupArray getAudioTrackGroups() {
-        Integer audioRendererIndex = rendererTrackIndex.get(AUDIO);
+        Integer audioRendererIndex = rendererTrackIndex.get(TrackType.AUDIO);
         return trackInfo().getTrackGroups(audioRendererIndex);
     }
 
     TrackGroupArray getSubtitleTrackGroups() {
-        Integer subtitleRendererIndex = rendererTrackIndex.get(TEXT);
+        Integer subtitleRendererIndex = rendererTrackIndex.get(TrackType.TEXT);
         return trackInfo().getTrackGroups(subtitleRendererIndex);
     }
 

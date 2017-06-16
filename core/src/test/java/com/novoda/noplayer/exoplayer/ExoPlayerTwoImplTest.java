@@ -13,7 +13,6 @@ import com.novoda.noplayer.Player;
 import com.novoda.noplayer.Player.StateChangedListener;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerSubtitleTrack;
-import com.novoda.noplayer.PlayerSubtitlesView;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
@@ -438,14 +437,14 @@ public class ExoPlayerTwoImplTest {
         public void whenSelectingSubtitlesTrack_thenShowsPlayerSubtitlesView() {
             PlayerSubtitleTrack playerSubtitleTrack = PlayerSubtitleTrackFixture.anInstance().build();
 
-            player.selectSubtitleTrack(playerSubtitleTrack, playerSubtitlesView);
+            player.showSubtitleTrack(playerSubtitleTrack, playerSubtitlesView);
 
             verify(playerSubtitlesView).showSubtitles();
         }
 
         @Test
         public void whenSelectingFirstAvailableSubtitlesTrack_thenShowsPlayerSubtitlesView() {
-            player.selectFirstAvailableSubtitleTrack(playerSubtitlesView);
+            player.showFirstAvailableSubtitleTrack(playerSubtitlesView);
 
             verify(playerSubtitlesView).showSubtitles();
         }
@@ -456,7 +455,7 @@ public class ExoPlayerTwoImplTest {
 
             PlayerSubtitleTrack playerSubtitleTrack = PlayerSubtitleTrackFixture.anInstance().build();
 
-            player.selectSubtitleTrack(playerSubtitleTrack, playerSubtitlesView);
+            player.showSubtitleTrack(playerSubtitleTrack, playerSubtitlesView);
 
             verify(playerSubtitlesView).setSubtitleCue(cueList);
         }
@@ -465,7 +464,7 @@ public class ExoPlayerTwoImplTest {
         public void givenPlayerHasLoadedSubtitleCues_whenSelectingFirstAvailableSubtitlesTrack_thenSetsSubtitleCuesOnView() {
             final List<Cue> cueList = givenPlayerHasLoadedSubtitleCues();
 
-            player.selectFirstAvailableSubtitleTrack(playerSubtitlesView);
+            player.showFirstAvailableSubtitleTrack(playerSubtitlesView);
 
             verify(playerSubtitlesView).setSubtitleCue(cueList);
         }
@@ -485,7 +484,7 @@ public class ExoPlayerTwoImplTest {
 
         @Test
         public void whenClearingSubtitles_thenHidesPlayerSubtitlesView() {
-            player.clearSubtitleTrack(playerSubtitlesView);
+            player.hideSubtitleTrack(playerSubtitlesView);
 
             verify(playerSubtitlesView).hideSubtitles();
         }

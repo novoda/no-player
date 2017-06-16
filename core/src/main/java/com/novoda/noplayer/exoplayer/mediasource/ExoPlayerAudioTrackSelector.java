@@ -10,7 +10,7 @@ import com.novoda.noplayer.PlayerAudioTrack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.novoda.noplayer.exoplayer.TrackType.AUDIO;
+import static com.novoda.noplayer.exoplayer.mediasource.TrackType.AUDIO;
 
 public class ExoPlayerAudioTrackSelector {
 

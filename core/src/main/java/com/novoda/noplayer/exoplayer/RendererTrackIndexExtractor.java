@@ -3,6 +3,7 @@ package com.novoda.noplayer.exoplayer;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerMappedTrackInfo;
+import com.novoda.noplayer.exoplayer.mediasource.TrackType;
 
 import java.util.EnumMap;
 import java.util.Map;
