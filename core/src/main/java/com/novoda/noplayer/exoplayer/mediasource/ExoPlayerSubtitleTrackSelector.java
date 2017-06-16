@@ -58,4 +58,8 @@ public class ExoPlayerSubtitleTrackSelector {
 
         return subtitleTracks;
     }
+
+    public void clearSubtitleTrack() {
+        trackSelector.clearSelectionOverrideFor(TEXT);
+    }
 }

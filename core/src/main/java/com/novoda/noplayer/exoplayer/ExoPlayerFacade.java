@@ -145,4 +145,8 @@ class ExoPlayerFacade {
     public SimpleExoPlayer getRawExoPlayer() {
         return exoPlayer;
     }
+
+    public void clearSubtitleTrack() {
+        subtitleTrackSelector.clearSubtitleTrack();
+    }
 }

@@ -31,6 +31,11 @@ public class ExoPlayerTrackSelector {
         return trackInfo().getTrackGroups(subtitleRendererIndex);
     }
 
+    public void clearSelectionOverrideFor(TrackType trackType) {
+        Integer rendererIndex = rendererTrackIndex.get(trackType);
+        trackSelector.clearSelectionOverrides(rendererIndex);
+    }
+
     public MappingTrackSelector.MappedTrackInfo trackInfo() {
         MappingTrackSelector.MappedTrackInfo trackInfo = trackSelector.getCurrentMappedTrackInfo();
 

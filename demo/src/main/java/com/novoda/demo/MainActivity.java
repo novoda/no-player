@@ -109,9 +109,14 @@ public class MainActivity extends Activity {
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
-                            PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position);
-                            player.selectSubtitleTrack(subtitleTrack);
-                            playerView.showSubtitles();
+                            if (position == 0) {
+                                player.clearSubtitleTrack();
+                                playerView.hideSubtitles();
+                            } else {
+                                PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 1);
+                                player.selectSubtitleTrack(subtitleTrack);
+                                playerView.showSubtitles();
+                            }
                         }
                     }).create();
             subtitlesSelectionDialog.show();
@@ -119,6 +124,7 @@ public class MainActivity extends Activity {
 
         private List<String> mapSubtitleTrackToLabel(List<PlayerSubtitleTrack> subtitleTracks) {
             List<String> labels = new ArrayList<>();
+            labels.add("Dismiss subtitles");
             for (PlayerSubtitleTrack subtitleTrack : subtitleTracks) {
                 labels.add("Group: " + subtitleTrack.groupIndex() + " Format: " + subtitleTrack.formatIndex());
             }

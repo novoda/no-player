@@ -222,6 +222,11 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
+    public void clearSubtitleTrack() {
+        exoPlayer.clearSubtitleTrack();
+    }
+
+    @Override
     public List<PlayerAudioTrack> getAudioTracks() {
         return exoPlayer.getAudioTracks();
     }
