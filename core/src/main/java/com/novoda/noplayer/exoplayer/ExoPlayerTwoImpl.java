@@ -69,7 +69,12 @@ public class ExoPlayerTwoImpl implements Player {
 
                 RendererTrackIndexExtractor rendererTrackIndexExtractor = new RendererTrackIndexExtractor();
                 Map<TrackType, Integer> trackTypeIndexMap = rendererTrackIndexExtractor.extractFrom(
-                        exoPlayerTrackSelector.trackInfo(),
+                        new RendererTrackIndexExtractor.NoPlayerTrackCounter() {
+                            @Override
+                            public int numberOfTracks() {
+                                return exoPlayerTrackSelector.trackInfo().length;
+                            }
+                        },
                         exoPlayer.getRawExoPlayer()
                 );
                 exoPlayerTrackSelector.setTrackRendererIndexes(trackTypeIndexMap);
