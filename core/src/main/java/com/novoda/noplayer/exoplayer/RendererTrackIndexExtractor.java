@@ -5,12 +5,13 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 class RendererTrackIndexExtractor {
 
-    EnumMap<TrackType, Integer> extractFrom(MappingTrackSelector.MappedTrackInfo mappedTrackInfo,
-                                            SimpleExoPlayer simpleExoPlayer) {
-        EnumMap<TrackType, Integer> trackIndex = new EnumMap<>(TrackType.class);
+    Map<TrackType, Integer> extractFrom(MappingTrackSelector.MappedTrackInfo mappedTrackInfo,
+                                        SimpleExoPlayer simpleExoPlayer) {
+        Map<TrackType, Integer> trackIndex = new EnumMap<>(TrackType.class);
 
         int numberOfTracks = mappedTrackInfo.length;
         for (int i = 0; i < numberOfTracks; i++) {

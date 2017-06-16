@@ -22,8 +22,8 @@ import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
 import com.novoda.noplayer.player.PlayerInformation;
 
-import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExoPlayerTwoImpl implements Player {
 
@@ -68,7 +68,7 @@ public class ExoPlayerTwoImpl implements Player {
                 loadTimeout.cancel();
 
                 RendererTrackIndexExtractor rendererTrackIndexExtractor = new RendererTrackIndexExtractor();
-                EnumMap<TrackType, Integer> trackTypeIndexMap = rendererTrackIndexExtractor.extractFrom(
+                Map<TrackType, Integer> trackTypeIndexMap = rendererTrackIndexExtractor.extractFrom(
                         exoPlayerTrackSelector.trackInfo(),
                         exoPlayer.getRawExoPlayer()
                 );

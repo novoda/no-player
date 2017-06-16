@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.novoda.noplayer.exoplayer.TrackType;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 import static com.novoda.noplayer.exoplayer.TrackType.AUDIO;
 import static com.novoda.noplayer.exoplayer.TrackType.TEXT;
@@ -56,7 +57,7 @@ public class ExoPlayerTrackSelector {
                 && trackInfo().getAdaptiveSupport(audioRendererIndex, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
     }
 
-    public void setTrackRendererIndexes(EnumMap<TrackType, Integer> trackTypeIndexMap) {
+    public void setTrackRendererIndexes(Map<TrackType, Integer> trackTypeIndexMap) {
         rendererTrackIndex = new EnumMap<>(trackTypeIndexMap);
     }
 }
