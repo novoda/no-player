@@ -2,7 +2,7 @@ package com.novoda.noplayer.exoplayer;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerMappedTrackInfo;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class RendererTrackIndexExtractorTest {
     public MockitoRule rule = MockitoJUnit.rule();
 
     @Mock
-    private ExoPlayerTrackSelector.ExoPlayerMappedTrackInfo trackCounter;
+    private ExoPlayerMappedTrackInfo trackCounter;
     @Mock
     private SimpleExoPlayer simpleExoPlayer;
 

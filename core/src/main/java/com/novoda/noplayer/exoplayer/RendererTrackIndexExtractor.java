@@ -2,14 +2,14 @@ package com.novoda.noplayer.exoplayer;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerMappedTrackInfo;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 class RendererTrackIndexExtractor {
 
-    Map<TrackType, Integer> extractFrom(ExoPlayerTrackSelector.ExoPlayerMappedTrackInfo mappedTrackInfo,
+    Map<TrackType, Integer> extractFrom(ExoPlayerMappedTrackInfo mappedTrackInfo,
                                         SimpleExoPlayer simpleExoPlayer) {
         Map<TrackType, Integer> trackIndex = new EnumMap<>(TrackType.class);
 
