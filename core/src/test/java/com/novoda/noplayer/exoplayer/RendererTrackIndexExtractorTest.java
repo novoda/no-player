@@ -2,6 +2,7 @@ package com.novoda.noplayer.exoplayer;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class RendererTrackIndexExtractorTest {
     public MockitoRule rule = MockitoJUnit.rule();
 
     @Mock
-    private RendererTrackIndexExtractor.NoPlayerTrackCounter trackCounter;
+    private ExoPlayerTrackSelector.ExoPlayerMappedTrackInfo trackCounter;
     @Mock
     private SimpleExoPlayer simpleExoPlayer;
 
@@ -35,7 +36,7 @@ public class RendererTrackIndexExtractorTest {
 
     @Test
     public void givenAudioTrackAtPositionZero_whenExtractingTrackIndexes_thenReturnsCorrectMap() {
-        given(trackCounter.numberOfTracks()).willReturn(1);
+        given(trackCounter.length()).willReturn(1);
         given(simpleExoPlayer.getRendererType(0)).willReturn(C.TRACK_TYPE_AUDIO);
         Map<TrackType, Integer> expectedMap = new EnumMap<>(TrackType.class);
         expectedMap.put(TrackType.AUDIO, 0);

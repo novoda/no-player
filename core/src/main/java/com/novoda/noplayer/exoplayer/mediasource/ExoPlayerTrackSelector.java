@@ -37,13 +37,34 @@ public class ExoPlayerTrackSelector {
         trackSelector.clearSelectionOverrides(rendererIndex);
     }
 
-    public MappingTrackSelector.MappedTrackInfo trackInfo() {
+    public ExoPlayerMappedTrackInfo trackInfo() {
         MappingTrackSelector.MappedTrackInfo trackInfo = trackSelector.getCurrentMappedTrackInfo();
 
         if (trackInfo == null) {
             throw new NullPointerException("Track info is not available.");
         }
-        return trackInfo;
+        return new ExoPlayerMappedTrackInfo(trackInfo);
+    }
+
+    public static class ExoPlayerMappedTrackInfo {
+
+        private final MappingTrackSelector.MappedTrackInfo mappedTrackInfo;
+
+        public ExoPlayerMappedTrackInfo(MappingTrackSelector.MappedTrackInfo mappedTrackInfo) {
+            this.mappedTrackInfo = mappedTrackInfo;
+        }
+
+        public int length() {
+            return mappedTrackInfo.length;
+        }
+
+        public TrackGroupArray getTrackGroups(int index) {
+            return mappedTrackInfo.getTrackGroups(index);
+        }
+
+        public int getAdaptiveSupport(Integer rendererIndex, int groupIndex, boolean includeCapabilitiesExceededTracks) {
+            return mappedTrackInfo.getAdaptiveSupport(rendererIndex, groupIndex, includeCapabilitiesExceededTracks);
+        }
     }
 
     void setSelectionOverride(TrackType trackType, TrackGroupArray trackGroups, MappingTrackSelector.SelectionOverride selectionOverride) {
