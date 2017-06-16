@@ -193,7 +193,7 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public void attach(final PlayerView playerView) {
+    public void attach(PlayerView playerView) {
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
