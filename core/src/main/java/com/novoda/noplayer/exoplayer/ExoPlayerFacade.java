@@ -149,4 +149,8 @@ class ExoPlayerFacade {
     public void clearSubtitleTrack() {
         subtitleTrackSelector.clearSubtitleTrack();
     }
+
+    public void selectFirstAvailableSubtitlesTrack() {
+        subtitleTrackSelector.selectFirstTextTrack();
+    }
 }

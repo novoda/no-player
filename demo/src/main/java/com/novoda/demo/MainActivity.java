@@ -112,8 +112,12 @@ public class MainActivity extends Activity {
                             if (position == 0) {
                                 player.clearSubtitleTrack();
                                 playerView.hideSubtitles();
+                            }
+                            if (position == 1) {
+                                player.selectFirstAvailableSubtitlesTrack();
+                                playerView.showSubtitles();
                             } else {
-                                PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 1);
+                                PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 2);
                                 player.selectSubtitleTrack(subtitleTrack);
                                 playerView.showSubtitles();
                             }
@@ -125,6 +129,7 @@ public class MainActivity extends Activity {
         private List<String> mapSubtitleTrackToLabel(List<PlayerSubtitleTrack> subtitleTracks) {
             List<String> labels = new ArrayList<>();
             labels.add("Dismiss subtitles");
+            labels.add("Enable default subtitles");
             for (PlayerSubtitleTrack subtitleTrack : subtitleTracks) {
                 labels.add("Group: " + subtitleTrack.groupIndex() + " Format: " + subtitleTrack.formatIndex());
             }

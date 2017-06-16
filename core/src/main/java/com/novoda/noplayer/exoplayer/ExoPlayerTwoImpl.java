@@ -222,6 +222,11 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
+    public void selectFirstAvailableSubtitlesTrack() {
+        exoPlayer.selectFirstAvailableSubtitlesTrack();
+    }
+
+    @Override
     public void clearSubtitleTrack() {
         exoPlayer.clearSubtitleTrack();
     }

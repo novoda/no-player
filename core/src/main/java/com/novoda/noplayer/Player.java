@@ -35,6 +35,8 @@ public interface Player extends PlayerState {
 
     void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack);
 
+    void selectFirstAvailableSubtitlesTrack();
+
     void clearSubtitleTrack();
 
     List<PlayerAudioTrack> getAudioTracks();
@@ -57,7 +59,7 @@ public interface Player extends PlayerState {
 
     interface PreparedListener {
 
-        void    onPrepared(PlayerState playerState);
+        void onPrepared(PlayerState playerState);
     }
 
     interface BufferStateListener {

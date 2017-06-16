@@ -271,6 +271,11 @@ public class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
+    public void selectFirstAvailableSubtitlesTrack() {
+        NoPlayerLog.w("Subtitles not implemented for Android Media Player");
+    }
+
+    @Override
     public void clearSubtitleTrack() {
         NoPlayerLog.w("Subtitles not implemented for Android Media Player");
     }
