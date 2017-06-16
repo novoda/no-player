@@ -15,6 +15,7 @@ import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerMappedTrackInfo;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;
 import com.novoda.noplayer.listeners.BufferStateListeners;
@@ -472,6 +473,8 @@ public class ExoPlayerTwoImplTest {
         ExoPlayerFacade exoPlayerFacade;
         @Mock
         ExoPlayerTrackSelector exoPlayerTrackSelector;
+        @Mock
+        ExoPlayerMappedTrackInfo exoPlayerMappedTrackInfo;
 
         ExoPlayerTwoImpl player;
 
@@ -497,6 +500,8 @@ public class ExoPlayerTwoImplTest {
             given(listenersHolder.getInfoListeners()).willReturn(infoListeners);
             given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListeners);
             given(listenersHolder.getBitrateChangedListeners()).willReturn(bitrateChangedListeners);
+
+            given(exoPlayerTrackSelector.trackInfo()).willReturn(exoPlayerMappedTrackInfo);
 
             player = new ExoPlayerTwoImpl(
                     exoPlayerFacade,

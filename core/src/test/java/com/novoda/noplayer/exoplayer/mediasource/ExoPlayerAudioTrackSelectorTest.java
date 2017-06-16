@@ -7,7 +7,7 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.novoda.noplayer.PlayerAudioTrack;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -20,7 +20,9 @@ import org.mockito.junit.MockitoRule;
 
 import static com.novoda.noplayer.exoplayer.TrackType.AUDIO;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -94,7 +96,7 @@ public class ExoPlayerAudioTrackSelectorTest {
         exoPlayerAudioTrackSelector.selectAudioTrack(AUDIO_TRACK);
 
         ArgumentCaptor<MappingTrackSelector.SelectionOverride> argumentCaptor = ArgumentCaptor.forClass(MappingTrackSelector.SelectionOverride.class);
-        verify(trackSelector).setSelectionOverride(AUDIO, eq(trackGroups), argumentCaptor.capture());
+        verify(trackSelector).setSelectionOverride(eq(AUDIO), eq(trackGroups), argumentCaptor.capture());
         return argumentCaptor;
     }
 
@@ -108,13 +110,13 @@ public class ExoPlayerAudioTrackSelectorTest {
                 )
         );
         given(trackSelector.getAudioTrackGroups()).willReturn(trackGroups);
-        given(trackSelector.supportsTrackSwitching(AUDIO, any(TrackGroupArray.class), anyInt()))
+        given(trackSelector.supportsTrackSwitching(eq(AUDIO), any(TrackGroupArray.class), anyInt()))
                 .willReturn(true)
                 .willReturn(false);
     }
 
     private List<PlayerAudioTrack> expectedSupportedAudioTracks() {
-        return Arrays.asList(
+        return Collections.singletonList(
                 new PlayerAudioTrack(
                         FIRST_GROUP,
                         FIRST_TRACK,

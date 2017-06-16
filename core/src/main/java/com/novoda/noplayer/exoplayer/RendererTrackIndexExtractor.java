@@ -9,8 +9,7 @@ import java.util.Map;
 
 class RendererTrackIndexExtractor {
 
-    Map<TrackType, Integer> extractFrom(ExoPlayerMappedTrackInfo mappedTrackInfo,
-                                        SimpleExoPlayer simpleExoPlayer) {
+    Map<TrackType, Integer> extractFrom(ExoPlayerMappedTrackInfo mappedTrackInfo, SimpleExoPlayer simpleExoPlayer) {
         Map<TrackType, Integer> trackIndex = new EnumMap<>(TrackType.class);
 
         int numberOfTracks = mappedTrackInfo.length();
