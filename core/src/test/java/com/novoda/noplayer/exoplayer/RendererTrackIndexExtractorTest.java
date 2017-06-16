@@ -32,14 +32,36 @@ public class RendererTrackIndexExtractorTest {
     @Before
     public void setUp() throws Exception {
         extractor = new RendererTrackIndexExtractor();
+        given(trackCounter.length()).willReturn(1);
     }
 
     @Test
     public void givenAudioTrackAtPositionZero_whenExtractingTrackIndexes_thenReturnsCorrectMap() {
-        given(trackCounter.length()).willReturn(1);
         given(simpleExoPlayer.getRendererType(0)).willReturn(C.TRACK_TYPE_AUDIO);
         Map<TrackType, Integer> expectedMap = new EnumMap<>(TrackType.class);
         expectedMap.put(TrackType.AUDIO, 0);
+
+        Map<TrackType, Integer> trackTypeIntegerMap = extractor.extractFrom(trackCounter, simpleExoPlayer);
+
+        assertThat(trackTypeIntegerMap).isEqualTo(expectedMap);
+    }
+
+    @Test
+    public void givenVideoTrackAtPositionZero_whenExtractingTrackIndexes_thenReturnsCorrectMap() {
+        given(simpleExoPlayer.getRendererType(0)).willReturn(C.TRACK_TYPE_VIDEO);
+        Map<TrackType, Integer> expectedMap = new EnumMap<>(TrackType.class);
+        expectedMap.put(TrackType.VIDEO, 0);
+
+        Map<TrackType, Integer> trackTypeIntegerMap = extractor.extractFrom(trackCounter, simpleExoPlayer);
+
+        assertThat(trackTypeIntegerMap).isEqualTo(expectedMap);
+    }
+
+    @Test
+    public void givenSubtitlesTrackAtPositionZero_whenExtractingTrackIndexes_thenReturnsCorrectMap() {
+        given(simpleExoPlayer.getRendererType(0)).willReturn(C.TRACK_TYPE_TEXT);
+        Map<TrackType, Integer> expectedMap = new EnumMap<>(TrackType.class);
+        expectedMap.put(TrackType.TEXT, 0);
 
         Map<TrackType, Integer> trackTypeIntegerMap = extractor.extractFrom(trackCounter, simpleExoPlayer);
 
