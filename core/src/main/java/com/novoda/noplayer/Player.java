@@ -33,6 +33,8 @@ public interface Player extends PlayerState {
 
     void selectAudioTrack(PlayerAudioTrack audioTrack);
 
+    boolean hasAvailableSubtitles();
+
     void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack);
 
     void selectFirstAvailableSubtitlesTrack();

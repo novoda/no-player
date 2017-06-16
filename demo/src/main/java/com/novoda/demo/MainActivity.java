@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Player;
@@ -97,7 +98,11 @@ public class MainActivity extends Activity {
     private final View.OnClickListener showSubtitleSelectionDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            showSubtitleSelectionDialog();
+            if (player.hasAvailableSubtitles()) {
+                showSubtitleSelectionDialog();
+            } else {
+                Toast.makeText(MainActivity.this, "no subtitles available!", Toast.LENGTH_LONG).show();
+            }
         }
 
         private void showSubtitleSelectionDialog() {
@@ -112,8 +117,7 @@ public class MainActivity extends Activity {
                             if (position == 0) {
                                 player.clearSubtitleTrack();
                                 playerView.hideSubtitles();
-                            }
-                            if (position == 1) {
+                            } else if (position == 1) {
                                 player.selectFirstAvailableSubtitlesTrack();
                                 playerView.showSubtitles();
                             } else {

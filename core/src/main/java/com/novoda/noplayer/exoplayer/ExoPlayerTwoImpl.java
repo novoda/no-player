@@ -217,6 +217,11 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
+    public boolean hasAvailableSubtitles() {
+        return !exoPlayer.getSubtitleTracks().isEmpty();
+    }
+
+    @Override
     public void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
         exoPlayer.selectSubtitleTrack(subtitleTrack);
     }
