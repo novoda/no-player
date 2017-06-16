@@ -15,6 +15,7 @@ import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;
 import com.novoda.noplayer.listeners.BufferStateListeners;
 import com.novoda.noplayer.listeners.CompletionListeners;
@@ -146,7 +147,7 @@ public class ExoPlayerTwoImplTest {
         @Test
         public void givenPlayerIsInitialised_whenAttachingPlayerView_thenAddsPlayerViewVideoSizeChangedListenerToListenersHolder() {
             player.initialise();
-            
+
             player.attach(playerView);
 
             ArgumentCaptor<Player.VideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
@@ -469,6 +470,8 @@ public class ExoPlayerTwoImplTest {
         BitrateChangedListeners bitrateChangedListeners;
         @Mock
         ExoPlayerFacade exoPlayerFacade;
+        @Mock
+        ExoPlayerTrackSelector exoPlayerTrackSelector;
 
         ExoPlayerTwoImpl player;
 

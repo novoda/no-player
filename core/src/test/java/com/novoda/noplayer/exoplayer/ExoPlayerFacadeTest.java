@@ -11,6 +11,7 @@ import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
 
 import java.util.Collections;
@@ -100,12 +101,12 @@ public class ExoPlayerFacadeTest {
 
             facade.selectAudioTrack(audioTrack);
 
-            verify(trackSelector).selectAudioTrack(audioTrack);
+            verify(audioTrackSelector).selectAudioTrack(audioTrack);
         }
 
         @Test
         public void whenGettingAudioTracks_thenDelegatesToTrackSelector() {
-            given(trackSelector.getAudioTracks()).willReturn(AUDIO_TRACKS);
+            given(audioTrackSelector.getAudioTracks()).willReturn(AUDIO_TRACKS);
 
             List<PlayerAudioTrack> audioTracks = facade.getAudioTracks();
 
@@ -291,7 +292,9 @@ public class ExoPlayerFacadeTest {
         @Mock
         ExoPlayerForwarder exoPlayerForwarder;
         @Mock
-        ExoPlayerAudioTrackSelector trackSelector;
+        ExoPlayerAudioTrackSelector audioTrackSelector;
+        @Mock
+        ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
         @Mock
         Uri uri;
         @Mock
@@ -305,8 +308,8 @@ public class ExoPlayerFacadeTest {
             given(exoPlayerCreator.create()).willReturn(exoPlayer);
             facade = new ExoPlayerFacade(
                     mediaSourceFactory,
-                    trackSelector,
-                    exoPlayerSubtitleTrackSelector, exoPlayerCreator
+                    audioTrackSelector,
+                    subtitleTrackSelector, exoPlayerCreator
             );
         }
 
