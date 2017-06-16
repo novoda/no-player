@@ -80,7 +80,6 @@ public class MainActivity extends Activity {
                         public void onClick(DialogInterface dialog, int position) {
                             PlayerAudioTrack audioTrack = audioTracks.get(position);
                             player.selectAudioTrack(audioTrack);
-                            playerView.showSubtitles();
                         }
                     }).create();
             audioSelectionDialog.show();
@@ -105,16 +104,17 @@ public class MainActivity extends Activity {
             final List<PlayerSubtitleTrack> subtitleTracks = player.getSubtitleTracks();
             ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, R.layout.list_item);
             adapter.addAll(mapSubtitleTrackToLabel(subtitleTracks));
-            AlertDialog audioSelectionDialog = new AlertDialog.Builder(MainActivity.this)
+            AlertDialog subtitlesSelectionDialog = new AlertDialog.Builder(MainActivity.this)
                     .setTitle("Select subtitle track")
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
                             PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position);
                             player.selectSubtitleTrack(subtitleTrack);
+                            playerView.showSubtitles();
                         }
                     }).create();
-            audioSelectionDialog.show();
+            subtitlesSelectionDialog.show();
         }
 
         private List<String> mapSubtitleTrackToLabel(List<PlayerSubtitleTrack> subtitleTracks) {
