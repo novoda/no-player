@@ -122,7 +122,7 @@ public class MainActivity extends Activity {
                                     player.clearSubtitleTrack(playerSubtitlesView);
                                     break;
                                 case 1:
-                                    player.selectFirstAvailableSubtitlesTrack(playerSubtitlesView);
+                                    player.selectFirstAvailableSubtitleTrack(playerSubtitlesView);
                                     break;
                                 default:
                                     PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 2);

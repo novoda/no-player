@@ -224,7 +224,7 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public void selectFirstAvailableSubtitlesTrack(PlayerSubtitlesView playerSubtitlesView) {
+    public void selectFirstAvailableSubtitleTrack(PlayerSubtitlesView playerSubtitlesView) {
         setSubtitleRenderer(playerSubtitlesView);
         exoPlayer.selectFirstAvailableSubtitlesTrack();
         playerSubtitlesView.showSubtitles();

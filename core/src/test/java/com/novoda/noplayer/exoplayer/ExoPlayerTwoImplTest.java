@@ -4,12 +4,15 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
+import com.google.android.exoplayer2.text.Cue;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.Player.StateChangedListener;
 import com.novoda.noplayer.PlayerListenersHolder;
+import com.novoda.noplayer.PlayerSubtitleTrack;
+import com.novoda.noplayer.PlayerSubtitlesView;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
@@ -35,6 +38,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
@@ -426,6 +430,45 @@ public class ExoPlayerTwoImplTest {
 
             verify(stateChangedListeners).onVideoPlaying();
         }
+
+        @Test
+        public void whenSelectingSubtitlesTrack_thenShowsPlayerSubtitlesView() {
+            PlayerSubtitleTrack playerSubtitleTrack = PlayerSubtitleTrackFixture.anInstance().build();
+
+            player.selectSubtitleTrack(playerSubtitleTrack, playerSubtitlesView);
+
+            verify(playerSubtitlesView).showSubtitles();
+        }
+
+        @Test
+        public void whenSelectingFirstAvailableSubtitlesTrack_thenShowsPlayerSubtitlesView() {
+            player.selectFirstAvailableSubtitleTrack(playerSubtitlesView);
+
+            verify(playerSubtitlesView).showSubtitles();
+        }
+
+        @Test
+        public void whenSelectingSubtitlesTrack_thenSetsSubtitleCuesOnPlayerSubtitlesView() {
+            PlayerSubtitleTrack playerSubtitleTrack = PlayerSubtitleTrackFixture.anInstance().build();
+
+            player.selectSubtitleTrack(playerSubtitleTrack, playerSubtitlesView);
+
+            verify(playerSubtitlesView).setSubtitleCue(ArgumentMatchers.<Cue>anyList());
+        }
+
+        @Test
+        public void whenSelectingFirstAvailableSubtitlesTrack_thenSetsSubtitleCuesOnPlayerSubtitlesView() {
+            player.selectFirstAvailableSubtitleTrack(playerSubtitlesView);
+
+            verify(playerSubtitlesView).setSubtitleCue(ArgumentMatchers.<Cue>anyList());
+        }
+
+        @Test
+        public void whenClearingSubtitles_thenHidesPlayerSubtitlesView() {
+            player.clearSubtitleTrack(playerSubtitlesView);
+
+            verify(playerSubtitlesView).hideSubtitles();
+        }
     }
 
     public abstract static class Base {
@@ -475,6 +518,8 @@ public class ExoPlayerTwoImplTest {
         ExoPlayerTrackSelector exoPlayerTrackSelector;
         @Mock
         ExoPlayerMappedTrackInfo exoPlayerMappedTrackInfo;
+        @Mock
+        PlayerSubtitlesView playerSubtitlesView;
 
         ExoPlayerTwoImpl player;
 

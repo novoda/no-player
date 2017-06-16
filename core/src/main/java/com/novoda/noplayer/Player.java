@@ -37,7 +37,7 @@ public interface Player extends PlayerState {
 
     void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack, PlayerSubtitlesView playerSubtitlesView);
 
-    void selectFirstAvailableSubtitlesTrack(PlayerSubtitlesView playerSubtitlesView);
+    void selectFirstAvailableSubtitleTrack(PlayerSubtitlesView playerSubtitlesView);
 
     void clearSubtitleTrack(PlayerSubtitlesView playerSubtitlesView);
 
