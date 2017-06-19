@@ -45,55 +45,55 @@ class ExoPlayerFacade {
         this.exoPlayerCreator = exoPlayerCreator;
     }
 
-    public boolean isPlaying() {
+    boolean isPlaying() {
         return exoPlayer != null && exoPlayer.getPlayWhenReady();
     }
 
-    public VideoPosition getPlayheadPosition() {
+    VideoPosition getPlayheadPosition() {
         assertVideoLoaded();
         return VideoPosition.fromMillis(exoPlayer.getCurrentPosition());
     }
 
-    public VideoDuration getMediaDuration() {
+    VideoDuration getMediaDuration() {
         assertVideoLoaded();
         return VideoDuration.fromMillis(exoPlayer.getDuration());
     }
 
-    public int getBufferPercentage() {
+    int getBufferPercentage() {
         assertVideoLoaded();
         return exoPlayer.getBufferedPercentage();
     }
 
-    public void play(SurfaceHolder surfaceHolder, VideoPosition position) {
+    void play(SurfaceHolder surfaceHolder, VideoPosition position) {
         seekTo(position);
         play(surfaceHolder);
     }
 
-    public void play(SurfaceHolder surfaceHolder) {
+    void play(SurfaceHolder surfaceHolder) {
         assertVideoLoaded();
         exoPlayer.clearVideoSurfaceHolder(surfaceHolder);
         exoPlayer.setVideoSurfaceHolder(surfaceHolder);
         exoPlayer.setPlayWhenReady(true);
     }
 
-    public void pause() {
+    void pause() {
         assertVideoLoaded();
         exoPlayer.setPlayWhenReady(false);
     }
 
-    public void seekTo(VideoPosition position) {
+    void seekTo(VideoPosition position) {
         assertVideoLoaded();
         exoPlayer.seekTo(position.inMillis());
     }
 
-    public void release() {
+    void release() {
         if (exoPlayer != null) {
             exoPlayer.release();
             exoPlayer = null;
         }
     }
 
-    public void stop() {
+    void stop() {
         assertVideoLoaded();
         exoPlayer.stop();
     }
@@ -104,7 +104,7 @@ class ExoPlayerFacade {
         }
     }
 
-    public void loadVideo(Uri uri, ContentType contentType, ExoPlayerForwarder forwarder) {
+    void loadVideo(Uri uri, ContentType contentType, ExoPlayerForwarder forwarder) {
         exoPlayer = exoPlayerCreator.create();
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
@@ -118,15 +118,15 @@ class ExoPlayerFacade {
         setExoPlayerTextOutput(output);
     }
 
-    public void selectAudioTrack(PlayerAudioTrack audioTrack) {
+    void selectAudioTrack(PlayerAudioTrack audioTrack) {
         audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester);
     }
 
-    public List<PlayerAudioTrack> getAudioTracks() {
+    List<PlayerAudioTrack> getAudioTracks() {
         return audioTrackSelector.getAudioTracks(rendererTypeRequester);
     }
 
-    public void setSubtitleRendererOutput(TextRenderer.Output output) {
+    void setSubtitleRendererOutput(TextRenderer.Output output) {
         this.output = output;
         setExoPlayerTextOutput(output);
     }
@@ -135,23 +135,23 @@ class ExoPlayerFacade {
         exoPlayer.setTextOutput(output);
     }
 
-    public void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+    void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
         subtitleTrackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester);
     }
 
-    public List<PlayerSubtitleTrack> getSubtitleTracks() {
+    List<PlayerSubtitleTrack> getSubtitleTracks() {
         return subtitleTrackSelector.getSubtitleTracks(rendererTypeRequester);
     }
 
-    public boolean hasPlayedContent() {
+    boolean hasPlayedContent() {
         return exoPlayer != null;
     }
 
-    public void clearSubtitleTrack() {
+    void clearSubtitleTrack() {
         subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
     }
 
-    public void selectFirstAvailableSubtitlesTrack() {
+    void selectFirstAvailableSubtitlesTrack() {
         subtitleTrackSelector.selectFirstTextTrack(rendererTypeRequester);
     }
 
