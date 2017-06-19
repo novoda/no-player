@@ -1,6 +1,7 @@
 package com.novoda.noplayer.exoplayer;
 
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.ContentType;
@@ -10,6 +11,7 @@ import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
@@ -29,6 +31,9 @@ public class ExoPlayerTwoImpl implements Player {
     private final LoadTimeout loadTimeout;
 
     private SurfaceHolderRequester surfaceHolderRequester;
+
+    @Nullable
+    private PlayerView playerView;
 
     private int videoWidth;
     private int videoHeight;
@@ -178,6 +183,7 @@ public class ExoPlayerTwoImpl implements Player {
 
     @Override
     public void attach(PlayerView playerView) {
+        this.playerView = playerView;
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
@@ -188,16 +194,49 @@ public class ExoPlayerTwoImpl implements Player {
         surfaceHolderRequester = null;
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        exoPlayer.removeSubtitleRendererOutput();
+        this.playerView = null;
+    }
+
+    /**
+     * @return Whether the selection was successful
+     */
+    @Override
+    public boolean selectAudioTrack(PlayerAudioTrack audioTrack) {
+        return exoPlayer.selectAudioTrack(audioTrack);
+    }
+
+    /**
+     *
+     * @return Whether the selection was successful
+     */
+    @Override
+    public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+        setSubtitleRendererOutput();
+        playerView.showSubtitles();
+        return exoPlayer.selectSubtitleTrack(subtitleTrack);
+    }
+
+    private void setSubtitleRendererOutput() {
+        TextRendererOutput textRendererOutput = new TextRendererOutput(playerView);
+        exoPlayer.setSubtitleRendererOutput(textRendererOutput);
     }
 
     @Override
-    public void selectAudioTrack(PlayerAudioTrack audioTrack) {
-        exoPlayer.selectAudioTrack(audioTrack);
+    public void hideSubtitleTrack() {
+        exoPlayer.clearSubtitleTrack();
+        playerView.hideSubtitles();
+        exoPlayer.removeSubtitleRendererOutput();
     }
 
     @Override
     public List<PlayerAudioTrack> getAudioTracks() {
         return exoPlayer.getAudioTracks();
+    }
+
+    @Override
+    public List<PlayerSubtitleTrack> getSubtitleTracks() {
+        return exoPlayer.getSubtitleTracks();
     }
 
     @Override

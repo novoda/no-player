@@ -13,6 +13,7 @@ import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
@@ -21,6 +22,7 @@ import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 
+import java.util.Collections;
 import java.util.List;
 
 public class AndroidMediaPlayerImpl implements Player {
@@ -258,14 +260,40 @@ public class AndroidMediaPlayerImpl implements Player {
         buggyVideoDriverPreventer.clear(playerView.getContainerView());
     }
 
+    /**
+     * @return Whether the selection was successful
+     */
     @Override
-    public void selectAudioTrack(PlayerAudioTrack audioTrack) {
-        mediaPlayer.selectAudioTrack(audioTrack);
+    public boolean selectAudioTrack(PlayerAudioTrack audioTrack) {
+        return mediaPlayer.selectAudioTrack(audioTrack);
+    }
+
+    /**
+     * @return Whether the selection was successful
+     */
+    @Override
+    public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+        SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
+        listenersHolder.getErrorListeners().onError(this, subtitlesError);
+        return false;
+    }
+
+    @Override
+    public void hideSubtitleTrack() {
+        SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
+        listenersHolder.getErrorListeners().onError(this, subtitlesError);
     }
 
     @Override
     public List<PlayerAudioTrack> getAudioTracks() {
         return mediaPlayer.getAudioTracks();
+    }
+
+    @Override
+    public List<PlayerSubtitleTrack> getSubtitleTracks() {
+        SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
+        listenersHolder.getErrorListeners().onError(this, subtitlesError);
+        return Collections.emptyList();
     }
 
     @Override

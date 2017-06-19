@@ -4,17 +4,21 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
+import com.google.android.exoplayer2.text.Cue;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.Player.StateChangedListener;
 import com.novoda.noplayer.PlayerListenersHolder;
+import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
+import com.novoda.noplayer.TextCues;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;
 import com.novoda.noplayer.listeners.BufferStateListeners;
 import com.novoda.noplayer.listeners.CompletionListeners;
@@ -25,6 +29,9 @@ import com.novoda.noplayer.listeners.StateChangedListeners;
 import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.noplayer.player.PlayerType;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -146,7 +153,7 @@ public class ExoPlayerTwoImplTest {
         @Test
         public void givenPlayerIsInitialised_whenAttachingPlayerView_thenAddsPlayerViewVideoSizeChangedListenerToListenersHolder() {
             player.initialise();
-            
+
             player.attach(playerView);
 
             ArgumentCaptor<Player.VideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
@@ -424,6 +431,66 @@ public class ExoPlayerTwoImplTest {
 
             verify(stateChangedListeners).onVideoPlaying();
         }
+
+        @Test
+        public void whenSelectingSubtitlesTrack_thenShowsPlayerSubtitlesView() {
+            PlayerSubtitleTrack playerSubtitleTrack = PlayerSubtitleTrackFixture.anInstance().build();
+
+            player.showSubtitleTrack(playerSubtitleTrack);
+
+            verify(playerView).showSubtitles();
+        }
+
+        @Test
+        public void givenSelectingSubtitleTrackSuceeds_whenSelectingSubtitlesTrack_thenReturnsTrue() {
+            PlayerSubtitleTrack playerSubtitleTrack = mock(PlayerSubtitleTrack.class);
+            given(exoPlayerFacade.selectSubtitleTrack(playerSubtitleTrack)).willReturn(true);
+
+            boolean success = player.showSubtitleTrack(playerSubtitleTrack);
+
+            assertThat(success).isTrue();
+        }
+
+        @Test
+        public void givenSelectingSubtitleTrackFails_whenSelectingSubtitlesTrack_thenReturnsFalse() {
+            PlayerSubtitleTrack playerSubtitleTrack = mock(PlayerSubtitleTrack.class);
+            given(exoPlayerFacade.selectSubtitleTrack(playerSubtitleTrack)).willReturn(false);
+
+            boolean success = player.showSubtitleTrack(playerSubtitleTrack);
+
+            assertThat(success).isFalse();
+        }
+
+        @Test
+        public void givenPlayerHasLoadedSubtitleCues_whenSelectingSubtitlesTrack_thenSetsSubtitleCuesOnView() {
+            TextCues textCues = givenPlayerHasLoadedSubtitleCues();
+
+            PlayerSubtitleTrack playerSubtitleTrack = PlayerSubtitleTrackFixture.anInstance().build();
+
+            player.showSubtitleTrack(playerSubtitleTrack);
+
+            verify(playerView).setSubtitleCue(textCues);
+        }
+
+        private TextCues givenPlayerHasLoadedSubtitleCues() {
+            final List<Cue> cueList = Arrays.asList(new Cue("first cue"), new Cue("secondCue"));
+            doAnswer(new Answer() {
+                @Override
+                public Object answer(InvocationOnMock invocation) throws Throwable {
+                    TextRendererOutput output = invocation.getArgument(0);
+                    output.output().onCues(cueList);
+                    return null;
+                }
+            }).when(exoPlayerFacade).setSubtitleRendererOutput(any(TextRendererOutput.class));
+            return new TextCues(cueList);
+        }
+
+        @Test
+        public void whenClearingSubtitles_thenHidesPlayerSubtitlesView() {
+            player.hideSubtitleTrack();
+
+            verify(playerView).hideSubtitles();
+        }
     }
 
     public abstract static class Base {
@@ -469,6 +536,8 @@ public class ExoPlayerTwoImplTest {
         BitrateChangedListeners bitrateChangedListeners;
         @Mock
         ExoPlayerFacade exoPlayerFacade;
+        @Mock
+        ExoPlayerTrackSelector exoPlayerTrackSelector;
 
         ExoPlayerTwoImpl player;
 

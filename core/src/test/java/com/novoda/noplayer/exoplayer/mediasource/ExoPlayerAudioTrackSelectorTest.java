@@ -6,8 +6,9 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.novoda.noplayer.PlayerAudioTrack;
+import com.novoda.noplayer.exoplayer.RendererTypeRequester;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -19,7 +20,9 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -45,6 +48,8 @@ public class ExoPlayerAudioTrackSelectorTest {
     private ExoPlayerTrackSelector trackSelector;
     @Mock
     private TrackSelection.Factory trackSelectionFactory;
+    @Mock
+    private RendererTypeRequester rendererTypeRequester;
 
     private ExoPlayerAudioTrackSelector exoPlayerAudioTrackSelector;
     private static final PlayerAudioTrack AUDIO_TRACK = new PlayerAudioTrack(SECOND_GROUP, THIRD_TRACK, ANY_TRACK_ID, ANY_LANGUAGE, ANY_MIME_TYPE, ANY_NUMBER_OF_CHANNELS, ANY_FREQUENCY);
@@ -70,7 +75,7 @@ public class ExoPlayerAudioTrackSelectorTest {
     public void givenTrackSelectorContainsUnsupportedTracks_whenGettingAudioTracks_thenReturnsOnlySupportedTracks() {
         givenTrackSelectorContainsUnsupportedTracks();
 
-        List<PlayerAudioTrack> actualAudioTracks = exoPlayerAudioTrackSelector.getAudioTracks();
+        List<PlayerAudioTrack> actualAudioTracks = exoPlayerAudioTrackSelector.getAudioTracks(rendererTypeRequester);
 
         assertThat(actualAudioTracks).isEqualTo(expectedSupportedAudioTracks());
     }
@@ -84,16 +89,16 @@ public class ExoPlayerAudioTrackSelectorTest {
                         AudioFormatFixture.anAudioFormat().build()
                 )
         );
-        given(trackSelector.getAudioTrackGroups()).willReturn(trackGroups);
+        given(trackSelector.trackGroups(TrackType.AUDIO, rendererTypeRequester)).willReturn(trackGroups);
 
         return trackGroups;
     }
 
     private ArgumentCaptor<MappingTrackSelector.SelectionOverride> whenSelectingAudioTrack(TrackGroupArray trackGroups) {
-        exoPlayerAudioTrackSelector.selectAudioTrack(AUDIO_TRACK);
+        exoPlayerAudioTrackSelector.selectAudioTrack(AUDIO_TRACK, rendererTypeRequester);
 
         ArgumentCaptor<MappingTrackSelector.SelectionOverride> argumentCaptor = ArgumentCaptor.forClass(MappingTrackSelector.SelectionOverride.class);
-        verify(trackSelector).setSelectionOverride(eq(trackGroups), argumentCaptor.capture());
+        verify(trackSelector).setSelectionOverride(eq(TrackType.AUDIO), any(RendererTypeRequester.class), eq(trackGroups), argumentCaptor.capture());
         return argumentCaptor;
     }
 
@@ -106,14 +111,14 @@ public class ExoPlayerAudioTrackSelectorTest {
                         AudioFormatFixture.anAudioFormat().build()
                 )
         );
-        given(trackSelector.getAudioTrackGroups()).willReturn(trackGroups);
-        given(trackSelector.supportsTrackSwitching(any(TrackGroupArray.class), anyInt()))
+        given(trackSelector.trackGroups(TrackType.AUDIO, rendererTypeRequester)).willReturn(trackGroups);
+        given(trackSelector.supportsTrackSwitching(eq(TrackType.AUDIO), any(RendererTypeRequester.class), any(TrackGroupArray.class), anyInt()))
                 .willReturn(true)
                 .willReturn(false);
     }
 
     private List<PlayerAudioTrack> expectedSupportedAudioTracks() {
-        return Arrays.asList(
+        return Collections.singletonList(
                 new PlayerAudioTrack(
                         FIRST_GROUP,
                         FIRST_TRACK,
