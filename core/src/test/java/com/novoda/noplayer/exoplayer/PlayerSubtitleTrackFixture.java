@@ -2,7 +2,7 @@ package com.novoda.noplayer.exoplayer;
 
 import com.novoda.noplayer.PlayerSubtitleTrack;
 
-public class PlayerSubtitleTrackFixture {
+class PlayerSubtitleTrackFixture {
 
     private int groupIndex = 0;
     private int formatIndex = 0;
