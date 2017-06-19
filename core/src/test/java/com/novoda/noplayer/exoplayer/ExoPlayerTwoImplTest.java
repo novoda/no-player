@@ -5,7 +5,6 @@ import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.text.Cue;
-import com.google.android.exoplayer2.text.TextRenderer;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.LoadTimeout;
@@ -15,6 +14,7 @@ import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
+import com.novoda.noplayer.TextCues;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
@@ -444,26 +444,26 @@ public class ExoPlayerTwoImplTest {
 
         @Test
         public void givenPlayerHasLoadedSubtitleCues_whenSelectingSubtitlesTrack_thenSetsSubtitleCuesOnView() {
-            final List<Cue> cueList = givenPlayerHasLoadedSubtitleCues();
+            TextCues textCues = givenPlayerHasLoadedSubtitleCues();
 
             PlayerSubtitleTrack playerSubtitleTrack = PlayerSubtitleTrackFixture.anInstance().build();
 
             player.showSubtitleTrack(playerSubtitleTrack);
 
-            verify(playerView).setSubtitleCue(cueList);
+            verify(playerView).setSubtitleCue(textCues);
         }
 
-        private List<Cue> givenPlayerHasLoadedSubtitleCues() {
+        private TextCues givenPlayerHasLoadedSubtitleCues() {
             final List<Cue> cueList = Arrays.asList(new Cue("first cue"), new Cue("secondCue"));
             doAnswer(new Answer() {
                 @Override
                 public Object answer(InvocationOnMock invocation) throws Throwable {
-                    TextRenderer.Output output = invocation.getArgument(0);
-                    output.onCues(cueList);
+                    TextRendererOutput output = invocation.getArgument(0);
+                    output.output().onCues(cueList);
                     return null;
                 }
-            }).when(exoPlayerFacade).setSubtitleRendererOutput(any(TextRenderer.Output.class));
-            return cueList;
+            }).when(exoPlayerFacade).setSubtitleRendererOutput(any(TextRendererOutput.class));
+            return new TextCues(cueList);
         }
 
         @Test

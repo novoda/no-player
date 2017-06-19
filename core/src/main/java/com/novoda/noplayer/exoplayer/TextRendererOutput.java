@@ -25,4 +25,30 @@ class TextRendererOutput {
             }
         };
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TextRendererOutput)) {
+            return false;
+        }
+
+        TextRendererOutput that = (TextRendererOutput) o;
+
+        return playerView.equals(that.playerView);
+    }
+
+    @Override
+    public int hashCode() {
+        return playerView.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "TextRendererOutput{" +
+                "playerView=" + playerView +
+                '}';
+    }
 }
