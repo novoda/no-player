@@ -98,12 +98,6 @@ class ExoPlayerFacade {
         exoPlayer.stop();
     }
 
-    private void assertVideoLoaded() {
-        if (exoPlayer == null) {
-            throw new IllegalStateException("Video must be loaded before trying to interact with the player");
-        }
-    }
-
     void loadVideo(Uri uri, ContentType contentType, ExoPlayerForwarder forwarder) {
         exoPlayer = exoPlayerCreator.create();
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
@@ -164,4 +158,10 @@ class ExoPlayerFacade {
             return exoPlayer.getRendererType(index);
         }
     };
+
+    private void assertVideoLoaded() {
+        if (exoPlayer == null) {
+            throw new IllegalStateException("Video must be loaded before trying to interact with the player");
+        }
+    }
 }
