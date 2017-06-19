@@ -196,7 +196,7 @@ public class ExoPlayerTwoImpl implements Player {
         surfaceHolderRequester = null;
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
-        exoPlayer.setSubtitleRendererOutput(null);
+        removeSubtitleRendererOutput();
         this.playerView = null;
     }
 
@@ -232,6 +232,11 @@ public class ExoPlayerTwoImpl implements Player {
     public void hideSubtitleTrack() {
         exoPlayer.clearSubtitleTrack();
         playerView.hideSubtitles();
+        removeSubtitleRendererOutput();
+    }
+
+    private void removeSubtitleRendererOutput() {
+        exoPlayer.setSubtitleRendererOutput(null);
     }
 
     @Override
