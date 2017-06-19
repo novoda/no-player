@@ -198,16 +198,23 @@ public class ExoPlayerTwoImpl implements Player {
         this.playerView = null;
     }
 
+    /**
+     * @return Whether the selection was successful
+     */
     @Override
-    public void selectAudioTrack(PlayerAudioTrack audioTrack) {
-        exoPlayer.selectAudioTrack(audioTrack);
+    public boolean selectAudioTrack(PlayerAudioTrack audioTrack) {
+        return exoPlayer.selectAudioTrack(audioTrack);
     }
 
+    /**
+     *
+     * @return Whether the selection was successful
+     */
     @Override
-    public void showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+    public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
         setSubtitleRendererOutput();
-        exoPlayer.selectSubtitleTrack(subtitleTrack);
         playerView.showSubtitles();
+        return exoPlayer.selectSubtitleTrack(subtitleTrack);
     }
 
     private void setSubtitleRendererOutput() {

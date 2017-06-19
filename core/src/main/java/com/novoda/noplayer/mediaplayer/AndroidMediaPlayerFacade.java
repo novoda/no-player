@@ -211,9 +211,9 @@ class AndroidMediaPlayerFacade {
         return trackSelector.getAudioTracks(mediaPlayer);
     }
 
-    void selectAudioTrack(PlayerAudioTrack playerAudioTrack) {
+    boolean selectAudioTrack(PlayerAudioTrack playerAudioTrack) {
         assertIsInPlaybackState();
-        trackSelector.selectAudioTrack(mediaPlayer, playerAudioTrack);
+        return trackSelector.selectAudioTrack(mediaPlayer, playerAudioTrack);
     }
 
     void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener) {

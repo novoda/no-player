@@ -113,9 +113,9 @@ class ExoPlayerFacade {
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
     }
 
-    void selectAudioTrack(PlayerAudioTrack audioTrack) {
+    boolean selectAudioTrack(PlayerAudioTrack audioTrack) {
         assertVideoLoaded();
-        audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester);
+        return audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester);
     }
 
     List<PlayerAudioTrack> getAudioTracks() {
@@ -133,9 +133,9 @@ class ExoPlayerFacade {
         exoPlayer.setTextOutput(null);
     }
 
-    void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+    boolean selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
         assertVideoLoaded();
-        subtitleTrackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester);
+        return subtitleTrackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester);
     }
 
     List<PlayerSubtitleTrack> getSubtitleTracks() {

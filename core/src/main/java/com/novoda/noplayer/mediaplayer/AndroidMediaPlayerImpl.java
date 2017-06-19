@@ -261,15 +261,22 @@ public class AndroidMediaPlayerImpl implements Player {
         buggyVideoDriverPreventer.clear(playerView.getContainerView());
     }
 
+    /**
+     * @return Whether the selection was successful
+     */
     @Override
-    public void selectAudioTrack(PlayerAudioTrack audioTrack) {
-        mediaPlayer.selectAudioTrack(audioTrack);
+    public boolean selectAudioTrack(PlayerAudioTrack audioTrack) {
+        return mediaPlayer.selectAudioTrack(audioTrack);
     }
 
+    /**
+     * @return Whether the selection was successful
+     */
     @Override
-    public void showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+    public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
         SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
         listenersHolder.getErrorListeners().onError(this, subtitlesError);
+        return false;
     }
 
     @Override

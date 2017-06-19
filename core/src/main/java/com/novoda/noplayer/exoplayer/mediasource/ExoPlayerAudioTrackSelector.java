@@ -23,7 +23,7 @@ public class ExoPlayerAudioTrackSelector {
         this.trackSelectionFactory = trackSelectionFactory;
     }
 
-    public void selectAudioTrack(PlayerAudioTrack audioTrack, RendererTypeRequester rendererTypeRequester) {
+    public boolean selectAudioTrack(PlayerAudioTrack audioTrack, RendererTypeRequester rendererTypeRequester) {
         TrackGroupArray trackGroups = trackSelector.trackGroups(AUDIO, rendererTypeRequester);
 
         MappingTrackSelector.SelectionOverride selectionOverride = new MappingTrackSelector.SelectionOverride(
@@ -31,7 +31,7 @@ public class ExoPlayerAudioTrackSelector {
                 audioTrack.groupIndex(),
                 audioTrack.formatIndex()
         );
-        trackSelector.setSelectionOverride(AUDIO, rendererTypeRequester, trackGroups, selectionOverride);
+        return trackSelector.setSelectionOverride(AUDIO, rendererTypeRequester, trackGroups, selectionOverride);
     }
 
     public List<PlayerAudioTrack> getAudioTracks(RendererTypeRequester rendererTypeRequester) {

@@ -442,6 +442,26 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
+        public void givenSelectingSubtitleTrackSuceeds_whenSelectingSubtitlesTrack_thenReturnsTrue() {
+            PlayerSubtitleTrack playerSubtitleTrack = mock(PlayerSubtitleTrack.class);
+            given(exoPlayerFacade.selectSubtitleTrack(playerSubtitleTrack)).willReturn(true);
+
+            boolean success = player.showSubtitleTrack(playerSubtitleTrack);
+
+            assertThat(success).isTrue();
+        }
+
+        @Test
+        public void givenSelectingSubtitleTrackFails_whenSelectingSubtitlesTrack_thenReturnsFalse() {
+            PlayerSubtitleTrack playerSubtitleTrack = mock(PlayerSubtitleTrack.class);
+            given(exoPlayerFacade.selectSubtitleTrack(playerSubtitleTrack)).willReturn(false);
+
+            boolean success = player.showSubtitleTrack(playerSubtitleTrack);
+
+            assertThat(success).isFalse();
+        }
+
+        @Test
         public void givenPlayerHasLoadedSubtitleCues_whenSelectingSubtitlesTrack_thenSetsSubtitleCuesOnView() {
             TextCues textCues = givenPlayerHasLoadedSubtitleCues();
 

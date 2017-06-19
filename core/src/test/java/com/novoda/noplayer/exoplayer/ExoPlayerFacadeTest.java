@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.PlayerAudioTrack;
+import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
@@ -164,6 +165,15 @@ public class ExoPlayerFacadeTest {
 
             facade.getAudioTracks();
         }
+
+        @Test
+        public void selectSubtitleTrack_thenThrowsIllegalStateException() {
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
+
+            PlayerSubtitleTrack subtitleTrack = mock(PlayerSubtitleTrack.class);
+
+            facade.selectSubtitleTrack(subtitleTrack);
+        }
     }
 
     public static class GivenVideoIsLoaded extends Base {
@@ -291,6 +301,55 @@ public class ExoPlayerFacadeTest {
             facade.selectAudioTrack(audioTrack);
 
             verify(audioTrackSelector).selectAudioTrack(audioTrack, rendererTypeRequester);
+        }
+
+        @Test
+        public void givenSelectingAudioTrackSuceeds_whenSelectingAudioTrack_thenReturnsTrue() {
+            PlayerAudioTrack audioTrack = mock(PlayerAudioTrack.class);
+            given(audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester)).willReturn(true);
+
+            boolean success = facade.selectAudioTrack(audioTrack);
+
+            assertThat(success).isTrue();
+        }
+
+        @Test
+        public void givenSelectingAudioTrackFails_whenSelectingAudioTrack_thenReturnsFalse() {
+            PlayerAudioTrack audioTrack = mock(PlayerAudioTrack.class);
+            given(audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester)).willReturn(false);
+
+            boolean success = facade.selectAudioTrack(audioTrack);
+
+            assertThat(success).isFalse();
+        }
+
+        @Test
+        public void whenSelectingSubtitlesTrack_thenDelegatesToTrackSelector() {
+            PlayerSubtitleTrack subtitleTrack = mock(PlayerSubtitleTrack.class);
+
+            facade.selectSubtitleTrack(subtitleTrack);
+
+            verify(subtitleTrackSelector).selectTextTrack(subtitleTrack, rendererTypeRequester);
+        }
+
+        @Test
+        public void givenSelectingTextTrackSuceeds_whenSelectingSubtitlesTrack_thenReturnsTrue() {
+            PlayerSubtitleTrack subtitleTrack = mock(PlayerSubtitleTrack.class);
+            given(subtitleTrackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester)).willReturn(true);
+
+            boolean success = facade.selectSubtitleTrack(subtitleTrack);
+
+            assertThat(success).isTrue();
+        }
+
+        @Test
+        public void givenSelectingTextTrackFails_whenSelectingSubtitlesTrack_thenReturnsFalse() {
+            PlayerSubtitleTrack subtitleTrack = mock(PlayerSubtitleTrack.class);
+            given(subtitleTrackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester)).willReturn(false);
+
+            boolean success = facade.selectSubtitleTrack(subtitleTrack);
+
+            assertThat(success).isFalse();
         }
 
         @Test

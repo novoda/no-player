@@ -23,7 +23,7 @@ public class ExoPlayerSubtitleTrackSelector {
         this.trackSelectionFactory = trackSelectionFactory;
     }
 
-    public void selectTextTrack(PlayerSubtitleTrack subtitleTrack, RendererTypeRequester rendererTypeRequester) {
+    public boolean selectTextTrack(PlayerSubtitleTrack subtitleTrack, RendererTypeRequester rendererTypeRequester) {
         TrackGroupArray trackGroups = trackSelector.trackGroups(TEXT, rendererTypeRequester);
 
         MappingTrackSelector.SelectionOverride selectionOverride = new MappingTrackSelector.SelectionOverride(
@@ -31,7 +31,7 @@ public class ExoPlayerSubtitleTrackSelector {
                 subtitleTrack.groupIndex(),
                 subtitleTrack.formatIndex()
         );
-        trackSelector.setSelectionOverride(TEXT, rendererTypeRequester, trackGroups, selectionOverride);
+        return trackSelector.setSelectionOverride(TEXT, rendererTypeRequester, trackGroups, selectionOverride);
     }
 
     public List<PlayerSubtitleTrack> getSubtitleTracks(RendererTypeRequester rendererTypeRequester) {
