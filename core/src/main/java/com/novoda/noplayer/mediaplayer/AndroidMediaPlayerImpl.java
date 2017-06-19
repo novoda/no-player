@@ -19,9 +19,9 @@ import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
+import com.novoda.noplayer.exoplayer.playererror.SubtitlesError;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
-import com.novoda.utils.NoPlayerLog;
 
 import java.util.List;
 
@@ -267,17 +267,20 @@ public class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
-        NoPlayerLog.w("Subtitles not implemented for Android Media Player");
+        SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
+        listenersHolder.getErrorListeners().onError(this, subtitlesError);
     }
 
     @Override
     public void showFirstAvailableSubtitleTrack() {
-        NoPlayerLog.w("Subtitles not implemented for Android Media Player");
+        SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
+        listenersHolder.getErrorListeners().onError(this, subtitlesError);
     }
 
     @Override
     public void hideSubtitleTrack() {
-        NoPlayerLog.w("Subtitles not implemented for Android Media Player");
+        SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
+        listenersHolder.getErrorListeners().onError(this, subtitlesError);
     }
 
     @Override
