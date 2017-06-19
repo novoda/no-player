@@ -2,6 +2,7 @@ package com.novoda.noplayer.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -118,12 +119,11 @@ class ExoPlayerFacade {
     }
 
     public void selectAudioTrack(PlayerAudioTrack audioTrack) {
-        // TODO check if we can read tracks from exoplayer directly
-        audioTrackSelector.selectAudioTrack(audioTrack);
+        audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester);
     }
 
     public List<PlayerAudioTrack> getAudioTracks() {
-        return audioTrackSelector.getAudioTracks();
+        return audioTrackSelector.getAudioTracks(rendererTypeRequester);
     }
 
     public void setSubtitleRendererOutput(TextRenderer.Output output) {
@@ -140,26 +140,30 @@ class ExoPlayerFacade {
     }
 
     public void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
-        subtitleTrackSelector.selectTextTrack(subtitleTrack);
+        subtitleTrackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester);
     }
 
     public List<PlayerSubtitleTrack> getSubtitleTracks() {
-        return subtitleTrackSelector.getSubtitleTracks();
+        return subtitleTrackSelector.getSubtitleTracks(rendererTypeRequester);
     }
 
     public boolean hasPlayedContent() {
         return exoPlayer != null;
     }
 
-    public SimpleExoPlayer getRawExoPlayer() {
-        return exoPlayer;
-    }
-
     public void clearSubtitleTrack() {
-        subtitleTrackSelector.clearSubtitleTrack();
+        subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
     }
 
     public void selectFirstAvailableSubtitlesTrack() {
-        subtitleTrackSelector.selectFirstTextTrack();
+        subtitleTrackSelector.selectFirstTextTrack(rendererTypeRequester);
     }
+
+    @VisibleForTesting
+    final RendererTypeRequester rendererTypeRequester = new RendererTypeRequester() {
+        @Override
+        public int getRendererTypeFor(int index) {
+            return exoPlayer.getRendererType(index);
+        }
+    };
 }

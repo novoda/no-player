@@ -25,10 +25,14 @@ public class ExoPlayerTwoImplFactory {
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
 
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
-        ExoPlayerTrackSelector exoPlayerTrackSelector = new ExoPlayerTrackSelector(trackSelector);
+
+        ExoPlayerTrackSelector exoPlayerTrackSelector = ExoPlayerTrackSelector.newInstance(trackSelector);
         FixedTrackSelection.Factory trackSelectionFactory = new FixedTrackSelection.Factory();
         ExoPlayerAudioTrackSelector exoPlayerAudioTrackSelector = new ExoPlayerAudioTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
-        ExoPlayerSubtitleTrackSelector exoPlayerSubtitleTrackSelector = new ExoPlayerSubtitleTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
+        ExoPlayerSubtitleTrackSelector exoPlayerSubtitleTrackSelector = new ExoPlayerSubtitleTrackSelector(
+                exoPlayerTrackSelector,
+                trackSelectionFactory
+        );
 
         ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context, trackSelector);
         ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(
@@ -48,8 +52,7 @@ public class ExoPlayerTwoImplFactory {
                 listenersHolder,
                 exoPlayerForwarder,
                 loadTimeout,
-                heart,
-                exoPlayerTrackSelector
+                heart
         );
     }
 }

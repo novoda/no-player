@@ -31,6 +31,7 @@ import org.mockito.junit.MockitoRule;
 import utils.ExceptionMatcher;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -101,12 +102,12 @@ public class ExoPlayerFacadeTest {
 
             facade.selectAudioTrack(audioTrack);
 
-            verify(audioTrackSelector).selectAudioTrack(audioTrack);
+            verify(audioTrackSelector).selectAudioTrack(audioTrack, facade.rendererTypeRequester);
         }
 
         @Test
         public void whenGettingAudioTracks_thenDelegatesToTrackSelector() {
-            given(audioTrackSelector.getAudioTracks()).willReturn(AUDIO_TRACKS);
+            given(audioTrackSelector.getAudioTracks(any(RendererTypeRequester.class))).willReturn(AUDIO_TRACKS);
 
             List<PlayerAudioTrack> audioTracks = facade.getAudioTracks();
 

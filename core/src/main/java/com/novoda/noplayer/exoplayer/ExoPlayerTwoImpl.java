@@ -20,12 +20,9 @@ import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
-import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
-import com.novoda.noplayer.exoplayer.mediasource.TrackType;
 import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;
-import java.util.Map;
 
 public class ExoPlayerTwoImpl implements Player {
 
@@ -33,7 +30,6 @@ public class ExoPlayerTwoImpl implements Player {
     private final PlayerListenersHolder listenersHolder;
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
-    private final ExoPlayerTrackSelector exoPlayerTrackSelector;
     private final LoadTimeout loadTimeout;
 
     private SurfaceHolderRequester surfaceHolderRequester;
@@ -48,14 +44,12 @@ public class ExoPlayerTwoImpl implements Player {
                      PlayerListenersHolder listenersHolder,
                      ExoPlayerForwarder exoPlayerForwarder,
                      LoadTimeout loadTimeoutParam,
-                     Heart heart,
-                     ExoPlayerTrackSelector exoPlayerTrackSelector) {
+                     Heart heart) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.heart = heart;
-        this.exoPlayerTrackSelector = exoPlayerTrackSelector;
     }
 
     public void initialise() {
@@ -71,13 +65,6 @@ public class ExoPlayerTwoImpl implements Player {
             @Override
             public void onPrepared(PlayerState playerState) {
                 loadTimeout.cancel();
-
-                RendererTrackIndexExtractor rendererTrackIndexExtractor = new RendererTrackIndexExtractor();
-                Map<TrackType, Integer> trackTypeIndexMap = rendererTrackIndexExtractor.extractFrom(
-                        exoPlayerTrackSelector.trackInfo(),
-                        exoPlayer.getRawExoPlayer()
-                );
-                exoPlayerTrackSelector.setTrackRendererIndexes(trackTypeIndexMap);
             }
         });
         listenersHolder.addErrorListener(new ErrorListener() {
@@ -215,11 +202,6 @@ public class ExoPlayerTwoImpl implements Player {
     @Override
     public void selectAudioTrack(PlayerAudioTrack audioTrack) {
         exoPlayer.selectAudioTrack(audioTrack);
-    }
-
-    @Override
-    public boolean hasAvailableSubtitles() {
-        return !exoPlayer.getSubtitleTracks().isEmpty();
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.novoda.noplayer.PlayerSubtitleTrack;
+import com.novoda.noplayer.exoplayer.RendererTypeRequester;
 import com.novoda.utils.NoPlayerLog;
 
 import java.util.ArrayList;
@@ -23,19 +24,19 @@ public class ExoPlayerSubtitleTrackSelector {
         this.trackSelectionFactory = trackSelectionFactory;
     }
 
-    public void selectTextTrack(PlayerSubtitleTrack subtitleTrack) {
-        TrackGroupArray trackGroups = trackSelector.getSubtitleTrackGroups();
+    public void selectTextTrack(PlayerSubtitleTrack subtitleTrack, RendererTypeRequester rendererTypeRequester) {
+        TrackGroupArray trackGroups = trackSelector.getTrackGroups(TEXT, rendererTypeRequester);
 
         MappingTrackSelector.SelectionOverride selectionOverride = new MappingTrackSelector.SelectionOverride(
                 trackSelectionFactory,
                 subtitleTrack.groupIndex(),
                 subtitleTrack.formatIndex()
         );
-        trackSelector.setSelectionOverride(TEXT, trackGroups, selectionOverride);
+        trackSelector.setSelectionOverride(TEXT, rendererTypeRequester, trackGroups, selectionOverride);
     }
 
-    public List<PlayerSubtitleTrack> getSubtitleTracks() {
-        TrackGroupArray trackGroups = trackSelector.getSubtitleTrackGroups();
+    public List<PlayerSubtitleTrack> getSubtitleTracks(RendererTypeRequester rendererTypeRequester) {
+        TrackGroupArray trackGroups = trackSelector.getTrackGroups(TEXT, rendererTypeRequester);
 
         List<PlayerSubtitleTrack> subtitleTracks = new ArrayList<>();
 
@@ -60,16 +61,16 @@ public class ExoPlayerSubtitleTrackSelector {
         return subtitleTracks;
     }
 
-    public void clearSubtitleTrack() {
-        trackSelector.clearSelectionOverrideFor(TEXT);
+    public void clearSubtitleTrack(RendererTypeRequester rendererTypeRequester) {
+        trackSelector.clearSelectionOverrideFor(TEXT, rendererTypeRequester);
     }
 
-    public void selectFirstTextTrack() {
-        List<PlayerSubtitleTrack> subtitleTracks = getSubtitleTracks();
+    public void selectFirstTextTrack(RendererTypeRequester rendererTypeRequester) {
+        List<PlayerSubtitleTrack> subtitleTracks = getSubtitleTracks(rendererTypeRequester);
         if (subtitleTracks.isEmpty()) {
             NoPlayerLog.e("No subtitles tracks available");
         } else {
-            selectTextTrack(subtitleTracks.get(0));
+            selectTextTrack(subtitleTracks.get(0), rendererTypeRequester);
         }
     }
 }

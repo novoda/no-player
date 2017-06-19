@@ -4,32 +4,30 @@ import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-
-import java.util.EnumMap;
-import java.util.Map;
+import com.novoda.noplayer.exoplayer.RendererTypeRequester;
 
 public class ExoPlayerTrackSelector {
 
     private final DefaultTrackSelector trackSelector;
+    private final RendererTrackIndexExtractor rendererTrackIndexExtractor;
 
-    private EnumMap<TrackType, Integer> rendererTrackIndex;
-
-    public ExoPlayerTrackSelector(DefaultTrackSelector trackSelector) {
-        this.trackSelector = trackSelector;
+    public static ExoPlayerTrackSelector newInstance(DefaultTrackSelector trackSelector) {
+        RendererTrackIndexExtractor rendererTrackIndexExtractor = new RendererTrackIndexExtractor();
+        return new ExoPlayerTrackSelector(trackSelector, rendererTrackIndexExtractor);
     }
 
-    TrackGroupArray getAudioTrackGroups() {
-        Integer audioRendererIndex = rendererTrackIndex.get(TrackType.AUDIO);
+    ExoPlayerTrackSelector(DefaultTrackSelector trackSelector, RendererTrackIndexExtractor rendererTrackIndexExtractor) {
+        this.trackSelector = trackSelector;
+        this.rendererTrackIndexExtractor = rendererTrackIndexExtractor;
+    }
+
+    TrackGroupArray getTrackGroups(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
+        Integer audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
         return trackInfo().getTrackGroups(audioRendererIndex);
     }
 
-    TrackGroupArray getSubtitleTrackGroups() {
-        Integer subtitleRendererIndex = rendererTrackIndex.get(TrackType.TEXT);
-        return trackInfo().getTrackGroups(subtitleRendererIndex);
-    }
-
-    public void clearSelectionOverrideFor(TrackType trackType) {
-        Integer rendererIndex = rendererTrackIndex.get(trackType);
+    public void clearSelectionOverrideFor(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
+        Integer rendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
         trackSelector.clearSelectionOverrides(rendererIndex);
     }
 
@@ -42,18 +40,24 @@ public class ExoPlayerTrackSelector {
         return new ExoPlayerMappedTrackInfo(trackInfo);
     }
 
-    void setSelectionOverride(TrackType trackType, TrackGroupArray trackGroups, MappingTrackSelector.SelectionOverride selectionOverride) {
-        Integer rendererIndex = rendererTrackIndex.get(trackType);
+    private int getMappedTrackInfoLength() {
+        return trackSelector.getCurrentMappedTrackInfo().length;
+    }
+
+    void setSelectionOverride(TrackType trackType,
+                              RendererTypeRequester rendererTypeRequester,
+                              TrackGroupArray trackGroups,
+                              MappingTrackSelector.SelectionOverride selectionOverride) {
+        int rendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
         trackSelector.setSelectionOverride(rendererIndex, trackGroups, selectionOverride);
     }
 
-    boolean supportsTrackSwitching(TrackType trackType, TrackGroupArray trackGroups, int groupIndex) {
-        Integer audioRendererIndex = rendererTrackIndex.get(trackType);
+    boolean supportsTrackSwitching(TrackType trackType,
+                                   RendererTypeRequester rendererTypeRequester,
+                                   TrackGroupArray trackGroups,
+                                   int groupIndex) {
+        int audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
         return trackGroups.get(groupIndex).length > 0
                 && trackInfo().getAdaptiveSupport(audioRendererIndex, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
-    }
-
-    public void setTrackRendererIndexes(Map<TrackType, Integer> trackTypeIndexMap) {
-        rendererTrackIndex = new EnumMap<>(trackTypeIndexMap);
     }
 }

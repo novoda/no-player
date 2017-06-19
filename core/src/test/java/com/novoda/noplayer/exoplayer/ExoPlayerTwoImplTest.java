@@ -437,16 +437,16 @@ public class ExoPlayerTwoImplTest {
         public void whenSelectingSubtitlesTrack_thenShowsPlayerSubtitlesView() {
             PlayerSubtitleTrack playerSubtitleTrack = PlayerSubtitleTrackFixture.anInstance().build();
 
-            player.showSubtitleTrack(playerSubtitleTrack, playerSubtitlesView);
+            player.showSubtitleTrack(playerSubtitleTrack);
 
-            verify(playerSubtitlesView).showSubtitles();
+            verify(playerView).showSubtitles();
         }
 
         @Test
         public void whenSelectingFirstAvailableSubtitlesTrack_thenShowsPlayerSubtitlesView() {
-            player.showFirstAvailableSubtitleTrack(playerSubtitlesView);
+            player.showFirstAvailableSubtitleTrack();
 
-            verify(playerSubtitlesView).showSubtitles();
+            verify(playerView).showSubtitles();
         }
 
         @Test
@@ -455,18 +455,18 @@ public class ExoPlayerTwoImplTest {
 
             PlayerSubtitleTrack playerSubtitleTrack = PlayerSubtitleTrackFixture.anInstance().build();
 
-            player.showSubtitleTrack(playerSubtitleTrack, playerSubtitlesView);
+            player.showSubtitleTrack(playerSubtitleTrack);
 
-            verify(playerSubtitlesView).setSubtitleCue(cueList);
+            verify(playerView).setSubtitleCue(cueList);
         }
 
         @Test
         public void givenPlayerHasLoadedSubtitleCues_whenSelectingFirstAvailableSubtitlesTrack_thenSetsSubtitleCuesOnView() {
             final List<Cue> cueList = givenPlayerHasLoadedSubtitleCues();
 
-            player.showFirstAvailableSubtitleTrack(playerSubtitlesView);
+            player.showFirstAvailableSubtitleTrack();
 
-            verify(playerSubtitlesView).setSubtitleCue(cueList);
+            verify(playerView).setSubtitleCue(cueList);
         }
 
         private List<Cue> givenPlayerHasLoadedSubtitleCues() {
@@ -484,9 +484,9 @@ public class ExoPlayerTwoImplTest {
 
         @Test
         public void whenClearingSubtitles_thenHidesPlayerSubtitlesView() {
-            player.hideSubtitleTrack(playerSubtitlesView);
+            player.hideSubtitleTrack();
 
-            verify(playerSubtitlesView).hideSubtitles();
+            verify(playerView).hideSubtitles();
         }
     }
 
@@ -537,8 +537,6 @@ public class ExoPlayerTwoImplTest {
         ExoPlayerTrackSelector exoPlayerTrackSelector;
         @Mock
         ExoPlayerMappedTrackInfo exoPlayerMappedTrackInfo;
-        @Mock
-        PlayerSubtitlesView playerSubtitlesView;
 
         ExoPlayerTwoImpl player;
 
@@ -572,8 +570,8 @@ public class ExoPlayerTwoImplTest {
                     listenersHolder,
                     forwarder,
                     loadTimeout,
-                    heart,
-                    exoPlayerTrackSelector);
+                    heart
+            );
         }
     }
 }
