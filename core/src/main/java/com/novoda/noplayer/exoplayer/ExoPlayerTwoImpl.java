@@ -196,6 +196,7 @@ public class ExoPlayerTwoImpl implements Player {
         surfaceHolderRequester = null;
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        exoPlayer.setSubtitleRendererOutput(null);
         this.playerView = null;
     }
 
