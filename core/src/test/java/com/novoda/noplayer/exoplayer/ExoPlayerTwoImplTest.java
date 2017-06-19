@@ -443,28 +443,12 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenSelectingFirstAvailableSubtitlesTrack_thenShowsPlayerSubtitlesView() {
-            player.showFirstAvailableSubtitleTrack();
-
-            verify(playerView).showSubtitles();
-        }
-
-        @Test
         public void givenPlayerHasLoadedSubtitleCues_whenSelectingSubtitlesTrack_thenSetsSubtitleCuesOnView() {
             final List<Cue> cueList = givenPlayerHasLoadedSubtitleCues();
 
             PlayerSubtitleTrack playerSubtitleTrack = PlayerSubtitleTrackFixture.anInstance().build();
 
             player.showSubtitleTrack(playerSubtitleTrack);
-
-            verify(playerView).setSubtitleCue(cueList);
-        }
-
-        @Test
-        public void givenPlayerHasLoadedSubtitleCues_whenSelectingFirstAvailableSubtitlesTrack_thenSetsSubtitleCuesOnView() {
-            final List<Cue> cueList = givenPlayerHasLoadedSubtitleCues();
-
-            player.showFirstAvailableSubtitleTrack();
 
             verify(playerView).setSubtitleCue(cueList);
         }

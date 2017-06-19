@@ -272,12 +272,6 @@ public class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public void showFirstAvailableSubtitleTrack() {
-        SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
-        listenersHolder.getErrorListeners().onError(this, subtitlesError);
-    }
-
-    @Override
     public void hideSubtitleTrack() {
         SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
         listenersHolder.getErrorListeners().onError(this, subtitlesError);

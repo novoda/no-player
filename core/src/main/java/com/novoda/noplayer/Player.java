@@ -35,8 +35,6 @@ public interface Player extends PlayerState {
 
     void showSubtitleTrack(PlayerSubtitleTrack subtitleTrack);
 
-    void showFirstAvailableSubtitleTrack();
-
     void hideSubtitleTrack();
 
     List<PlayerAudioTrack> getAudioTracks();
