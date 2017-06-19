@@ -214,7 +214,7 @@ class AndroidMediaPlayerFacade {
     }
 
     public List<PlayerSubtitleTrack> getSubtitleTracks() {
-        NoPlayerLog.w("Subtitles not implemented for Android Media Player");
+        NoPlayerLog.e("Subtitles not implemented for Android Media Player");
         return Collections.emptyList();
     }
 
