@@ -3,7 +3,7 @@ package com.novoda.noplayer.exoplayer.mediasource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 
-public class ExoPlayerMappedTrackInfo {
+class ExoPlayerMappedTrackInfo {
 
     private final MappingTrackSelector.MappedTrackInfo mappedTrackInfo;
 
