@@ -132,6 +132,7 @@ class ExoPlayerFacade {
     }
 
     private void setExoPlayerTextOutput(TextRenderer.Output output) {
+        assertVideoLoaded();
         exoPlayer.setTextOutput(output);
     }
 
@@ -159,6 +160,7 @@ class ExoPlayerFacade {
     final RendererTypeRequester rendererTypeRequester = new RendererTypeRequester() {
         @Override
         public int getRendererTypeFor(int index) {
+            assertVideoLoaded();
             return exoPlayer.getRendererType(index);
         }
     };
