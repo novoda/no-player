@@ -35,12 +35,13 @@ public class ExoPlayerTwoImplFactory {
         );
 
         ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context, trackSelector);
+        RendererTypeRequesterCreator rendererTypeRequesterCreator = new RendererTypeRequesterCreator();
         ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(
                 mediaSourceFactory,
                 exoPlayerAudioTrackSelector,
                 exoPlayerSubtitleTrackSelector,
-                exoPlayerCreator
-        );
+                exoPlayerCreator,
+                rendererTypeRequesterCreator);
 
         PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
         ExoPlayerForwarder exoPlayerForwarder = new ExoPlayerForwarder();

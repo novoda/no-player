@@ -37,6 +37,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
 public class ExoPlayerFacadeTest {
@@ -97,24 +98,6 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void whenSelectingAudioTrack_thenDelegatesToTrackSelector() {
-            PlayerAudioTrack audioTrack = mock(PlayerAudioTrack.class);
-
-            facade.selectAudioTrack(audioTrack);
-
-            verify(audioTrackSelector).selectAudioTrack(audioTrack, facade.rendererTypeRequester);
-        }
-
-        @Test
-        public void whenGettingAudioTracks_thenDelegatesToTrackSelector() {
-            given(audioTrackSelector.getAudioTracks(any(RendererTypeRequester.class))).willReturn(AUDIO_TRACKS);
-
-            List<PlayerAudioTrack> audioTracks = facade.getAudioTracks();
-
-            assertThat(audioTracks).isEqualTo(AUDIO_TRACKS);
-        }
-
-        @Test
         public void whenQueryingIsPlaying_thenReturnsFalse() {
 
             boolean isPlaying = facade.isPlaying();
@@ -163,9 +146,30 @@ public class ExoPlayerFacadeTest {
 
             facade.stop();
         }
+
+        @Test
+        public void whenSelectingAudioTrack_thenThrowsIllegalStateException() {
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
+
+            PlayerAudioTrack audioTrack = mock(PlayerAudioTrack.class);
+
+            facade.selectAudioTrack(audioTrack);
+        }
+
+        @Test
+        public void whenGettingAudioTracks_thenThrowsIllegalStateException() {
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
+
+            given(audioTrackSelector.getAudioTracks(any(RendererTypeRequester.class))).willReturn(AUDIO_TRACKS);
+
+            facade.getAudioTracks();
+        }
     }
 
     public static class GivenVideoIsLoaded extends Base {
+
+        private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
+        private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
 
         @Override
         public void setUp() {
@@ -279,6 +283,24 @@ public class ExoPlayerFacadeTest {
 
             assertThat(bufferPercentage).isEqualTo(TEN_PERCENT);
         }
+
+        @Test
+        public void whenSelectingAudioTrack_thenDelegatesToTrackSelector() {
+            PlayerAudioTrack audioTrack = mock(PlayerAudioTrack.class);
+
+            facade.selectAudioTrack(audioTrack);
+
+            verify(audioTrackSelector).selectAudioTrack(audioTrack, rendererTypeRequester);
+        }
+
+        @Test
+        public void whenGettingAudioTracks_thenDelegatesToTrackSelector() {
+            given(audioTrackSelector.getAudioTracks(any(RendererTypeRequester.class))).willReturn(AUDIO_TRACKS);
+
+            List<PlayerAudioTrack> audioTracks = facade.getAudioTracks();
+
+            assertThat(audioTracks).isEqualTo(AUDIO_TRACKS);
+        }
     }
 
     public abstract static class Base {
@@ -300,6 +322,10 @@ public class ExoPlayerFacadeTest {
         Uri uri;
         @Mock
         SurfaceHolder surfaceHolder;
+        @Mock
+        RendererTypeRequester rendererTypeRequester;
+        @Mock
+        RendererTypeRequesterCreator rendererTypeRequesterCreator;
 
         ExoPlayerFacade facade;
 
@@ -307,10 +333,13 @@ public class ExoPlayerFacadeTest {
         public void setUp() {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerCreator.create()).willReturn(exoPlayer);
+            when(rendererTypeRequesterCreator.createfrom(exoPlayer)).thenReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
                     mediaSourceFactory,
                     audioTrackSelector,
-                    subtitleTrackSelector, exoPlayerCreator
+                    subtitleTrackSelector,
+                    exoPlayerCreator,
+                    rendererTypeRequesterCreator
             );
         }
 

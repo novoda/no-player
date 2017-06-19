@@ -2,7 +2,6 @@ package com.novoda.noplayer.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
 import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -29,20 +28,25 @@ class ExoPlayerFacade {
     private final ExoPlayerAudioTrackSelector audioTrackSelector;
     private final ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
     private final ExoPlayerCreator exoPlayerCreator;
+    private final RendererTypeRequesterCreator rendererTypeRequesterCreator;
 
     @Nullable
     private SimpleExoPlayer exoPlayer;
     @Nullable
     private TextRenderer.Output output;
+    @Nullable
+    private RendererTypeRequester rendererTypeRequester;
 
     ExoPlayerFacade(MediaSourceFactory mediaSourceFactory,
                     ExoPlayerAudioTrackSelector audioTrackSelector,
                     ExoPlayerSubtitleTrackSelector subtitleTrackSelector,
-                    ExoPlayerCreator exoPlayerCreator) {
+                    ExoPlayerCreator exoPlayerCreator,
+                    RendererTypeRequesterCreator rendererTypeRequesterCreator) {
         this.mediaSourceFactory = mediaSourceFactory;
         this.audioTrackSelector = audioTrackSelector;
         this.subtitleTrackSelector = subtitleTrackSelector;
         this.exoPlayerCreator = exoPlayerCreator;
+        this.rendererTypeRequesterCreator = rendererTypeRequesterCreator;
     }
 
     boolean isPlaying() {
@@ -100,6 +104,7 @@ class ExoPlayerFacade {
 
     void loadVideo(Uri uri, ContentType contentType, ExoPlayerForwarder forwarder) {
         exoPlayer = exoPlayerCreator.create();
+        rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
         MediaSource mediaSource = mediaSourceFactory.create(
@@ -113,10 +118,12 @@ class ExoPlayerFacade {
     }
 
     void selectAudioTrack(PlayerAudioTrack audioTrack) {
+        assertVideoLoaded();
         audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester);
     }
 
     List<PlayerAudioTrack> getAudioTracks() {
+        assertVideoLoaded();
         return audioTrackSelector.getAudioTracks(rendererTypeRequester);
     }
 
@@ -131,10 +138,12 @@ class ExoPlayerFacade {
     }
 
     void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+        assertVideoLoaded();
         subtitleTrackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester);
     }
 
     List<PlayerSubtitleTrack> getSubtitleTracks() {
+        assertVideoLoaded();
         return subtitleTrackSelector.getSubtitleTracks(rendererTypeRequester);
     }
 
@@ -143,21 +152,14 @@ class ExoPlayerFacade {
     }
 
     void clearSubtitleTrack() {
+        assertVideoLoaded();
         subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
     }
 
     void selectFirstAvailableSubtitlesTrack() {
+        assertVideoLoaded();
         subtitleTrackSelector.selectFirstTextTrack(rendererTypeRequester);
     }
-
-    @VisibleForTesting
-    final RendererTypeRequester rendererTypeRequester = new RendererTypeRequester() {
-        @Override
-        public int getRendererTypeFor(int index) {
-            assertVideoLoaded();
-            return exoPlayer.getRendererType(index);
-        }
-    };
 
     private void assertVideoLoaded() {
         if (exoPlayer == null) {
