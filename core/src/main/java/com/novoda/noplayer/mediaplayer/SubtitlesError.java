@@ -1,13 +1,13 @@
-package com.novoda.noplayer.exoplayer.playererror;
+package com.novoda.noplayer.mediaplayer;
 
 import com.novoda.noplayer.Player;
 
-public class SubtitlesError implements Player.PlayerError {
+class SubtitlesError implements Player.PlayerError {
 
     private final String type;
     private final Throwable cause;
 
-    public SubtitlesError(String type, Throwable cause) {
+    SubtitlesError(String type, Throwable cause) {
         this.type = type;
         this.cause = cause;
     }

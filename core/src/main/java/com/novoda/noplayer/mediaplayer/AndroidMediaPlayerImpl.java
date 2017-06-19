@@ -19,7 +19,6 @@ import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
-import com.novoda.noplayer.exoplayer.playererror.SubtitlesError;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 
