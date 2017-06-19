@@ -5,6 +5,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.novoda.noplayer.exoplayer.RendererTypeRequester;
+import com.novoda.utils.Optional;
 
 public class ExoPlayerTrackSelector {
 
@@ -22,13 +23,15 @@ public class ExoPlayerTrackSelector {
     }
 
     TrackGroupArray getTrackGroups(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
-        Integer audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
-        return trackInfo().getTrackGroups(audioRendererIndex);
+        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
+        return audioRendererIndex.isAbsent() ? TrackGroupArray.EMPTY : trackInfo().getTrackGroups(audioRendererIndex.get());
     }
 
     public void clearSelectionOverrideFor(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
-        Integer rendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
-        trackSelector.clearSelectionOverrides(rendererIndex);
+        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
+        if (audioRendererIndex.isPresent()) {
+            trackSelector.clearSelectionOverrides(audioRendererIndex.get());
+        }
     }
 
     public ExoPlayerMappedTrackInfo trackInfo() {
@@ -48,16 +51,19 @@ public class ExoPlayerTrackSelector {
                               RendererTypeRequester rendererTypeRequester,
                               TrackGroupArray trackGroups,
                               MappingTrackSelector.SelectionOverride selectionOverride) {
-        int rendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
-        trackSelector.setSelectionOverride(rendererIndex, trackGroups, selectionOverride);
+        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
+        if (audioRendererIndex.isPresent()) {
+            trackSelector.setSelectionOverride(audioRendererIndex.get(), trackGroups, selectionOverride);
+        }
     }
 
     boolean supportsTrackSwitching(TrackType trackType,
                                    RendererTypeRequester rendererTypeRequester,
                                    TrackGroupArray trackGroups,
                                    int groupIndex) {
-        int audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
-        return trackGroups.get(groupIndex).length > 0
-                && trackInfo().getAdaptiveSupport(audioRendererIndex, groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
+        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
+        return audioRendererIndex.isPresent()
+                && trackGroups.get(groupIndex).length > 0
+                && trackInfo().getAdaptiveSupport(audioRendererIndex.get(), groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
     }
 }

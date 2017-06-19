@@ -2,6 +2,7 @@ package com.novoda.noplayer.exoplayer.mediasource;
 
 import com.google.android.exoplayer2.C;
 import com.novoda.noplayer.exoplayer.RendererTypeRequester;
+import com.novoda.utils.Optional;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,34 +26,55 @@ public class RendererTrackIndexExtractorTest {
 
     @Test
     public void givenAudioTrackAtPositionZero_whenExtractingAudioIndex_thenReturnsIndexZero() {
-        int audioIndex = extractor.get(TrackType.AUDIO, 1, rendererTypeRequesterAudioTrack);
+        Optional<Integer> audioIndex = extractor.get(TrackType.AUDIO, 1, rendererTypeRequesterAudioTrack);
         int expectedAudioIndex = 0;
 
-        assertThat(audioIndex).isEqualTo(expectedAudioIndex);
+        assertThat(audioIndex.get()).isEqualTo(expectedAudioIndex);
     }
 
     @Test
     public void givenVideoTrackAtPositionZero_whenExtractingVideoIndex_thenReturnsIndexZero() {
-        int videoIndex = extractor.get(TrackType.VIDEO, 1, rendererTypeRequesterVideoTrack);
+        Optional<Integer> videoIndex = extractor.get(TrackType.VIDEO, 1, rendererTypeRequesterVideoTrack);
         int expectedVideoIndex = 0;
 
-        assertThat(videoIndex).isEqualTo(expectedVideoIndex);
+        assertThat(videoIndex.get()).isEqualTo(expectedVideoIndex);
     }
 
     @Test
     public void givenSubtitlesTrackAtPositionZero_whenExtractingTextIndex_thenReturnsIndexZero() {
-        int textIndex = extractor.get(TrackType.TEXT, 1, rendererTypeRequesterTextTrack);
+        Optional<Integer> textIndex = extractor.get(TrackType.TEXT, 1, rendererTypeRequesterTextTrack);
         int expectedTextIndex = 0;
 
-        assertThat(textIndex).isEqualTo(expectedTextIndex);
+        assertThat(textIndex.get()).isEqualTo(expectedTextIndex);
     }
 
     @Test
     public void givenThreeTrackTypes_whenExtractingAudioIndexes_thenReturnsIndexOne() {
-        int audioIndex = extractor.get(TrackType.AUDIO, 3, rendererTypeRequesterVideoAudioTextTrack);
+        Optional<Integer> audioIndex = extractor.get(TrackType.AUDIO, 3, rendererTypeRequesterVideoAudioTextTrack);
         int expectedAudioIndex = 1;
 
-        assertThat(audioIndex).isEqualTo(expectedAudioIndex);
+        assertThat(audioIndex.get()).isEqualTo(expectedAudioIndex);
+    }
+
+    @Test
+    public void givenNoAudioTrack_whenExtractingAudioIndex_thenReturnsEmpty() {
+        Optional<Integer> audioIndex = extractor.get(TrackType.AUDIO, 1, emptyRendererTypeRequester);
+
+        assertThat(audioIndex.isAbsent()).isTrue();
+    }
+
+    @Test
+    public void givenNoVideoTrack_whenExtractingVideoIndex_thenReturnsEmpty() {
+        Optional<Integer> videoIndex = extractor.get(TrackType.VIDEO, 1, emptyRendererTypeRequester);
+
+        assertThat(videoIndex.isAbsent()).isTrue();
+    }
+
+    @Test
+    public void givenNoTextTrack_whenExtractingTextIndex_thenReturnsEmpty() {
+        Optional<Integer> textIndex = extractor.get(TrackType.TEXT, 1, emptyRendererTypeRequester);
+
+        assertThat(textIndex.isAbsent()).isTrue();
     }
 
     private RendererTypeRequester rendererTypeRequesterAudioTrack = new RendererTypeRequester() {
@@ -84,6 +106,13 @@ public class RendererTrackIndexExtractorTest {
                 return C.TRACK_TYPE_TEXT;
             }
 
+            return -1;
+        }
+    };
+
+    private RendererTypeRequester emptyRendererTypeRequester = new RendererTypeRequester() {
+        @Override
+        public int getRendererTypeFor(int index) {
             return -1;
         }
     };
