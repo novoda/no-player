@@ -16,46 +16,46 @@ class PlayerSubtitleTrackFixture {
         // use anInstance() to get an instance
     }
 
-    public static PlayerSubtitleTrackFixture anInstance() {
+    static PlayerSubtitleTrackFixture anInstance() {
         return new PlayerSubtitleTrackFixture();
     }
 
-    public PlayerSubtitleTrackFixture withGroupIndex(int groupIndex) {
+    PlayerSubtitleTrackFixture withGroupIndex(int groupIndex) {
         this.groupIndex = groupIndex;
         return this;
     }
 
-    public PlayerSubtitleTrackFixture withFormatIndex(int formatIndex) {
+    PlayerSubtitleTrackFixture withFormatIndex(int formatIndex) {
         this.formatIndex = formatIndex;
         return this;
     }
 
-    public PlayerSubtitleTrackFixture withTrackId(String trackId) {
+    PlayerSubtitleTrackFixture withTrackId(String trackId) {
         this.trackId = trackId;
         return this;
     }
 
-    public PlayerSubtitleTrackFixture withLanguage(String language) {
+    PlayerSubtitleTrackFixture withLanguage(String language) {
         this.language = language;
         return this;
     }
 
-    public PlayerSubtitleTrackFixture withMimeType(String mimeType) {
+    PlayerSubtitleTrackFixture withMimeType(String mimeType) {
         this.mimeType = mimeType;
         return this;
     }
 
-    public PlayerSubtitleTrackFixture withNumberOfChannels(int numberOfChannels) {
+    PlayerSubtitleTrackFixture withNumberOfChannels(int numberOfChannels) {
         this.numberOfChannels = numberOfChannels;
         return this;
     }
 
-    public PlayerSubtitleTrackFixture withFrequency(int frequency) {
+    PlayerSubtitleTrackFixture withFrequency(int frequency) {
         this.frequency = frequency;
         return this;
     }
 
-    public PlayerSubtitleTrack build() {
+    PlayerSubtitleTrack build() {
         return new PlayerSubtitleTrack(groupIndex, formatIndex, trackId, language, mimeType, numberOfChannels, frequency);
     }
 }
