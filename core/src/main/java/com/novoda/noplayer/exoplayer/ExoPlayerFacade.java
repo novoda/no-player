@@ -156,11 +156,6 @@ class ExoPlayerFacade {
         subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
     }
 
-    void selectFirstAvailableSubtitlesTrack() {
-        assertVideoLoaded();
-        subtitleTrackSelector.selectFirstTextTrack(rendererTypeRequester);
-    }
-
     private void assertVideoLoaded() {
         if (exoPlayer == null) {
             throw new IllegalStateException("Video must be loaded before trying to interact with the player");
