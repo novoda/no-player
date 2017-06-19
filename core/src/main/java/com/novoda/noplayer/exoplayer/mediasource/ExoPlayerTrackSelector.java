@@ -22,13 +22,13 @@ public class ExoPlayerTrackSelector {
         this.rendererTrackIndexExtractor = rendererTrackIndexExtractor;
     }
 
-    TrackGroupArray getTrackGroups(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
-        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
+    TrackGroupArray trackGroups(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
+        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
         return audioRendererIndex.isAbsent() ? TrackGroupArray.EMPTY : trackInfo().getTrackGroups(audioRendererIndex.get());
     }
 
     public void clearSelectionOverrideFor(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
-        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
+        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
         if (audioRendererIndex.isPresent()) {
             trackSelector.clearSelectionOverrides(audioRendererIndex.get());
         }
@@ -43,7 +43,7 @@ public class ExoPlayerTrackSelector {
         return new ExoPlayerMappedTrackInfo(trackInfo);
     }
 
-    private int getMappedTrackInfoLength() {
+    private int mappedTrackInfoLength() {
         return trackSelector.getCurrentMappedTrackInfo().length;
     }
 
@@ -51,7 +51,7 @@ public class ExoPlayerTrackSelector {
                               RendererTypeRequester rendererTypeRequester,
                               TrackGroupArray trackGroups,
                               MappingTrackSelector.SelectionOverride selectionOverride) {
-        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
+        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
         if (audioRendererIndex.isPresent()) {
             trackSelector.setSelectionOverride(audioRendererIndex.get(), trackGroups, selectionOverride);
         }
@@ -61,7 +61,7 @@ public class ExoPlayerTrackSelector {
                                    RendererTypeRequester rendererTypeRequester,
                                    TrackGroupArray trackGroups,
                                    int groupIndex) {
-        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.get(trackType, getMappedTrackInfoLength(), rendererTypeRequester);
+        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
         return audioRendererIndex.isPresent()
                 && trackGroups.get(groupIndex).length > 0
                 && trackInfo().getAdaptiveSupport(audioRendererIndex.get(), groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;

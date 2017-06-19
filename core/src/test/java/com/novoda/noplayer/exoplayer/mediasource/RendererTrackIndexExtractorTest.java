@@ -26,7 +26,7 @@ public class RendererTrackIndexExtractorTest {
 
     @Test
     public void givenAudioTrackAtPositionZero_whenExtractingAudioIndex_thenReturnsIndexZero() {
-        Optional<Integer> audioIndex = extractor.get(TrackType.AUDIO, 1, rendererTypeRequesterAudioTrack);
+        Optional<Integer> audioIndex = extractor.extract(TrackType.AUDIO, 1, rendererTypeRequesterAudioTrack);
         int expectedAudioIndex = 0;
 
         assertThat(audioIndex.get()).isEqualTo(expectedAudioIndex);
@@ -34,7 +34,7 @@ public class RendererTrackIndexExtractorTest {
 
     @Test
     public void givenVideoTrackAtPositionZero_whenExtractingVideoIndex_thenReturnsIndexZero() {
-        Optional<Integer> videoIndex = extractor.get(TrackType.VIDEO, 1, rendererTypeRequesterVideoTrack);
+        Optional<Integer> videoIndex = extractor.extract(TrackType.VIDEO, 1, rendererTypeRequesterVideoTrack);
         int expectedVideoIndex = 0;
 
         assertThat(videoIndex.get()).isEqualTo(expectedVideoIndex);
@@ -42,7 +42,7 @@ public class RendererTrackIndexExtractorTest {
 
     @Test
     public void givenSubtitlesTrackAtPositionZero_whenExtractingTextIndex_thenReturnsIndexZero() {
-        Optional<Integer> textIndex = extractor.get(TrackType.TEXT, 1, rendererTypeRequesterTextTrack);
+        Optional<Integer> textIndex = extractor.extract(TrackType.TEXT, 1, rendererTypeRequesterTextTrack);
         int expectedTextIndex = 0;
 
         assertThat(textIndex.get()).isEqualTo(expectedTextIndex);
@@ -50,7 +50,7 @@ public class RendererTrackIndexExtractorTest {
 
     @Test
     public void givenThreeTrackTypes_whenExtractingAudioIndexes_thenReturnsIndexOne() {
-        Optional<Integer> audioIndex = extractor.get(TrackType.AUDIO, 3, rendererTypeRequesterVideoAudioTextTrack);
+        Optional<Integer> audioIndex = extractor.extract(TrackType.AUDIO, 3, rendererTypeRequesterVideoAudioTextTrack);
         int expectedAudioIndex = 1;
 
         assertThat(audioIndex.get()).isEqualTo(expectedAudioIndex);
@@ -58,21 +58,21 @@ public class RendererTrackIndexExtractorTest {
 
     @Test
     public void givenNoAudioTrack_whenExtractingAudioIndex_thenReturnsEmpty() {
-        Optional<Integer> audioIndex = extractor.get(TrackType.AUDIO, 1, emptyRendererTypeRequester);
+        Optional<Integer> audioIndex = extractor.extract(TrackType.AUDIO, 1, emptyRendererTypeRequester);
 
         assertThat(audioIndex.isAbsent()).isTrue();
     }
 
     @Test
     public void givenNoVideoTrack_whenExtractingVideoIndex_thenReturnsEmpty() {
-        Optional<Integer> videoIndex = extractor.get(TrackType.VIDEO, 1, emptyRendererTypeRequester);
+        Optional<Integer> videoIndex = extractor.extract(TrackType.VIDEO, 1, emptyRendererTypeRequester);
 
         assertThat(videoIndex.isAbsent()).isTrue();
     }
 
     @Test
     public void givenNoTextTrack_whenExtractingTextIndex_thenReturnsEmpty() {
-        Optional<Integer> textIndex = extractor.get(TrackType.TEXT, 1, emptyRendererTypeRequester);
+        Optional<Integer> textIndex = extractor.extract(TrackType.TEXT, 1, emptyRendererTypeRequester);
 
         assertThat(textIndex.isAbsent()).isTrue();
     }

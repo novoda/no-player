@@ -89,7 +89,7 @@ public class ExoPlayerAudioTrackSelectorTest {
                         AudioFormatFixture.anAudioFormat().build()
                 )
         );
-        given(trackSelector.getTrackGroups(TrackType.AUDIO, rendererTypeRequester)).willReturn(trackGroups);
+        given(trackSelector.trackGroups(TrackType.AUDIO, rendererTypeRequester)).willReturn(trackGroups);
 
         return trackGroups;
     }
@@ -111,7 +111,7 @@ public class ExoPlayerAudioTrackSelectorTest {
                         AudioFormatFixture.anAudioFormat().build()
                 )
         );
-        given(trackSelector.getTrackGroups(TrackType.AUDIO, rendererTypeRequester)).willReturn(trackGroups);
+        given(trackSelector.trackGroups(TrackType.AUDIO, rendererTypeRequester)).willReturn(trackGroups);
         given(trackSelector.supportsTrackSwitching(eq(TrackType.AUDIO), any(RendererTypeRequester.class), any(TrackGroupArray.class), anyInt()))
                 .willReturn(true)
                 .willReturn(false);

@@ -6,8 +6,8 @@ import com.novoda.utils.Optional;
 
 class RendererTrackIndexExtractor {
 
-    public Optional<Integer> get(TrackType trackType, int mappedTrackInfoLength, RendererTypeRequester typeRequester) {
-        for (int i = 0; i < mappedTrackInfoLength; i++) {
+    Optional<Integer> extract(TrackType trackType, int numberOfTracks, RendererTypeRequester typeRequester) {
+        for (int i = 0; i < numberOfTracks; i++) {
             int rendererType = typeRequester.getRendererTypeFor(i);
 
             if ((trackType == TrackType.AUDIO && rendererType == C.TRACK_TYPE_AUDIO)
