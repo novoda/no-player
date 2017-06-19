@@ -46,11 +46,12 @@ class AndroidMediaPlayerAudioTrackSelector {
         return audioTracks;
     }
 
-    void selectAudioTrack(MediaPlayer mediaPlayer, PlayerAudioTrack playerAudioTrack) {
+    boolean selectAudioTrack(MediaPlayer mediaPlayer, PlayerAudioTrack playerAudioTrack) {
         if (mediaPlayer == null) {
             throw new NullPointerException("You can only call selectAudioTrack() when video is prepared.");
         }
 
         mediaPlayer.selectTrack(playerAudioTrack.groupIndex());
+        return true;
     }
 }

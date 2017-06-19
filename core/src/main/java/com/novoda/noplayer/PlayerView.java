@@ -15,4 +15,6 @@ public interface PlayerView {
     void showSubtitles();
 
     void hideSubtitles();
+
+    void setSubtitleCue(TextCues textCues);
 }

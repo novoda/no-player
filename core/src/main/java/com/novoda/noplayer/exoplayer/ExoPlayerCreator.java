@@ -1,6 +1,7 @@
 package com.novoda.noplayer.exoplayer;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -19,6 +20,7 @@ class ExoPlayerCreator {
         this.trackSelector = trackSelector;
     }
 
+    @NonNull
     public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator) {
         DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(context, drmSessionCreator.create());
         DefaultLoadControl loadControl = new DefaultLoadControl();

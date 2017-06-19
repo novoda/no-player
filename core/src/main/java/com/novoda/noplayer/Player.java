@@ -31,9 +31,15 @@ public interface Player extends PlayerState {
 
     void detach(PlayerView playerView);
 
-    void selectAudioTrack(PlayerAudioTrack audioTrack);
+    boolean selectAudioTrack(PlayerAudioTrack audioTrack);
+
+    boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack);
+
+    void hideSubtitleTrack();
 
     List<PlayerAudioTrack> getAudioTracks();
+
+    List<PlayerSubtitleTrack> getSubtitleTracks();
 
     Listeners getListeners();
 

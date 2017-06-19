@@ -14,6 +14,7 @@ import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
+import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
 
@@ -25,12 +26,23 @@ public class ExoPlayerTwoImplFactory {
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
 
         DefaultTrackSelector trackSelector = new DefaultTrackSelector();
-        ExoPlayerTrackSelector exoPlayerTrackSelector = new ExoPlayerTrackSelector(trackSelector);
+
+        ExoPlayerTrackSelector exoPlayerTrackSelector = ExoPlayerTrackSelector.newInstance(trackSelector);
         FixedTrackSelection.Factory trackSelectionFactory = new FixedTrackSelection.Factory();
         ExoPlayerAudioTrackSelector exoPlayerAudioTrackSelector = new ExoPlayerAudioTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
+        ExoPlayerSubtitleTrackSelector exoPlayerSubtitleTrackSelector = new ExoPlayerSubtitleTrackSelector(
+                exoPlayerTrackSelector,
+                trackSelectionFactory
+        );
 
         ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context, trackSelector);
-        ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(mediaSourceFactory, exoPlayerAudioTrackSelector, exoPlayerCreator);
+        RendererTypeRequesterCreator rendererTypeRequesterCreator = new RendererTypeRequesterCreator();
+        ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(
+                mediaSourceFactory,
+                exoPlayerAudioTrackSelector,
+                exoPlayerSubtitleTrackSelector,
+                exoPlayerCreator,
+                rendererTypeRequesterCreator);
 
         PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
         ExoPlayerForwarder exoPlayerForwarder = new ExoPlayerForwarder();

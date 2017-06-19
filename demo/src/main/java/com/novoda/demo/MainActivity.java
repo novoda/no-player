@@ -7,11 +7,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.player.PlayerFactory;
@@ -31,6 +33,7 @@ public class MainActivity extends Activity {
     private Player player;
     private PlayerView playerView;
     private View audioSelectionButton;
+    private View subtitleSelectionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         playerView = (PlayerView) findViewById(R.id.player_view);
         audioSelectionButton = findViewById(R.id.button_audio_selection);
+        subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
     }
 
     @Override
@@ -57,6 +61,7 @@ public class MainActivity extends Activity {
         player.attach(playerView);
 
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
+        subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
 
         Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
         player.loadVideo(uri, ContentType.DASH);
@@ -89,6 +94,49 @@ public class MainActivity extends Activity {
             List<String> labels = new ArrayList<>();
             for (PlayerAudioTrack audioTrack : audioTracks) {
                 labels.add("Group: " + audioTrack.groupIndex() + " Format: " + audioTrack.formatIndex());
+            }
+            return labels;
+        }
+    };
+
+    private final View.OnClickListener showSubtitleSelectionDialog = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!player.getSubtitleTracks().isEmpty()) {
+                showSubtitleSelectionDialog();
+            } else {
+                Toast.makeText(MainActivity.this, "no subtitles available!", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        private void showSubtitleSelectionDialog() {
+            final List<PlayerSubtitleTrack> subtitleTracks = player.getSubtitleTracks();
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, R.layout.list_item);
+            adapter.addAll(mapSubtitleTrackToLabel(subtitleTracks));
+            AlertDialog subtitlesSelectionDialog = new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("Select subtitle track")
+                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int position) {
+                            switch (position) {
+                                case 0:
+                                    player.hideSubtitleTrack();
+                                    break;
+                                default:
+                                    PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 1);
+                                    player.showSubtitleTrack(subtitleTrack);
+                                    break;
+                            }
+                        }
+                    }).create();
+            subtitlesSelectionDialog.show();
+        }
+
+        private List<String> mapSubtitleTrackToLabel(List<PlayerSubtitleTrack> subtitleTracks) {
+            List<String> labels = new ArrayList<>();
+            labels.add("Dismiss subtitles");
+            for (PlayerSubtitleTrack subtitleTrack : subtitleTracks) {
+                labels.add("Group: " + subtitleTrack.groupIndex() + " Format: " + subtitleTrack.formatIndex());
             }
             return labels;
         }
