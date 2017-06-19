@@ -207,19 +207,19 @@ public class ExoPlayerTwoImpl implements Player {
 
     @Override
     public void showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
-        setSubtitleRenderer();
+        setSubtitleRendererOutput();
         exoPlayer.selectSubtitleTrack(subtitleTrack);
         playerView.showSubtitles();
     }
 
     @Override
     public void showFirstAvailableSubtitleTrack() {
-        setSubtitleRenderer();
+        setSubtitleRendererOutput();
         exoPlayer.selectFirstAvailableSubtitlesTrack();
         playerView.showSubtitles();
     }
 
-    private void setSubtitleRenderer() {
+    private void setSubtitleRendererOutput() {
         exoPlayer.setSubtitleRendererOutput(new TextRenderer.Output() {
             @Override
             public void onCues(List<Cue> list) {
