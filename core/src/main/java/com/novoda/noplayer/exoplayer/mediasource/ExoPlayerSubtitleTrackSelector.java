@@ -7,7 +7,6 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.exoplayer.RendererTypeRequester;
-import com.novoda.utils.NoPlayerLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,14 +62,5 @@ public class ExoPlayerSubtitleTrackSelector {
 
     public void clearSubtitleTrack(RendererTypeRequester rendererTypeRequester) {
         trackSelector.clearSelectionOverrideFor(TEXT, rendererTypeRequester);
-    }
-
-    public void selectFirstTextTrack(RendererTypeRequester rendererTypeRequester) {
-        List<PlayerSubtitleTrack> subtitleTracks = getSubtitleTracks(rendererTypeRequester);
-        if (subtitleTracks.isEmpty()) {
-            NoPlayerLog.e("No subtitles tracks available");
-        } else {
-            selectTextTrack(subtitleTracks.get(0), rendererTypeRequester);
-        }
     }
 }
