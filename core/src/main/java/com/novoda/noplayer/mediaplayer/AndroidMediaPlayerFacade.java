@@ -7,13 +7,11 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.PlayerAudioTrack;
-import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.utils.NoPlayerLog;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -211,11 +209,6 @@ class AndroidMediaPlayerFacade {
     List<PlayerAudioTrack> getAudioTracks() {
         assertIsInPlaybackState();
         return trackSelector.getAudioTracks(mediaPlayer);
-    }
-
-    public List<PlayerSubtitleTrack> getSubtitleTracks() {
-        NoPlayerLog.e("Subtitles not implemented for Android Media Player");
-        return Collections.emptyList();
     }
 
     void selectAudioTrack(PlayerAudioTrack playerAudioTrack) {

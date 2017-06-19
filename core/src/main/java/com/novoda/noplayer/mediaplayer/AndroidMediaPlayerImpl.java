@@ -23,6 +23,7 @@ import com.novoda.noplayer.exoplayer.playererror.SubtitlesError;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 
+import java.util.Collections;
 import java.util.List;
 
 public class AndroidMediaPlayerImpl implements Player {
@@ -284,7 +285,9 @@ public class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public List<PlayerSubtitleTrack> getSubtitleTracks() {
-        return mediaPlayer.getSubtitleTracks();
+        SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
+        listenersHolder.getErrorListeners().onError(this, subtitlesError);
+        return Collections.emptyList();
     }
 
     @Override
