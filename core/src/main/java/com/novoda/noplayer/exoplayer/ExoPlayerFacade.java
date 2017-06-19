@@ -6,7 +6,6 @@ import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.text.TextRenderer;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerSubtitleTrack;
@@ -32,8 +31,6 @@ class ExoPlayerFacade {
 
     @Nullable
     private SimpleExoPlayer exoPlayer;
-    @Nullable
-    private TextRenderer.Output output;
     @Nullable
     private RendererTypeRequester rendererTypeRequester;
 
@@ -114,7 +111,6 @@ class ExoPlayerFacade {
                 forwarder.mediaSourceEventListener()
         );
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
-        setExoPlayerTextOutput(output);
     }
 
     void selectAudioTrack(PlayerAudioTrack audioTrack) {
@@ -127,14 +123,14 @@ class ExoPlayerFacade {
         return audioTrackSelector.getAudioTracks(rendererTypeRequester);
     }
 
-    void setSubtitleRendererOutput(TextRenderer.Output output) {
-        this.output = output;
-        setExoPlayerTextOutput(output);
+    void setSubtitleRendererOutput(TextRendererOutputFacade textRendererOutputFacade) {
+        assertVideoLoaded();
+        exoPlayer.setTextOutput(textRendererOutputFacade.output());
     }
 
-    private void setExoPlayerTextOutput(TextRenderer.Output output) {
+    void removeSubtitleRendererOutput() {
         assertVideoLoaded();
-        exoPlayer.setTextOutput(output);
+        exoPlayer.setTextOutput(null);
     }
 
     void selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {

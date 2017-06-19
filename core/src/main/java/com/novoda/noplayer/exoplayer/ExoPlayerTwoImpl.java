@@ -4,8 +4,6 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
-import com.google.android.exoplayer2.text.Cue;
-import com.google.android.exoplayer2.text.TextRenderer;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.LoadTimeout;
@@ -196,7 +194,7 @@ public class ExoPlayerTwoImpl implements Player {
         surfaceHolderRequester = null;
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
-        removeSubtitleRendererOutput();
+        exoPlayer.removeSubtitleRendererOutput();
         this.playerView = null;
     }
 
@@ -213,23 +211,15 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     private void setSubtitleRendererOutput() {
-        exoPlayer.setSubtitleRendererOutput(new TextRenderer.Output() {
-            @Override
-            public void onCues(List<Cue> list) {
-                playerView.setSubtitleCue(list);
-            }
-        });
+        TextRendererOutputFacade textRendererOutputFacade = new TextRendererOutputFacade(playerView);
+        exoPlayer.setSubtitleRendererOutput(textRendererOutputFacade);
     }
 
     @Override
     public void hideSubtitleTrack() {
         exoPlayer.clearSubtitleTrack();
         playerView.hideSubtitles();
-        removeSubtitleRendererOutput();
-    }
-
-    private void removeSubtitleRendererOutput() {
-        exoPlayer.setSubtitleRendererOutput(null);
+        exoPlayer.removeSubtitleRendererOutput();
     }
 
     @Override
