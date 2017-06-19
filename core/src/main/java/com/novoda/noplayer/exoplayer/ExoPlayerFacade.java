@@ -132,10 +132,6 @@ class ExoPlayerFacade {
     }
 
     private void setExoPlayerTextOutput(TextRenderer.Output output) {
-        if (exoPlayer == null) {
-            return;
-        }
-
         exoPlayer.setTextOutput(output);
     }
 
