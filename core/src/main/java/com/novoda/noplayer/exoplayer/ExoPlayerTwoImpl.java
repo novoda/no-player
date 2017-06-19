@@ -211,8 +211,8 @@ public class ExoPlayerTwoImpl implements Player {
     }
 
     private void setSubtitleRendererOutput() {
-        TextRendererOutputFacade textRendererOutputFacade = new TextRendererOutputFacade(playerView);
-        exoPlayer.setSubtitleRendererOutput(textRendererOutputFacade);
+        TextRendererOutput textRendererOutput = new TextRendererOutput(playerView);
+        exoPlayer.setSubtitleRendererOutput(textRendererOutput);
     }
 
     @Override

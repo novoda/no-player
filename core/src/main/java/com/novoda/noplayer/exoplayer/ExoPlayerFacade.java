@@ -123,9 +123,9 @@ class ExoPlayerFacade {
         return audioTrackSelector.getAudioTracks(rendererTypeRequester);
     }
 
-    void setSubtitleRendererOutput(TextRendererOutputFacade textRendererOutputFacade) {
+    void setSubtitleRendererOutput(TextRendererOutput textRendererOutput) {
         assertVideoLoaded();
-        exoPlayer.setTextOutput(textRendererOutputFacade.output());
+        exoPlayer.setTextOutput(textRendererOutput.output());
     }
 
     void removeSubtitleRendererOutput() {

@@ -6,11 +6,11 @@ import com.novoda.noplayer.PlayerView;
 
 import java.util.List;
 
-class TextRendererOutputFacade {
+class TextRendererOutput {
 
     private final PlayerView playerView;
 
-    TextRendererOutputFacade(PlayerView playerView) {
+    TextRendererOutput(PlayerView playerView) {
         this.playerView = playerView;
     }
 
