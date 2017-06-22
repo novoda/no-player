@@ -10,11 +10,11 @@ public class ModularDrmKeyRequest {
         this.data = data;
     }
 
-    public String getUrl() {
+    public String url() {
         return url;
     }
 
-    public byte[] getData() {
+    public byte[] data() {
         return data;
     }
 }

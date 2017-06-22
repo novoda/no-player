@@ -26,7 +26,7 @@ class DataPostingModularDrm implements StreamingModularDrm {
     public byte[] executeKeyRequest(ModularDrmKeyRequest request) throws DrmRequestException {
         DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("user-agent");
         try {
-            return executePost(dataSourceFactory, url, request.getData());
+            return executePost(dataSourceFactory, url, request.data());
         } catch (IOException e) {
             throw DrmRequestException.from(e);
         }
