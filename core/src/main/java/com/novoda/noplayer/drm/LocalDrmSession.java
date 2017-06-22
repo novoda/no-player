@@ -98,6 +98,7 @@ class LocalDrmSession implements DrmSessionManager<FrameworkMediaCrypto>, DrmSes
     public void releaseSession(DrmSession<FrameworkMediaCrypto> drmSession) {
         if (sessionId != null) {
             mediaDrm.closeSession(sessionId);
+            state = STATE_CLOSED;
             sessionId = null;
         }
     }
