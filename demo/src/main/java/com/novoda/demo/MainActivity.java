@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         // TODO: Add switch in UI to avoid redeploy.
-        player = new PlayerFactory(this, PrioritizedPlayerTypes.prioritizeExoPlayer()).create(DrmType.WIDEVINE_MODULAR_STREAM, new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY));
+        player = new PlayerFactory(this, PrioritizedPlayerTypes.prioritizeExoPlayer()).create(DrmType.WIDEVINE_MODULAR_STREAM, DataPostingModularDrm.from(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY));
         player.getListeners().addPreparedListener(new Player.PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {

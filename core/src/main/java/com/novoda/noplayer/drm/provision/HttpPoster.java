@@ -1,12 +1,13 @@
 package com.novoda.noplayer.drm.provision;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-class HttpPoster {
+public class HttpPoster {
 
     private static final String POST_REQUEST_METHOD = "POST";
     private static final int RESPONSE_BUFFER_SIZE = 1024 * 4;
@@ -17,6 +18,27 @@ class HttpPoster {
             urlConnection = (HttpURLConnection) new URL(url).openConnection();
             urlConnection.setRequestMethod(POST_REQUEST_METHOD);
             urlConnection.setDoInput(true);
+            return byteArrayFrom(urlConnection);
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+    }
+
+    public byte[] post(String url, byte[] data) throws IOException {
+        HttpURLConnection urlConnection = null;
+        try {
+            urlConnection = (HttpURLConnection) new URL(url).openConnection();
+            urlConnection.setRequestMethod(POST_REQUEST_METHOD);
+            urlConnection.setDoOutput(true);
+            urlConnection.setDoInput(true);
+
+            DataOutputStream outputStream = new DataOutputStream(urlConnection.getOutputStream());
+            outputStream.write(data);
+            outputStream.flush();
+            outputStream.close();
+
             return byteArrayFrom(urlConnection);
         } finally {
             if (urlConnection != null) {
