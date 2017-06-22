@@ -5,6 +5,7 @@ import android.media.MediaCryptoException;
 import android.media.NotProvisionedException;
 import android.media.ResourceBusyException;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Looper;
 
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
@@ -22,12 +23,23 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
     private final ExoMediaDrm<FrameworkMediaCrypto> mediaDrm;
     private final DefaultDrmSessionManager.EventListener eventListener;
     private final UUID drmScheme;
+    private final Handler handler;
 
-    LocalDrmSessionManager(KeySetId keySetIdToRestore, ExoMediaDrm<FrameworkMediaCrypto> mediaDrm, DefaultDrmSessionManager.EventListener eventListener, UUID drmScheme) {
+    static LocalDrmSessionManager newInstance(KeySetId keySetIdToRestore, ExoMediaDrm<FrameworkMediaCrypto> mediaDrm, DefaultDrmSessionManager.EventListener eventListener, UUID drmScheme) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        return new LocalDrmSessionManager(keySetIdToRestore, mediaDrm, eventListener, drmScheme, handler);
+    }
+
+    private LocalDrmSessionManager(KeySetId keySetIdToRestore,
+                                   ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
+                                   DefaultDrmSessionManager.EventListener eventListener,
+                                   UUID drmScheme,
+                                   Handler handler) {
         this.keySetIdToRestore = keySetIdToRestore;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;
         this.drmScheme = drmScheme;
+        this.handler = handler;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -44,10 +56,20 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
             drmSession = new LocalDrmSession(mediaCrypto, keySetIdToRestore, sessionId);
         } catch (NotProvisionedException | MediaCryptoException | ResourceBusyException exception) {
             drmSession = new InvalidDrmSession(new DrmSession.DrmSessionException(exception));
-            eventListener.onDrmSessionManagerError(drmSession.getError());
+            notifyErrorListener(drmSession);
         }
 
         return drmSession;
+    }
+
+    private void notifyErrorListener(DrmSession<FrameworkMediaCrypto> drmSession) {
+        final DrmSession.DrmSessionException error = drmSession.getError();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                eventListener.onDrmSessionManagerError(error);
+            }
+        });
     }
 
     @Override
