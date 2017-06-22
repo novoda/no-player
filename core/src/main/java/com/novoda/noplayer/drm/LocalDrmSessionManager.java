@@ -19,10 +19,10 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
 
     private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
 
-    private final byte[] keySetIdToRestore;
+    private final KeySetId keySetIdToRestore;
     private final ExoMediaDrm<FrameworkMediaCrypto> mediaDrm;
 
-    LocalDrmSessionManager(byte[] keySetIdToRestore, ExoMediaDrm<FrameworkMediaCrypto> mediaDrm) {
+    LocalDrmSessionManager(KeySetId keySetIdToRestore, ExoMediaDrm<FrameworkMediaCrypto> mediaDrm) {
         this.keySetIdToRestore = keySetIdToRestore;
         this.mediaDrm = mediaDrm;
     }
@@ -36,7 +36,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
             SessionId sessionId = SessionId.of(mediaDrm.openSession());
             FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(WIDEVINE_MODULAR_UUID, sessionId.asBytes());
 
-            mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore);
+            mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore.asBytes());
 
             drmSession = new LocalDrmSession(mediaCrypto, keySetIdToRestore, sessionId);
         } catch (NotProvisionedException | MediaCryptoException | ResourceBusyException e) {

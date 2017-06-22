@@ -11,10 +11,10 @@ class LocalDrmSession implements FrameworkDrmSession {
     private static final DrmSessionException NO_EXCEPTION = null;
 
     private final FrameworkMediaCrypto mediaCrypto;
-    private final byte[] keySetIdToRestore;
+    private final KeySetId keySetIdToRestore;
     private final SessionId sessionId;
 
-    LocalDrmSession(FrameworkMediaCrypto mediaCrypto, byte[] keySetIdToRestore, SessionId sessionId) {
+    LocalDrmSession(FrameworkMediaCrypto mediaCrypto, KeySetId keySetIdToRestore, SessionId sessionId) {
         this.mediaCrypto = mediaCrypto;
         this.keySetIdToRestore = keySetIdToRestore;
         this.sessionId = sessionId;
@@ -47,7 +47,7 @@ class LocalDrmSession implements FrameworkDrmSession {
 
     @Override
     public byte[] getOfflineLicenseKeySetId() {
-        return keySetIdToRestore;
+        return keySetIdToRestore.asBytes();
     }
 
     @Override
