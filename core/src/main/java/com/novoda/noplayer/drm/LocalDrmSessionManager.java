@@ -7,6 +7,7 @@ import android.media.ResourceBusyException;
 import android.os.Build;
 import android.os.Looper;
 
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -21,10 +22,12 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
 
     private final KeySetId keySetIdToRestore;
     private final ExoMediaDrm<FrameworkMediaCrypto> mediaDrm;
+    private final DefaultDrmSessionManager.EventListener eventListener;
 
-    LocalDrmSessionManager(KeySetId keySetIdToRestore, ExoMediaDrm<FrameworkMediaCrypto> mediaDrm) {
+    LocalDrmSessionManager(KeySetId keySetIdToRestore, ExoMediaDrm<FrameworkMediaCrypto> mediaDrm, DefaultDrmSessionManager.EventListener eventListener) {
         this.keySetIdToRestore = keySetIdToRestore;
         this.mediaDrm = mediaDrm;
+        this.eventListener = eventListener;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -39,8 +42,9 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
             mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore.asBytes());
 
             drmSession = new LocalDrmSession(mediaCrypto, keySetIdToRestore, sessionId);
-        } catch (NotProvisionedException | MediaCryptoException | ResourceBusyException e) {
-            drmSession = new InvalidDrmSession(new DrmSession.DrmSessionException(e));
+        } catch (NotProvisionedException | MediaCryptoException | ResourceBusyException exception) {
+            drmSession = new InvalidDrmSession(new DrmSession.DrmSessionException(exception));
+            eventListener.onDrmSessionManagerError(drmSession.getError());
         }
 
         return drmSession;
