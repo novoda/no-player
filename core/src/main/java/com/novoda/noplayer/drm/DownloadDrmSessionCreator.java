@@ -4,11 +4,7 @@ import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 
-import java.util.UUID;
-
 class DownloadDrmSessionCreator implements DrmSessionCreator {
-
-    private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
 
     private final DownloadedModularDrm downloadedModularDrm;
     private final FrameworkMediaDrmCreator mediaDrmCreator;
@@ -20,6 +16,6 @@ class DownloadDrmSessionCreator implements DrmSessionCreator {
 
     @Override
     public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionManager.EventListener eventListener) {
-        return new LocalDrmSessionManager(downloadedModularDrm.getKeySetId(), mediaDrmCreator.create(WIDEVINE_MODULAR_UUID), eventListener);
+        return new LocalDrmSessionManager(downloadedModularDrm.getKeySetId(), mediaDrmCreator.create(WIDEVINE_MODULAR_UUID), eventListener, WIDEVINE_MODULAR_UUID);
     }
 }

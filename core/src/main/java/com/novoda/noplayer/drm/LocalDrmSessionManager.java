@@ -18,16 +18,16 @@ import java.util.UUID;
 
 class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> {
 
-    private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
-
     private final KeySetId keySetIdToRestore;
     private final ExoMediaDrm<FrameworkMediaCrypto> mediaDrm;
     private final DefaultDrmSessionManager.EventListener eventListener;
+    private final UUID drmScheme;
 
-    LocalDrmSessionManager(KeySetId keySetIdToRestore, ExoMediaDrm<FrameworkMediaCrypto> mediaDrm, DefaultDrmSessionManager.EventListener eventListener) {
+    LocalDrmSessionManager(KeySetId keySetIdToRestore, ExoMediaDrm<FrameworkMediaCrypto> mediaDrm, DefaultDrmSessionManager.EventListener eventListener, UUID drmScheme) {
         this.keySetIdToRestore = keySetIdToRestore;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;
+        this.drmScheme = drmScheme;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -37,7 +37,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
 
         try {
             SessionId sessionId = SessionId.of(mediaDrm.openSession());
-            FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(WIDEVINE_MODULAR_UUID, sessionId.asBytes());
+            FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(drmScheme, sessionId.asBytes());
 
             mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore.asBytes());
 
