@@ -73,7 +73,7 @@ public class PlayerFactory {
                         (StreamingModularDrm) drmHandler,
                         provisionExecutor
                 );
-                return new StreamingDrmSessionCreator(mediaDrmCallback, new FrameworkMediaDrmCreator());
+                return StreamingDrmSessionCreator.newInstance(mediaDrmCallback, new FrameworkMediaDrmCreator());
             case WIDEVINE_MODULAR_DOWNLOAD:
                 return new DownloadDrmSessionCreator((DownloadedModularDrm) drmHandler);
             default:

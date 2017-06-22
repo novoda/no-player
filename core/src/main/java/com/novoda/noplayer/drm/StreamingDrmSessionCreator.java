@@ -20,17 +20,22 @@ public class StreamingDrmSessionCreator implements DrmSessionCreator {
 
     private final MediaDrmCallback mediaDrmCallback;
     private final FrameworkMediaDrmCreator frameworkMediaDrmCreator;
+    private final Handler handler;
 
-    public StreamingDrmSessionCreator(MediaDrmCallback mediaDrmCallback, FrameworkMediaDrmCreator frameworkMediaDrmCreator) {
+    public static StreamingDrmSessionCreator newInstance(MediaDrmCallback mediaDrmCallback, FrameworkMediaDrmCreator frameworkMediaDrmCreator) {
+        Looper eventLooper = Looper.myLooper() != null ? Looper.myLooper() : Looper.getMainLooper();
+        Handler handler = new Handler(eventLooper);
+        return new StreamingDrmSessionCreator(mediaDrmCallback, frameworkMediaDrmCreator, handler);
+    }
+
+    private StreamingDrmSessionCreator(MediaDrmCallback mediaDrmCallback, FrameworkMediaDrmCreator frameworkMediaDrmCreator, Handler handler) {
         this.mediaDrmCallback = mediaDrmCallback;
         this.frameworkMediaDrmCreator = frameworkMediaDrmCreator;
+        this.handler = handler;
     }
 
     @Override
     public DrmSessionManager<FrameworkMediaCrypto> create() {
-        Looper eventLooper = Looper.myLooper() != null ? Looper.myLooper() : Looper.getMainLooper();
-        Handler mainHandler = new Handler(eventLooper);
-
         FrameworkMediaDrm frameworkMediaDrm = frameworkMediaDrmCreator.create(WIDEVINE_MODULAR_UUID);
 
         return new DefaultDrmSessionManager<>(
@@ -38,7 +43,7 @@ public class StreamingDrmSessionCreator implements DrmSessionCreator {
                 frameworkMediaDrm,
                 mediaDrmCallback,
                 NO_OPTIONAL_PARAMETERS,
-                mainHandler,
+                handler,
                 TODO_ERROR_EVENT_LISTENER
         );
     }
