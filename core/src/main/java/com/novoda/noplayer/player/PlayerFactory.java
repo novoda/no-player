@@ -61,13 +61,13 @@ public class PlayerFactory {
         }
     }
 
-    static class UnableToCreatePlayerException extends RuntimeException {
+    public static class UnableToCreatePlayerException extends RuntimeException {
 
         static UnableToCreatePlayerException unhandledDrmType(DrmType drmType) {
             return new UnableToCreatePlayerException("Unhandled DrmType: " + drmType);
         }
 
-        static UnableToCreatePlayerException noDrmHandlerFor(DrmType drmType) {
+        public static UnableToCreatePlayerException noDrmHandlerFor(DrmType drmType) {
             return new UnableToCreatePlayerException("No DrmHandler for DrmType: " + drmType);
         }
 
