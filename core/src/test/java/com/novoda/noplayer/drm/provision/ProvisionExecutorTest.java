@@ -1,7 +1,5 @@
 package com.novoda.noplayer.drm.provision;
 
-import android.media.MediaDrm;
-
 import java.io.IOException;
 
 import org.junit.Before;
@@ -32,7 +30,7 @@ public class ProvisionExecutorTest {
     HttpPoster httpPoster;
 
     @Mock
-    MediaDrm.ProvisionRequest provisionRequest;
+    ModularDrmProvisionRequest provisionRequest;
 
     @Mock
     ProvisioningCapabilities capabilities;
@@ -40,8 +38,8 @@ public class ProvisionExecutorTest {
     @Before
     public void setUp() {
         provisionUrlCaptor = ArgumentCaptor.forClass(String.class);
-        when(provisionRequest.getData()).thenReturn(PROVISION_DATA);
-        when(provisionRequest.getDefaultUrl()).thenReturn(PROVISION_URL);
+        when(provisionRequest.data()).thenReturn(PROVISION_DATA);
+        when(provisionRequest.url()).thenReturn(PROVISION_URL);
 
         provisionExecutor = new ProvisionExecutor(httpPoster, capabilities);
     }

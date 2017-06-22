@@ -15,6 +15,7 @@ import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.player.PlayerFactory;
 import com.novoda.noplayer.player.PrioritizedPlayerTypes;
 import com.novoda.utils.NoPlayerLog;
@@ -26,6 +27,8 @@ public class MainActivity extends Activity {
 
     private static final String URI_VIDEO_MP4 = "http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-85.mp4";
     private static final String URI_VIDEO_MPD = "https://storage.googleapis.com/content-samples/multi-audio/manifest.mpd";
+    private static final String URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD = "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd";
+    private static final String EXAMPLE_MODULAR_LSP = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
 
     private Player player;
     private PlayerView playerView;
@@ -46,7 +49,8 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         // TODO: Add switch in UI to avoid redeploy.
-        player = new PlayerFactory(this, PrioritizedPlayerTypes.prioritizeExoPlayer()).create();
+        PlayerFactory playerFactory = new PlayerFactory(this, PrioritizedPlayerTypes.prioritizeExoPlayer());
+        player = playerFactory.create(DrmType.WIDEVINE_MODULAR_STREAM, new DataPostingModularDrm(EXAMPLE_MODULAR_LSP));
         player.getListeners().addPreparedListener(new Player.PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
@@ -59,7 +63,7 @@ public class MainActivity extends Activity {
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
 
-        Uri uri = Uri.parse(URI_VIDEO_MPD);
+        Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
         player.loadVideo(uri, ContentType.DASH);
     }
 

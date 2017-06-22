@@ -5,6 +5,7 @@ import android.content.Context;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
+import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
@@ -24,6 +25,7 @@ import org.mockito.junit.MockitoRule;
 import static com.novoda.noplayer.player.PrioritizedPlayerTypes.prioritizeExoPlayer;
 import static com.novoda.noplayer.player.PrioritizedPlayerTypes.prioritizeMediaPlayer;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -44,20 +46,22 @@ public class PlayerFactoryTest {
 
         @Mock
         Context context;
-
         @Mock
         PlayerFactory.ExoPlayerCreator exoPlayerCreator;
-
         @Mock
         PlayerFactory.MediaPlayerCreator mediaPlayerCreator;
+        @Mock
+        DrmSessionCreatorFactory drmSessionCreatorFactory;
 
         PlayerFactory playerFactory;
 
         @Before
         public void setUp() {
-            given(exoPlayerCreator.createExoPlayer(any(Context.class))).willReturn(EXO_PLAYER);
+            DrmSessionCreator drmSessionCreator = mock(DrmSessionCreator.class);
+            given(drmSessionCreatorFactory.createFor(any(DrmType.class), any(DrmHandler.class))).willReturn(drmSessionCreator);
+            given(exoPlayerCreator.createExoPlayer(any(Context.class), eq(drmSessionCreator))).willReturn(EXO_PLAYER);
             given(mediaPlayerCreator.createMediaPlayer(any(Context.class))).willReturn(MEDIA_PLAYER);
-            playerFactory = new PlayerFactory(context, prioritizedPlayerTypes(), exoPlayerCreator, mediaPlayerCreator);
+            playerFactory = new PlayerFactory(context, prioritizedPlayerTypes(), exoPlayerCreator, mediaPlayerCreator, drmSessionCreatorFactory);
         }
 
         abstract PrioritizedPlayerTypes prioritizedPlayerTypes();
@@ -160,18 +164,20 @@ public class PlayerFactoryTest {
         ExoPlayerTwoImpl player;
         @Mock
         Context context;
+        @Mock
+        DrmSessionCreator drmSessionCreator;
 
         private PlayerFactory.ExoPlayerCreator creator;
 
         @Before
         public void setUp() {
             creator = new PlayerFactory.ExoPlayerCreator(factory);
-            given(factory.create(any(Context.class))).willReturn(player);
+            given(factory.create(context, drmSessionCreator)).willReturn(player);
         }
 
         @Test
         public void whenCreatingExoPlayerTwo_thenInitialisesPlayer() {
-            creator.createExoPlayer(context);
+            creator.createExoPlayer(context, drmSessionCreator);
 
             verify(player).initialise();
         }

@@ -17,6 +17,7 @@ import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
+import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 
@@ -29,6 +30,7 @@ public class ExoPlayerTwoImpl implements Player {
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
     private final LoadTimeout loadTimeout;
+    private final DrmSessionCreator drmSessionCreator;
 
     private SurfaceHolderRequester surfaceHolderRequester;
 
@@ -42,12 +44,14 @@ public class ExoPlayerTwoImpl implements Player {
                      PlayerListenersHolder listenersHolder,
                      ExoPlayerForwarder exoPlayerForwarder,
                      LoadTimeout loadTimeoutParam,
-                     Heart heart) {
+                     Heart heart,
+                     DrmSessionCreator drmSessionCreator) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.heart = heart;
+        this.drmSessionCreator = drmSessionCreator;
     }
 
     public void initialise() {
@@ -167,7 +171,7 @@ public class ExoPlayerTwoImpl implements Player {
             reset();
         }
         listenersHolder.getPreparedListeners().resetPreparedState();
-        exoPlayer.loadVideo(uri, contentType, forwarder);
+        exoPlayer.loadVideo(drmSessionCreator, uri, contentType, forwarder);
     }
 
     @Override

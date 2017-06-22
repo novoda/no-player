@@ -6,7 +6,6 @@ import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.drm.DrmType;
-import com.novoda.noplayer.drm.NoDrmSessionCreator;
 import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
 import com.novoda.noplayer.exoplayer.ExoPlayerTwoImplFactory;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
@@ -18,16 +17,22 @@ public class PlayerFactory {
     private final PrioritizedPlayerTypes prioritizedPlayerTypes;
     private final ExoPlayerCreator exoPlayerCreator;
     private final MediaPlayerCreator mediaPlayerCreator;
+    private final DrmSessionCreatorFactory drmSessionCreatorFactory;
 
     public PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
-        this(context, prioritizedPlayerTypes, ExoPlayerCreator.newInstance(), MediaPlayerCreator.newInstance());
+        this(context, prioritizedPlayerTypes, ExoPlayerCreator.newInstance(), MediaPlayerCreator.newInstance(), new DrmSessionCreatorFactory());
     }
 
-    PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes, ExoPlayerCreator exoPlayerCreator, MediaPlayerCreator mediaPlayerCreator) {
+    PlayerFactory(Context context,
+                  PrioritizedPlayerTypes prioritizedPlayerTypes,
+                  ExoPlayerCreator exoPlayerCreator,
+                  MediaPlayerCreator mediaPlayerCreator,
+                  DrmSessionCreatorFactory drmSessionCreatorFactory) {
         this.context = context;
         this.prioritizedPlayerTypes = prioritizedPlayerTypes;
         this.exoPlayerCreator = exoPlayerCreator;
         this.mediaPlayerCreator = mediaPlayerCreator;
+        this.drmSessionCreatorFactory = drmSessionCreatorFactory;
     }
 
     public Player create() {
@@ -48,29 +53,10 @@ public class PlayerFactory {
             case MEDIA_PLAYER:
                 return mediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
-                // TODO handle DRM
-                // DrmSessionCreator drmSessionCreator = createDrmSessionCreatorFor(drmType, drmHandler);
-                return exoPlayerCreator.createExoPlayer(context);
+                DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler);
+                return exoPlayerCreator.createExoPlayer(context, drmSessionCreator);
             default:
                 throw UnableToCreatePlayerException.unhandledPlayerType(playerType);
-        }
-    }
-
-    private DrmSessionCreator createDrmSessionCreatorFor(DrmType drmType, DrmHandler drmHandler) {
-        switch (drmType) {
-            case NONE:
-            case WIDEVINE_CLASSIC:
-                return new NoDrmSessionCreator();
-            case WIDEVINE_MODULAR_STREAM:
-//                ProvisionExecutor provisionExecutor = ProvisionExecutor.newInstance();
-//                ProvisioningModularDrmCallback mediaDrmCallback = new ProvisioningModularDrmCallback((StreamingModularDrm) drmHandler, provisionExecutor);
-//                return new StreamingDrmSessionCreator(mediaDrmCallback);
-                return new NoDrmSessionCreator();
-            case WIDEVINE_MODULAR_DOWNLOAD:
-//                return new LocalDrmSessionCreator((DownloadedModularDrm) drmHandler);
-                return new NoDrmSessionCreator();
-            default:
-                throw UnableToCreatePlayerException.noDrmHandlerFor(drmType);
         }
     }
 
@@ -106,8 +92,8 @@ public class PlayerFactory {
             this.factory = factory;
         }
 
-        Player createExoPlayer(Context context) {
-            ExoPlayerTwoImpl player = factory.create(context);
+        Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator) {
+            ExoPlayerTwoImpl player = factory.create(context, drmSessionCreator);
             player.initialise();
             return player;
         }

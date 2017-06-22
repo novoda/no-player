@@ -1,8 +1,8 @@
 package com.novoda.noplayer.drm;
 
-import android.media.MediaDrm;
+import com.novoda.noplayer.drm.provision.ModularDrmKeyRequest;
 
 public interface StreamingModularDrm extends DrmHandler {
 
-    byte[] executeKeyRequest(MediaDrm.KeyRequest request) throws DrmRequestException;
+    byte[] executeKeyRequest(ModularDrmKeyRequest request) throws DrmRequestException;
 }
