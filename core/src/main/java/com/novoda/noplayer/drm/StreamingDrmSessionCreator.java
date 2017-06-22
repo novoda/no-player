@@ -12,7 +12,7 @@ import com.google.android.exoplayer2.drm.MediaDrmCallback;
 import java.util.HashMap;
 import java.util.UUID;
 
-class StreamingDrmSessionCreator implements DrmSessionCreator {
+public class StreamingDrmSessionCreator implements DrmSessionCreator {
 
     private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
     private static final HashMap<String, String> NO_OPTIONAL_PARAMETERS = null;
@@ -22,7 +22,7 @@ class StreamingDrmSessionCreator implements DrmSessionCreator {
     private final FrameworkMediaDrmCreator frameworkMediaDrmCreator;
     private final Handler handler;
 
-    static StreamingDrmSessionCreator newInstance(MediaDrmCallback mediaDrmCallback, FrameworkMediaDrmCreator frameworkMediaDrmCreator) {
+    public static StreamingDrmSessionCreator newInstance(MediaDrmCallback mediaDrmCallback, FrameworkMediaDrmCreator frameworkMediaDrmCreator) {
         Handler handler = new Handler(Looper.getMainLooper());
         return new StreamingDrmSessionCreator(mediaDrmCallback, frameworkMediaDrmCreator, handler);
     }
