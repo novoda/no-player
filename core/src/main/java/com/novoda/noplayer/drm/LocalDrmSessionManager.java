@@ -40,7 +40,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
 
             mediaDrm.restoreKeys(sessionId, keySetIdToRestore);
 
-            drmSession = new LocalDrmSession(STATE_OPENED_WITH_KEYS, mediaCrypto, null, keySetIdToRestore, sessionId);
+            drmSession = new LocalDrmSession(STATE_OPENED_WITH_KEYS, mediaCrypto, keySetIdToRestore, sessionId);
         } catch (NotProvisionedException | MediaCryptoException | ResourceBusyException e) {
             drmSession = new InvalidDrmSession(new DrmSession.DrmSessionException(e));
         }

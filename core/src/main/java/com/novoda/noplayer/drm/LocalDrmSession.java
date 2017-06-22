@@ -8,16 +8,16 @@ import java.util.Map;
 
 class LocalDrmSession implements FrameworkDrmSession {
 
-    private int state;
-    private FrameworkMediaCrypto mediaCrypto;
-    private Exception lastKnownException;
-    private byte[] keySetIdToRestore;
+    private static final DrmSessionException NO_EXCEPTION = null;
+
+    private final int state;
+    private final FrameworkMediaCrypto mediaCrypto;
+    private final byte[] keySetIdToRestore;
     private final byte[] sessionId;
 
-    LocalDrmSession(int state, FrameworkMediaCrypto mediaCrypto, Exception lastKnownException, byte[] keySetIdToRestore, byte[] sessionId) {
+    LocalDrmSession(int state, FrameworkMediaCrypto mediaCrypto, byte[] keySetIdToRestore, byte[] sessionId) {
         this.state = state;
         this.mediaCrypto = mediaCrypto;
-        this.lastKnownException = lastKnownException;
         this.keySetIdToRestore = keySetIdToRestore;
         this.sessionId = sessionId;
     }
@@ -39,7 +39,7 @@ class LocalDrmSession implements FrameworkDrmSession {
 
     @Override
     public DrmSessionException getError() {
-        return new DrmSessionException(lastKnownException);
+        return NO_EXCEPTION;
     }
 
     @Override
