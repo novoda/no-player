@@ -1,7 +1,5 @@
 package com.novoda.noplayer.drm;
 
-import android.media.MediaDrm;
-
 import com.novoda.noplayer.drm.provision.ProvisionExecutor;
 
 import java.util.UUID;
@@ -16,11 +14,11 @@ public class ProvisioningModularDrmCallback {
         this.provisionExecutor = provisionExecutor;
     }
 
-    public byte[] executeProvisionRequest(UUID uuid, MediaDrm.ProvisionRequest request) throws Exception {
+    public byte[] executeProvisionRequest(UUID uuid, ModularDrmProvisionRequest request) throws Exception {
         return provisionExecutor.execute(request);
     }
 
-    public byte[] executeKeyRequest(UUID uuid, MediaDrm.KeyRequest request) throws Exception {
+    public byte[] executeKeyRequest(UUID uuid, ModularDrmKeyRequest request) throws Exception {
         return streamingModularDrm.executeKeyRequest(request);
     }
 }
