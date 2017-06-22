@@ -18,7 +18,7 @@ public class DrmSessionCreatorFactory {
                 );
                 return StreamingDrmSessionCreator.newInstance(mediaDrmCallback, new FrameworkMediaDrmCreator());
             case WIDEVINE_MODULAR_DOWNLOAD:
-                return new NoDrmSessionCreator();
+                return new DownloadDrmSessionCreator((DownloadedModularDrm) drmHandler, new FrameworkMediaDrmCreator());
             default:
                 throw PlayerFactory.UnableToCreatePlayerException.noDrmHandlerFor(drmType);
         }
