@@ -15,6 +15,7 @@ import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.player.PlayerFactory;
 import com.novoda.noplayer.player.PrioritizedPlayerTypes;
 import com.novoda.utils.NoPlayerLog;
@@ -49,7 +50,7 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         // TODO: Add switch in UI to avoid redeploy.
-        player = new PlayerFactory(this, PrioritizedPlayerTypes.prioritizeExoPlayer()).create();
+        player = new PlayerFactory(this, PrioritizedPlayerTypes.prioritizeExoPlayer()).create(DrmType.WIDEVINE_MODULAR_STREAM, new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY));
         player.getListeners().addPreparedListener(new Player.PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
