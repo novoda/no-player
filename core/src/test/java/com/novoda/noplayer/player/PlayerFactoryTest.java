@@ -25,6 +25,7 @@ import org.mockito.junit.MockitoRule;
 import static com.novoda.noplayer.player.PrioritizedPlayerTypes.prioritizeExoPlayer;
 import static com.novoda.noplayer.player.PrioritizedPlayerTypes.prioritizeMediaPlayer;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -45,20 +46,22 @@ public class PlayerFactoryTest {
 
         @Mock
         Context context;
-
         @Mock
         PlayerFactory.ExoPlayerCreator exoPlayerCreator;
-
         @Mock
         PlayerFactory.MediaPlayerCreator mediaPlayerCreator;
+        @Mock
+        DrmSessionCreatorFactory drmSessionCreatorFactory;
 
         PlayerFactory playerFactory;
 
         @Before
         public void setUp() {
-            given(exoPlayerCreator.createExoPlayer(any(Context.class), any(DrmSessionCreator.class))).willReturn(EXO_PLAYER);
+            DrmSessionCreator drmSessionCreator = mock(DrmSessionCreator.class);
+            given(drmSessionCreatorFactory.createFor(any(DrmType.class), any(DrmHandler.class))).willReturn(drmSessionCreator);
+            given(exoPlayerCreator.createExoPlayer(any(Context.class), eq(drmSessionCreator))).willReturn(EXO_PLAYER);
             given(mediaPlayerCreator.createMediaPlayer(any(Context.class))).willReturn(MEDIA_PLAYER);
-            playerFactory = new PlayerFactory(context, prioritizedPlayerTypes(), exoPlayerCreator, mediaPlayerCreator);
+            playerFactory = new PlayerFactory(context, prioritizedPlayerTypes(), exoPlayerCreator, mediaPlayerCreator, drmSessionCreatorFactory);
         }
 
         abstract PrioritizedPlayerTypes prioritizedPlayerTypes();
