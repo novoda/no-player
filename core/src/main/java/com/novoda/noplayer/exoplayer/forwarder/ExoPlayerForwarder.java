@@ -17,12 +17,14 @@ public class ExoPlayerForwarder {
     private final MediaSourceEventListener mediaSourceEventListener;
     private final ExoPlayerVideoRendererEventListener videoRendererEventListener;
     private final ExoPlayerExtractorMediaSourceListener extractorMediaSourceListener;
+    private final ExoPlayerDrmSessionEventListener drmSessionEventListener;
 
     public ExoPlayerForwarder() {
         exoPlayerEventListener = new EventListener();
         mediaSourceEventListener = new MediaSourceEventListener();
         videoRendererEventListener = new ExoPlayerVideoRendererEventListener();
         extractorMediaSourceListener = new ExoPlayerExtractorMediaSourceListener();
+        drmSessionEventListener = new ExoPlayerDrmSessionEventListener();
     }
 
     public EventListener exoPlayerEventListener() {
@@ -41,6 +43,10 @@ public class ExoPlayerForwarder {
         return extractorMediaSourceListener;
     }
 
+    public ExoPlayerDrmSessionEventListener drmSessionEventListener() {
+        return drmSessionEventListener;
+    }
+
     public void bind(PreparedListeners preparedListeners, PlayerState playerState) {
         exoPlayerEventListener.add(new OnPrepareForwarder(preparedListeners, playerState));
     }
@@ -53,6 +59,7 @@ public class ExoPlayerForwarder {
     public void bind(ErrorListeners errorListeners, Player player) {
         exoPlayerEventListener.add(new PlayerOnErrorForwarder(player, errorListeners));
         extractorMediaSourceListener.add(new MediaSourceOnErrorForwarder(player, errorListeners));
+        drmSessionEventListener.add(new DrmSessionErrorForwarder(player, errorListeners));
     }
 
     public void bind(BufferStateListeners bufferStateListeners) {

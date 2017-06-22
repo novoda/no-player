@@ -101,7 +101,7 @@ class ExoPlayerFacade {
     }
 
     void loadVideo(DrmSessionCreator drmSessionCreator, Uri uri, ContentType contentType, ExoPlayerForwarder forwarder) {
-        exoPlayer = exoPlayerCreator.create(drmSessionCreator);
+        exoPlayer = exoPlayerCreator.create(drmSessionCreator, forwarder.drmSessionEventListener());
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());

@@ -11,6 +11,7 @@ import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
 import com.novoda.noplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerDrmSessionEventListener;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
@@ -388,13 +389,16 @@ public class ExoPlayerFacadeTest {
         RendererTypeRequesterCreator rendererTypeRequesterCreator;
         @Mock
         DrmSessionCreator drmSessionCreator;
+        @Mock
+        ExoPlayerDrmSessionEventListener drmSessionEventListener;
 
         ExoPlayerFacade facade;
 
         @Before
         public void setUp() {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
-            given(exoPlayerCreator.create(drmSessionCreator)).willReturn(exoPlayer);
+            given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
+            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener)).willReturn(exoPlayer);
             when(rendererTypeRequesterCreator.createfrom(exoPlayer)).thenReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
                     mediaSourceFactory,
