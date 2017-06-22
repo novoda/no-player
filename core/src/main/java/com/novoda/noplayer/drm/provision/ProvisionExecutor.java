@@ -38,6 +38,6 @@ public class ProvisionExecutor {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private String buildProvisioningUrl(ModularDrmProvisionRequest request) {
-        return request.getUrl() + PARAMETER_SIGNED_REQUEST + new String(request.getData(), Charset.forName("UTF-8"));
+        return request.url() + PARAMETER_SIGNED_REQUEST + new String(request.data(), Charset.forName("UTF-8"));
     }
 }

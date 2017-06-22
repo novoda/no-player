@@ -38,8 +38,8 @@ public class ProvisionExecutorTest {
     @Before
     public void setUp() {
         provisionUrlCaptor = ArgumentCaptor.forClass(String.class);
-        when(provisionRequest.getData()).thenReturn(PROVISION_DATA);
-        when(provisionRequest.getUrl()).thenReturn(PROVISION_URL);
+        when(provisionRequest.data()).thenReturn(PROVISION_DATA);
+        when(provisionRequest.url()).thenReturn(PROVISION_URL);
 
         provisionExecutor = new ProvisionExecutor(httpPoster, capabilities);
     }
