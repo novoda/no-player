@@ -13,9 +13,9 @@ class LocalDrmSession implements FrameworkDrmSession {
     private final int state;
     private final FrameworkMediaCrypto mediaCrypto;
     private final byte[] keySetIdToRestore;
-    private final byte[] sessionId;
+    private final SessionId sessionId;
 
-    LocalDrmSession(int state, FrameworkMediaCrypto mediaCrypto, byte[] keySetIdToRestore, byte[] sessionId) {
+    LocalDrmSession(int state, FrameworkMediaCrypto mediaCrypto, byte[] keySetIdToRestore, SessionId sessionId) {
         this.state = state;
         this.mediaCrypto = mediaCrypto;
         this.keySetIdToRestore = keySetIdToRestore;
@@ -53,7 +53,7 @@ class LocalDrmSession implements FrameworkDrmSession {
     }
 
     @Override
-    public byte[] getSessionId() {
+    public SessionId getSessionId() {
         return sessionId;
     }
 }

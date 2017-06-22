@@ -35,10 +35,10 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
         DrmSession<FrameworkMediaCrypto> drmSession;
 
         try {
-            byte[] sessionId = mediaDrm.openSession();
-            FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(WIDEVINE_MODULAR_UUID, sessionId);
+            SessionId sessionId = SessionId.of(mediaDrm.openSession());
+            FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(WIDEVINE_MODULAR_UUID, sessionId.asBytes());
 
-            mediaDrm.restoreKeys(sessionId, keySetIdToRestore);
+            mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore);
 
             drmSession = new LocalDrmSession(STATE_OPENED_WITH_KEYS, mediaCrypto, keySetIdToRestore, sessionId);
         } catch (NotProvisionedException | MediaCryptoException | ResourceBusyException e) {
@@ -51,6 +51,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
     @Override
     public void releaseSession(DrmSession<FrameworkMediaCrypto> drmSession) {
         FrameworkDrmSession frameworkDrmSession = (FrameworkDrmSession) drmSession;
-        mediaDrm.closeSession(frameworkDrmSession.getSessionId());
+        SessionId sessionId = frameworkDrmSession.getSessionId();
+        mediaDrm.closeSession(sessionId.asBytes());
     }
 }

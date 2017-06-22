@@ -44,7 +44,7 @@ class InvalidDrmSession implements FrameworkDrmSession {
     }
 
     @Override
-    public byte[] getSessionId() {
-        return new byte[0];
+    public SessionId getSessionId() {
+        return SessionId.absent();
     }
 }
