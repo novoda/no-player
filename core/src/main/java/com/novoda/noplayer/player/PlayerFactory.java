@@ -8,6 +8,7 @@ import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.drm.DrmType;
+import com.novoda.noplayer.drm.FrameworkMediaDrmCreator;
 import com.novoda.noplayer.drm.NoDrmSessionCreator;
 import com.novoda.noplayer.drm.ProvisioningModularDrmCallback;
 import com.novoda.noplayer.drm.StreamingDrmSessionCreator;
@@ -72,7 +73,7 @@ public class PlayerFactory {
                         (StreamingModularDrm) drmHandler,
                         provisionExecutor
                 );
-                return new StreamingDrmSessionCreator(mediaDrmCallback);
+                return new StreamingDrmSessionCreator(mediaDrmCallback, new FrameworkMediaDrmCreator());
             case WIDEVINE_MODULAR_DOWNLOAD:
                 return new DownloadDrmSessionCreator((DownloadedModularDrm) drmHandler);
             default:
