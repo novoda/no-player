@@ -11,6 +11,7 @@ import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.SystemClock;
+import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
@@ -19,7 +20,7 @@ import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
 
 public class ExoPlayerTwoImplFactory {
 
-    public ExoPlayerTwoImpl create(Context context) {
+    public ExoPlayerTwoImpl create(Context context, DrmSessionCreator drmSessionCreator) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
         Handler handler = new Handler(Looper.getMainLooper());
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
@@ -53,7 +54,8 @@ public class ExoPlayerTwoImplFactory {
                 listenersHolder,
                 exoPlayerForwarder,
                 loadTimeout,
-                heart
+                heart,
+                drmSessionCreator
         );
     }
 }

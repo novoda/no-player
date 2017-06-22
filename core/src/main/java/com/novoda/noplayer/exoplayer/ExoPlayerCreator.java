@@ -7,7 +7,10 @@ import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.novoda.noplayer.drm.DrmSessionCreator;
 
 class ExoPlayerCreator {
 
@@ -20,8 +23,9 @@ class ExoPlayerCreator {
     }
 
     @NonNull
-    public SimpleExoPlayer create() {
-        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(context);
+    public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator) {
+        DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create();
+        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(context, drmSessionManager);
         DefaultLoadControl loadControl = new DefaultLoadControl();
         return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
     }
