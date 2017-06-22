@@ -15,6 +15,8 @@ import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -68,7 +70,7 @@ class LocalDrmSession implements DrmSessionManager<FrameworkMediaCrypto>, DrmSes
 
     @Override
     public Map<String, String> queryKeyStatus() {
-        return null;
+        return Collections.unmodifiableMap(new HashMap<String, String>());
     }
 
     @Override
