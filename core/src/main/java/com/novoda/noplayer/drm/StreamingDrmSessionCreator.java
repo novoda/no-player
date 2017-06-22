@@ -15,7 +15,7 @@ import java.util.UUID;
 public class StreamingDrmSessionCreator implements DrmSessionCreator {
 
     private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
-    private static final HashMap<String, String> NO_OPTIONAL_PARAMETERS = null;
+    private static final HashMap<String, String> NO_OPTIONAL_PARAMETERS = new HashMap<>();
     private static final DefaultDrmSessionManager.EventListener TODO_ERROR_EVENT_LISTENER = null;
 
     private final MediaDrmCallback mediaDrmCallback;
