@@ -28,7 +28,7 @@ class HttpClient {
 
             return readResponseFrom(connection);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new HttpClientException(e);
         } finally {
             release(connection);
         }
@@ -57,7 +57,7 @@ class HttpClient {
             buffer.flush();
             return buffer.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new HttpClientException(e);
         } finally {
             release(inputStream, buffer);
         }
@@ -70,6 +70,13 @@ class HttpClient {
 
         if (buffer != null) {
             buffer.close();
+        }
+    }
+
+    private static class HttpClientException extends RuntimeException {
+
+        HttpClientException(Throwable cause) {
+            super(cause);
         }
     }
 }
