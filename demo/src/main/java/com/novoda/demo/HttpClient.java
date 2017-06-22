@@ -6,11 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 class HttpClient {
 
     private static final String POST = "POST";
-    private static final int BUFFER_SIZE = 16384;
+    private static final int RESPONSE_BUFFER_SIZE = 16384;
 
     static byte[] post(String url, byte[] data) {
         HttpURLConnection connection = null;
@@ -25,29 +26,50 @@ class HttpClient {
             outputStream.flush();
             outputStream.close();
 
-            InputStream inputStream = connection.getInputStream();
-            return readResponse(inputStream);
+            return readResponseFrom(connection);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
+            release(connection);
         }
     }
 
-    private static byte[] readResponse(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    private static void release(HttpURLConnection connection) {
+        if (connection != null) {
+            connection.disconnect();
+        }
+    }
 
-        int currentReadPosition;
-        byte[] readHolder = new byte[BUFFER_SIZE];
+    private static byte[] readResponseFrom(URLConnection connection) throws IOException {
+        InputStream inputStream = null;
+        ByteArrayOutputStream buffer = null;
+        try {
+            inputStream = connection.getInputStream();
+            buffer = new ByteArrayOutputStream();
 
-        while ((currentReadPosition = inputStream.read(readHolder, 0, readHolder.length)) != -1) {
-            buffer.write(readHolder, 0, currentReadPosition);
+            int currentReadPosition;
+            byte[] readHolder = new byte[RESPONSE_BUFFER_SIZE];
+
+            while ((currentReadPosition = inputStream.read(readHolder, 0, readHolder.length)) != -1) {
+                buffer.write(readHolder, 0, currentReadPosition);
+            }
+
+            buffer.flush();
+            return buffer.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            release(inputStream, buffer);
+        }
+    }
+
+    private static void release(InputStream inputStream, ByteArrayOutputStream buffer) throws IOException {
+        if (inputStream != null) {
+            inputStream.close();
         }
 
-        buffer.flush();
-
-        return buffer.toByteArray();
+        if (buffer != null) {
+            buffer.close();
+        }
     }
 }
