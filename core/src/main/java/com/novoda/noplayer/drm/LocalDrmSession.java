@@ -43,15 +43,19 @@ class LocalDrmSession implements DrmSessionManager<FrameworkMediaCrypto>, DrmSes
 
     @Override
     public FrameworkMediaCrypto getMediaCrypto() {
-        if (state != STATE_OPENED && state != STATE_OPENED_WITH_KEYS) {
+        if (notInSession()) {
             throw new IllegalStateException();
         }
         return mediaCrypto;
     }
 
+    private boolean notInSession() {
+        return state != STATE_OPENED && state != STATE_OPENED_WITH_KEYS;
+    }
+
     @Override
     public boolean requiresSecureDecoderComponent(String mimeType) {
-        if (state != STATE_OPENED && state != STATE_OPENED_WITH_KEYS) {
+        if (notInSession()) {
             throw new IllegalStateException();
         }
         return mediaCrypto.requiresSecureDecoderComponent(mimeType);
