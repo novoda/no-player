@@ -15,8 +15,6 @@ import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 
 import java.util.UUID;
 
-import static com.google.android.exoplayer2.drm.DrmSession.STATE_OPENED_WITH_KEYS;
-
 class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> {
 
     private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
@@ -40,7 +38,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
 
             mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore);
 
-            drmSession = new LocalDrmSession(STATE_OPENED_WITH_KEYS, mediaCrypto, keySetIdToRestore, sessionId);
+            drmSession = new LocalDrmSession(mediaCrypto, keySetIdToRestore, sessionId);
         } catch (NotProvisionedException | MediaCryptoException | ResourceBusyException e) {
             drmSession = new InvalidDrmSession(new DrmSession.DrmSessionException(e));
         }
