@@ -5,14 +5,14 @@ import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 
 import java.util.UUID;
 
-public class DownloadDrmSessionCreator implements DrmSessionCreator {
+class DownloadDrmSessionCreator implements DrmSessionCreator {
 
     private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
 
     private final DownloadedModularDrm downloadedModularDrm;
     private final FrameworkMediaDrmCreator mediaDrmCreator;
 
-    public DownloadDrmSessionCreator(DownloadedModularDrm downloadedModularDrm, FrameworkMediaDrmCreator mediaDrmCreator) {
+    DownloadDrmSessionCreator(DownloadedModularDrm downloadedModularDrm, FrameworkMediaDrmCreator mediaDrmCreator) {
         this.downloadedModularDrm = downloadedModularDrm;
         this.mediaDrmCreator = mediaDrmCreator;
     }

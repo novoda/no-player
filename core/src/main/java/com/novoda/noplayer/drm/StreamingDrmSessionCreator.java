@@ -12,7 +12,7 @@ import com.google.android.exoplayer2.drm.MediaDrmCallback;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class StreamingDrmSessionCreator implements DrmSessionCreator {
+class StreamingDrmSessionCreator implements DrmSessionCreator {
 
     private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
     private static final HashMap<String, String> NO_OPTIONAL_PARAMETERS = null;
