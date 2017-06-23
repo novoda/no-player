@@ -7,6 +7,8 @@ import java.util.Map;
 
 class InvalidDrmSession implements FrameworkDrmSession {
 
+    private static final byte[] ABSENT_OFFLINE_LICENSE_KEY_SET_ID = null;
+
     private final DrmSessionException drmSessionException;
 
     InvalidDrmSession(DrmSessionException drmSessionException) {
@@ -40,7 +42,7 @@ class InvalidDrmSession implements FrameworkDrmSession {
 
     @Override
     public byte[] getOfflineLicenseKeySetId() {
-        return null;
+        return ABSENT_OFFLINE_LICENSE_KEY_SET_ID;
     }
 
     @Override
