@@ -14,7 +14,8 @@ import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
 
 public class PlayerFactory {
 
-    private static final boolean USE_SECURE_CODEC = true;
+    private static final boolean USE_SECURE_CODEC = false;
+
     private final Context context;
     private final PrioritizedPlayerTypes prioritizedPlayerTypes;
     private final ExoPlayerCreator exoPlayerCreator;

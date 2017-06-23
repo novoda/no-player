@@ -15,7 +15,7 @@ class CodecSelector implements MediaCodecSelector {
     @Override
     public MediaCodecInfo getDecoderInfo(String mimeType, boolean requiresSecureDecoder)
             throws MediaCodecUtil.DecoderQueryException {
-        return MediaCodecUtil.getDecoderInfo(mimeType, useSecureCodec);
+        return MediaCodecUtil.getDecoderInfo(mimeType, requiresSecureDecoder && useSecureCodec);
     }
 
     @Override
