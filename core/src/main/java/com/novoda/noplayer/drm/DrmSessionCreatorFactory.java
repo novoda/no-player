@@ -8,6 +8,7 @@ public class DrmSessionCreatorFactory {
     public DrmSessionCreator createFor(DrmType drmType, DrmHandler drmHandler) {
         switch (drmType) {
             case NONE:
+                // Fall-through.
             case WIDEVINE_CLASSIC:
                 return new NoDrmSessionCreator();
             case WIDEVINE_MODULAR_STREAM:
