@@ -14,6 +14,7 @@ import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
 
 public class PlayerFactory {
 
+    private static final boolean USE_SECURE_CODEC = true;
     private final Context context;
     private final PrioritizedPlayerTypes prioritizedPlayerTypes;
     private final ExoPlayerCreator exoPlayerCreator;
@@ -41,21 +42,25 @@ public class PlayerFactory {
     }
 
     public Player create(DrmType drmType, DrmHandler drmHandler) {
+        return create(drmType, drmHandler, USE_SECURE_CODEC);
+    }
+
+    public Player create(DrmType drmType, DrmHandler drmHandler, boolean useSecureCodec) {
         for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
-                return createPlayerForType(player, drmType, drmHandler);
+                return createPlayerForType(player, drmType, drmHandler, useSecureCodec);
             }
         }
         throw UnableToCreatePlayerException.unhandledDrmType(drmType);
     }
 
-    private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler) {
+    private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler, boolean useSecureCodec) {
         switch (playerType) {
             case MEDIA_PLAYER:
                 return mediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
                 DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler);
-                return exoPlayerCreator.createExoPlayer(context, drmSessionCreator);
+                return exoPlayerCreator.createExoPlayer(context, drmSessionCreator, useSecureCodec);
             default:
                 throw UnableToCreatePlayerException.unhandledPlayerType(playerType);
         }
@@ -93,8 +98,8 @@ public class PlayerFactory {
             this.factory = factory;
         }
 
-        Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator) {
-            ExoPlayerTwoImpl player = factory.create(context, drmSessionCreator);
+        Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator, boolean useSecureCodec) {
+            ExoPlayerTwoImpl player = factory.create(context, drmSessionCreator, useSecureCodec);
             player.initialise();
             return player;
         }

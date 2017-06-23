@@ -18,6 +18,8 @@ import static org.mockito.Mockito.verify;
 
 public class ExoPlayerTwoCreatorTest {
 
+    private static final boolean USE_SECURE_CODEC = true;
+
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -35,12 +37,12 @@ public class ExoPlayerTwoCreatorTest {
     @Before
     public void setUp() {
         creator = new PlayerFactory.ExoPlayerCreator(factory);
-        given(factory.create(context, drmSessionCreator)).willReturn(player);
+        given(factory.create(context, drmSessionCreator, USE_SECURE_CODEC)).willReturn(player);
     }
 
     @Test
     public void whenCreatingExoPlayerTwo_thenInitialisesPlayer() {
-        creator.createExoPlayer(context, drmSessionCreator);
+        creator.createExoPlayer(context, drmSessionCreator, USE_SECURE_CODEC);
 
         verify(player).initialise();
     }
