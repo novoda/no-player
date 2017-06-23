@@ -10,6 +10,7 @@ import com.novoda.noplayer.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerSubtitleTrack;
 import com.novoda.noplayer.VideoDuration;
 import com.novoda.noplayer.VideoPosition;
+import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
@@ -76,7 +77,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenAddsPlayerEventListener() {
 
-            facade.loadVideo(uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
+            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
 
             verify(exoPlayer).addListener(exoPlayerForwarder.exoPlayerEventListener());
         }
@@ -84,7 +85,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenSetsVideoDebugListener() {
 
-            facade.loadVideo(uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
+            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
 
             verify(exoPlayer).setVideoDebugListener(exoPlayerForwarder.videoRendererEventListener());
         }
@@ -93,7 +94,7 @@ public class ExoPlayerFacadeTest {
         public void givenMediaSource_whenLoadingVideo_thenPreparesInternalExoPlayer() {
             MediaSource mediaSource = givenMediaSource();
 
-            facade.loadVideo(uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
+            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
 
             verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
         }
@@ -189,7 +190,7 @@ public class ExoPlayerFacadeTest {
 
         private void givenPlayerIsLoaded() {
             givenMediaSource();
-            facade.loadVideo(uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
+            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
         }
 
         @Test
@@ -385,13 +386,15 @@ public class ExoPlayerFacadeTest {
         RendererTypeRequester rendererTypeRequester;
         @Mock
         RendererTypeRequesterCreator rendererTypeRequesterCreator;
+        @Mock
+        DrmSessionCreator drmSessionCreator;
 
         ExoPlayerFacade facade;
 
         @Before
         public void setUp() {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
-            given(exoPlayerCreator.create()).willReturn(exoPlayer);
+            given(exoPlayerCreator.create(drmSessionCreator)).willReturn(exoPlayer);
             when(rendererTypeRequesterCreator.createfrom(exoPlayer)).thenReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
                     mediaSourceFactory,

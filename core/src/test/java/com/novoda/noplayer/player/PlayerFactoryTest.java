@@ -5,10 +5,10 @@ import android.content.Context;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
+import com.novoda.noplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
-import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
-import com.novoda.noplayer.exoplayer.ExoPlayerTwoImplFactory;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
 
@@ -47,17 +47,21 @@ public class PlayerFactoryTest {
 
         @Mock
         PlayerFactory.ExoPlayerCreator exoPlayerCreator;
-
         @Mock
         PlayerFactory.MediaPlayerCreator mediaPlayerCreator;
+        @Mock
+        DrmSessionCreator drmSessionCreator;
+        @Mock
+        DrmSessionCreatorFactory drmSessionCreatorFactory;
 
         PlayerFactory playerFactory;
 
         @Before
         public void setUp() {
-            given(exoPlayerCreator.createExoPlayer(any(Context.class))).willReturn(EXO_PLAYER);
-            given(mediaPlayerCreator.createMediaPlayer(any(Context.class))).willReturn(MEDIA_PLAYER);
-            playerFactory = new PlayerFactory(context, prioritizedPlayerTypes(), exoPlayerCreator, mediaPlayerCreator);
+            given(drmSessionCreatorFactory.createFor(any(DrmType.class), any(DrmHandler.class))).willReturn(drmSessionCreator);
+            given(exoPlayerCreator.createExoPlayer(context, drmSessionCreator)).willReturn(EXO_PLAYER);
+            given(mediaPlayerCreator.createMediaPlayer(context)).willReturn(MEDIA_PLAYER);
+            playerFactory = new PlayerFactory(context, prioritizedPlayerTypes(), exoPlayerCreator, mediaPlayerCreator, drmSessionCreatorFactory);
         }
 
         abstract PrioritizedPlayerTypes prioritizedPlayerTypes();
@@ -146,34 +150,6 @@ public class PlayerFactoryTest {
             Player player = playerFactory.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
-        }
-    }
-
-    public static class ExoPlayerTwoCreatorTest {
-
-        @Rule
-        public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-        @Mock
-        ExoPlayerTwoImplFactory factory;
-        @Mock
-        ExoPlayerTwoImpl player;
-        @Mock
-        Context context;
-
-        private PlayerFactory.ExoPlayerCreator creator;
-
-        @Before
-        public void setUp() {
-            creator = new PlayerFactory.ExoPlayerCreator(factory);
-            given(factory.create(any(Context.class))).willReturn(player);
-        }
-
-        @Test
-        public void whenCreatingExoPlayerTwo_thenInitialisesPlayer() {
-            creator.createExoPlayer(context);
-
-            verify(player).initialise();
         }
     }
 

@@ -1,8 +1,6 @@
 package com.novoda.noplayer.drm.provision;
 
-import android.annotation.TargetApi;
-import android.media.MediaDrm;
-import android.os.Build;
+import com.novoda.noplayer.drm.ModularDrmProvisionRequest;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -25,20 +23,19 @@ public class ProvisionExecutor {
         this.capabilities = capabilities;
     }
 
-    public byte[] execute(MediaDrm.ProvisionRequest request) throws IOException, UnableToProvisionException {
-        if (isIncapabaleOfProvisioning()) {
+    public byte[] execute(ModularDrmProvisionRequest request) throws IOException, UnableToProvisionException {
+        if (isIncapableOfProvisioning()) {
             throw new UnableToProvisionException();
         }
         String provisioningUrl = buildProvisioningUrl(request);
         return httpPoster.post(provisioningUrl);
     }
 
-    private boolean isIncapabaleOfProvisioning() {
+    private boolean isIncapableOfProvisioning() {
         return !capabilities.canProvision();
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private String buildProvisioningUrl(MediaDrm.ProvisionRequest request) {
-        return request.getDefaultUrl() + PARAMETER_SIGNED_REQUEST + new String(request.getData(), Charset.forName("UTF-8"));
+    private String buildProvisioningUrl(ModularDrmProvisionRequest request) {
+        return request.url() + PARAMETER_SIGNED_REQUEST + new String(request.data(), Charset.forName("UTF-8"));
     }
 }
