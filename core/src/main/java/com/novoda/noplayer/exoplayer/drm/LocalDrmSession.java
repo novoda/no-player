@@ -1,6 +1,8 @@
-package com.novoda.noplayer.drm;
+package com.novoda.noplayer.exoplayer.drm;
 
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.novoda.noplayer.drm.KeySetId;
+import com.novoda.noplayer.drm.SessionId;
 
 import java.util.Collections;
 import java.util.HashMap;

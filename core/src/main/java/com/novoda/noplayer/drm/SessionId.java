@@ -2,7 +2,7 @@ package com.novoda.noplayer.drm;
 
 import java.util.Arrays;
 
-class SessionId {
+public class SessionId {
 
     private final byte[] sessionId;
 

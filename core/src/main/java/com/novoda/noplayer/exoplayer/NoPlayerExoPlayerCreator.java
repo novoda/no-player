@@ -11,7 +11,7 @@ import com.novoda.noplayer.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.SystemClock;
-import com.novoda.noplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;

@@ -17,7 +17,7 @@ import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.TextCues;
 import com.novoda.noplayer.Timeout;
 import com.novoda.noplayer.VideoPosition;
-import com.novoda.noplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;

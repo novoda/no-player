@@ -10,7 +10,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.novoda.noplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerDrmSessionEventListener;
 
 import static com.novoda.noplayer.exoplayer.SimpleRenderersFactory.EXTENSION_RENDERER_MODE_OFF;

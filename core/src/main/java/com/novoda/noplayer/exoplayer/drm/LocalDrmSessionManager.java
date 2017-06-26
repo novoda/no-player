@@ -1,4 +1,4 @@
-package com.novoda.noplayer.drm;
+package com.novoda.noplayer.exoplayer.drm;
 
 import android.annotation.TargetApi;
 import android.media.MediaCryptoException;
@@ -14,6 +14,8 @@ import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.novoda.noplayer.drm.KeySetId;
+import com.novoda.noplayer.drm.SessionId;
 
 import java.util.UUID;
 

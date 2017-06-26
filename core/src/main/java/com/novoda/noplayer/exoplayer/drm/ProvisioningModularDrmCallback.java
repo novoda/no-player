@@ -1,7 +1,10 @@
-package com.novoda.noplayer.drm;
+package com.novoda.noplayer.exoplayer.drm;
 
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.MediaDrmCallback;
+import com.novoda.noplayer.drm.ModularDrmKeyRequest;
+import com.novoda.noplayer.drm.ModularDrmProvisionRequest;
+import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.drm.provision.ProvisionExecutor;
 
 import java.util.UUID;

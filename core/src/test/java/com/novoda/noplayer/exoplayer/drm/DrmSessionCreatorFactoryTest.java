@@ -1,7 +1,11 @@
-package com.novoda.noplayer.drm;
+package com.novoda.noplayer.exoplayer.drm;
 
 import android.os.Handler;
 
+import com.novoda.noplayer.drm.DownloadedModularDrm;
+import com.novoda.noplayer.drm.DrmHandler;
+import com.novoda.noplayer.drm.DrmType;
+import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.player.PlayerFactory;
 import com.novoda.utils.AndroidDeviceVersion;
 
