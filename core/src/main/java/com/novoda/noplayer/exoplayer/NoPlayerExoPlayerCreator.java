@@ -7,7 +7,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.Heart;
-import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.SystemClock;
@@ -17,6 +16,7 @@ import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
+import com.novoda.noplayer.model.LoadTimeout;
 
 public class NoPlayerExoPlayerCreator {
 
