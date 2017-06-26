@@ -51,5 +51,4 @@ public class PlayerChecker {
         String value = systemProperties.get(prop);
         return "true".equalsIgnoreCase(value) || "1".equals(value);
     }
-
 }

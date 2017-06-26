@@ -25,7 +25,7 @@ import com.novoda.noplayer.player.PlayerInformation;
 import java.util.Collections;
 import java.util.List;
 
-public class AndroidMediaPlayerImpl implements Player {
+class AndroidMediaPlayerImpl implements Player {
 
     private static final VideoPosition NO_SEEK_TO_POSITION = VideoPosition.INVALID;
     private static final MediaPlayerInformation MEDIA_PLAYER_INFORMATION = new MediaPlayerInformation();
@@ -65,7 +65,7 @@ public class AndroidMediaPlayerImpl implements Player {
         this.buggyVideoDriverPreventer = buggyVideoDriverPreventer;
     }
 
-    public void initialise() {
+    void initialise() {
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
         forwarder.bind(listenersHolder.getBufferStateListeners(), listenersHolder.getErrorListeners(), this);
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());

@@ -227,7 +227,7 @@ class AndroidMediaPlayerFacade {
         }
     }
 
-    public boolean hasPlayedContent() {
+    boolean hasPlayedContent() {
         return hasPlayer();
     }
 

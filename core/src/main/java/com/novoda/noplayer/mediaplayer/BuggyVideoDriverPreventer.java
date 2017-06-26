@@ -17,7 +17,7 @@ class BuggyVideoDriverPreventer {
 
     private OnPotentialBuggyDriverLayoutListener preventerListener;
 
-    public static BuggyVideoDriverPreventer newInstance() {
+    static BuggyVideoDriverPreventer newInstance() {
         PlayerChecker playerChecker = PlayerChecker.newInstance();
         return new BuggyVideoDriverPreventer(playerChecker);
     }
@@ -41,7 +41,7 @@ class BuggyVideoDriverPreventer {
         containerView.addOnLayoutChangeListener(preventerListener);
     }
 
-    public void clear(View containerView) {
+    void clear(View containerView) {
         containerView.removeOnLayoutChangeListener(preventerListener);
         preventerListener = null;
     }

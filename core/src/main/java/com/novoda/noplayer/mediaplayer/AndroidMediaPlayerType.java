@@ -1,7 +1,10 @@
 package com.novoda.noplayer.mediaplayer;
 
 public enum AndroidMediaPlayerType {
-    AWESOME("AwesomePlayer"), NU("NuPlayer"), UNKNOWN("Unknown");
+
+    AWESOME("AwesomePlayer"),
+    NU("NuPlayer"),
+    UNKNOWN("Unknown");
 
     private final String name;
 

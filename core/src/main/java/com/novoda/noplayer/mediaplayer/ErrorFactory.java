@@ -28,7 +28,7 @@ public final class ErrorFactory {
         private final int type;
         private final int extra;
 
-        protected MediaPlayerError(int type, int extra) {
+        MediaPlayerError(int type, int extra) {
             this.type = type;
             this.extra = extra;
         }
@@ -42,7 +42,6 @@ public final class ErrorFactory {
         public Throwable getCause() {
             return new MediaPlayerErrorThrowable(extra);
         }
-
     }
 
     private static class MediaPlayerErrorThrowable extends Throwable {
@@ -54,18 +53,16 @@ public final class ErrorFactory {
 
     public static class StreamedVideoError extends MediaPlayerError {
 
-        protected StreamedVideoError(int type, int extra) {
+        StreamedVideoError(int type, int extra) {
             super(type, extra);
         }
-
     }
 
     public static class MediaFormatNotRecognizedError extends MediaPlayerError {
 
-        protected MediaFormatNotRecognizedError(int type, int extra) {
+        MediaFormatNotRecognizedError(int type, int extra) {
             super(type, extra);
         }
-
     }
 
     public static class MediaServerDiedError extends MediaPlayerError {
@@ -73,14 +70,12 @@ public final class ErrorFactory {
         protected MediaServerDiedError(int type, int extra) {
             super(type, extra);
         }
-
     }
 
     public static class UnknownMediaPlayerError extends MediaPlayerError {
 
-        protected UnknownMediaPlayerError(int type, int extra) {
+        UnknownMediaPlayerError(int type, int extra) {
             super(type, extra);
         }
-
     }
 }
