@@ -4,29 +4,25 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 
-/**
- * CodecSelector that allows overriding of the requiresSecureDecoder to allow
- * downgrading of security but not upgrading.
- */
-class CodecSelector implements MediaCodecSelector {
+class SecurityDowngradingCodecSelector implements MediaCodecSelector {
 
     private final InternalMediaCodecUtil internalMediaCodecUtil;
-    private final boolean overrideSecureDecoder;
+    private final boolean downgradeSecureDecoder;
 
-    public static CodecSelector newInstance(boolean useSecureCodec) {
+    public static SecurityDowngradingCodecSelector newInstance(boolean downgradeSecureDecoder) {
         InternalMediaCodecUtil internalMediaCodecUtil = new InternalMediaCodecUtil();
-        return new CodecSelector(internalMediaCodecUtil, useSecureCodec);
+        return new SecurityDowngradingCodecSelector(internalMediaCodecUtil, downgradeSecureDecoder);
     }
 
-    CodecSelector(InternalMediaCodecUtil internalMediaCodecUtil, boolean overrideSecureDecoder) {
+    SecurityDowngradingCodecSelector(InternalMediaCodecUtil internalMediaCodecUtil, boolean downgradeSecureDecoder) {
         this.internalMediaCodecUtil = internalMediaCodecUtil;
-        this.overrideSecureDecoder = overrideSecureDecoder;
+        this.downgradeSecureDecoder = downgradeSecureDecoder;
     }
 
     @Override
     public MediaCodecInfo getDecoderInfo(String mimeType, boolean contentRequiresSecureDecoder)
             throws MediaCodecUtil.DecoderQueryException {
-        return internalMediaCodecUtil.getDecoderInfo(mimeType, contentRequiresSecureDecoder && overrideSecureDecoder);
+        return internalMediaCodecUtil.getDecoderInfo(mimeType, contentRequiresSecureDecoder && !downgradeSecureDecoder);
     }
 
     @Override

@@ -20,7 +20,7 @@ import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
 
 public class ExoPlayerTwoImplFactory {
 
-    public ExoPlayerTwoImpl create(Context context, DrmSessionCreator drmSessionCreator, boolean useSecureCodec) {
+    public ExoPlayerTwoImpl create(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
         Handler handler = new Handler(Looper.getMainLooper());
         MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
@@ -56,7 +56,7 @@ public class ExoPlayerTwoImplFactory {
                 loadTimeout,
                 heart,
                 drmSessionCreator,
-                useSecureCodec
+                downgradeSecureDecoder
         );
     }
 }

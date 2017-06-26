@@ -46,22 +46,22 @@ public class PlayerFactory {
         return create(drmType, drmHandler, USE_SECURE_CODEC);
     }
 
-    public Player create(DrmType drmType, DrmHandler drmHandler, boolean useSecureCodec) {
+    public Player create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
         for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
-                return createPlayerForType(player, drmType, drmHandler, useSecureCodec);
+                return createPlayerForType(player, drmType, drmHandler, downgradeSecureDecoder);
             }
         }
         throw UnableToCreatePlayerException.unhandledDrmType(drmType);
     }
 
-    private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler, boolean useSecureCodec) {
+    private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
         switch (playerType) {
             case MEDIA_PLAYER:
                 return mediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
                 DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler);
-                return exoPlayerCreator.createExoPlayer(context, drmSessionCreator, useSecureCodec);
+                return exoPlayerCreator.createExoPlayer(context, drmSessionCreator, downgradeSecureDecoder);
             default:
                 throw UnableToCreatePlayerException.unhandledPlayerType(playerType);
         }
@@ -99,8 +99,8 @@ public class PlayerFactory {
             this.factory = factory;
         }
 
-        Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator, boolean useSecureCodec) {
-            ExoPlayerTwoImpl player = factory.create(context, drmSessionCreator, useSecureCodec);
+        Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
+            ExoPlayerTwoImpl player = factory.create(context, drmSessionCreator, downgradeSecureDecoder);
             player.initialise();
             return player;
         }
