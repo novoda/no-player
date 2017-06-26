@@ -44,7 +44,7 @@ import java.util.ArrayList;
 /**
  * Default {@link RenderersFactory} implementation.
  */
-public class SimpleRenderersFactory implements RenderersFactory {
+class SimpleRenderersFactory implements RenderersFactory {
 
     /**
      * Modes for using extension renderers.

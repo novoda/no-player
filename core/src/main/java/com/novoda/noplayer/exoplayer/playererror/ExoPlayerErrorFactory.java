@@ -1,4 +1,4 @@
-package com.novoda.noplayer.exoplayer;
+package com.novoda.noplayer.exoplayer.playererror;
 
 import android.media.MediaCodec;
 
@@ -6,12 +6,6 @@ import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmRequestException;
-import com.novoda.noplayer.exoplayer.playererror.ConnectivityError;
-import com.novoda.noplayer.exoplayer.playererror.DrmDecryptionError;
-import com.novoda.noplayer.exoplayer.playererror.DrmRequestError;
-import com.novoda.noplayer.exoplayer.playererror.InvalidResponseCodeError;
-import com.novoda.noplayer.exoplayer.playererror.MalformedContentError;
-import com.novoda.noplayer.exoplayer.playererror.UnknownError;
 
 import java.io.IOException;
 

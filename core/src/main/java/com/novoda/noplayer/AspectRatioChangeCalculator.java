@@ -1,14 +1,14 @@
-package com.novoda.noplayer.exoplayer;
+package com.novoda.noplayer;
 
-public class AspectRatioChangeCalculator {
+class AspectRatioChangeCalculator {
 
     private final Listener listener;
 
-    public AspectRatioChangeCalculator(Listener listener) {
+    AspectRatioChangeCalculator(Listener listener) {
         this.listener = listener;
     }
 
-    public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+    public void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio) {
         float aspectRatio = determineAspectRatio(width, height, pixelWidthHeightRatio);
         listener.onNewAspectRatio(aspectRatio);
     }
@@ -20,9 +20,8 @@ public class AspectRatioChangeCalculator {
         return (videoWidth * pixelWidthHeightRatio) / videoHeight;
     }
 
-    public interface Listener {
+    interface Listener {
 
         void onNewAspectRatio(float aspectRatio);
-
     }
 }

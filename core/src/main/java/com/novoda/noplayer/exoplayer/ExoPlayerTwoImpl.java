@@ -23,7 +23,7 @@ import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;
 
-public class ExoPlayerTwoImpl implements Player {
+class ExoPlayerTwoImpl implements Player {
 
     private final ExoPlayerFacade exoPlayer;
     private final PlayerListenersHolder listenersHolder;
@@ -57,7 +57,7 @@ public class ExoPlayerTwoImpl implements Player {
         this.useSecureCodec = useSecureCodec;
     }
 
-    public void initialise() {
+    void initialise() {
         heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());

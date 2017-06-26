@@ -17,7 +17,7 @@ public class ExoPlayerTrackSelector {
         return new ExoPlayerTrackSelector(trackSelector, rendererTrackIndexExtractor);
     }
 
-    ExoPlayerTrackSelector(DefaultTrackSelector trackSelector, RendererTrackIndexExtractor rendererTrackIndexExtractor) {
+    private ExoPlayerTrackSelector(DefaultTrackSelector trackSelector, RendererTrackIndexExtractor rendererTrackIndexExtractor) {
         this.trackSelector = trackSelector;
         this.rendererTrackIndexExtractor = rendererTrackIndexExtractor;
     }
@@ -27,14 +27,14 @@ public class ExoPlayerTrackSelector {
         return audioRendererIndex.isAbsent() ? TrackGroupArray.EMPTY : trackInfo().getTrackGroups(audioRendererIndex.get());
     }
 
-    public void clearSelectionOverrideFor(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
+    void clearSelectionOverrideFor(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
         Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
         if (audioRendererIndex.isPresent()) {
             trackSelector.clearSelectionOverrides(audioRendererIndex.get());
         }
     }
 
-    public ExoPlayerMappedTrackInfo trackInfo() {
+    private ExoPlayerMappedTrackInfo trackInfo() {
         MappingTrackSelector.MappedTrackInfo trackInfo = trackSelector.getCurrentMappedTrackInfo();
 
         if (trackInfo == null) {
