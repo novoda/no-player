@@ -34,7 +34,7 @@ public class PlayerFactoryTest {
 
     public static abstract class Base {
 
-        static final boolean USE_SECURE_CODEC = true;
+        static final boolean USE_SECURE_CODEC = false;
         static final StreamingModularDrm STREAMING_MODULAR_DRM = mock(StreamingModularDrm.class);
         static final DownloadedModularDrm DOWNLOADED_MODULAR_DRM = mock(DownloadedModularDrm.class);
         static final Player EXO_PLAYER = mock(Player.class);

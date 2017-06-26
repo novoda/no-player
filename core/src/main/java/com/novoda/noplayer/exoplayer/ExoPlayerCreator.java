@@ -35,7 +35,7 @@ class ExoPlayerCreator {
                 drmSessionManager,
                 EXTENSION_RENDERER_MODE_OFF,
                 DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS,
-                new CodecSelector(useSecureCodec)
+                CodecSelector.newInstance(useSecureCodec)
         );
 
         DefaultLoadControl loadControl = new DefaultLoadControl();
