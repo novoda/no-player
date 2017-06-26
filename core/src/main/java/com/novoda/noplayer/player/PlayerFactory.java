@@ -11,6 +11,7 @@ import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
 import com.novoda.noplayer.exoplayer.ExoPlayerTwoImplFactory;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
+import com.novoda.utils.AndroidDeviceVersion;
 
 public class PlayerFactory {
 
@@ -23,7 +24,13 @@ public class PlayerFactory {
     private final DrmSessionCreatorFactory drmSessionCreatorFactory;
 
     public PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
-        this(context, prioritizedPlayerTypes, ExoPlayerCreator.newInstance(), MediaPlayerCreator.newInstance(), new DrmSessionCreatorFactory());
+        this(
+                context,
+                prioritizedPlayerTypes,
+                ExoPlayerCreator.newInstance(),
+                MediaPlayerCreator.newInstance(),
+                new DrmSessionCreatorFactory(AndroidDeviceVersion.newInstance())
+        );
     }
 
     PlayerFactory(Context context,
@@ -79,6 +86,19 @@ public class PlayerFactory {
 
         static UnableToCreatePlayerException unhandledPlayerType(PlayerType playerType) {
             return new UnableToCreatePlayerException("Unhandled player type: " + playerType.name());
+        }
+
+        public static UnableToCreatePlayerException deviceDoesNotMeetTargetApiException(DrmType drmType,
+                                                                                        int targetApiLevel,
+                                                                                        AndroidDeviceVersion actualApiLevel) {
+            return new UnableToCreatePlayerException(
+                    "Device must be target: "
+                            + targetApiLevel
+                            + " but was: "
+                            + actualApiLevel.sdkInt()
+                            + " for DRM type: "
+                            + drmType.name()
+            );
         }
 
         UnableToCreatePlayerException(String reason) {
