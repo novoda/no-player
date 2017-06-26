@@ -5,8 +5,10 @@ import android.media.MediaCryptoException;
 import android.media.NotProvisionedException;
 import android.media.ResourceBusyException;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Looper;
 
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -17,14 +19,30 @@ import java.util.UUID;
 
 class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> {
 
-    private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
-
     private final KeySetId keySetIdToRestore;
     private final ExoMediaDrm<FrameworkMediaCrypto> mediaDrm;
+    private final DefaultDrmSessionManager.EventListener eventListener;
+    private final UUID drmScheme;
+    private final Handler handler;
 
-    LocalDrmSessionManager(KeySetId keySetIdToRestore, ExoMediaDrm<FrameworkMediaCrypto> mediaDrm) {
+    static LocalDrmSessionManager newInstance(KeySetId keySetIdToRestore,
+                                              ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
+                                              UUID drmScheme,
+                                              DefaultDrmSessionManager.EventListener eventListener) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        return new LocalDrmSessionManager(keySetIdToRestore, mediaDrm, drmScheme, handler, eventListener);
+    }
+
+    private LocalDrmSessionManager(KeySetId keySetIdToRestore,
+                                   ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
+                                   UUID drmScheme,
+                                   Handler handler,
+                                   DefaultDrmSessionManager.EventListener eventListener) {
         this.keySetIdToRestore = keySetIdToRestore;
         this.mediaDrm = mediaDrm;
+        this.eventListener = eventListener;
+        this.drmScheme = drmScheme;
+        this.handler = handler;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -34,16 +52,27 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
 
         try {
             SessionId sessionId = SessionId.of(mediaDrm.openSession());
-            FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(WIDEVINE_MODULAR_UUID, sessionId.asBytes());
+            FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(drmScheme, sessionId.asBytes());
 
             mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore.asBytes());
 
             drmSession = new LocalDrmSession(mediaCrypto, keySetIdToRestore, sessionId);
-        } catch (NotProvisionedException | MediaCryptoException | ResourceBusyException e) {
-            drmSession = new InvalidDrmSession(new DrmSession.DrmSessionException(e));
+        } catch (NotProvisionedException | MediaCryptoException | ResourceBusyException exception) {
+            drmSession = new InvalidDrmSession(new DrmSession.DrmSessionException(exception));
+            notifyErrorListener(drmSession);
         }
 
         return drmSession;
+    }
+
+    private void notifyErrorListener(DrmSession<FrameworkMediaCrypto> drmSession) {
+        final DrmSession.DrmSessionException error = drmSession.getError();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                eventListener.onDrmSessionManagerError(error);
+            }
+        });
     }
 
     @Override

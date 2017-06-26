@@ -2,6 +2,7 @@ package com.novoda.noplayer.drm;
 
 import android.support.annotation.Nullable;
 
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 
@@ -11,7 +12,7 @@ class NoDrmSessionCreator implements DrmSessionCreator {
 
     @Nullable
     @Override
-    public DrmSessionManager<FrameworkMediaCrypto> create() {
+    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionManager.EventListener eventListener) {
         return NO_DRM_SESSION;
     }
 }

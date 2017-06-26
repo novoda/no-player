@@ -10,19 +10,16 @@ import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.MediaDrmCallback;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 class StreamingDrmSessionCreator implements DrmSessionCreator {
 
-    private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
     private static final HashMap<String, String> NO_OPTIONAL_PARAMETERS = null;
-    private static final DefaultDrmSessionManager.EventListener TODO_ERROR_EVENT_LISTENER = null;
 
     private final MediaDrmCallback mediaDrmCallback;
     private final FrameworkMediaDrmCreator frameworkMediaDrmCreator;
     private final Handler handler;
 
-    public static StreamingDrmSessionCreator newInstance(MediaDrmCallback mediaDrmCallback, FrameworkMediaDrmCreator frameworkMediaDrmCreator) {
+    static StreamingDrmSessionCreator newInstance(MediaDrmCallback mediaDrmCallback, FrameworkMediaDrmCreator frameworkMediaDrmCreator) {
         Handler handler = new Handler(Looper.getMainLooper());
         return new StreamingDrmSessionCreator(mediaDrmCallback, frameworkMediaDrmCreator, handler);
     }
@@ -34,7 +31,7 @@ class StreamingDrmSessionCreator implements DrmSessionCreator {
     }
 
     @Override
-    public DrmSessionManager<FrameworkMediaCrypto> create() {
+    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionManager.EventListener eventListener) {
         FrameworkMediaDrm frameworkMediaDrm = frameworkMediaDrmCreator.create(WIDEVINE_MODULAR_UUID);
 
         return new DefaultDrmSessionManager<>(
@@ -43,7 +40,7 @@ class StreamingDrmSessionCreator implements DrmSessionCreator {
                 mediaDrmCallback,
                 NO_OPTIONAL_PARAMETERS,
                 handler,
-                TODO_ERROR_EVENT_LISTENER
+                eventListener
         );
     }
 }
