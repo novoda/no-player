@@ -30,7 +30,7 @@ class ExoPlayerTwoImpl implements Player {
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
     private final DrmSessionCreator drmSessionCreator;
-    private final boolean useSecureCodec;
+    private final boolean downgradeSecureDecoder;
     private final LoadTimeout loadTimeout;
 
     private SurfaceHolderRequester surfaceHolderRequester;
@@ -47,14 +47,14 @@ class ExoPlayerTwoImpl implements Player {
                      LoadTimeout loadTimeoutParam,
                      Heart heart,
                      DrmSessionCreator drmSessionCreator,
-                     boolean useSecureCodec) {
+                     boolean downgradeSecureDecoder) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.heart = heart;
         this.drmSessionCreator = drmSessionCreator;
-        this.useSecureCodec = useSecureCodec;
+        this.downgradeSecureDecoder = downgradeSecureDecoder;
     }
 
     void initialise() {
@@ -174,7 +174,7 @@ class ExoPlayerTwoImpl implements Player {
             reset();
         }
         listenersHolder.getPreparedListeners().resetPreparedState();
-        exoPlayer.loadVideo(drmSessionCreator, uri, contentType, forwarder, useSecureCodec);
+        exoPlayer.loadVideo(drmSessionCreator, uri, contentType, forwarder, downgradeSecureDecoder);
     }
 
     @Override

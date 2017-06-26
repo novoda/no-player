@@ -1,5 +1,7 @@
 package com.novoda.noplayer.exoplayer.drm;
 
+import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.novoda.noplayer.drm.SessionId;
@@ -41,6 +43,7 @@ class InvalidDrmSession implements FrameworkDrmSession {
         throw new IllegalStateException();
     }
 
+    @Nullable
     @Override
     public byte[] getOfflineLicenseKeySetId() {
         return ABSENT_OFFLINE_LICENSE_KEY_SET_ID;
