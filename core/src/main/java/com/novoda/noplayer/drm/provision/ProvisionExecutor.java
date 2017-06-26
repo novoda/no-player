@@ -18,14 +18,14 @@ public class ProvisionExecutor {
     }
 
     public byte[] execute(ModularDrmProvisionRequest request) throws IOException, UnableToProvisionException {
-        if (isIncapabaleOfProvisioning()) {
+        if (isIncapableOfProvisioning()) {
             throw new UnableToProvisionException();
         }
         String provisioningUrl = buildProvisioningUrl(request);
         return httpPoster.post(provisioningUrl);
     }
 
-    private boolean isIncapabaleOfProvisioning() {
+    private boolean isIncapableOfProvisioning() {
         return !capabilities.canProvision();
     }
 
