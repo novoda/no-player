@@ -23,16 +23,15 @@ public class PlayerFactory {
     private final NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator;
     private final DrmSessionCreatorFactory drmSessionCreatorFactory;
 
-    public PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
-        this(
+    public static PlayerFactory newInstance(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(AndroidDeviceVersion.newInstance(), handler);
+        return new PlayerFactory(
                 context,
                 prioritizedPlayerTypes,
-                NoPlayerExoPlayerCreator.newInstance(new Handler(Looper.getMainLooper())),
-                NoPlayerMediaPlayerCreator.newInstance(new Handler(Looper.getMainLooper())),
-                new DrmSessionCreatorFactory(
-                        AndroidDeviceVersion.newInstance(),
-                        new Handler(Looper.getMainLooper())
-                )
+                NoPlayerExoPlayerCreator.newInstance(handler),
+                NoPlayerMediaPlayerCreator.newInstance(handler),
+                drmSessionCreatorFactory
         );
     }
 
