@@ -1,18 +1,16 @@
 package com.novoda.noplayer.model;
 
-import com.google.android.exoplayer2.text.Cue;
-
 import java.util.List;
 
 public class TextCues {
 
-    private final List<Cue> cues;
+    private final List<NoPlayerCue> cues;
 
-    public TextCues(List<Cue> cues) {
+    public TextCues(List<NoPlayerCue> cues) {
         this.cues = cues;
     }
 
-    public List<Cue> cues() {
+    public List<NoPlayerCue> cues() {
         return cues;
     }
 
