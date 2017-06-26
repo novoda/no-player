@@ -14,7 +14,7 @@ import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
 
 public class PlayerFactory {
 
-    private static final boolean USE_SECURE_CODEC = false;
+    private static final boolean DOWNGRADE_SECURE_DECODER = false;
 
     private final Context context;
     private final PrioritizedPlayerTypes prioritizedPlayerTypes;
@@ -43,7 +43,7 @@ public class PlayerFactory {
     }
 
     public Player create(DrmType drmType, DrmHandler drmHandler) {
-        return create(drmType, drmHandler, USE_SECURE_CODEC);
+        return create(drmType, drmHandler, DOWNGRADE_SECURE_DECODER);
     }
 
     public Player create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
