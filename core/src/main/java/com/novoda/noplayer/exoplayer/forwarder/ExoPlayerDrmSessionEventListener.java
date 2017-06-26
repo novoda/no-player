@@ -5,11 +5,11 @@ import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ExoPlayerDrmSessionEventListener implements DefaultDrmSessionManager.EventListener {
+class ExoPlayerDrmSessionEventListener implements DefaultDrmSessionManager.EventListener {
 
     private final List<DefaultDrmSessionManager.EventListener> listeners = new CopyOnWriteArrayList<>();
 
-    public void add(DefaultDrmSessionManager.EventListener listener) {
+    void add(DefaultDrmSessionManager.EventListener listener) {
         listeners.add(listener);
     }
 

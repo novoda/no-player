@@ -1,5 +1,9 @@
 package com.novoda.noplayer.exoplayer.forwarder;
 
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.listeners.BitrateChangedListeners;
@@ -31,19 +35,19 @@ public class ExoPlayerForwarder {
         return exoPlayerEventListener;
     }
 
-    public MediaSourceEventListener mediaSourceEventListener() {
+    public AdaptiveMediaSourceEventListener mediaSourceEventListener() {
         return mediaSourceEventListener;
     }
 
-    public ExoPlayerVideoRendererEventListener videoRendererEventListener() {
+    public VideoRendererEventListener videoRendererEventListener() {
         return videoRendererEventListener;
     }
 
-    public ExoPlayerExtractorMediaSourceListener extractorMediaSourceListener() {
+    public ExtractorMediaSource.EventListener extractorMediaSourceListener() {
         return extractorMediaSourceListener;
     }
 
-    public ExoPlayerDrmSessionEventListener drmSessionEventListener() {
+    public DefaultDrmSessionManager.EventListener drmSessionEventListener() {
         return drmSessionEventListener;
     }
 

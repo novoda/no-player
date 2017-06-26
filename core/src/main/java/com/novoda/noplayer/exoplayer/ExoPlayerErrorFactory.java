@@ -1,4 +1,4 @@
-package com.novoda.noplayer.exoplayer.forwarder;
+package com.novoda.noplayer.exoplayer;
 
 import android.media.MediaCodec;
 
@@ -15,13 +15,13 @@ import com.novoda.noplayer.exoplayer.playererror.UnknownError;
 
 import java.io.IOException;
 
-final class ExoPlayerErrorFactory {
+public final class ExoPlayerErrorFactory {
 
     private ExoPlayerErrorFactory() {
         // uninstantiable
     }
 
-    static Player.PlayerError errorFor(Exception e) {
+    public static Player.PlayerError errorFor(Exception e) {
         if (e instanceof HttpDataSource.InvalidResponseCodeException) {
             return new InvalidResponseCodeError(e);
         }
