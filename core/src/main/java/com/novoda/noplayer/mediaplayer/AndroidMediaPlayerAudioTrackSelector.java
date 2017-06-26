@@ -2,7 +2,7 @@ package com.novoda.noplayer.mediaplayer;
 
 import android.media.MediaPlayer;
 
-import com.novoda.noplayer.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerAudioTrack;
 
 import java.util.ArrayList;
 import java.util.List;

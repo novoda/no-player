@@ -1,5 +1,8 @@
 package com.novoda.noplayer;
 
+import com.novoda.noplayer.model.VideoDuration;
+import com.novoda.noplayer.model.VideoPosition;
+
 public interface PlayerState {
 
     boolean isPlaying();

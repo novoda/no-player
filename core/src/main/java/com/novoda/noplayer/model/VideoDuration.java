@@ -1,4 +1,4 @@
-package com.novoda.noplayer;
+package com.novoda.noplayer.model;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;

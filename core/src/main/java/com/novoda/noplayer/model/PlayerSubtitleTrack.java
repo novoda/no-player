@@ -1,6 +1,6 @@
-package com.novoda.noplayer;
+package com.novoda.noplayer.model;
 
-public class PlayerAudioTrack {
+public class PlayerSubtitleTrack {
 
     private final int groupIndex;
     private final int formatIndex;
@@ -10,7 +10,7 @@ public class PlayerAudioTrack {
     private final int numberOfChannels;
     private final int frequency;
 
-    public PlayerAudioTrack(int groupIndex, int formatIndex, String trackId, String language, String mimeType, int numberOfChannels, int frequency) {
+    public PlayerSubtitleTrack(int groupIndex, int formatIndex, String trackId, String language, String mimeType, int numberOfChannels, int frequency) {
         this.groupIndex = groupIndex;
         this.formatIndex = formatIndex;
         this.trackId = trackId;
@@ -53,11 +53,11 @@ public class PlayerAudioTrack {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof PlayerSubtitleTrack)) {
             return false;
         }
 
-        PlayerAudioTrack that = (PlayerAudioTrack) o;
+        PlayerSubtitleTrack that = (PlayerSubtitleTrack) o;
 
         if (groupIndex != that.groupIndex) {
             return false;
@@ -94,7 +94,7 @@ public class PlayerAudioTrack {
 
     @Override
     public String toString() {
-        return "PlayerAudioTrack{" +
+        return "PlayerSubtitleTrack{" +
                 "groupIndex=" + groupIndex +
                 ", formatIndex=" + formatIndex +
                 ", trackId='" + trackId + '\'' +

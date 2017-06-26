@@ -1,14 +1,5 @@
 package com.novoda.noplayer;
 
-import com.novoda.noplayer.listeners.BitrateChangedListeners;
-import com.novoda.noplayer.listeners.BufferStateListeners;
-import com.novoda.noplayer.listeners.CompletionListeners;
-import com.novoda.noplayer.listeners.ErrorListeners;
-import com.novoda.noplayer.listeners.InfoListeners;
-import com.novoda.noplayer.listeners.PreparedListeners;
-import com.novoda.noplayer.listeners.StateChangedListeners;
-import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
-
 public interface Listeners {
 
     void addErrorListener(Player.ErrorListener errorListener);
@@ -46,5 +37,4 @@ public interface Listeners {
     void addVideoSizeChangedListener(Player.VideoSizeChangedListener videoSizeChangedListener);
 
     void removeVideoSizeChangedListener(Player.VideoSizeChangedListener videoSizeChangedListener);
-
 }

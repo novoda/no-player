@@ -1,4 +1,4 @@
-package com.novoda.noplayer;
+package com.novoda.noplayer.model;
 
 import com.google.android.exoplayer2.text.Cue;
 
@@ -12,7 +12,7 @@ public class TextCues {
         this.cues = cues;
     }
 
-    List<Cue> cues() {
+    public List<Cue> cues() {
         return cues;
     }
 

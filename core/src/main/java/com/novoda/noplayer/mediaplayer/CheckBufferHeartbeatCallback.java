@@ -2,7 +2,7 @@ package com.novoda.noplayer.mediaplayer;
 
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.VideoPosition;
+import com.novoda.noplayer.model.VideoPosition;
 
 public class CheckBufferHeartbeatCallback implements Heart.Heartbeat.Callback<Player> {
 

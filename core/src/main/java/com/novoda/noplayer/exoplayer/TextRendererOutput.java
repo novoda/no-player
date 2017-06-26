@@ -3,7 +3,7 @@ package com.novoda.noplayer.exoplayer;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextRenderer;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.TextCues;
+import com.novoda.noplayer.model.TextCues;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.novoda.noplayer.Heart;
-import com.novoda.noplayer.LoadTimeout;
+import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.SystemClock;

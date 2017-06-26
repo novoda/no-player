@@ -3,7 +3,7 @@ package com.novoda.noplayer.mediaplayer;
 import android.media.MediaPlayer;
 
 import utils.ExceptionMatcher;
-import com.novoda.noplayer.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerAudioTrack;
 
 import java.util.Arrays;
 import java.util.Collections;
