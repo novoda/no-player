@@ -31,8 +31,8 @@ public class NoPlayerExoPlayerCreator {
         this.internalCreator = internalCreator;
     }
 
-    public Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator, boolean useSecureCodec) {
-        ExoPlayerTwoImpl player = internalCreator.create(context, drmSessionCreator, useSecureCodec);
+    public Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
+        ExoPlayerTwoImpl player = internalCreator.create(context, drmSessionCreator, downgradeSecureDecoder);
         player.initialise();
         return player;
     }
@@ -45,7 +45,7 @@ public class NoPlayerExoPlayerCreator {
             this.handler = handler;
         }
 
-        ExoPlayerTwoImpl create(Context context, DrmSessionCreator drmSessionCreator, boolean useSecureCodec) {
+        ExoPlayerTwoImpl create(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
             DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
             MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
 
@@ -81,7 +81,7 @@ public class NoPlayerExoPlayerCreator {
                     loadTimeout,
                     heart,
                     drmSessionCreator,
-                    useSecureCodec
+                    downgradeSecureDecoder
             );
         }
     }

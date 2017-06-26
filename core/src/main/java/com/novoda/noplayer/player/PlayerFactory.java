@@ -15,7 +15,7 @@ import com.novoda.utils.AndroidDeviceVersion;
 
 public class PlayerFactory {
 
-    private static final boolean USE_SECURE_CODEC = false;
+    private static final boolean DOWNGRADE_SECURE_DECODER = false;
 
     private final Context context;
     private final PrioritizedPlayerTypes prioritizedPlayerTypes;
@@ -52,25 +52,25 @@ public class PlayerFactory {
     }
 
     public Player create(DrmType drmType, DrmHandler drmHandler) {
-        return create(drmType, drmHandler, USE_SECURE_CODEC);
+        return create(drmType, drmHandler, DOWNGRADE_SECURE_DECODER);
     }
 
-    public Player create(DrmType drmType, DrmHandler drmHandler, boolean useSecureCodec) {
+    public Player create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
         for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
-                return createPlayerForType(player, drmType, drmHandler, useSecureCodec);
+                return createPlayerForType(player, drmType, drmHandler, downgradeSecureDecoder);
             }
         }
         throw UnableToCreatePlayerException.unhandledDrmType(drmType);
     }
 
-    private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler, boolean useSecureCodec) {
+    private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
         switch (playerType) {
             case MEDIA_PLAYER:
                 return noPlayerMediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
                 DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler);
-                return noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, useSecureCodec);
+                return noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, downgradeSecureDecoder);
             default:
                 throw UnableToCreatePlayerException.unhandledPlayerType(playerType);
         }

@@ -28,14 +28,14 @@ class ExoPlayerCreator {
     }
 
     @NonNull
-    public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator, ExoPlayerDrmSessionEventListener exoPlayerDrmSessionEventListener, boolean useSecureCodec) {
+    public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator, ExoPlayerDrmSessionEventListener exoPlayerDrmSessionEventListener, boolean downgradeSecureDecoder) {
         DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(exoPlayerDrmSessionEventListener);
         RenderersFactory renderersFactory = new SimpleRenderersFactory(
                 context,
                 drmSessionManager,
                 EXTENSION_RENDERER_MODE_OFF,
                 DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS,
-                new CodecSelector(useSecureCodec)
+                SecurityDowngradingCodecSelector.newInstance(downgradeSecureDecoder)
         );
 
         DefaultLoadControl loadControl = new DefaultLoadControl();
