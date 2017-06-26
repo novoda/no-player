@@ -1,5 +1,7 @@
 package com.novoda.noplayer.drm;
 
+import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 
 import java.util.Collections;
@@ -35,6 +37,7 @@ class LocalDrmSession implements FrameworkDrmSession {
         return mediaCrypto.requiresSecureDecoderComponent(mimeType);
     }
 
+    @Nullable
     @Override
     public DrmSessionException getError() {
         return NO_EXCEPTION;
