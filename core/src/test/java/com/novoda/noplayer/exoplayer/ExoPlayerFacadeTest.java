@@ -45,6 +45,7 @@ import static org.mockito.Mockito.when;
 @RunWith(Enclosed.class)
 public class ExoPlayerFacadeTest {
 
+    private static final boolean USE_SECURE_CODEC = true;
     private static final long TWO_MINUTES_IN_MILLIS = 120000;
     private static final long TEN_MINUTES_IN_MILLIS = 600000;
 
@@ -78,7 +79,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenAddsPlayerEventListener() {
 
-            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
+            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, USE_SECURE_CODEC);
 
             verify(exoPlayer).addListener(exoPlayerForwarder.exoPlayerEventListener());
         }
@@ -86,7 +87,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenSetsVideoDebugListener() {
 
-            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
+            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, USE_SECURE_CODEC);
 
             verify(exoPlayer).setVideoDebugListener(exoPlayerForwarder.videoRendererEventListener());
         }
@@ -95,7 +96,7 @@ public class ExoPlayerFacadeTest {
         public void givenMediaSource_whenLoadingVideo_thenPreparesInternalExoPlayer() {
             MediaSource mediaSource = givenMediaSource();
 
-            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
+            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, USE_SECURE_CODEC);
 
             verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
         }
@@ -191,7 +192,7 @@ public class ExoPlayerFacadeTest {
 
         private void givenPlayerIsLoaded() {
             givenMediaSource();
-            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder);
+            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, USE_SECURE_CODEC);
         }
 
         @Test
@@ -398,7 +399,7 @@ public class ExoPlayerFacadeTest {
         public void setUp() {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
-            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener)).willReturn(exoPlayer);
+            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, USE_SECURE_CODEC)).willReturn(exoPlayer);
             when(rendererTypeRequesterCreator.createfrom(exoPlayer)).thenReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
                     mediaSourceFactory,

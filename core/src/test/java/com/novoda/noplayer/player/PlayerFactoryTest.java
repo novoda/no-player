@@ -34,6 +34,7 @@ public class PlayerFactoryTest {
 
     public static abstract class Base {
 
+        static final boolean USE_SECURE_CODEC = false;
         static final StreamingModularDrm STREAMING_MODULAR_DRM = mock(StreamingModularDrm.class);
         static final DownloadedModularDrm DOWNLOADED_MODULAR_DRM = mock(DownloadedModularDrm.class);
         static final Player EXO_PLAYER = mock(Player.class);
@@ -59,7 +60,7 @@ public class PlayerFactoryTest {
         @Before
         public void setUp() {
             given(drmSessionCreatorFactory.createFor(any(DrmType.class), any(DrmHandler.class))).willReturn(drmSessionCreator);
-            given(exoPlayerCreator.createExoPlayer(context, drmSessionCreator)).willReturn(EXO_PLAYER);
+            given(exoPlayerCreator.createExoPlayer(context, drmSessionCreator, USE_SECURE_CODEC)).willReturn(EXO_PLAYER);
             given(mediaPlayerCreator.createMediaPlayer(context)).willReturn(MEDIA_PLAYER);
             playerFactory = new PlayerFactory(context, prioritizedPlayerTypes(), exoPlayerCreator, mediaPlayerCreator, drmSessionCreatorFactory);
         }

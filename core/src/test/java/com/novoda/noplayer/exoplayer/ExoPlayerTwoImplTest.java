@@ -60,6 +60,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(Enclosed.class)
 public class ExoPlayerTwoImplTest {
 
+    private static final boolean USE_SECURE_CODEC = true;
     private static final long TWO_MINUTES_IN_MILLIS = 120000;
     private static final long TEN_SECONDS = 10;
 
@@ -180,7 +181,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, ANY_CONTENT_TYPE);
 
-            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder);
+            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, USE_SECURE_CODEC);
         }
 
         @Test
@@ -188,7 +189,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder);
+            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, USE_SECURE_CODEC);
         }
 
         @Test
@@ -573,7 +574,8 @@ public class ExoPlayerTwoImplTest {
                     forwarder,
                     loadTimeout,
                     heart,
-                    drmSessionCreator
+                    drmSessionCreator,
+                    USE_SECURE_CODEC
             );
         }
     }
