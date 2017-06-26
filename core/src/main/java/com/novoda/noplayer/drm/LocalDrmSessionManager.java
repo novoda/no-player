@@ -25,16 +25,11 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
     private final UUID drmScheme;
     private final Handler handler;
 
-    static LocalDrmSessionManager newInstance(KeySetId keySetIdToRestore, ExoMediaDrm<FrameworkMediaCrypto> mediaDrm, DefaultDrmSessionManager.EventListener eventListener, UUID drmScheme) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        return new LocalDrmSessionManager(keySetIdToRestore, mediaDrm, eventListener, drmScheme, handler);
-    }
-
-    private LocalDrmSessionManager(KeySetId keySetIdToRestore,
-                                   ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
-                                   DefaultDrmSessionManager.EventListener eventListener,
-                                   UUID drmScheme,
-                                   Handler handler) {
+    LocalDrmSessionManager(KeySetId keySetIdToRestore,
+                           ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
+                           DefaultDrmSessionManager.EventListener eventListener,
+                           UUID drmScheme,
+                           Handler handler) {
         this.keySetIdToRestore = keySetIdToRestore;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;

@@ -2,7 +2,7 @@ package com.novoda.noplayer.drm.provision;
 
 import android.os.Build;
 
-class ProvisioningCapabilities {
+public class ProvisioningCapabilities {
 
     private final int deviceOsVersion;
 
@@ -10,11 +10,11 @@ class ProvisioningCapabilities {
         return new ProvisioningCapabilities(Build.VERSION.SDK_INT);
     }
 
-    ProvisioningCapabilities(int deviceOsVersion) {
+    private ProvisioningCapabilities(int deviceOsVersion) {
         this.deviceOsVersion = deviceOsVersion;
     }
 
-    public boolean canProvision() {
+    boolean canProvision() {
         return deviceOsVersion >= Build.VERSION_CODES.JELLY_BEAN_MR2;
     }
 }

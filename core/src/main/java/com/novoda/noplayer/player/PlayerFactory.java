@@ -1,6 +1,8 @@
 package com.novoda.noplayer.player;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmHandler;
@@ -29,7 +31,10 @@ public class PlayerFactory {
                 prioritizedPlayerTypes,
                 ExoPlayerCreator.newInstance(),
                 MediaPlayerCreator.newInstance(),
-                new DrmSessionCreatorFactory(AndroidDeviceVersion.newInstance())
+                new DrmSessionCreatorFactory(
+                        AndroidDeviceVersion.newInstance(),
+                        new Handler(Looper.getMainLooper())
+                )
         );
     }
 

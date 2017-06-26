@@ -12,13 +12,7 @@ public class ProvisionExecutor {
     private final HttpPoster httpPoster;
     private final ProvisioningCapabilities capabilities;
 
-    public static ProvisionExecutor newInstance() {
-        HttpPoster httpPoster = new HttpPoster();
-        ProvisioningCapabilities capabilities = ProvisioningCapabilities.newInstance();
-        return new ProvisionExecutor(httpPoster, capabilities);
-    }
-
-    ProvisionExecutor(HttpPoster httpPoster, ProvisioningCapabilities capabilities) {
+    public ProvisionExecutor(HttpPoster httpPoster, ProvisioningCapabilities capabilities) {
         this.httpPoster = httpPoster;
         this.capabilities = capabilities;
     }

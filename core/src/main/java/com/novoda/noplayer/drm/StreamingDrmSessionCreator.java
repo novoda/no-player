@@ -1,7 +1,6 @@
 package com.novoda.noplayer.drm;
 
 import android.os.Handler;
-import android.os.Looper;
 
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -19,12 +18,7 @@ class StreamingDrmSessionCreator implements DrmSessionCreator {
     private final FrameworkMediaDrmCreator frameworkMediaDrmCreator;
     private final Handler handler;
 
-    static StreamingDrmSessionCreator newInstance(MediaDrmCallback mediaDrmCallback, FrameworkMediaDrmCreator frameworkMediaDrmCreator) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        return new StreamingDrmSessionCreator(mediaDrmCallback, frameworkMediaDrmCreator, handler);
-    }
-
-    private StreamingDrmSessionCreator(MediaDrmCallback mediaDrmCallback, FrameworkMediaDrmCreator frameworkMediaDrmCreator, Handler handler) {
+    StreamingDrmSessionCreator(MediaDrmCallback mediaDrmCallback, FrameworkMediaDrmCreator frameworkMediaDrmCreator, Handler handler) {
         this.mediaDrmCallback = mediaDrmCallback;
         this.frameworkMediaDrmCreator = frameworkMediaDrmCreator;
         this.handler = handler;
