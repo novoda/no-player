@@ -4,9 +4,10 @@ import com.novoda.noplayer.listeners.BufferStateListeners;
 import com.novoda.noplayer.mediaplayer.CheckBufferHeartbeatCallback;
 
 class BufferHeartbeatListener implements CheckBufferHeartbeatCallback.BufferListener {
+
     private final BufferStateListeners bufferStateListeners;
 
-    public BufferHeartbeatListener(BufferStateListeners bufferStateListeners) {
+    BufferHeartbeatListener(BufferStateListeners bufferStateListeners) {
         this.bufferStateListeners = bufferStateListeners;
     }
 

@@ -5,9 +5,10 @@ import android.media.MediaPlayer;
 import com.novoda.noplayer.listeners.BufferStateListeners;
 
 class BufferOnPreparedListener implements MediaPlayer.OnPreparedListener {
+
     private final BufferStateListeners bufferStateListeners;
 
-    public BufferOnPreparedListener(BufferStateListeners bufferStateListeners) {
+    BufferOnPreparedListener(BufferStateListeners bufferStateListeners) {
         this.bufferStateListeners = bufferStateListeners;
     }
 

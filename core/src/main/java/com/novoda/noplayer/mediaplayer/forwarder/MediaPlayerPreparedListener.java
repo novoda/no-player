@@ -5,11 +5,11 @@ import android.media.MediaPlayer;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class MediaPlayerPreparedListener implements MediaPlayer.OnPreparedListener {
+class MediaPlayerPreparedListener implements MediaPlayer.OnPreparedListener {
 
     private final List<MediaPlayer.OnPreparedListener> listeners = new CopyOnWriteArrayList<>();
 
-    public void add(MediaPlayer.OnPreparedListener listener) {
+    void add(MediaPlayer.OnPreparedListener listener) {
         listeners.add(listener);
     }
 

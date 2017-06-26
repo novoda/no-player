@@ -10,7 +10,7 @@ class VideoSizeChangedInfoForwarder implements MediaPlayer.OnVideoSizeChangedLis
 
     private final InfoListeners infoListeners;
 
-    public VideoSizeChangedInfoForwarder(InfoListeners infoListeners) {
+    VideoSizeChangedInfoForwarder(InfoListeners infoListeners) {
         this.infoListeners = infoListeners;
     }
 
