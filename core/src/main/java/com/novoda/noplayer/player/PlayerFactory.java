@@ -10,8 +10,7 @@ import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.exoplayer.NoPlayerExoPlayerCreator;
-import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
-import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
+import com.novoda.noplayer.mediaplayer.NoPlayerMediaPlayerCreator;
 import com.novoda.utils.AndroidDeviceVersion;
 
 public class PlayerFactory {
@@ -29,7 +28,7 @@ public class PlayerFactory {
                 context,
                 prioritizedPlayerTypes,
                 NoPlayerExoPlayerCreator.newInstance(new Handler(Looper.getMainLooper())),
-                NoPlayerMediaPlayerCreator.newInstance(),
+                NoPlayerMediaPlayerCreator.newInstance(new Handler(Looper.getMainLooper())),
                 new DrmSessionCreatorFactory(
                         AndroidDeviceVersion.newInstance(),
                         new Handler(Looper.getMainLooper())
@@ -107,26 +106,6 @@ public class PlayerFactory {
 
         UnableToCreatePlayerException(String reason) {
             super(reason);
-        }
-    }
-
-    static class NoPlayerMediaPlayerCreator {
-
-        private final AndroidMediaPlayerImplFactory factory;
-
-        static NoPlayerMediaPlayerCreator newInstance() {
-            AndroidMediaPlayerImplFactory factory = new AndroidMediaPlayerImplFactory();
-            return new NoPlayerMediaPlayerCreator(factory);
-        }
-
-        NoPlayerMediaPlayerCreator(AndroidMediaPlayerImplFactory factory) {
-            this.factory = factory;
-        }
-
-        Player createMediaPlayer(Context context) {
-            AndroidMediaPlayerImpl player = factory.create(context);
-            player.initialise();
-            return player;
         }
     }
 }

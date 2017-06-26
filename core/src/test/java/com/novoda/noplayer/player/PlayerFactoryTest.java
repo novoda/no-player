@@ -10,8 +10,7 @@ import com.novoda.noplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.exoplayer.NoPlayerExoPlayerCreator;
-import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
-import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
+import com.novoda.noplayer.mediaplayer.NoPlayerMediaPlayerCreator;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -28,7 +27,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @RunWith(Enclosed.class)
 public class PlayerFactoryTest {
@@ -50,7 +48,7 @@ public class PlayerFactoryTest {
         @Mock
         NoPlayerExoPlayerCreator noPlayerExoPlayerCreator;
         @Mock
-        PlayerFactory.NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator;
+        NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator;
         @Mock
         DrmSessionCreator drmSessionCreator;
         @Mock
@@ -152,34 +150,6 @@ public class PlayerFactoryTest {
             Player player = playerFactory.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
-        }
-    }
-
-    public static class NoPlayerMediaPlayerCreatorTest {
-
-        @Rule
-        public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-        @Mock
-        AndroidMediaPlayerImplFactory factory;
-        @Mock
-        AndroidMediaPlayerImpl player;
-        @Mock
-        Context context;
-
-        private PlayerFactory.NoPlayerMediaPlayerCreator creator;
-
-        @Before
-        public void setUp() {
-            creator = new PlayerFactory.NoPlayerMediaPlayerCreator(factory);
-            given(factory.create(context)).willReturn(player);
-        }
-
-        @Test
-        public void whenCreatingMediaPlayer_thenInitialisesPlayer() {
-            creator.createMediaPlayer(context);
-
-            verify(player).initialise();
         }
     }
 }
