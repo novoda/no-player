@@ -9,8 +9,7 @@ import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.drm.DrmType;
-import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
-import com.novoda.noplayer.exoplayer.ExoPlayerTwoImplFactory;
+import com.novoda.noplayer.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
 import com.novoda.utils.AndroidDeviceVersion;
@@ -21,16 +20,16 @@ public class PlayerFactory {
 
     private final Context context;
     private final PrioritizedPlayerTypes prioritizedPlayerTypes;
-    private final ExoPlayerCreator exoPlayerCreator;
-    private final MediaPlayerCreator mediaPlayerCreator;
+    private final NoPlayerExoPlayerCreator noPlayerExoPlayerCreator;
+    private final NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator;
     private final DrmSessionCreatorFactory drmSessionCreatorFactory;
 
     public PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
         this(
                 context,
                 prioritizedPlayerTypes,
-                ExoPlayerCreator.newInstance(),
-                MediaPlayerCreator.newInstance(),
+                NoPlayerExoPlayerCreator.newInstance(new Handler(Looper.getMainLooper())),
+                NoPlayerMediaPlayerCreator.newInstance(),
                 new DrmSessionCreatorFactory(
                         AndroidDeviceVersion.newInstance(),
                         new Handler(Looper.getMainLooper())
@@ -40,13 +39,13 @@ public class PlayerFactory {
 
     PlayerFactory(Context context,
                   PrioritizedPlayerTypes prioritizedPlayerTypes,
-                  ExoPlayerCreator exoPlayerCreator,
-                  MediaPlayerCreator mediaPlayerCreator,
+                  NoPlayerExoPlayerCreator noPlayerExoPlayerCreator,
+                  NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator,
                   DrmSessionCreatorFactory drmSessionCreatorFactory) {
         this.context = context;
         this.prioritizedPlayerTypes = prioritizedPlayerTypes;
-        this.exoPlayerCreator = exoPlayerCreator;
-        this.mediaPlayerCreator = mediaPlayerCreator;
+        this.noPlayerExoPlayerCreator = noPlayerExoPlayerCreator;
+        this.noPlayerMediaPlayerCreator = noPlayerMediaPlayerCreator;
         this.drmSessionCreatorFactory = drmSessionCreatorFactory;
     }
 
@@ -70,10 +69,10 @@ public class PlayerFactory {
     private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler, boolean useSecureCodec) {
         switch (playerType) {
             case MEDIA_PLAYER:
-                return mediaPlayerCreator.createMediaPlayer(context);
+                return noPlayerMediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
                 DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler);
-                return exoPlayerCreator.createExoPlayer(context, drmSessionCreator, useSecureCodec);
+                return noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, useSecureCodec);
             default:
                 throw UnableToCreatePlayerException.unhandledPlayerType(playerType);
         }
@@ -111,36 +110,16 @@ public class PlayerFactory {
         }
     }
 
-    static class ExoPlayerCreator {
-
-        private final ExoPlayerTwoImplFactory factory;
-
-        static ExoPlayerCreator newInstance() {
-            ExoPlayerTwoImplFactory factory = new ExoPlayerTwoImplFactory();
-            return new ExoPlayerCreator(factory);
-        }
-
-        ExoPlayerCreator(ExoPlayerTwoImplFactory factory) {
-            this.factory = factory;
-        }
-
-        Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator, boolean useSecureCodec) {
-            ExoPlayerTwoImpl player = factory.create(context, drmSessionCreator, useSecureCodec);
-            player.initialise();
-            return player;
-        }
-    }
-
-    static class MediaPlayerCreator {
+    static class NoPlayerMediaPlayerCreator {
 
         private final AndroidMediaPlayerImplFactory factory;
 
-        static MediaPlayerCreator newInstance() {
+        static NoPlayerMediaPlayerCreator newInstance() {
             AndroidMediaPlayerImplFactory factory = new AndroidMediaPlayerImplFactory();
-            return new MediaPlayerCreator(factory);
+            return new NoPlayerMediaPlayerCreator(factory);
         }
 
-        MediaPlayerCreator(AndroidMediaPlayerImplFactory factory) {
+        NoPlayerMediaPlayerCreator(AndroidMediaPlayerImplFactory factory) {
             this.factory = factory;
         }
 

@@ -1,7 +1,6 @@
 package com.novoda.noplayer;
 
 import android.os.Handler;
-import android.os.Looper;
 
 public class Heart {
 
@@ -14,12 +13,11 @@ public class Heart {
 
     private boolean beating;
 
-    public static Heart newInstance() {
-        Handler handler = new Handler(Looper.getMainLooper());
+    public static Heart newInstance(Handler handler) {
         return new Heart(handler, HEART_BEAT_FREQUENCY_IN_MILLIS);
     }
 
-    Heart(Handler handler, long heartbeatFrequencyInMillis) {
+    private Heart(Handler handler, long heartbeatFrequencyInMillis) {
         this.handler = handler;
         this.heartbeatFrequency = heartbeatFrequencyInMillis;
     }

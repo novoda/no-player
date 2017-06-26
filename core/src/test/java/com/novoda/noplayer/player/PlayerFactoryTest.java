@@ -9,6 +9,7 @@ import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
 import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
 
@@ -34,7 +35,7 @@ public class PlayerFactoryTest {
 
     public static abstract class Base {
 
-        static final boolean USE_SECURE_CODEC = true;
+        static final boolean USE_SECURE_CODEC = false;
         static final StreamingModularDrm STREAMING_MODULAR_DRM = mock(StreamingModularDrm.class);
         static final DownloadedModularDrm DOWNLOADED_MODULAR_DRM = mock(DownloadedModularDrm.class);
         static final Player EXO_PLAYER = mock(Player.class);
@@ -47,9 +48,9 @@ public class PlayerFactoryTest {
         Context context;
 
         @Mock
-        PlayerFactory.ExoPlayerCreator exoPlayerCreator;
+        NoPlayerExoPlayerCreator noPlayerExoPlayerCreator;
         @Mock
-        PlayerFactory.MediaPlayerCreator mediaPlayerCreator;
+        PlayerFactory.NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator;
         @Mock
         DrmSessionCreator drmSessionCreator;
         @Mock
@@ -60,9 +61,9 @@ public class PlayerFactoryTest {
         @Before
         public void setUp() {
             given(drmSessionCreatorFactory.createFor(any(DrmType.class), any(DrmHandler.class))).willReturn(drmSessionCreator);
-            given(exoPlayerCreator.createExoPlayer(context, drmSessionCreator, USE_SECURE_CODEC)).willReturn(EXO_PLAYER);
-            given(mediaPlayerCreator.createMediaPlayer(context)).willReturn(MEDIA_PLAYER);
-            playerFactory = new PlayerFactory(context, prioritizedPlayerTypes(), exoPlayerCreator, mediaPlayerCreator, drmSessionCreatorFactory);
+            given(noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, USE_SECURE_CODEC)).willReturn(EXO_PLAYER);
+            given(noPlayerMediaPlayerCreator.createMediaPlayer(context)).willReturn(MEDIA_PLAYER);
+            playerFactory = new PlayerFactory(context, prioritizedPlayerTypes(), noPlayerExoPlayerCreator, noPlayerMediaPlayerCreator, drmSessionCreatorFactory);
         }
 
         abstract PrioritizedPlayerTypes prioritizedPlayerTypes();
@@ -154,7 +155,7 @@ public class PlayerFactoryTest {
         }
     }
 
-    public static class MediaPlayerCreatorTest {
+    public static class NoPlayerMediaPlayerCreatorTest {
 
         @Rule
         public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -166,12 +167,12 @@ public class PlayerFactoryTest {
         @Mock
         Context context;
 
-        private PlayerFactory.MediaPlayerCreator creator;
+        private PlayerFactory.NoPlayerMediaPlayerCreator creator;
 
         @Before
         public void setUp() {
-            creator = new PlayerFactory.MediaPlayerCreator(factory);
-            given(factory.create(any(Context.class))).willReturn(player);
+            creator = new PlayerFactory.NoPlayerMediaPlayerCreator(factory);
+            given(factory.create(context)).willReturn(player);
         }
 
         @Test
