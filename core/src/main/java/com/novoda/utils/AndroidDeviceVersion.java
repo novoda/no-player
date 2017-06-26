@@ -10,7 +10,7 @@ public class AndroidDeviceVersion {
         return new AndroidDeviceVersion(Build.VERSION.SDK_INT);
     }
 
-    private AndroidDeviceVersion(int sdkInt) {
+    public AndroidDeviceVersion(int sdkInt) {
         this.sdkInt = sdkInt;
     }
 
