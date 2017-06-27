@@ -33,6 +33,6 @@ final class ExoPlayerCueMapper {
             );
             noPlayerCues.add(noPlayerCue);
         }
-        return new TextCues(noPlayerCues);
+        return TextCues.of(noPlayerCues);
     }
 }
