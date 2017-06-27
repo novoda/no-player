@@ -7,7 +7,6 @@ import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.exoplayer.playererror.ExoPlayerErrorFactory;
 import com.novoda.noplayer.listeners.ErrorListeners;
 
 class PlayerOnErrorForwarder implements ExoPlayer.EventListener {
@@ -22,7 +21,7 @@ class PlayerOnErrorForwarder implements ExoPlayer.EventListener {
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-        Player.PlayerError playerError = ExoPlayerErrorFactory.errorFor(error);
+        Player.PlayerError playerError = ExoPlayerErrorMapper.errorFor(error);
         errorListeners.onError(player, playerError);
     }
 

@@ -1,16 +1,16 @@
-package com.novoda.noplayer.drm;
+package com.novoda.noplayer.exoplayer.drm;
 
 import java.util.Arrays;
 
-public class SessionId {
+class SessionId {
 
     private final byte[] sessionId;
 
-    public static SessionId absent() {
+    static SessionId absent() {
         return new SessionId(new byte[0]);
     }
 
-    public static SessionId of(byte[] sessionId) {
+    static SessionId of(byte[] sessionId) {
         return new SessionId(Arrays.copyOf(sessionId, sessionId.length));
     }
 
@@ -18,7 +18,7 @@ public class SessionId {
         this.sessionId = sessionId;
     }
 
-    public byte[] asBytes() {
+    byte[] asBytes() {
         return sessionId;
     }
 

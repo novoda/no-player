@@ -16,7 +16,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ProvisionExecutorTest {
+public class ProvisionExecutorImplTest {
 
     private static final String PROVISION_URL = "http://provisionurl.com";
     private static final byte[] PROVISION_DATA = "provision-payload".getBytes();
@@ -25,25 +25,25 @@ public class ProvisionExecutorTest {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
-    private ProvisionExecutor provisionExecutor;
+    private ProvisionExecutorImpl provisionExecutorImpl;
     private ArgumentCaptor<String> provisionUrlCaptor;
 
     @Mock
-    private HttpPoster httpPoster;
+    private HttpUrlConnectionPoster httpPoster;
     @Mock
     private ProvisioningCapabilities capabilities;
 
     @Before
     public void setUp() {
         provisionUrlCaptor = ArgumentCaptor.forClass(String.class);
-        provisionExecutor = new ProvisionExecutor(httpPoster, capabilities);
+        provisionExecutorImpl = new ProvisionExecutorImpl(httpPoster, capabilities);
     }
 
     @Test(expected = UnableToProvisionException.class)
     public void givenNonCapableProvisionCapabilities_whenProvisioning_thenAnUnableToProvisionExceptionIsThrown() throws IOException, UnableToProvisionException {
         when(capabilities.canProvision()).thenReturn(false);
 
-        provisionExecutor.execute(A_PROVISION_REQUEST);
+        provisionExecutorImpl.execute(A_PROVISION_REQUEST);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ProvisionExecutorTest {
         when(capabilities.canProvision()).thenReturn(true);
         String expectedProvisionUrl = PROVISION_URL + "&signedRequest=" + new String(PROVISION_DATA);
 
-        provisionExecutor.execute(A_PROVISION_REQUEST);
+        provisionExecutorImpl.execute(A_PROVISION_REQUEST);
         verify(httpPoster).post(provisionUrlCaptor.capture());
 
         assertThat(provisionUrlCaptor.getValue()).isEqualTo(expectedProvisionUrl);
