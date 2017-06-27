@@ -15,6 +15,18 @@ public class TextCues {
         this.cues = cues;
     }
 
+    public int size() {
+        return cues.size();
+    }
+
+    public boolean isEmpty() {
+        return cues.isEmpty();
+    }
+
+    public NoPlayerCue get(int position) {
+        return cues.get(position);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -39,17 +51,5 @@ public class TextCues {
         return "TextCues{" +
                 "cues=" + cues +
                 '}';
-    }
-
-    public int size() {
-        return cues.size();
-    }
-
-    public boolean isEmpty() {
-        return cues.isEmpty();
-    }
-
-    public NoPlayerCue get(int position) {
-        return cues.get(position);
     }
 }
