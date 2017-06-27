@@ -8,18 +8,18 @@ import android.view.SurfaceHolder;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Listeners;
-import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
-import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
+import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.model.LoadTimeout;
+import com.novoda.noplayer.model.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
-import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.Collections;
@@ -260,17 +260,11 @@ class AndroidMediaPlayerImpl implements Player {
         buggyVideoDriverPreventer.clear(playerView.getContainerView());
     }
 
-    /**
-     * @return Whether the selection was successful
-     */
     @Override
     public boolean selectAudioTrack(PlayerAudioTrack audioTrack) {
         return mediaPlayer.selectAudioTrack(audioTrack);
     }
 
-    /**
-     * @return Whether the selection was successful
-     */
     @Override
     public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
         SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());

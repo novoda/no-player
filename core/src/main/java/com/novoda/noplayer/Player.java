@@ -14,38 +14,121 @@ import java.util.Map;
 
 public interface Player extends PlayerState {
 
+    /**
+     * Plays content of a prepared {@link Player.PreparedListener} {@link Player}.
+     */
     void play();
 
+    /**
+     * Plays content of a prepared {@link Player.PreparedListener} {@link Player} at a position.
+     *
+     * @param position to start playing content from.
+     */
     void play(VideoPosition position);
 
+    /**
+     * Pauses content of a {@link Player}.
+     */
     void pause();
 
+    /**
+     * Seeks content of a prepared {@link Player.PreparedListener} {@link Player} to a given position.
+     * Will not cause content to play if not already playing.
+     *
+     * @param position to seek content to.
+     */
     void seekTo(VideoPosition position);
 
+    /**
+     * Stops playback of content and then requires call to {@link Player#loadVideo(Uri, ContentType)} to continue playback.
+     */
     void stop();
 
+    /**
+     * Stops playback of content and drops all internal resources. The instance of {@link Player} should not be
+     * used after calling {@link Player#release()}.
+     */
     void release();
 
+    /**
+     * Loads the video content and triggers the {@link Player.PreparedListener}.
+     *
+     * @param uri         link to the content.
+     * @param contentType format of the content.
+     */
     void loadVideo(Uri uri, ContentType contentType);
 
+    /**
+     * Loads the video content and triggers the {@link Player.PreparedListener}.
+     *
+     * @param uri                 link to the content.
+     * @param contentType         format of the content.
+     * @param timeout             amount of time to wait before triggering {@link LoadTimeoutCallback}.
+     * @param loadTimeoutCallback callback when loading has hit the timeout.
+     */
     void loadVideoWithTimeout(Uri uri, ContentType contentType, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback);
 
+    /**
+     * Supplies information about the underlying player.
+     *
+     * @return {@link PlayerInformation}.
+     */
     PlayerInformation getPlayerInformation();
 
+    /**
+     * Attaches a given {@link PlayerView} to the {@link Player}.
+     *
+     * @param playerView for displaying video content.
+     */
     void attach(PlayerView playerView);
 
+    /**
+     * Detaches a given {@link PlayerView} from the {@link Player}.
+     *
+     * @param playerView for displaying video content.
+     */
     void detach(PlayerView playerView);
 
-    boolean selectAudioTrack(PlayerAudioTrack audioTrack);
-
-    boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack);
-
-    void hideSubtitleTrack();
-
+    /**
+     * Retrieves all of the available {@link PlayerAudioTrack} of a prepared {@link Player.PreparedListener} {@link Player}.
+     *
+     * @return A list of available {@link PlayerAudioTrack}.
+     */
     List<PlayerAudioTrack> getAudioTracks();
 
+    /**
+     * Selects a given {@link PlayerAudioTrack}.
+     *
+     * @param audioTrack the audio track to select.
+     * @return whether the selection was successful.
+     */
+    boolean selectAudioTrack(PlayerAudioTrack audioTrack);
+
+    /**
+     * Retrieves all of the available {@link PlayerSubtitleTrack} of a prepared {@link Player.PreparedListener} {@link Player}.
+     *
+     * @return A list of available {@link PlayerSubtitleTrack}.
+     */
     List<PlayerSubtitleTrack> getSubtitleTracks();
 
+    /**
+     * Selects a given {@link PlayerSubtitleTrack}.
+     *
+     * @param subtitleTrack the subtitle track to select.
+     * @return whether the selection was successful.
+     */
+    boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack);
+
+    /**
+     * Clear and hide the subtitles.
+     */
+    void hideSubtitleTrack();
+
+    /**
+     * Retrieves a holder, which allows you to add and remove listeners to the {@link Player}.
+     *
+     * @return {@link Listeners} holder.
+     */
     Listeners getListeners();
 
     interface PlayerError {
