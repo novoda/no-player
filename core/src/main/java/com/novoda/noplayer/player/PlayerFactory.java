@@ -6,10 +6,10 @@ import android.os.Looper;
 
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmHandler;
-import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
-import com.novoda.noplayer.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.exoplayer.NoPlayerExoPlayerCreator;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.mediaplayer.NoPlayerMediaPlayerCreator;
 import com.novoda.utils.AndroidDeviceVersion;
 
@@ -73,38 +73,6 @@ public class PlayerFactory {
                 return noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, downgradeSecureDecoder);
             default:
                 throw UnableToCreatePlayerException.unhandledPlayerType(playerType);
-        }
-    }
-
-    public static class UnableToCreatePlayerException extends RuntimeException {
-
-        static UnableToCreatePlayerException unhandledDrmType(DrmType drmType) {
-            return new UnableToCreatePlayerException("Unhandled DrmType: " + drmType);
-        }
-
-        public static UnableToCreatePlayerException noDrmHandlerFor(DrmType drmType) {
-            return new UnableToCreatePlayerException("No DrmHandler for DrmType: " + drmType);
-        }
-
-        static UnableToCreatePlayerException unhandledPlayerType(PlayerType playerType) {
-            return new UnableToCreatePlayerException("Unhandled player type: " + playerType.name());
-        }
-
-        public static UnableToCreatePlayerException deviceDoesNotMeetTargetApiException(DrmType drmType,
-                                                                                        int targetApiLevel,
-                                                                                        AndroidDeviceVersion actualApiLevel) {
-            return new UnableToCreatePlayerException(
-                    "Device must be target: "
-                            + targetApiLevel
-                            + " but was: "
-                            + actualApiLevel.sdkInt()
-                            + " for DRM type: "
-                            + drmType.name()
-            );
-        }
-
-        UnableToCreatePlayerException(String reason) {
-            super(reason);
         }
     }
 }

@@ -10,7 +10,7 @@ import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.drm.provision.HttpPoster;
 import com.novoda.noplayer.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.drm.provision.ProvisioningCapabilities;
-import com.novoda.noplayer.player.PlayerFactory;
+import com.novoda.noplayer.player.UnableToCreatePlayerException;
 import com.novoda.utils.AndroidDeviceVersion;
 
 public class DrmSessionCreatorFactory {
@@ -36,7 +36,7 @@ public class DrmSessionCreatorFactory {
                 assertThatApiLevelIsJellyBeanEighteenOrAbove(drmType);
                 return createModularDownload((DownloadedModularDrm) drmHandler);
             default:
-                throw PlayerFactory.UnableToCreatePlayerException.noDrmHandlerFor(drmType);
+                throw UnableToCreatePlayerException.noDrmHandlerFor(drmType);
         }
     }
 
@@ -44,7 +44,7 @@ public class DrmSessionCreatorFactory {
         if (androidDeviceVersion.isJellyBeanEighteenOrAbove()) {
             return;
         }
-        throw PlayerFactory.UnableToCreatePlayerException.deviceDoesNotMeetTargetApiException(
+        throw UnableToCreatePlayerException.deviceDoesNotMeetTargetApiException(
                 drmType,
                 Build.VERSION_CODES.JELLY_BEAN_MR2,
                 androidDeviceVersion
