@@ -15,27 +15,31 @@ import java.util.Map;
 public interface Player extends PlayerState {
 
     /**
-     * Plays content of a prepared {@link Player.PreparedListener} {@link Player}.
+     * Plays content of a prepared Player.
+     *
+     * @see Player.PreparedListener
      */
     void play();
 
     /**
-     * Plays content of a prepared {@link Player.PreparedListener} {@link Player} at a position.
+     * Plays content of a prepared Player at a position.
      *
      * @param position to start playing content from.
+     * @see Player.PreparedListener
      */
     void play(VideoPosition position);
 
     /**
-     * Pauses content of a {@link Player}.
+     * Pauses content of a Player.
      */
     void pause();
 
     /**
-     * Seeks content of a prepared {@link Player.PreparedListener} {@link Player} to a given position.
+     * Seeks content of a prepared Player to a given position.
      * Will not cause content to play if not already playing.
      *
      * @param position to seek content to.
+     * @see Player.PreparedListener
      */
     void seekTo(VideoPosition position);
 
@@ -45,8 +49,8 @@ public interface Player extends PlayerState {
     void stop();
 
     /**
-     * Stops playback of content and drops all internal resources. The instance of {@link Player} should not be
-     * used after calling {@link Player#release()}.
+     * Stops playback of content and drops all internal resources. The instance of Player should not be
+     * used after calling release.
      */
     void release();
 
@@ -76,23 +80,24 @@ public interface Player extends PlayerState {
     PlayerInformation getPlayerInformation();
 
     /**
-     * Attaches a given {@link PlayerView} to the {@link Player}.
+     * Attaches a given {@link PlayerView} to the Player.
      *
      * @param playerView for displaying video content.
      */
     void attach(PlayerView playerView);
 
     /**
-     * Detaches a given {@link PlayerView} from the {@link Player}.
+     * Detaches a given {@link PlayerView} from the Player.
      *
      * @param playerView for displaying video content.
      */
     void detach(PlayerView playerView);
 
     /**
-     * Retrieves all of the available {@link PlayerAudioTrack} of a prepared {@link Player.PreparedListener} {@link Player}.
+     * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player.
      *
      * @return A list of available {@link PlayerAudioTrack}.
+     * @see Player.PreparedListener
      */
     List<PlayerAudioTrack> getAudioTracks();
 
@@ -105,9 +110,10 @@ public interface Player extends PlayerState {
     boolean selectAudioTrack(PlayerAudioTrack audioTrack);
 
     /**
-     * Retrieves all of the available {@link PlayerSubtitleTrack} of a prepared {@link Player.PreparedListener} {@link Player}.
+     * Retrieves all of the available {@link PlayerSubtitleTrack} of a prepared Player.
      *
      * @return A list of available {@link PlayerSubtitleTrack}.
+     * @see Player.PreparedListener
      */
     List<PlayerSubtitleTrack> getSubtitleTracks();
 
@@ -125,7 +131,7 @@ public interface Player extends PlayerState {
     void hideSubtitleTrack();
 
     /**
-     * Retrieves a holder, which allows you to add and remove listeners to the {@link Player}.
+     * Retrieves a holder, which allows you to add and remove listeners to on the Player.
      *
      * @return {@link Listeners} holder.
      */
