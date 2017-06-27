@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 
 import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
-import com.novoda.noplayer.drm.SessionId;
 
 import java.util.Map;
 
