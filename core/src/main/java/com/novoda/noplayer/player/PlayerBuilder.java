@@ -30,40 +30,44 @@ public class PlayerBuilder {
     private boolean downgradeSecureDecoder = false;
 
     /**
-     * Sets {@link PlayerBuilder} to build a {@link Player} which supports Widevine classic DRM.
+     * Sets {@link PlayerBuilder} to build a Player which supports Widevine classic DRM.
      *
      * @return {@link PlayerBuilder}
+     * @see Player
      */
     public PlayerBuilder withWidevineClassicDrm() {
         return withDrm(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM);
     }
 
     /**
-     * Sets {@link PlayerBuilder} to build a {@link Player} which supports Widevine modular streaming DRM.
+     * Sets {@link PlayerBuilder} to build a Player which supports Widevine modular streaming DRM.
      *
      * @param streamingModularDrm Implementation of {@link StreamingModularDrm}.
      * @return {@link PlayerBuilder}
+     * @see Player
      */
     public PlayerBuilder withWidevineModularStreamingDrm(StreamingModularDrm streamingModularDrm) {
         return withDrm(DrmType.WIDEVINE_MODULAR_STREAM, streamingModularDrm);
     }
 
     /**
-     * Sets {@link PlayerBuilder} to build a {@link Player} which supports Widevine modular download DRM.
+     * Sets {@link PlayerBuilder} to build a Player which supports Widevine modular download DRM.
      *
      * @param downloadedModularDrm Implementation of {@link DownloadedModularDrm}.
      * @return {@link PlayerBuilder}
+     * @see Player
      */
     public PlayerBuilder withWidevineModularDownloadDrm(DownloadedModularDrm downloadedModularDrm) {
         return withDrm(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm);
     }
 
     /**
-     * Sets {@link PlayerBuilder} to build a {@link Player} which supports the specified parameters.
+     * Sets {@link PlayerBuilder} to build a Player which supports the specified parameters.
      *
      * @param drmType    {@link DrmType}
      * @param drmHandler {@link DrmHandler}
      * @return {@link PlayerBuilder}
+     * @see Player
      */
     public PlayerBuilder withDrm(DrmType drmType, DrmHandler drmHandler) {
         this.drmType = drmType;
@@ -72,11 +76,12 @@ public class PlayerBuilder {
     }
 
     /**
-     * Sets {@link PlayerBuilder} to build a {@link Player} which will prioritise the underlying player when
+     * Sets {@link PlayerBuilder} to build a Player which will prioritise the underlying player when
      * multiple underlying players share the same features.
      *
      * @param playerTypes Priority order of {@link PlayerType} with the first being the highest.
      * @return {@link PlayerBuilder}
+     * @see Player
      */
     public PlayerBuilder withPriority(PlayerType playerType, PlayerType... playerTypes) {
         List<PlayerType> types = new ArrayList<>();
@@ -98,11 +103,12 @@ public class PlayerBuilder {
     }
 
     /**
-     * Builds a new {@link Player} instance.
+     * Builds a new Player instance.
      *
      * @param context
-     * @return {@link Player}
+     * @return a Player instance.
      * @throws UnableToCreatePlayerException thrown when the configuration is not supported and there is no way to recover.
+     * @see Player
      */
     public Player build(Context context) throws UnableToCreatePlayerException {
         Handler handler = new Handler(Looper.getMainLooper());
