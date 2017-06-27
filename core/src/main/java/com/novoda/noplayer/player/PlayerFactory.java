@@ -1,8 +1,6 @@
 package com.novoda.noplayer.player;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmHandler;
@@ -11,29 +9,14 @@ import com.novoda.noplayer.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.mediaplayer.NoPlayerMediaPlayerCreator;
-import com.novoda.utils.AndroidDeviceVersion;
 
-public class PlayerFactory {
-
-    private static final boolean DOWNGRADE_SECURE_DECODER = false;
+class PlayerFactory {
 
     private final Context context;
     private final PrioritizedPlayerTypes prioritizedPlayerTypes;
     private final NoPlayerExoPlayerCreator noPlayerExoPlayerCreator;
     private final NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator;
     private final DrmSessionCreatorFactory drmSessionCreatorFactory;
-
-    public static PlayerFactory newInstance(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(AndroidDeviceVersion.newInstance(), handler);
-        return new PlayerFactory(
-                context,
-                prioritizedPlayerTypes,
-                NoPlayerExoPlayerCreator.newInstance(handler),
-                NoPlayerMediaPlayerCreator.newInstance(handler),
-                drmSessionCreatorFactory
-        );
-    }
 
     PlayerFactory(Context context,
                   PrioritizedPlayerTypes prioritizedPlayerTypes,
@@ -47,15 +30,7 @@ public class PlayerFactory {
         this.drmSessionCreatorFactory = drmSessionCreatorFactory;
     }
 
-    public Player create() {
-        return create(DrmType.NONE, DrmHandler.NO_DRM);
-    }
-
-    public Player create(DrmType drmType, DrmHandler drmHandler) {
-        return create(drmType, drmHandler, DOWNGRADE_SECURE_DECODER);
-    }
-
-    public Player create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
+    Player create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
         for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
                 return createPlayerForType(player, drmType, drmHandler, downgradeSecureDecoder);

@@ -5,11 +5,11 @@ import android.content.Context;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
-import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
-import com.novoda.noplayer.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.exoplayer.NoPlayerExoPlayerCreator;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.mediaplayer.NoPlayerMediaPlayerCreator;
 
 import org.junit.Before;
@@ -75,36 +75,29 @@ public class PlayerFactoryTest {
         }
 
         @Test
-        public void whenCreatingPlayer_thenReturnsMediaPlayer() {
-            Player player = playerFactory.create();
-
-            assertThat(player).isEqualTo(MEDIA_PLAYER);
-        }
-
-        @Test
         public void whenCreatingPlayerWithDrmTypeNone_thenReturnsMediaPlayer() {
-            Player player = playerFactory.create(DrmType.NONE, DrmHandler.NO_DRM);
+            Player player = playerFactory.create(DrmType.NONE, DrmHandler.NO_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(MEDIA_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineClassic_thenReturnsMediaPlayer() {
-            Player player = playerFactory.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM);
+            Player player = playerFactory.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(MEDIA_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularStream_thenReturnsExoPlayer() {
-            Player player = playerFactory.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM);
+            Player player = playerFactory.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularDownload_thenReturnsExoPlayer() {
-            Player player = playerFactory.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM);
+            Player player = playerFactory.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
@@ -118,36 +111,29 @@ public class PlayerFactoryTest {
         }
 
         @Test
-        public void whenCreatingPlayer_thenReturnsExoPlayer() {
-            Player player = playerFactory.create();
-
-            assertThat(player).isEqualTo(EXO_PLAYER);
-        }
-
-        @Test
         public void whenCreatingPlayerWithDrmTypeNone_thenReturnsExoPlayer() {
-            Player player = playerFactory.create(DrmType.NONE, DrmHandler.NO_DRM);
+            Player player = playerFactory.create(DrmType.NONE, DrmHandler.NO_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineClassic_thenReturnsMediaPlayer() {
-            Player player = playerFactory.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM);
+            Player player = playerFactory.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(MEDIA_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularStream_thenReturnsExoPlayer() {
-            Player player = playerFactory.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM);
+            Player player = playerFactory.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularDownload_thenReturnsExoPlayer() {
-            Player player = playerFactory.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM);
+            Player player = playerFactory.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
