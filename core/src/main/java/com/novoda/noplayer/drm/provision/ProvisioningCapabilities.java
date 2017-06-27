@@ -2,11 +2,11 @@ package com.novoda.noplayer.drm.provision;
 
 import android.os.Build;
 
-public class ProvisioningCapabilities {
+class ProvisioningCapabilities {
 
     private final int deviceOsVersion;
 
-    public static ProvisioningCapabilities newInstance() {
+    static ProvisioningCapabilities newInstance() {
         return new ProvisioningCapabilities(Build.VERSION.SDK_INT);
     }
 

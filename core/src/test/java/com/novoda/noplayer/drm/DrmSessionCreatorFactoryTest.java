@@ -2,6 +2,7 @@ package com.novoda.noplayer.drm;
 
 import android.os.Handler;
 
+import com.novoda.noplayer.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.player.PlayerFactory;
 import com.novoda.utils.AndroidDeviceVersion;
 
@@ -34,12 +35,14 @@ public class DrmSessionCreatorFactoryTest {
     private DownloadedModularDrm downloadedModularDrm;
     @Mock
     private StreamingModularDrm streamingModularDrm;
+    @Mock
+    private ProvisionExecutorCreator provisionExecutorCreator;
 
     private DrmSessionCreatorFactory drmSessionCreatorFactory;
 
     @Before
     public void setUp() {
-        drmSessionCreatorFactory = new DrmSessionCreatorFactory(SUPPORTED_MEDIA_DRM_DEVICE, handler);
+        drmSessionCreatorFactory = new DrmSessionCreatorFactory(SUPPORTED_MEDIA_DRM_DEVICE, provisionExecutorCreator, handler);
     }
 
     @Test
@@ -65,7 +68,7 @@ public class DrmSessionCreatorFactoryTest {
 
     @Test
     public void givenDrmTypeWidevineModularStream_andAndroidVersionDoesNotSupportMediaDrmApis_whenCreatingDrmSessionCreator_thenThrowsUnableToCreatePlayerException() {
-        drmSessionCreatorFactory = new DrmSessionCreatorFactory(UNSUPPORTED_MEDIA_DRM_DEVICE_VERSION, handler);
+        drmSessionCreatorFactory = new DrmSessionCreatorFactory(UNSUPPORTED_MEDIA_DRM_DEVICE_VERSION, provisionExecutorCreator, handler);
 
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_STREAM";
         thrown.expect(ExceptionMatcher.matches(message, PlayerFactory.UnableToCreatePlayerException.class));
@@ -82,7 +85,7 @@ public class DrmSessionCreatorFactoryTest {
 
     @Test
     public void givenDrmTypeWidevineDownloadStream_andAndroidVersionDoesNotSupportMediaDrmApis_whenCreatingDrmSessionCreator_thenThrowsUnableToCreatePlayerException() {
-        drmSessionCreatorFactory = new DrmSessionCreatorFactory(UNSUPPORTED_MEDIA_DRM_DEVICE_VERSION, handler);
+        drmSessionCreatorFactory = new DrmSessionCreatorFactory(UNSUPPORTED_MEDIA_DRM_DEVICE_VERSION, provisionExecutorCreator, handler);
 
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_DOWNLOAD";
         thrown.expect(ExceptionMatcher.matches(message, PlayerFactory.UnableToCreatePlayerException.class));
