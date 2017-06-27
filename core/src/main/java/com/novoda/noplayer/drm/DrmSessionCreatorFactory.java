@@ -3,7 +3,7 @@ package com.novoda.noplayer.drm;
 import android.os.Build;
 import android.os.Handler;
 
-import com.novoda.noplayer.drm.provision.HttpPoster;
+import com.novoda.noplayer.drm.provision.HttpUrlConnectionPoster;
 import com.novoda.noplayer.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.drm.provision.ProvisioningCapabilities;
 import com.novoda.noplayer.player.PlayerFactory;
@@ -48,9 +48,9 @@ public class DrmSessionCreatorFactory {
     }
 
     private DrmSessionCreator createModularStream(StreamingModularDrm drmHandler) {
-        HttpPoster httpPoster = new HttpPoster();
+        HttpUrlConnectionPoster httpUrlConnectionPoster = new HttpUrlConnectionPoster();
         ProvisioningCapabilities capabilities = ProvisioningCapabilities.newInstance();
-        ProvisionExecutor provisionExecutor = new ProvisionExecutor(httpPoster, capabilities);
+        ProvisionExecutor provisionExecutor = new ProvisionExecutor(httpUrlConnectionPoster, capabilities);
         ProvisioningModularDrmCallback mediaDrmCallback = new ProvisioningModularDrmCallback(
                 drmHandler,
                 provisionExecutor

@@ -9,11 +9,11 @@ public class ProvisionExecutor {
 
     private static final String PARAMETER_SIGNED_REQUEST = "&signedRequest=";
 
-    private final HttpPoster httpPoster;
+    private final HttpUrlConnectionPoster httpUrlConnectionPoster;
     private final ProvisioningCapabilities capabilities;
 
-    public ProvisionExecutor(HttpPoster httpPoster, ProvisioningCapabilities capabilities) {
-        this.httpPoster = httpPoster;
+    public ProvisionExecutor(HttpUrlConnectionPoster httpUrlConnectionPoster, ProvisioningCapabilities capabilities) {
+        this.httpUrlConnectionPoster = httpUrlConnectionPoster;
         this.capabilities = capabilities;
     }
 
@@ -22,7 +22,7 @@ public class ProvisionExecutor {
             throw new UnableToProvisionException();
         }
         String provisioningUrl = buildProvisioningUrl(request);
-        return httpPoster.post(provisioningUrl);
+        return httpUrlConnectionPoster.post(provisioningUrl);
     }
 
     private boolean isIncapableOfProvisioning() {

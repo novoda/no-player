@@ -29,14 +29,14 @@ public class ProvisionExecutorTest {
     private ArgumentCaptor<String> provisionUrlCaptor;
 
     @Mock
-    private HttpPoster httpPoster;
+    private HttpUrlConnectionPoster httpUrlConnectionPoster;
     @Mock
     private ProvisioningCapabilities capabilities;
 
     @Before
     public void setUp() {
         provisionUrlCaptor = ArgumentCaptor.forClass(String.class);
-        provisionExecutor = new ProvisionExecutor(httpPoster, capabilities);
+        provisionExecutor = new ProvisionExecutor(httpUrlConnectionPoster, capabilities);
     }
 
     @Test(expected = UnableToProvisionException.class)
@@ -52,7 +52,7 @@ public class ProvisionExecutorTest {
         String expectedProvisionUrl = PROVISION_URL + "&signedRequest=" + new String(PROVISION_DATA);
 
         provisionExecutor.execute(A_PROVISION_REQUEST);
-        verify(httpPoster).post(provisionUrlCaptor.capture());
+        verify(httpUrlConnectionPoster).post(provisionUrlCaptor.capture());
 
         assertThat(provisionUrlCaptor.getValue()).isEqualTo(expectedProvisionUrl);
     }

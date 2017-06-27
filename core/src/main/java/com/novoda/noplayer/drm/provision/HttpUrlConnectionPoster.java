@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HttpPoster {
+public class HttpUrlConnectionPoster {
 
     private static final String POST_REQUEST_METHOD = "POST";
     private static final int RESPONSE_BUFFER_SIZE = 1024 * 4;
