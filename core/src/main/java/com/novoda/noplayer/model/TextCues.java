@@ -1,19 +1,30 @@
 package com.novoda.noplayer.model;
 
-import com.google.android.exoplayer2.text.Cue;
-
+import java.util.Collections;
 import java.util.List;
 
 public class TextCues {
 
-    private final List<Cue> cues;
+    private final List<NoPlayerCue> cues;
 
-    public TextCues(List<Cue> cues) {
+    public static TextCues of(List<NoPlayerCue> cues) {
+        return new TextCues(Collections.unmodifiableList(cues));
+    }
+
+    private TextCues(List<NoPlayerCue> cues) {
         this.cues = cues;
     }
 
-    public List<Cue> cues() {
-        return cues;
+    public int size() {
+        return cues.size();
+    }
+
+    public boolean isEmpty() {
+        return cues.isEmpty();
+    }
+
+    public NoPlayerCue get(int position) {
+        return cues.get(position);
     }
 
     @Override
@@ -21,18 +32,18 @@ public class TextCues {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof TextCues)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         TextCues textCues = (TextCues) o;
 
-        return cues.equals(textCues.cues);
+        return cues != null ? cues.equals(textCues.cues) : textCues.cues == null;
     }
 
     @Override
     public int hashCode() {
-        return cues.hashCode();
+        return cues != null ? cues.hashCode() : 0;
     }
 
     @Override

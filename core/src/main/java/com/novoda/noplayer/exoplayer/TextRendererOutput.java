@@ -5,7 +5,6 @@ import com.google.android.exoplayer2.text.TextRenderer;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.model.TextCues;
 
-import java.util.ArrayList;
 import java.util.List;
 
 class TextRendererOutput {
@@ -19,8 +18,8 @@ class TextRendererOutput {
     TextRenderer.Output output() {
         return new TextRenderer.Output() {
             @Override
-            public void onCues(List<Cue> list) {
-                TextCues textCues = new TextCues(new ArrayList<>(list));
+            public void onCues(List<Cue> cues) {
+                TextCues textCues = ExoPlayerCueMapper.map(cues);
                 playerView.setSubtitleCue(textCues);
             }
         };

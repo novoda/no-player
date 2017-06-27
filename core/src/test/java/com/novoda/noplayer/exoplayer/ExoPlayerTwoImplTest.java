@@ -7,16 +7,11 @@ import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.text.Cue;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
-import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.Player.StateChangedListener;
 import com.novoda.noplayer.PlayerListenersHolder;
-import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
-import com.novoda.noplayer.model.TextCues;
-import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerTrackSelector;
@@ -28,6 +23,11 @@ import com.novoda.noplayer.listeners.InfoListeners;
 import com.novoda.noplayer.listeners.PreparedListeners;
 import com.novoda.noplayer.listeners.StateChangedListeners;
 import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
+import com.novoda.noplayer.model.LoadTimeout;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.TextCues;
+import com.novoda.noplayer.model.Timeout;
+import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.noplayer.player.PlayerInformation;
 import com.novoda.noplayer.player.PlayerType;
 
@@ -484,7 +484,7 @@ public class ExoPlayerTwoImplTest {
                     return null;
                 }
             }).when(exoPlayerFacade).setSubtitleRendererOutput(any(TextRendererOutput.class));
-            return new TextCues(cueList);
+            return ExoPlayerCueMapper.map(cueList);
         }
 
         @Test
