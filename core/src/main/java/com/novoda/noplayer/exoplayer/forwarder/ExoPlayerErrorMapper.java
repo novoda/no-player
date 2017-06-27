@@ -1,4 +1,4 @@
-package com.novoda.noplayer.exoplayer.playererror;
+package com.novoda.noplayer.exoplayer.forwarder;
 
 import android.media.MediaCodec;
 
@@ -6,16 +6,22 @@ import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmRequestException;
+import com.novoda.noplayer.exoplayer.playererror.ConnectivityError;
+import com.novoda.noplayer.exoplayer.playererror.DrmDecryptionError;
+import com.novoda.noplayer.exoplayer.playererror.DrmRequestError;
+import com.novoda.noplayer.exoplayer.playererror.InvalidResponseCodeError;
+import com.novoda.noplayer.exoplayer.playererror.MalformedContentError;
+import com.novoda.noplayer.exoplayer.playererror.UnknownError;
 
 import java.io.IOException;
 
-public final class ExoPlayerErrorFactory {
+final class ExoPlayerErrorMapper {
 
-    private ExoPlayerErrorFactory() {
-        // uninstantiable
+    private ExoPlayerErrorMapper() {
+        // static class.
     }
 
-    public static Player.PlayerError errorFor(Exception e) {
+    static Player.PlayerError errorFor(Exception e) {
         if (e instanceof HttpDataSource.InvalidResponseCodeException) {
             return new InvalidResponseCodeError(e);
         }
