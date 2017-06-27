@@ -1,16 +1,17 @@
 package com.novoda.noplayer.player;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.drm.DrmType;
-import com.novoda.noplayer.exoplayer.ExoPlayerTwoImpl;
-import com.novoda.noplayer.exoplayer.ExoPlayerTwoImplFactory;
-import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImpl;
-import com.novoda.noplayer.mediaplayer.AndroidMediaPlayerImplFactory;
+import com.novoda.noplayer.exoplayer.NoPlayerExoPlayerCreator;
+import com.novoda.noplayer.mediaplayer.NoPlayerMediaPlayerCreator;
+import com.novoda.utils.AndroidDeviceVersion;
 
 public class PlayerFactory {
 
@@ -18,23 +19,31 @@ public class PlayerFactory {
 
     private final Context context;
     private final PrioritizedPlayerTypes prioritizedPlayerTypes;
-    private final ExoPlayerCreator exoPlayerCreator;
-    private final MediaPlayerCreator mediaPlayerCreator;
+    private final NoPlayerExoPlayerCreator noPlayerExoPlayerCreator;
+    private final NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator;
     private final DrmSessionCreatorFactory drmSessionCreatorFactory;
 
-    public PlayerFactory(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
-        this(context, prioritizedPlayerTypes, ExoPlayerCreator.newInstance(), MediaPlayerCreator.newInstance(), new DrmSessionCreatorFactory());
+    public static PlayerFactory newInstance(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(AndroidDeviceVersion.newInstance(), handler);
+        return new PlayerFactory(
+                context,
+                prioritizedPlayerTypes,
+                NoPlayerExoPlayerCreator.newInstance(handler),
+                NoPlayerMediaPlayerCreator.newInstance(handler),
+                drmSessionCreatorFactory
+        );
     }
 
     PlayerFactory(Context context,
                   PrioritizedPlayerTypes prioritizedPlayerTypes,
-                  ExoPlayerCreator exoPlayerCreator,
-                  MediaPlayerCreator mediaPlayerCreator,
+                  NoPlayerExoPlayerCreator noPlayerExoPlayerCreator,
+                  NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator,
                   DrmSessionCreatorFactory drmSessionCreatorFactory) {
         this.context = context;
         this.prioritizedPlayerTypes = prioritizedPlayerTypes;
-        this.exoPlayerCreator = exoPlayerCreator;
-        this.mediaPlayerCreator = mediaPlayerCreator;
+        this.noPlayerExoPlayerCreator = noPlayerExoPlayerCreator;
+        this.noPlayerMediaPlayerCreator = noPlayerMediaPlayerCreator;
         this.drmSessionCreatorFactory = drmSessionCreatorFactory;
     }
 
@@ -58,10 +67,10 @@ public class PlayerFactory {
     private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
         switch (playerType) {
             case MEDIA_PLAYER:
-                return mediaPlayerCreator.createMediaPlayer(context);
+                return noPlayerMediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
                 DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler);
-                return exoPlayerCreator.createExoPlayer(context, drmSessionCreator, downgradeSecureDecoder);
+                return noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, downgradeSecureDecoder);
             default:
                 throw UnableToCreatePlayerException.unhandledPlayerType(playerType);
         }
@@ -81,48 +90,21 @@ public class PlayerFactory {
             return new UnableToCreatePlayerException("Unhandled player type: " + playerType.name());
         }
 
+        public static UnableToCreatePlayerException deviceDoesNotMeetTargetApiException(DrmType drmType,
+                                                                                        int targetApiLevel,
+                                                                                        AndroidDeviceVersion actualApiLevel) {
+            return new UnableToCreatePlayerException(
+                    "Device must be target: "
+                            + targetApiLevel
+                            + " but was: "
+                            + actualApiLevel.sdkInt()
+                            + " for DRM type: "
+                            + drmType.name()
+            );
+        }
+
         UnableToCreatePlayerException(String reason) {
             super(reason);
-        }
-    }
-
-    static class ExoPlayerCreator {
-
-        private final ExoPlayerTwoImplFactory factory;
-
-        static ExoPlayerCreator newInstance() {
-            ExoPlayerTwoImplFactory factory = new ExoPlayerTwoImplFactory();
-            return new ExoPlayerCreator(factory);
-        }
-
-        ExoPlayerCreator(ExoPlayerTwoImplFactory factory) {
-            this.factory = factory;
-        }
-
-        Player createExoPlayer(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
-            ExoPlayerTwoImpl player = factory.create(context, drmSessionCreator, downgradeSecureDecoder);
-            player.initialise();
-            return player;
-        }
-    }
-
-    static class MediaPlayerCreator {
-
-        private final AndroidMediaPlayerImplFactory factory;
-
-        static MediaPlayerCreator newInstance() {
-            AndroidMediaPlayerImplFactory factory = new AndroidMediaPlayerImplFactory();
-            return new MediaPlayerCreator(factory);
-        }
-
-        MediaPlayerCreator(AndroidMediaPlayerImplFactory factory) {
-            this.factory = factory;
-        }
-
-        Player createMediaPlayer(Context context) {
-            AndroidMediaPlayerImpl player = factory.create(context);
-            player.initialise();
-            return player;
         }
     }
 }
