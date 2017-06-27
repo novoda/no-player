@@ -6,9 +6,10 @@ import android.os.Looper;
 
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmHandler;
-import com.novoda.noplayer.drm.DrmSessionCreator;
-import com.novoda.noplayer.drm.DrmSessionCreatorFactory;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.drm.DrmType;
+import com.novoda.noplayer.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.mediaplayer.NoPlayerMediaPlayerCreator;
 import com.novoda.utils.AndroidDeviceVersion;
@@ -25,7 +26,13 @@ public class PlayerFactory {
 
     public static PlayerFactory newInstance(Context context, PrioritizedPlayerTypes prioritizedPlayerTypes) {
         Handler handler = new Handler(Looper.getMainLooper());
-        DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(AndroidDeviceVersion.newInstance(), handler);
+        ProvisionExecutorCreator provisionExecutorCreator = new ProvisionExecutorCreator();
+        DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(
+                AndroidDeviceVersion.newInstance(),
+                provisionExecutorCreator,
+                handler
+        );
+
         return new PlayerFactory(
                 context,
                 prioritizedPlayerTypes,

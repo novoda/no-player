@@ -2,7 +2,7 @@ package com.novoda.noplayer.exoplayer;
 
 import android.content.Context;
 
-import com.novoda.noplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
 
 import org.junit.Before;
 import org.junit.Rule;

@@ -1,6 +1,6 @@
 package com.novoda.noplayer.listeners;
 
-import com.novoda.noplayer.Bitrate;
+import com.novoda.noplayer.model.Bitrate;
 import com.novoda.noplayer.Player;
 
 import java.util.Set;

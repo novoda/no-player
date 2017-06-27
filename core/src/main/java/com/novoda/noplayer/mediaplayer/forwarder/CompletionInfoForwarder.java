@@ -10,7 +10,7 @@ class CompletionInfoForwarder implements MediaPlayer.OnCompletionListener {
 
     private final InfoListeners infoListeners;
 
-    public CompletionInfoForwarder(InfoListeners infoListeners) {
+    CompletionInfoForwarder(InfoListeners infoListeners) {
         this.infoListeners = infoListeners;
     }
 

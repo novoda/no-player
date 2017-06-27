@@ -6,24 +6,24 @@ import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
-import com.novoda.noplayer.LoadTimeout;
+import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
-import com.novoda.noplayer.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
-import com.novoda.noplayer.Timeout;
-import com.novoda.noplayer.VideoDuration;
-import com.novoda.noplayer.VideoPosition;
-import com.novoda.noplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.model.Timeout;
+import com.novoda.noplayer.model.VideoDuration;
+import com.novoda.noplayer.model.VideoPosition;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;
 
-public class ExoPlayerTwoImpl implements Player {
+class ExoPlayerTwoImpl implements Player {
 
     private final ExoPlayerFacade exoPlayer;
     private final PlayerListenersHolder listenersHolder;
@@ -57,7 +57,7 @@ public class ExoPlayerTwoImpl implements Player {
         this.downgradeSecureDecoder = downgradeSecureDecoder;
     }
 
-    public void initialise() {
+    void initialise() {
         heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());

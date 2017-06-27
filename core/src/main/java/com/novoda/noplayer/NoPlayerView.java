@@ -8,7 +8,7 @@ import android.widget.FrameLayout;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SubtitleView;
-import com.novoda.noplayer.exoplayer.AspectRatioChangeCalculator;
+import com.novoda.noplayer.model.TextCues;
 
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
@@ -84,7 +84,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-            aspectRatioChangeCalculator.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+            aspectRatioChangeCalculator.onVideoSizeChanged(width, height, pixelWidthHeightRatio);
         }
     };
 

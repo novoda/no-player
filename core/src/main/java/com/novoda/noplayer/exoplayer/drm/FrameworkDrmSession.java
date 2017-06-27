@@ -1,4 +1,4 @@
-package com.novoda.noplayer.drm;
+package com.novoda.noplayer.exoplayer.drm;
 
 import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;

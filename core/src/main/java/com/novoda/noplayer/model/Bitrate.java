@@ -1,4 +1,4 @@
-package com.novoda.noplayer;
+package com.novoda.noplayer.model;
 
 public final class Bitrate {
 

@@ -13,7 +13,7 @@ class ErrorForwarder implements MediaPlayer.OnErrorListener {
     private final ErrorListeners errorListeners;
     private final Player player;
 
-    public ErrorForwarder(BufferStateListeners bufferStateListeners, ErrorListeners errorListeners, Player player) {
+    ErrorForwarder(BufferStateListeners bufferStateListeners, ErrorListeners errorListeners, Player player) {
         this.bufferStateListeners = bufferStateListeners;
         this.errorListeners = errorListeners;
         this.player = player;

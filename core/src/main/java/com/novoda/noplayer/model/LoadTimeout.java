@@ -1,6 +1,9 @@
-package com.novoda.noplayer;
+package com.novoda.noplayer.model;
 
 import android.os.Handler;
+
+import com.novoda.noplayer.Clock;
+import com.novoda.noplayer.Player;
 
 public class LoadTimeout {
 

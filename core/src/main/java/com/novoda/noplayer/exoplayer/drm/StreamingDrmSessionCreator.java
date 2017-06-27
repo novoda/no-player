@@ -1,4 +1,4 @@
-package com.novoda.noplayer.drm;
+package com.novoda.noplayer.exoplayer.drm;
 
 import android.os.Handler;
 

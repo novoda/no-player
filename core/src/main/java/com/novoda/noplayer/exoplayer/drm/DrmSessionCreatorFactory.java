@@ -1,21 +1,26 @@
-package com.novoda.noplayer.drm;
+package com.novoda.noplayer.exoplayer.drm;
 
 import android.os.Build;
 import android.os.Handler;
 
-import com.novoda.noplayer.drm.provision.HttpPoster;
+import com.novoda.noplayer.drm.DownloadedModularDrm;
+import com.novoda.noplayer.drm.DrmHandler;
+import com.novoda.noplayer.drm.DrmType;
+import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.drm.provision.ProvisionExecutor;
-import com.novoda.noplayer.drm.provision.ProvisioningCapabilities;
+import com.novoda.noplayer.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.player.PlayerFactory;
 import com.novoda.utils.AndroidDeviceVersion;
 
 public class DrmSessionCreatorFactory {
 
     private final AndroidDeviceVersion androidDeviceVersion;
+    private final ProvisionExecutorCreator provisionExecutorCreator;
     private final Handler handler;
 
-    public DrmSessionCreatorFactory(AndroidDeviceVersion androidDeviceVersion, Handler handler) {
+    public DrmSessionCreatorFactory(AndroidDeviceVersion androidDeviceVersion, ProvisionExecutorCreator provisionExecutorCreator, Handler handler) {
         this.androidDeviceVersion = androidDeviceVersion;
+        this.provisionExecutorCreator = provisionExecutorCreator;
         this.handler = handler;
     }
 
@@ -48,9 +53,7 @@ public class DrmSessionCreatorFactory {
     }
 
     private DrmSessionCreator createModularStream(StreamingModularDrm drmHandler) {
-        HttpPoster httpPoster = new HttpPoster();
-        ProvisioningCapabilities capabilities = ProvisioningCapabilities.newInstance();
-        ProvisionExecutor provisionExecutor = new ProvisionExecutor(httpPoster, capabilities);
+        ProvisionExecutor provisionExecutor = provisionExecutorCreator.create();
         ProvisioningModularDrmCallback mediaDrmCallback = new ProvisioningModularDrmCallback(
                 drmHandler,
                 provisionExecutor

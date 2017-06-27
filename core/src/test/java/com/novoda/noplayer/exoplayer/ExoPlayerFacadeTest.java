@@ -4,14 +4,14 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.PlayerAudioTrack;
-import com.novoda.noplayer.PlayerSubtitleTrack;
-import com.novoda.noplayer.VideoDuration;
-import com.novoda.noplayer.VideoPosition;
-import com.novoda.noplayer.drm.DrmSessionCreator;
-import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerDrmSessionEventListener;
+import com.novoda.noplayer.model.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.VideoDuration;
+import com.novoda.noplayer.model.VideoPosition;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
@@ -391,7 +391,7 @@ public class ExoPlayerFacadeTest {
         @Mock
         DrmSessionCreator drmSessionCreator;
         @Mock
-        ExoPlayerDrmSessionEventListener drmSessionEventListener;
+        DefaultDrmSessionManager.EventListener drmSessionEventListener;
 
         ExoPlayerFacade facade;
 

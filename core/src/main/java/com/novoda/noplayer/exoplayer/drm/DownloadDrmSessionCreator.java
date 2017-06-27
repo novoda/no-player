@@ -1,10 +1,11 @@
-package com.novoda.noplayer.drm;
+package com.novoda.noplayer.exoplayer.drm;
 
 import android.os.Handler;
 
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.novoda.noplayer.drm.DownloadedModularDrm;
 
 class DownloadDrmSessionCreator implements DrmSessionCreator {
 

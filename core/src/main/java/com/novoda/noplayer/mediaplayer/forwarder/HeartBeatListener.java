@@ -5,11 +5,11 @@ import com.novoda.noplayer.mediaplayer.CheckBufferHeartbeatCallback;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class HeartBeatListener implements CheckBufferHeartbeatCallback.BufferListener {
+class HeartBeatListener implements CheckBufferHeartbeatCallback.BufferListener {
 
     private final List<CheckBufferHeartbeatCallback.BufferListener> listeners = new CopyOnWriteArrayList<>();
 
-    public void add(CheckBufferHeartbeatCallback.BufferListener listener) {
+    void add(CheckBufferHeartbeatCallback.BufferListener listener) {
         listeners.add(listener);
     }
 

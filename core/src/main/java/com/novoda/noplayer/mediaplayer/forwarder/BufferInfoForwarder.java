@@ -9,7 +9,7 @@ class BufferInfoForwarder implements CheckBufferHeartbeatCallback.BufferListener
 
     private final InfoListeners infoListeners;
 
-    public BufferInfoForwarder(InfoListeners infoListeners) {
+    BufferInfoForwarder(InfoListeners infoListeners) {
         this.infoListeners = infoListeners;
     }
 
@@ -18,7 +18,6 @@ class BufferInfoForwarder implements CheckBufferHeartbeatCallback.BufferListener
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
         infoListeners.onNewInfo("onBufferStart", callingMethodParameters);
-
     }
 
     @Override

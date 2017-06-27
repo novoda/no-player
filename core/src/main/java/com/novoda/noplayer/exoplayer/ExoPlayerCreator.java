@@ -1,17 +1,16 @@
 package com.novoda.noplayer.exoplayer;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.novoda.noplayer.drm.DrmSessionCreator;
-import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerDrmSessionEventListener;
+import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
 
 import static com.novoda.noplayer.exoplayer.SimpleRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
 
@@ -27,9 +26,8 @@ class ExoPlayerCreator {
         this.trackSelector = trackSelector;
     }
 
-    @NonNull
-    public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator, ExoPlayerDrmSessionEventListener exoPlayerDrmSessionEventListener, boolean downgradeSecureDecoder) {
-        DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(exoPlayerDrmSessionEventListener);
+    public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator, DefaultDrmSessionManager.EventListener drmSessionEventListener, boolean downgradeSecureDecoder) {
+        DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
         RenderersFactory renderersFactory = new SimpleRenderersFactory(
                 context,
                 drmSessionManager,

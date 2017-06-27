@@ -21,7 +21,7 @@ class PlayerOnErrorForwarder implements ExoPlayer.EventListener {
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-        Player.PlayerError playerError = ExoPlayerErrorFactory.errorFor(error);
+        Player.PlayerError playerError = ExoPlayerErrorMapper.errorFor(error);
         errorListeners.onError(player, playerError);
     }
 

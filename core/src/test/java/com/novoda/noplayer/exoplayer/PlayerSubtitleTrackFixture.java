@@ -1,6 +1,6 @@
 package com.novoda.noplayer.exoplayer;
 
-import com.novoda.noplayer.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
 
 class PlayerSubtitleTrackFixture {
 

@@ -11,9 +11,9 @@ import android.widget.Toast;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerState;
-import com.novoda.noplayer.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.player.PlayerFactory;

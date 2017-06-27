@@ -2,6 +2,8 @@ package com.novoda.noplayer;
 
 import android.view.View;
 
+import com.novoda.noplayer.model.TextCues;
+
 public interface PlayerView {
 
     View getContainerView();

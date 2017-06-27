@@ -2,6 +2,9 @@ package com.novoda.noplayer;
 
 import android.os.Handler;
 
+import com.novoda.noplayer.model.LoadTimeout;
+import com.novoda.noplayer.model.Timeout;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

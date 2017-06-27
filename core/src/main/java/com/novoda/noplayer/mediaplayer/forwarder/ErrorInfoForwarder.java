@@ -10,7 +10,7 @@ class ErrorInfoForwarder implements MediaPlayer.OnErrorListener {
 
     private final InfoListeners infoListeners;
 
-    public ErrorInfoForwarder(InfoListeners infoListeners) {
+    ErrorInfoForwarder(InfoListeners infoListeners) {
         this.infoListeners = infoListeners;
     }
 

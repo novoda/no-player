@@ -15,10 +15,10 @@ import com.novoda.noplayer.exoplayer.playererror.UnknownError;
 
 import java.io.IOException;
 
-final class ExoPlayerErrorFactory {
+final class ExoPlayerErrorMapper {
 
-    private ExoPlayerErrorFactory() {
-        // uninstantiable
+    private ExoPlayerErrorMapper() {
+        // static class.
     }
 
     static Player.PlayerError errorFor(Exception e) {

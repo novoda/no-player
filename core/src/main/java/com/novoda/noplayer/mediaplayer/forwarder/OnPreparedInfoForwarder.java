@@ -10,7 +10,7 @@ class OnPreparedInfoForwarder implements MediaPlayer.OnPreparedListener {
 
     private final InfoListeners infoListeners;
 
-    public OnPreparedInfoForwarder(InfoListeners infoListeners) {
+    OnPreparedInfoForwarder(InfoListeners infoListeners) {
         this.infoListeners = infoListeners;
     }
 

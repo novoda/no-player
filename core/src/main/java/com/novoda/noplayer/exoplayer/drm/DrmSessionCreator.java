@@ -1,4 +1,4 @@
-package com.novoda.noplayer.drm;
+package com.novoda.noplayer.exoplayer.drm;
 
 import android.support.annotation.Nullable;
 
@@ -14,11 +14,4 @@ public interface DrmSessionCreator {
 
     @Nullable
     DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionManager.EventListener eventListener);
-
-    class DrmSessionManagerCreationException extends RuntimeException {
-
-        DrmSessionManagerCreationException(Throwable cause) {
-            super(cause);
-        }
-    }
 }

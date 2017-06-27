@@ -8,24 +8,24 @@ import android.view.SurfaceHolder;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Listeners;
-import com.novoda.noplayer.LoadTimeout;
+import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
-import com.novoda.noplayer.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
-import com.novoda.noplayer.Timeout;
-import com.novoda.noplayer.VideoDuration;
-import com.novoda.noplayer.VideoPosition;
+import com.novoda.noplayer.model.Timeout;
+import com.novoda.noplayer.model.VideoDuration;
+import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.Collections;
 import java.util.List;
 
-public class AndroidMediaPlayerImpl implements Player {
+class AndroidMediaPlayerImpl implements Player {
 
     private static final VideoPosition NO_SEEK_TO_POSITION = VideoPosition.INVALID;
     private static final MediaPlayerInformation MEDIA_PLAYER_INFORMATION = new MediaPlayerInformation();
@@ -65,7 +65,7 @@ public class AndroidMediaPlayerImpl implements Player {
         this.buggyVideoDriverPreventer = buggyVideoDriverPreventer;
     }
 
-    public void initialise() {
+    void initialise() {
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
         forwarder.bind(listenersHolder.getBufferStateListeners(), listenersHolder.getErrorListeners(), this);
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
