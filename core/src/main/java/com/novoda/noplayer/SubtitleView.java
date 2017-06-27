@@ -18,6 +18,9 @@ public final class SubtitleView extends View {
     private static final int FRACTIONAL = 0;
     private static final int ABSOLUTE = 2;
 
+    private static final int ZERO_PIXELS = 0;
+    private static final int NO_CUES = 0;
+
     private final List<SubtitlePainter> painters;
 
     private List<NoPlayerCue> cues;
@@ -56,7 +59,7 @@ public final class SubtitleView extends View {
 
     @Override
     public void dispatchDraw(Canvas canvas) {
-        int cueCount = (cues == null) ? 0 : cues.size();
+        int cueCount = (cues == null) ? NO_CUES : cues.size();
         int rawTop = getTop();
         int rawBottom = getBottom();
 
@@ -68,15 +71,24 @@ public final class SubtitleView extends View {
             return;
         }
 
-        float textSizePx = textSizeType == ABSOLUTE ? textSize
-                : textSize * (textSizeType == FRACTIONAL ? (bottom - top) : (rawBottom - rawTop));
-        if (textSizePx <= 0) {
+        float textSizeInPixels = textSizeType == ABSOLUTE ? textSize : textSize * (textSizeType == FRACTIONAL ? (bottom - top) : (rawBottom - rawTop));
+
+        if (textSizeInPixels <= ZERO_PIXELS) {
             return;
         }
 
         for (int i = 0; i < cueCount; i++) {
-            painters.get(i).draw(cues.get(i), applyEmbeddedStyles, applyEmbeddedFontSizes,
-                    textSizePx, bottomPaddingFraction, canvas, left, top, right, bottom);
+            painters.get(i).draw(cues.get(i),
+                    applyEmbeddedStyles,
+                    applyEmbeddedFontSizes,
+                    textSizeInPixels,
+                    bottomPaddingFraction,
+                    canvas,
+                    left,
+                    top,
+                    right,
+                    bottom
+            );
         }
     }
 }
