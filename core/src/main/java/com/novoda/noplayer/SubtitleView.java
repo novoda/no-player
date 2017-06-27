@@ -47,7 +47,11 @@ public final class SubtitleView extends View {
 
     @Override
     public void dispatchDraw(Canvas canvas) {
-        int cueCount = (cues == null) ? NO_CUES : cues.size();
+        if (cues == null || cues.isEmpty()) {
+            return;
+        }
+
+        int cueCount = cues.size();
         int rawTop = getTop();
         int rawBottom = getBottom();
 
