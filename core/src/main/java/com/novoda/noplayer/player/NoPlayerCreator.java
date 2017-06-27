@@ -10,7 +10,7 @@ import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.mediaplayer.NoPlayerMediaPlayerCreator;
 
-class PlayerFactory {
+class NoPlayerCreator {
 
     private final Context context;
     private final PrioritizedPlayerTypes prioritizedPlayerTypes;
@@ -18,11 +18,11 @@ class PlayerFactory {
     private final NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator;
     private final DrmSessionCreatorFactory drmSessionCreatorFactory;
 
-    PlayerFactory(Context context,
-                  PrioritizedPlayerTypes prioritizedPlayerTypes,
-                  NoPlayerExoPlayerCreator noPlayerExoPlayerCreator,
-                  NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator,
-                  DrmSessionCreatorFactory drmSessionCreatorFactory) {
+    NoPlayerCreator(Context context,
+                    PrioritizedPlayerTypes prioritizedPlayerTypes,
+                    NoPlayerExoPlayerCreator noPlayerExoPlayerCreator,
+                    NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator,
+                    DrmSessionCreatorFactory drmSessionCreatorFactory) {
         this.context = context;
         this.prioritizedPlayerTypes = prioritizedPlayerTypes;
         this.noPlayerExoPlayerCreator = noPlayerExoPlayerCreator;

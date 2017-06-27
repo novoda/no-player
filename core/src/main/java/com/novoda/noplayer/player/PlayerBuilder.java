@@ -66,13 +66,13 @@ public class PlayerBuilder {
     public Player build(Context context) {
         Handler handler = new Handler(Looper.getMainLooper());
         DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(AndroidDeviceVersion.newInstance(), handler);
-        PlayerFactory playerFactory = new PlayerFactory(
+        NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
                 context,
                 prioritizedPlayerTypes,
                 NoPlayerExoPlayerCreator.newInstance(handler),
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
-        return playerFactory.create(drmType, drmHandler, downgradeSecureDecoder);
+        return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder);
     }
 }
