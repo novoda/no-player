@@ -20,30 +20,23 @@ import java.util.List;
 
 public class PlayerBuilder {
 
-    private DrmType drmType;
-    private DrmHandler drmHandler;
+    private DrmType drmType = DrmType.NONE;
+    private DrmHandler drmHandler = DrmHandler.NO_DRM;
     private PrioritizedPlayerTypes prioritizedPlayerTypes = PrioritizedPlayerTypes.prioritizeExoPlayer();
     private boolean downgradeSecureDecoder = false;
 
     public PlayerBuilder withWidevineClassicDrm() {
-        drmType = DrmType.WIDEVINE_CLASSIC;
-        drmHandler = DrmHandler.NO_DRM;
-        return this;
+        return withDrm(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM);
     }
 
     public PlayerBuilder withWidevineModularStreamingDrm(StreamingModularDrm streamingModularDrm) {
-        drmType = DrmType.WIDEVINE_MODULAR_STREAM;
-        drmHandler = streamingModularDrm;
-        return this;
+        return withDrm(DrmType.WIDEVINE_MODULAR_STREAM, streamingModularDrm);
     }
 
     public PlayerBuilder withWidevineModularDownloadDrm(DownloadedModularDrm downloadedModularDrm) {
-        drmType = DrmType.WIDEVINE_MODULAR_DOWNLOAD;
-        drmHandler = downloadedModularDrm;
-        return this;
+        return withDrm(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm);
     }
 
-    @Deprecated
     public PlayerBuilder withDrm(DrmType drmType, DrmHandler drmHandler) {
         this.drmType = drmType;
         this.drmHandler = drmHandler;
