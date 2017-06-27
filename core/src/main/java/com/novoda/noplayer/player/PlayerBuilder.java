@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Builds instances of {@link Player} for given configurations.
+ */
 public class PlayerBuilder {
 
     private DrmType drmType = DrmType.NONE;
@@ -26,24 +29,55 @@ public class PlayerBuilder {
     private PrioritizedPlayerTypes prioritizedPlayerTypes = PrioritizedPlayerTypes.prioritizeExoPlayer();
     private boolean downgradeSecureDecoder = false;
 
+    /**
+     * Sets {@link PlayerBuilder} to build a {@link Player} which supports Widevine classic DRM.
+     *
+     * @return {@link PlayerBuilder}
+     */
     public PlayerBuilder withWidevineClassicDrm() {
         return withDrm(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM);
     }
 
+    /**
+     * Sets {@link PlayerBuilder} to build a {@link Player} which supports Widevine modular streaming DRM.
+     *
+     * @param streamingModularDrm Implementation of {@link StreamingModularDrm}.
+     * @return {@link PlayerBuilder}
+     */
     public PlayerBuilder withWidevineModularStreamingDrm(StreamingModularDrm streamingModularDrm) {
         return withDrm(DrmType.WIDEVINE_MODULAR_STREAM, streamingModularDrm);
     }
 
+    /**
+     * Sets {@link PlayerBuilder} to build a {@link Player} which supports Widevine modular download DRM.
+     *
+     * @param downloadedModularDrm Implementation of {@link DownloadedModularDrm}.
+     * @return {@link PlayerBuilder}
+     */
     public PlayerBuilder withWidevineModularDownloadDrm(DownloadedModularDrm downloadedModularDrm) {
         return withDrm(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm);
     }
 
+    /**
+     * Sets {@link PlayerBuilder} to build a {@link Player} which supports the specified parameters.
+     *
+     * @param drmType    {@link DrmType}
+     * @param drmHandler {@link DrmHandler}
+     * @return {@link PlayerBuilder}
+     */
     public PlayerBuilder withDrm(DrmType drmType, DrmHandler drmHandler) {
         this.drmType = drmType;
         this.drmHandler = drmHandler;
         return this;
     }
 
+    /**
+     * Sets {@link PlayerBuilder} to build a {@link Player} which will prioritise the underlying player when
+     * multiple underlying players share the same features.
+     *
+     * @param playerTypes Priority order of {@link PlayerType} with the first being the highest.
+     * @return {@link PlayerBuilder}
+     */
     public PlayerBuilder withPriority(PlayerType playerType, PlayerType... playerTypes) {
         List<PlayerType> types = new ArrayList<>();
         types.add(playerType);
@@ -52,11 +86,23 @@ public class PlayerBuilder {
         return this;
     }
 
+    /**
+     * Forces secure decoder selection to be ignored in favour of using an insecure decoder.
+     * e.g. Forcing an L3 stream to play with an insecure decoder instead of a secure decoder by default.
+     *
+     * @return {@link PlayerBuilder}
+     */
     public PlayerBuilder withDowngradedSecureDecoder() {
         downgradeSecureDecoder = true;
         return this;
     }
 
+    /**
+     * Builds a new {@link Player} instance.
+     *
+     * @param context
+     * @return {@link Player}
+     */
     public Player build(Context context) {
         Handler handler = new Handler(Looper.getMainLooper());
         ProvisionExecutorCreator provisionExecutorCreator = new ProvisionExecutorCreator();
