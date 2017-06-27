@@ -102,8 +102,9 @@ public class PlayerBuilder {
      *
      * @param context
      * @return {@link Player}
+     * @throws UnableToCreatePlayerException thrown when the configuration is not supported and there is no way to recover.
      */
-    public Player build(Context context) {
+    public Player build(Context context) throws UnableToCreatePlayerException {
         Handler handler = new Handler(Looper.getMainLooper());
         ProvisionExecutorCreator provisionExecutorCreator = new ProvisionExecutorCreator();
         DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(
