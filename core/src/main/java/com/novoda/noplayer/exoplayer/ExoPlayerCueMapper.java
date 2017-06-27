@@ -7,7 +7,11 @@ import com.novoda.noplayer.model.TextCues;
 import java.util.ArrayList;
 import java.util.List;
 
-class ExoPlayerCueMapper {
+final class ExoPlayerCueMapper {
+
+    private ExoPlayerCueMapper() {
+        // static class.
+    }
 
     static TextCues map(List<Cue> cues) {
         List<NoPlayerCue> noPlayerCues = new ArrayList<>(cues.size());
