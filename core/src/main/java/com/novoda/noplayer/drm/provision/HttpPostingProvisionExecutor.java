@@ -5,14 +5,14 @@ import com.novoda.noplayer.drm.ModularDrmProvisionRequest;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-class ProvisionExecutorImpl implements ProvisionExecutor {
+class HttpPostingProvisionExecutor implements ProvisionExecutor {
 
     private static final String PARAMETER_SIGNED_REQUEST = "&signedRequest=";
 
     private final HttpUrlConnectionPoster httpPoster;
     private final ProvisioningCapabilities capabilities;
 
-    ProvisionExecutorImpl(HttpUrlConnectionPoster httpPoster, ProvisioningCapabilities capabilities) {
+    HttpPostingProvisionExecutor(HttpUrlConnectionPoster httpPoster, ProvisioningCapabilities capabilities) {
         this.httpPoster = httpPoster;
         this.capabilities = capabilities;
     }
