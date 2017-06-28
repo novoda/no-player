@@ -6,22 +6,22 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.novoda.noplayer.listeners.BufferStateListeners;
+import com.novoda.noplayer.Player;
 
 class BufferStateForwarder implements ExoPlayer.EventListener {
 
-    private final BufferStateListeners bufferStateListeners;
+    private final Player.BufferStateListener bufferStateListener;
 
-    BufferStateForwarder(BufferStateListeners bufferStateListeners) {
-        this.bufferStateListeners = bufferStateListeners;
+    BufferStateForwarder(Player.BufferStateListener bufferStateListener) {
+        this.bufferStateListener = bufferStateListener;
     }
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == ExoPlayer.STATE_BUFFERING) {
-            bufferStateListeners.onBufferStarted();
+            bufferStateListener.onBufferStarted();
         } else if (playbackState == ExoPlayer.STATE_READY) {
-            bufferStateListeners.onBufferCompleted();
+            bufferStateListener.onBufferCompleted();
         }
     }
 

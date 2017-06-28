@@ -4,8 +4,8 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.upstream.DataSpec;
+import com.novoda.noplayer.Player;
 import com.novoda.noplayer.model.Bitrate;
-import com.novoda.noplayer.listeners.BitrateChangedListeners;
 
 import java.io.IOException;
 
@@ -14,20 +14,20 @@ class BitrateForwarder implements AdaptiveMediaSourceEventListener {
     private Bitrate videoBitrate = Bitrate.fromBitsPerSecond(0);
     private Bitrate audioBitrate = Bitrate.fromBitsPerSecond(0);
 
-    private final BitrateChangedListeners bitrateChangedListeners;
+    private final Player.BitrateChangedListener bitrateChangedListener;
 
-    BitrateForwarder(BitrateChangedListeners bitrateChangedListeners) {
-        this.bitrateChangedListeners = bitrateChangedListeners;
+    BitrateForwarder(Player.BitrateChangedListener bitrateChangedListener) {
+        this.bitrateChangedListener = bitrateChangedListener;
     }
 
     @Override
     public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaTimeMs) {
         if (trackType == C.TRACK_TYPE_VIDEO) {
             videoBitrate = Bitrate.fromBitsPerSecond(trackFormat.bitrate);
-            bitrateChangedListeners.onBitrateChanged(audioBitrate, videoBitrate);
+            bitrateChangedListener.onBitrateChanged(audioBitrate, videoBitrate);
         } else if (trackType == C.TRACK_TYPE_AUDIO) {
             audioBitrate = Bitrate.fromBitsPerSecond(trackFormat.bitrate);
-            bitrateChangedListeners.onBitrateChanged(audioBitrate, videoBitrate);
+            bitrateChangedListener.onBitrateChanged(audioBitrate, videoBitrate);
         }
     }
 

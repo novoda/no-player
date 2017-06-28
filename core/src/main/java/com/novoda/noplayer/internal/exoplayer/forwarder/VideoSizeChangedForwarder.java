@@ -5,19 +5,19 @@ import android.view.Surface;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
-import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
+import com.novoda.noplayer.Player;
 
 class VideoSizeChangedForwarder implements VideoRendererEventListener {
 
-    private final VideoSizeChangedListeners videoSizeChangedListeners;
+    private final Player.VideoSizeChangedListener videoSizeChangedListener;
 
-    VideoSizeChangedForwarder(VideoSizeChangedListeners videoSizeChangedListeners) {
-        this.videoSizeChangedListeners = videoSizeChangedListeners;
+    VideoSizeChangedForwarder(Player.VideoSizeChangedListener videoSizeChangedListener) {
+        this.videoSizeChangedListener = videoSizeChangedListener;
     }
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-        videoSizeChangedListeners.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+        videoSizeChangedListener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
     }
 
     @Override

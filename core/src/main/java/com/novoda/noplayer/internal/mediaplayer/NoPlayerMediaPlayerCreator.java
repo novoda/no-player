@@ -6,7 +6,7 @@ import android.os.Handler;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.PlayerListenersHolder;
+import com.novoda.noplayer.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 

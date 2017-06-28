@@ -2,18 +2,18 @@ package com.novoda.noplayer.internal.mediaplayer.forwarder;
 
 import android.media.MediaPlayer;
 
-import com.novoda.noplayer.listeners.BufferStateListeners;
+import com.novoda.noplayer.Player;
 
 class BufferOnPreparedListener implements MediaPlayer.OnPreparedListener {
 
-    private final BufferStateListeners bufferStateListeners;
+    private final Player.BufferStateListener bufferStateListener;
 
-    BufferOnPreparedListener(BufferStateListeners bufferStateListeners) {
-        this.bufferStateListeners = bufferStateListeners;
+    BufferOnPreparedListener(Player.BufferStateListener bufferStateListener) {
+        this.bufferStateListener = bufferStateListener;
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        bufferStateListeners.onBufferCompleted();
+        bufferStateListener.onBufferCompleted();
     }
 }

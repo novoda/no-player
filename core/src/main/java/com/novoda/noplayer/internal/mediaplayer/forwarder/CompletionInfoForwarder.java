@@ -2,16 +2,16 @@ package com.novoda.noplayer.internal.mediaplayer.forwarder;
 
 import android.media.MediaPlayer;
 
-import com.novoda.noplayer.listeners.InfoListeners;
+import com.novoda.noplayer.Player;
 
 import java.util.HashMap;
 
 class CompletionInfoForwarder implements MediaPlayer.OnCompletionListener {
 
-    private final InfoListeners infoListeners;
+    private final Player.InfoListener infoListener;
 
-    CompletionInfoForwarder(InfoListeners infoListeners) {
-        this.infoListeners = infoListeners;
+    CompletionInfoForwarder(Player.InfoListener infoListener) {
+        this.infoListener = infoListener;
     }
 
     @Override
@@ -20,6 +20,6 @@ class CompletionInfoForwarder implements MediaPlayer.OnCompletionListener {
 
         callingMethodParameters.put("mp", String.valueOf(mp));
 
-        infoListeners.onNewInfo("onCompletion", callingMethodParameters);
+        infoListener.onNewInfo("onCompletion", callingMethodParameters);
     }
 }

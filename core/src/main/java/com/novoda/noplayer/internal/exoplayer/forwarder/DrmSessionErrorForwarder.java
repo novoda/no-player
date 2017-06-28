@@ -3,16 +3,15 @@ package com.novoda.noplayer.internal.exoplayer.forwarder;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.internal.exoplayer.playererror.DrmInitiatingError;
-import com.novoda.noplayer.listeners.ErrorListeners;
 
 class DrmSessionErrorForwarder implements DefaultDrmSessionManager.EventListener {
 
     private final Player player;
-    private final ErrorListeners errorListeners;
+    private final Player.ErrorListener errorListener;
 
-    DrmSessionErrorForwarder(Player player, ErrorListeners errorListeners) {
+    DrmSessionErrorForwarder(Player player, Player.ErrorListener errorListener) {
         this.player = player;
-        this.errorListeners = errorListeners;
+        this.errorListener = errorListener;
     }
 
     @Override
@@ -23,7 +22,7 @@ class DrmSessionErrorForwarder implements DefaultDrmSessionManager.EventListener
     @Override
     public void onDrmSessionManagerError(Exception e) {
         Player.PlayerError playerError = new DrmInitiatingError(e);
-        errorListeners.onError(player, playerError);
+        errorListener.onError(player, playerError);
     }
 
     @Override

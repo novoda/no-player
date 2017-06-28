@@ -1,23 +1,23 @@
 package com.novoda.noplayer.internal.mediaplayer.forwarder;
 
-import com.novoda.noplayer.listeners.BufferStateListeners;
+import com.novoda.noplayer.Player;
 import com.novoda.noplayer.internal.mediaplayer.CheckBufferHeartbeatCallback;
 
 class BufferHeartbeatListener implements CheckBufferHeartbeatCallback.BufferListener {
 
-    private final BufferStateListeners bufferStateListeners;
+    private final Player.BufferStateListener bufferStateListener;
 
-    BufferHeartbeatListener(BufferStateListeners bufferStateListeners) {
-        this.bufferStateListeners = bufferStateListeners;
+    BufferHeartbeatListener(Player.BufferStateListener bufferStateListener) {
+        this.bufferStateListener = bufferStateListener;
     }
 
     @Override
     public void onBufferStart() {
-        bufferStateListeners.onBufferStarted();
+        bufferStateListener.onBufferStarted();
     }
 
     @Override
     public void onBufferComplete() {
-        bufferStateListeners.onBufferCompleted();
+        bufferStateListener.onBufferCompleted();
     }
 }

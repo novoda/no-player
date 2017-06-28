@@ -9,11 +9,11 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
@@ -180,7 +180,7 @@ class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public void pause() {  // TODO: throw to match ExoPlayer?
+    public void pause() throws IllegalStateException {
         mediaPlayer.pause();
         if (heart.isBeating()) {
             heart.stopBeatingHeart();
@@ -265,12 +265,12 @@ class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+    public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException {
         return mediaPlayer.selectSubtitleTrack(subtitleTrack);
     }
 
     @Override
-    public void hideSubtitleTrack() {
+    public void hideSubtitleTrack() throws IllegalStateException {
         mediaPlayer.clearSubtitleTrack();
     }
 
@@ -280,7 +280,7 @@ class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public List<PlayerSubtitleTrack> getSubtitleTracks() {
+    public List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException {
         return mediaPlayer.getSubtitleTracks();
     }
 

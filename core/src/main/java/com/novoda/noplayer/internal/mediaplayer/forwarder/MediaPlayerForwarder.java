@@ -4,13 +4,6 @@ import android.media.MediaPlayer;
 
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerState;
-import com.novoda.noplayer.listeners.BufferStateListeners;
-import com.novoda.noplayer.listeners.CompletionListeners;
-import com.novoda.noplayer.listeners.ErrorListeners;
-import com.novoda.noplayer.listeners.InfoListeners;
-import com.novoda.noplayer.listeners.PreparedListeners;
-import com.novoda.noplayer.listeners.StateChangedListeners;
-import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 import com.novoda.noplayer.internal.mediaplayer.CheckBufferHeartbeatCallback;
 
 public class MediaPlayerForwarder {
@@ -29,31 +22,31 @@ public class MediaPlayerForwarder {
         videoSizeChangedListener = new VideoSizeChangedListener();
     }
 
-    public void bind(PreparedListeners preparedListeners, PlayerState playerState) {
-        preparedListener.add(new OnPreparedForwarder(preparedListeners, playerState));
+    public void bind(Player.PreparedListener preparedListener, PlayerState playerState) {
+        this.preparedListener.add(new OnPreparedForwarder(preparedListener, playerState));
     }
 
-    public void bind(BufferStateListeners bufferStateListeners, ErrorListeners errorListeners, Player player) {
-        preparedListener.add(new BufferOnPreparedListener(bufferStateListeners));
-        heartBeatListener.add(new BufferHeartbeatListener(bufferStateListeners));
-        errorListener.add(new ErrorForwarder(bufferStateListeners, errorListeners, player));
+    public void bind(Player.BufferStateListener bufferStateListener, Player.ErrorListener errorListener, Player player) {
+        preparedListener.add(new BufferOnPreparedListener(bufferStateListener));
+        heartBeatListener.add(new BufferHeartbeatListener(bufferStateListener));
+        this.errorListener.add(new ErrorForwarder(bufferStateListener, errorListener, player));
     }
 
-    public void bind(CompletionListeners completionListeners, StateChangedListeners stateChangedListeners) {
-        completionListener.add(new CompletionForwarder(completionListeners));
-        completionListener.add(new CompletionStateChangedForwarder(stateChangedListeners));
+    public void bind(Player.CompletionListener completionListener, Player.StateChangedListener stateChangedListener) {
+        this.completionListener.add(new CompletionForwarder(completionListener));
+        this.completionListener.add(new CompletionStateChangedForwarder(stateChangedListener));
     }
 
-    public void bind(VideoSizeChangedListeners videoSizeChangedListeners) {
-        videoSizeChangedListener.add(new VideoSizeChangedForwarder(videoSizeChangedListeners));
+    public void bind(Player.VideoSizeChangedListener videoSizeChangedListener) {
+        this.videoSizeChangedListener.add(new VideoSizeChangedForwarder(videoSizeChangedListener));
     }
 
-    public void bind(InfoListeners infoListeners) {
-        preparedListener.add(new OnPreparedInfoForwarder(infoListeners));
-        heartBeatListener.add(new BufferInfoForwarder(infoListeners));
-        completionListener.add(new CompletionInfoForwarder(infoListeners));
-        errorListener.add(new ErrorInfoForwarder(infoListeners));
-        videoSizeChangedListener.add(new VideoSizeChangedInfoForwarder(infoListeners));
+    public void bind(Player.InfoListener infoListener) {
+        preparedListener.add(new OnPreparedInfoForwarder(infoListener));
+        heartBeatListener.add(new BufferInfoForwarder(infoListener));
+        completionListener.add(new CompletionInfoForwarder(infoListener));
+        errorListener.add(new ErrorInfoForwarder(infoListener));
+        videoSizeChangedListener.add(new VideoSizeChangedInfoForwarder(infoListener));
     }
 
     public MediaPlayer.OnPreparedListener onPreparedListener() {

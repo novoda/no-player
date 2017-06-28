@@ -1,14 +1,9 @@
-package com.novoda.noplayer;
+package com.novoda.noplayer.listeners;
 
+import com.novoda.noplayer.Heart;
+import com.novoda.noplayer.Listeners;
+import com.novoda.noplayer.Player;
 import com.novoda.noplayer.Player.BitrateChangedListener;
-import com.novoda.noplayer.listeners.BitrateChangedListeners;
-import com.novoda.noplayer.listeners.BufferStateListeners;
-import com.novoda.noplayer.listeners.CompletionListeners;
-import com.novoda.noplayer.listeners.ErrorListeners;
-import com.novoda.noplayer.listeners.InfoListeners;
-import com.novoda.noplayer.listeners.PreparedListeners;
-import com.novoda.noplayer.listeners.StateChangedListeners;
-import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 
 public class PlayerListenersHolder implements Listeners {
 
@@ -125,39 +120,39 @@ public class PlayerListenersHolder implements Listeners {
         videoSizeChangedListeners.remove(videoSizeChangedListener);
     }
 
-    public ErrorListeners getErrorListeners() {
+    public Player.ErrorListener getErrorListeners() {
         return errorListeners;
     }
 
-    public PreparedListeners getPreparedListeners() {
+    public Player.PreparedListener getPreparedListeners() {
         return preparedListeners;
     }
 
-    public BufferStateListeners getBufferStateListeners() {
+    public Player.BufferStateListener getBufferStateListeners() {
         return bufferStateListeners;
     }
 
-    public CompletionListeners getCompletionListeners() {
+    public Player.CompletionListener getCompletionListeners() {
         return completionListeners;
     }
 
-    public StateChangedListeners getStateChangedListeners() {
+    public Player.StateChangedListener getStateChangedListeners() {
         return stateChangedListeners;
     }
 
-    public InfoListeners getInfoListeners() {
+    public Player.InfoListener getInfoListeners() {
         return infoListeners;
     }
 
-    public HeartbeatCallbacks<Player> getHeartbeatCallbacks() {
+    public Heart.Heartbeat.Callback<Player> getHeartbeatCallbacks() {
         return heartbeatCallbacks;
     }
 
-    public VideoSizeChangedListeners getVideoSizeChangedListeners() {
+    public Player.VideoSizeChangedListener getVideoSizeChangedListeners() {
         return videoSizeChangedListeners;
     }
 
-    public BitrateChangedListeners getBitrateChangedListeners() {
+    public Player.BitrateChangedListener getBitrateChangedListeners() {
         return bitrateChangedListeners;
     }
 

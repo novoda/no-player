@@ -5,19 +5,19 @@ import com.novoda.noplayer.Player;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public class VideoSizeChangedListeners implements Player.VideoSizeChangedListener {
+class VideoSizeChangedListeners implements Player.VideoSizeChangedListener {
 
     private final Set<Player.VideoSizeChangedListener> listeners = new CopyOnWriteArraySet<>();
 
-    public void add(Player.VideoSizeChangedListener listener) {
+    void add(Player.VideoSizeChangedListener listener) {
         listeners.add(listener);
     }
 
-    public void remove(Player.VideoSizeChangedListener listener) {
+    void remove(Player.VideoSizeChangedListener listener) {
         listeners.remove(listener);
     }
 
-    public void clear() {
+    void clear() {
         listeners.clear();
     }
 

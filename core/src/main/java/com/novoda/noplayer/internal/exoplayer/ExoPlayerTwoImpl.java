@@ -8,12 +8,12 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
+import com.novoda.noplayer.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
@@ -174,7 +174,6 @@ class ExoPlayerTwoImpl implements Player {
         if (exoPlayer.hasPlayedContent()) {
             reset();
         }
-        listenersHolder.getPreparedListeners().resetPreparedState();
         exoPlayer.loadVideo(drmSessionCreator, uri, contentType, forwarder, mediaCodecSelector);
     }
 

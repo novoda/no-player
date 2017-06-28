@@ -6,20 +6,20 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.novoda.noplayer.listeners.StateChangedListeners;
+import com.novoda.noplayer.Player;
 
 class OnCompletionStateChangedForwarder implements ExoPlayer.EventListener {
 
-    private final StateChangedListeners stateChangedListeners;
+    private final Player.StateChangedListener stateChangedListener;
 
-    OnCompletionStateChangedForwarder(StateChangedListeners stateChangedListeners) {
-        this.stateChangedListeners = stateChangedListeners;
+    OnCompletionStateChangedForwarder(Player.StateChangedListener stateChangedListener) {
+        this.stateChangedListener = stateChangedListener;
     }
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == ExoPlayer.STATE_ENDED) {
-            stateChangedListeners.onVideoStopped();
+            stateChangedListener.onVideoStopped();
         }
     }
 

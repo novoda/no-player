@@ -10,20 +10,12 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.Player.StateChangedListener;
-import com.novoda.noplayer.PlayerListenersHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerTrackSelector;
-import com.novoda.noplayer.listeners.BitrateChangedListeners;
-import com.novoda.noplayer.listeners.BufferStateListeners;
-import com.novoda.noplayer.listeners.CompletionListeners;
-import com.novoda.noplayer.listeners.ErrorListeners;
-import com.novoda.noplayer.listeners.InfoListeners;
-import com.novoda.noplayer.listeners.PreparedListeners;
-import com.novoda.noplayer.listeners.StateChangedListeners;
-import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
+import com.novoda.noplayer.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.TextCues;
@@ -91,13 +83,13 @@ public class ExoPlayerTwoImplTest {
         public void whenInitialisingPlayer_thenBindsListenersToForwarder() {
             player.initialise();
 
-            verify(forwarder).bind(preparedListeners, player);
-            verify(forwarder).bind(completionListeners, stateChangedListeners);
-            verify(forwarder).bind(errorListeners, player);
-            verify(forwarder).bind(bufferStateListeners);
-            verify(forwarder).bind(videoSizeChangedListeners);
-            verify(forwarder).bind(bitrateChangedListeners);
-            verify(forwarder).bind(infoListeners);
+            verify(forwarder).bind(preparedListener, player);
+            verify(forwarder).bind(completionListener, stateChangedListener);
+            verify(forwarder).bind(errorListener, player);
+            verify(forwarder).bind(bufferStateListener);
+            verify(forwarder).bind(videoSizeChangedListener);
+            verify(forwarder).bind(bitrateChangedListener);
+            verify(forwarder).bind(infoListener);
         }
 
         @Test
@@ -169,7 +161,7 @@ public class ExoPlayerTwoImplTest {
 
             player.release();
 
-            verify(stateChangedListeners).onVideoStopped();
+            verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
             verify(exoPlayerFacade).release();
@@ -272,7 +264,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(URI, ContentType.HLS);
 
-            verify(stateChangedListeners).onVideoStopped();
+            verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
             verify(exoPlayerFacade).release();
@@ -285,7 +277,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(stateChangedListeners).onVideoStopped();
+            verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
             verify(exoPlayerFacade).release();
@@ -298,7 +290,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(URI, ContentType.HLS);
 
-            verify(stateChangedListeners, never()).onVideoStopped();
+            verify(stateChangedListener, never()).onVideoStopped();
             verify(loadTimeout, never()).cancel();
             verify(heart, never()).stopBeatingHeart();
             verify(exoPlayerFacade, never()).release();
@@ -310,7 +302,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(stateChangedListeners, never()).onVideoStopped();
+            verify(stateChangedListener, never()).onVideoStopped();
             verify(loadTimeout, never()).cancel();
             verify(heart, never()).stopBeatingHeart();
             verify(exoPlayerFacade, never()).release();
@@ -345,7 +337,7 @@ public class ExoPlayerTwoImplTest {
         public void whenPausing_thenNotifiesStateListenersThatVideoIsPaused() {
             player.pause();
 
-            verify(stateChangedListeners).onVideoPaused();
+            verify(stateChangedListener).onVideoPaused();
         }
 
         @Test
@@ -423,7 +415,7 @@ public class ExoPlayerTwoImplTest {
 
             player.play();
 
-            verify(stateChangedListeners).onVideoPlaying();
+            verify(stateChangedListener).onVideoPlaying();
         }
 
         @Test
@@ -431,7 +423,7 @@ public class ExoPlayerTwoImplTest {
 
             player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
-            verify(stateChangedListeners).onVideoPlaying();
+            verify(stateChangedListener).onVideoPlaying();
         }
 
         @Test
@@ -521,21 +513,19 @@ public class ExoPlayerTwoImplTest {
         @Mock
         PlayerListenersHolder listenersHolder;
         @Mock
-        ErrorListeners errorListeners;
+        Player.ErrorListener errorListener;
         @Mock
-        PreparedListeners preparedListeners;
+        Player.PreparedListener preparedListener;
         @Mock
-        BufferStateListeners bufferStateListeners;
+        Player.BufferStateListener bufferStateListener;
         @Mock
-        CompletionListeners completionListeners;
+        Player.CompletionListener completionListener;
         @Mock
-        StateChangedListeners stateChangedListeners;
+        Player.StateChangedListener stateChangedListener;
         @Mock
-        InfoListeners infoListeners;
+        Player.InfoListener infoListener;
         @Mock
-        VideoSizeChangedListeners videoSizeChangedListeners;
-        @Mock
-        BitrateChangedListeners bitrateChangedListeners;
+        Player.BitrateChangedListener bitrateChangedListener;
         @Mock
         ExoPlayerFacade exoPlayerFacade;
         @Mock
@@ -561,14 +551,14 @@ public class ExoPlayerTwoImplTest {
                 }
             }).when(surfaceHolderRequester).requestSurfaceHolder(any(SurfaceHolderRequester.Callback.class));
 
-            given(listenersHolder.getErrorListeners()).willReturn(errorListeners);
-            given(listenersHolder.getPreparedListeners()).willReturn(preparedListeners);
-            given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListeners);
-            given(listenersHolder.getCompletionListeners()).willReturn(completionListeners);
-            given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListeners);
-            given(listenersHolder.getInfoListeners()).willReturn(infoListeners);
-            given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListeners);
-            given(listenersHolder.getBitrateChangedListeners()).willReturn(bitrateChangedListeners);
+            given(listenersHolder.getErrorListeners()).willReturn(errorListener);
+            given(listenersHolder.getPreparedListeners()).willReturn(preparedListener);
+            given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListener);
+            given(listenersHolder.getCompletionListeners()).willReturn(completionListener);
+            given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListener);
+            given(listenersHolder.getInfoListeners()).willReturn(infoListener);
+            given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListener);
+            given(listenersHolder.getBitrateChangedListeners()).willReturn(bitrateChangedListener);
 
             player = new ExoPlayerTwoImpl(
                     exoPlayerFacade,

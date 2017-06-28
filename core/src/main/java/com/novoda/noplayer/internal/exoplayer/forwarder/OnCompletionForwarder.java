@@ -6,20 +6,20 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.novoda.noplayer.listeners.CompletionListeners;
+import com.novoda.noplayer.Player;
 
 class OnCompletionForwarder implements ExoPlayer.EventListener {
 
-    private final CompletionListeners completionListeners;
+    private final Player.CompletionListener completionListener;
 
-    OnCompletionForwarder(CompletionListeners completionListeners) {
-        this.completionListeners = completionListeners;
+    OnCompletionForwarder(Player.CompletionListener completionListener) {
+        this.completionListener = completionListener;
     }
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == ExoPlayer.STATE_ENDED) {
-            completionListeners.onCompletion();
+            completionListener.onCompletion();
         }
     }
 

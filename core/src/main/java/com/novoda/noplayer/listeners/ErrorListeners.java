@@ -5,19 +5,19 @@ import com.novoda.noplayer.Player;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public class ErrorListeners implements Player.ErrorListener {
+class ErrorListeners implements Player.ErrorListener {
 
     private final Set<Player.ErrorListener> listeners = new CopyOnWriteArraySet<>();
 
-    public void add(Player.ErrorListener listener) {
+    void add(Player.ErrorListener listener) {
         listeners.add(listener);
     }
 
-    public void remove(Player.ErrorListener listener) {
+    void remove(Player.ErrorListener listener) {
         listeners.remove(listener);
     }
 
-    public void clear() {
+    void clear() {
         listeners.clear();
     }
 

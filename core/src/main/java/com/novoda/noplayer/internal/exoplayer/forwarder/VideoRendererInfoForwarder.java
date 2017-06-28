@@ -5,16 +5,16 @@ import android.view.Surface;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
-import com.novoda.noplayer.listeners.InfoListeners;
+import com.novoda.noplayer.Player;
 
 import java.util.HashMap;
 
 class VideoRendererInfoForwarder implements VideoRendererEventListener {
 
-    private final InfoListeners infoListeners;
+    private final Player.InfoListener infoListener;
 
-    VideoRendererInfoForwarder(InfoListeners infoListeners) {
-        this.infoListeners = infoListeners;
+    VideoRendererInfoForwarder(Player.InfoListener infoListener) {
+        this.infoListener = infoListener;
     }
 
     @Override
@@ -24,7 +24,7 @@ class VideoRendererInfoForwarder implements VideoRendererEventListener {
         callingMethodParameters.put("count", String.valueOf(count));
         callingMethodParameters.put("elapsedMs", String.valueOf(elapsedMs));
 
-        infoListeners.onNewInfo("onDroppedFrames", callingMethodParameters);
+        infoListener.onNewInfo("onDroppedFrames", callingMethodParameters);
     }
 
     @Override
@@ -33,7 +33,7 @@ class VideoRendererInfoForwarder implements VideoRendererEventListener {
 
         callingMethodParameters.put("counters", String.valueOf(counters));
 
-        infoListeners.onNewInfo("onVideoEnabled", callingMethodParameters);
+        infoListener.onNewInfo("onVideoEnabled", callingMethodParameters);
     }
 
     @Override
@@ -44,7 +44,7 @@ class VideoRendererInfoForwarder implements VideoRendererEventListener {
         callingMethodParameters.put("initializedTimestampMs", String.valueOf(initializedTimestampMs));
         callingMethodParameters.put("initializationDurationMs", String.valueOf(initializationDurationMs));
 
-        infoListeners.onNewInfo("onVideoDecoderInitialized", callingMethodParameters);
+        infoListener.onNewInfo("onVideoDecoderInitialized", callingMethodParameters);
     }
 
     @Override
@@ -53,7 +53,7 @@ class VideoRendererInfoForwarder implements VideoRendererEventListener {
 
         callingMethodParameters.put("format", String.valueOf(format));
 
-        infoListeners.onNewInfo("onVideoInputFormatChanged", callingMethodParameters);
+        infoListener.onNewInfo("onVideoInputFormatChanged", callingMethodParameters);
     }
 
     @Override
@@ -65,7 +65,7 @@ class VideoRendererInfoForwarder implements VideoRendererEventListener {
         callingMethodParameters.put("unappliedRotationDegrees", String.valueOf(unappliedRotationDegrees));
         callingMethodParameters.put("pixelWidthHeightRatio", String.valueOf(pixelWidthHeightRatio));
 
-        infoListeners.onNewInfo("onVideoSizeChanged", callingMethodParameters);
+        infoListener.onNewInfo("onVideoSizeChanged", callingMethodParameters);
     }
 
     @Override
@@ -74,7 +74,7 @@ class VideoRendererInfoForwarder implements VideoRendererEventListener {
 
         callingMethodParameters.put("surface", String.valueOf(surface));
 
-        infoListeners.onNewInfo("onRenderedFirstFrame", callingMethodParameters);
+        infoListener.onNewInfo("onRenderedFirstFrame", callingMethodParameters);
     }
 
     @Override
@@ -83,6 +83,6 @@ class VideoRendererInfoForwarder implements VideoRendererEventListener {
 
         callingMethodParameters.put("counters", String.valueOf(counters));
 
-        infoListeners.onNewInfo("onVideoDisabled", callingMethodParameters);
+        infoListener.onNewInfo("onVideoDisabled", callingMethodParameters);
     }
 }

@@ -3,17 +3,17 @@ package com.novoda.noplayer.internal.exoplayer.forwarder;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.upstream.DataSpec;
-import com.novoda.noplayer.listeners.InfoListeners;
+import com.novoda.noplayer.Player;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
 
-    private final InfoListeners infoListeners;
+    private final Player.InfoListener infoListener;
 
-    MediaSourceInfoForwarder(InfoListeners infoListeners) {
-        this.infoListeners = infoListeners;
+    MediaSourceInfoForwarder(Player.InfoListener infoListener) {
+        this.infoListener = infoListener;
     }
 
     @Override
@@ -31,7 +31,7 @@ class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
         callingMethodParameters.put("mediaEndTimeMs", String.valueOf(mediaEndTimeMs));
         callingMethodParameters.put("elapsedRealtimeMs", String.valueOf(elapsedRealtimeMs));
 
-        infoListeners.onNewInfo("onLoadStarted", callingMethodParameters);
+        infoListener.onNewInfo("onLoadStarted", callingMethodParameters);
     }
 
     @Override
@@ -52,7 +52,7 @@ class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
         callingMethodParameters.put("loadDurationMs", String.valueOf(loadDurationMs));
         callingMethodParameters.put("bytesLoaded", String.valueOf(bytesLoaded));
 
-        infoListeners.onNewInfo("onLoadCompleted", callingMethodParameters);
+        infoListener.onNewInfo("onLoadCompleted", callingMethodParameters);
     }
 
     @Override
@@ -73,7 +73,7 @@ class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
         callingMethodParameters.put("loadDurationMs", String.valueOf(loadDurationMs));
         callingMethodParameters.put("bytesLoaded", String.valueOf(bytesLoaded));
 
-        infoListeners.onNewInfo("onLoadCanceled", callingMethodParameters);
+        infoListener.onNewInfo("onLoadCanceled", callingMethodParameters);
     }
 
     @Override
@@ -96,7 +96,7 @@ class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
         callingMethodParameters.put("IOException", String.valueOf(error));
         callingMethodParameters.put("wasCanceled", String.valueOf(wasCanceled));
 
-        infoListeners.onNewInfo("onLoadError", callingMethodParameters);
+        infoListener.onNewInfo("onLoadError", callingMethodParameters);
     }
 
     @Override
@@ -107,7 +107,7 @@ class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
         callingMethodParameters.put("mediaStartTimeMs", String.valueOf(mediaStartTimeMs));
         callingMethodParameters.put("mediaEndTimeMs", String.valueOf(mediaEndTimeMs));
 
-        infoListeners.onNewInfo("onUpstreamDiscarded", callingMethodParameters);
+        infoListener.onNewInfo("onUpstreamDiscarded", callingMethodParameters);
     }
 
     @Override
@@ -121,6 +121,6 @@ class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
         callingMethodParameters.put("trackSelectionData", String.valueOf(trackSelectionData));
         callingMethodParameters.put("mediaTimeMs", String.valueOf(mediaTimeMs));
 
-        infoListeners.onNewInfo("onDownstreamFormatChanged", callingMethodParameters);
+        infoListener.onNewInfo("onDownstreamFormatChanged", callingMethodParameters);
     }
 }

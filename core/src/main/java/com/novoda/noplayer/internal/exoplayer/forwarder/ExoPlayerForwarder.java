@@ -6,14 +6,6 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerState;
-import com.novoda.noplayer.listeners.BitrateChangedListeners;
-import com.novoda.noplayer.listeners.BufferStateListeners;
-import com.novoda.noplayer.listeners.CompletionListeners;
-import com.novoda.noplayer.listeners.ErrorListeners;
-import com.novoda.noplayer.listeners.InfoListeners;
-import com.novoda.noplayer.listeners.PreparedListeners;
-import com.novoda.noplayer.listeners.StateChangedListeners;
-import com.novoda.noplayer.listeners.VideoSizeChangedListeners;
 
 public class ExoPlayerForwarder {
 
@@ -51,34 +43,34 @@ public class ExoPlayerForwarder {
         return drmSessionEventListener;
     }
 
-    public void bind(PreparedListeners preparedListeners, PlayerState playerState) {
-        exoPlayerEventListener.add(new OnPrepareForwarder(preparedListeners, playerState));
+    public void bind(Player.PreparedListener preparedListener, PlayerState playerState) {
+        exoPlayerEventListener.add(new OnPrepareForwarder(preparedListener, playerState));
     }
 
-    public void bind(CompletionListeners completionListeners, StateChangedListeners stateChangedListeners) {
-        exoPlayerEventListener.add(new OnCompletionForwarder(completionListeners));
-        exoPlayerEventListener.add(new OnCompletionStateChangedForwarder(stateChangedListeners));
+    public void bind(Player.CompletionListener completionListener, Player.StateChangedListener stateChangedListener) {
+        exoPlayerEventListener.add(new OnCompletionForwarder(completionListener));
+        exoPlayerEventListener.add(new OnCompletionStateChangedForwarder(stateChangedListener));
     }
 
-    public void bind(ErrorListeners errorListeners, Player player) {
-        exoPlayerEventListener.add(new PlayerOnErrorForwarder(player, errorListeners));
-        extractorMediaSourceListener.add(new MediaSourceOnErrorForwarder(player, errorListeners));
-        drmSessionEventListener.add(new DrmSessionErrorForwarder(player, errorListeners));
+    public void bind(Player.ErrorListener errorListener, Player player) {
+        exoPlayerEventListener.add(new PlayerOnErrorForwarder(player, errorListener));
+        extractorMediaSourceListener.add(new MediaSourceOnErrorForwarder(player, errorListener));
+        drmSessionEventListener.add(new DrmSessionErrorForwarder(player, errorListener));
     }
 
-    public void bind(BufferStateListeners bufferStateListeners) {
-        exoPlayerEventListener.add(new BufferStateForwarder(bufferStateListeners));
+    public void bind(Player.BufferStateListener bufferStateListener) {
+        exoPlayerEventListener.add(new BufferStateForwarder(bufferStateListener));
     }
 
-    public void bind(VideoSizeChangedListeners videoSizeChangedListeners) {
-        videoRendererEventListener.add(new VideoSizeChangedForwarder(videoSizeChangedListeners));
+    public void bind(Player.VideoSizeChangedListener videoSizeChangedListener) {
+        videoRendererEventListener.add(new VideoSizeChangedForwarder(videoSizeChangedListener));
     }
 
-    public void bind(BitrateChangedListeners bitrateChangedListeners) {
-        mediaSourceEventListener.add(new BitrateForwarder(bitrateChangedListeners));
+    public void bind(Player.BitrateChangedListener bitrateChangedListener) {
+        mediaSourceEventListener.add(new BitrateForwarder(bitrateChangedListener));
     }
 
-    public void bind(InfoListeners infoListeners) {
+    public void bind(Player.InfoListener infoListeners) {
         exoPlayerEventListener.add(new EventInfoForwarder(infoListeners));
         mediaSourceEventListener.add(new MediaSourceInfoForwarder(infoListeners));
         videoRendererEventListener.add(new VideoRendererInfoForwarder(infoListeners));

@@ -6,16 +6,16 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.novoda.noplayer.listeners.InfoListeners;
+import com.novoda.noplayer.Player;
 
 import java.util.HashMap;
 
 class EventInfoForwarder implements ExoPlayer.EventListener {
 
-    private final InfoListeners infoListeners;
+    private final Player.InfoListener infoListener;
 
-    EventInfoForwarder(InfoListeners infoListeners) {
-        this.infoListeners = infoListeners;
+    EventInfoForwarder(Player.InfoListener infoListener) {
+        this.infoListener = infoListener;
     }
 
     @Override
@@ -25,7 +25,7 @@ class EventInfoForwarder implements ExoPlayer.EventListener {
         callingMethodParameters.put("timeline", String.valueOf(timeline));
         callingMethodParameters.put("manifest", String.valueOf(manifest));
 
-        infoListeners.onNewInfo("onTimelineChanged", callingMethodParameters);
+        infoListener.onNewInfo("onTimelineChanged", callingMethodParameters);
     }
 
     @Override
@@ -35,7 +35,7 @@ class EventInfoForwarder implements ExoPlayer.EventListener {
         callingMethodParameters.put("trackGroups", String.valueOf(trackGroups));
         callingMethodParameters.put("trackSelections", String.valueOf(trackSelections));
 
-        infoListeners.onNewInfo("onTracksChanged", callingMethodParameters);
+        infoListener.onNewInfo("onTracksChanged", callingMethodParameters);
     }
 
     @Override
@@ -44,7 +44,7 @@ class EventInfoForwarder implements ExoPlayer.EventListener {
 
         callingMethodParameters.put("isLoading", String.valueOf(isLoading));
 
-        infoListeners.onNewInfo("onLoadingChanged", callingMethodParameters);
+        infoListener.onNewInfo("onLoadingChanged", callingMethodParameters);
     }
 
     @Override
@@ -54,7 +54,7 @@ class EventInfoForwarder implements ExoPlayer.EventListener {
         callingMethodParameters.put("playWhenReady", String.valueOf(playWhenReady));
         callingMethodParameters.put("playbackState", String.valueOf(playbackState));
 
-        infoListeners.onNewInfo("onPlayerStateChanged", callingMethodParameters);
+        infoListener.onNewInfo("onPlayerStateChanged", callingMethodParameters);
     }
 
     @Override
@@ -63,14 +63,14 @@ class EventInfoForwarder implements ExoPlayer.EventListener {
 
         callingMethodParameters.put("error", String.valueOf(error));
 
-        infoListeners.onNewInfo("onPlayerError", callingMethodParameters);
+        infoListener.onNewInfo("onPlayerError", callingMethodParameters);
     }
 
     @Override
     public void onPositionDiscontinuity() {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        infoListeners.onNewInfo("onPositionDiscontinuity", callingMethodParameters);
+        infoListener.onNewInfo("onPositionDiscontinuity", callingMethodParameters);
     }
 
     @Override
@@ -79,6 +79,6 @@ class EventInfoForwarder implements ExoPlayer.EventListener {
 
         callingMethodParameters.put("playbackParameters", String.valueOf(playbackParameters));
 
-        infoListeners.onNewInfo("onPlaybackParametersChanged", callingMethodParameters);
+        infoListener.onNewInfo("onPlaybackParametersChanged", callingMethodParameters);
     }
 }

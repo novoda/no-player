@@ -5,19 +5,19 @@ import com.novoda.noplayer.Player;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public class CompletionListeners implements Player.CompletionListener {
+class CompletionListeners implements Player.CompletionListener {
 
     private final Set<Player.CompletionListener> listeners = new CopyOnWriteArraySet<>();
 
-    public void add(Player.CompletionListener listener) {
+    void add(Player.CompletionListener listener) {
         listeners.add(listener);
     }
 
-    public void remove(Player.CompletionListener listener) {
+    void remove(Player.CompletionListener listener) {
         listeners.remove(listener);
     }
 
-    public void clear() {
+    void clear() {
         listeners.clear();
     }
 

@@ -2,16 +2,16 @@ package com.novoda.noplayer.internal.mediaplayer.forwarder;
 
 import android.media.MediaPlayer;
 
-import com.novoda.noplayer.listeners.InfoListeners;
+import com.novoda.noplayer.Player;
 
 import java.util.HashMap;
 
 class ErrorInfoForwarder implements MediaPlayer.OnErrorListener {
 
-    private final InfoListeners infoListeners;
+    private final Player.InfoListener infoListener;
 
-    ErrorInfoForwarder(InfoListeners infoListeners) {
-        this.infoListeners = infoListeners;
+    ErrorInfoForwarder(Player.InfoListener infoListener) {
+        this.infoListener = infoListener;
     }
 
     @Override
@@ -22,7 +22,7 @@ class ErrorInfoForwarder implements MediaPlayer.OnErrorListener {
         callingMethodParameters.put("what", String.valueOf(what));
         callingMethodParameters.put("extra", String.valueOf(extra));
 
-        infoListeners.onNewInfo("onError", callingMethodParameters);
+        infoListener.onNewInfo("onError", callingMethodParameters);
         return false;
     }
 }
