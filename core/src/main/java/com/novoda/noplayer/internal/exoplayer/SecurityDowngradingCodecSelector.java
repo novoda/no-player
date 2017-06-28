@@ -6,6 +6,8 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 
 class SecurityDowngradingCodecSelector implements MediaCodecSelector {
 
+    private static final boolean USE_INSECURE_DECODER = false;
+
     private final InternalMediaCodecUtil internalMediaCodecUtil;
 
     public static SecurityDowngradingCodecSelector newInstance() {
@@ -20,7 +22,7 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
     @Override
     public MediaCodecInfo getDecoderInfo(String mimeType, boolean contentRequiresSecureDecoder)
             throws MediaCodecUtil.DecoderQueryException {
-        return internalMediaCodecUtil.getDecoderInfo(mimeType, false);
+        return internalMediaCodecUtil.getDecoderInfo(mimeType, USE_INSECURE_DECODER);
     }
 
     @Override

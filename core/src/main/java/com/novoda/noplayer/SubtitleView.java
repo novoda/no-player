@@ -5,7 +5,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.novoda.noplayer.model.NoPlayerCue;
+import com.novoda.noplayer.model.TextCues;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,20 +23,20 @@ public final class SubtitleView extends View {
 
     private final List<SubtitlePainter> painters;
 
-    private List<NoPlayerCue> cues;
+    private TextCues textCues;
 
     public SubtitleView(Context context, AttributeSet attrs) {
         super(context, attrs);
         painters = new ArrayList<>();
     }
 
-    public void setCues(List<NoPlayerCue> cues) {
-        if (this.cues == cues) {
+    public void setCues(TextCues textCues) {
+        if (this.textCues.equals(textCues)) {
             return;
         }
 
-        this.cues = cues;
-        int cueCount = (cues == null) ? NO_CUES : cues.size();
+        this.textCues = textCues;
+        int cueCount = (textCues == null) ? NO_CUES : textCues.size();
 
         while (painters.size() < cueCount) {
             painters.add(new SubtitlePainter(getContext()));
@@ -47,7 +47,11 @@ public final class SubtitleView extends View {
 
     @Override
     public void dispatchDraw(Canvas canvas) {
-        int cueCount = (cues == null) ? NO_CUES : cues.size();
+        if (textCues == null || textCues.isEmpty()) {
+            return;
+        }
+
+        int cueCount = textCues.size();
         int rawTop = getTop();
         int rawBottom = getBottom();
 
@@ -68,7 +72,7 @@ public final class SubtitleView extends View {
 
         for (int i = 0; i < cueCount; i++) {
             painters.get(i).draw(
-                    cues.get(i),
+                    textCues.get(i),
                     APPLY_EMBEDDED_STYLES,
                     APPLY_EMBEDDED_FONT_STYLES,
                     textSizeInPixels,
