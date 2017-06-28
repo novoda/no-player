@@ -5,7 +5,7 @@ import android.media.MediaCodec;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.drm.DrmRequestException;
+import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.internal.exoplayer.playererror.ConnectivityError;
 import com.novoda.noplayer.internal.exoplayer.playererror.DrmDecryptionError;
 import com.novoda.noplayer.internal.exoplayer.playererror.DrmRequestError;
@@ -33,7 +33,7 @@ final class ExoPlayerErrorMapper {
         if (e.getCause() instanceof MediaCodec.CryptoException) {
             return new DrmDecryptionError(e);
         }
-        if (cause instanceof DrmRequestException) {
+        if (cause instanceof StreamingModularDrm.DrmRequestException) {
             return new DrmRequestError(cause);
         }
         if (e instanceof IOException || cause instanceof IOException) {

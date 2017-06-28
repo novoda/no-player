@@ -1,4 +1,4 @@
-package com.novoda.noplayer.drm.provision;
+package com.novoda.noplayer.internal.drm.provision;
 
 public class ProvisionExecutorCreator {
 

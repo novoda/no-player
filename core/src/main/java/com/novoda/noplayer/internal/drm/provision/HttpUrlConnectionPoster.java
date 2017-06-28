@@ -1,4 +1,4 @@
-package com.novoda.noplayer.drm.provision;
+package com.novoda.noplayer.internal.drm.provision;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
