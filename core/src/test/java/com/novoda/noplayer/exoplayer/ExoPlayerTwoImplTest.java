@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
+import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.text.Cue;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
@@ -60,7 +61,6 @@ import static org.mockito.Mockito.verify;
 @RunWith(Enclosed.class)
 public class ExoPlayerTwoImplTest {
 
-    private static final boolean USE_SECURE_CODEC = true;
     private static final long TWO_MINUTES_IN_MILLIS = 120000;
     private static final long TEN_SECONDS = 10;
 
@@ -181,7 +181,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, ANY_CONTENT_TYPE);
 
-            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, USE_SECURE_CODEC);
+            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -189,7 +189,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, USE_SECURE_CODEC);
+            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -542,6 +542,8 @@ public class ExoPlayerTwoImplTest {
         ExoPlayerTrackSelector exoPlayerTrackSelector;
         @Mock
         DrmSessionCreator drmSessionCreator;
+        @Mock
+        MediaCodecSelector mediaCodecSelector;
 
         ExoPlayerTwoImpl player;
 
@@ -575,7 +577,7 @@ public class ExoPlayerTwoImplTest {
                     loadTimeout,
                     heart,
                     drmSessionCreator,
-                    USE_SECURE_CODEC
+                    mediaCodecSelector
             );
         }
     }

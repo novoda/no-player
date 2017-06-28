@@ -11,13 +11,11 @@ import android.widget.Toast;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.PlayerState;
-import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.drm.DrmType;
-import com.novoda.noplayer.player.PlayerFactory;
-import com.novoda.noplayer.player.PrioritizedPlayerTypes;
+import com.novoda.noplayer.model.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.player.PlayerBuilder;
 import com.novoda.utils.NoPlayerLog;
 
 import java.util.ArrayList;
@@ -50,10 +48,12 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         // TODO: Add switch in UI to avoid redeploy.
-        PlayerFactory playerFactory = PlayerFactory.newInstance(this, PrioritizedPlayerTypes.prioritizeExoPlayer());
         DataPostingModularDrm drmHandler = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
 
-        player = playerFactory.create(DrmType.WIDEVINE_MODULAR_STREAM, drmHandler);
+        player = new PlayerBuilder()
+                .withWidevineModularStreamingDrm(drmHandler)
+                .build(this);
+
         player.getListeners().addPreparedListener(new Player.PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {

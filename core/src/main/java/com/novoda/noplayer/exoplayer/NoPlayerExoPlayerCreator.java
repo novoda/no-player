@@ -3,6 +3,7 @@ package com.novoda.noplayer.exoplayer;
 import android.content.Context;
 import android.os.Handler;
 
+import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -51,6 +52,8 @@ public class NoPlayerExoPlayerCreator {
 
             DefaultTrackSelector trackSelector = new DefaultTrackSelector();
 
+            MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder ? SecurityDowngradingCodecSelector.newInstance() : MediaCodecSelector.DEFAULT;
+
             ExoPlayerTrackSelector exoPlayerTrackSelector = ExoPlayerTrackSelector.newInstance(trackSelector);
             FixedTrackSelection.Factory trackSelectionFactory = new FixedTrackSelection.Factory();
             ExoPlayerAudioTrackSelector exoPlayerAudioTrackSelector = new ExoPlayerAudioTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
@@ -81,7 +84,7 @@ public class NoPlayerExoPlayerCreator {
                     loadTimeout,
                     heart,
                     drmSessionCreator,
-                    downgradeSecureDecoder
+                    mediaCodecSelector
             );
         }
     }

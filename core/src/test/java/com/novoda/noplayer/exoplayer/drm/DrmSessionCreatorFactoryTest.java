@@ -7,7 +7,7 @@ import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.drm.provision.ProvisionExecutorCreator;
-import com.novoda.noplayer.player.PlayerFactory;
+import com.novoda.noplayer.player.UnableToCreatePlayerException;
 import com.novoda.utils.AndroidDeviceVersion;
 
 import org.junit.Before;
@@ -75,7 +75,7 @@ public class DrmSessionCreatorFactoryTest {
         drmSessionCreatorFactory = new DrmSessionCreatorFactory(UNSUPPORTED_MEDIA_DRM_DEVICE_VERSION, provisionExecutorCreator, handler);
 
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_STREAM";
-        thrown.expect(ExceptionMatcher.matches(message, PlayerFactory.UnableToCreatePlayerException.class));
+        thrown.expect(ExceptionMatcher.matches(message, UnableToCreatePlayerException.class));
 
         drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, IGNORED_DRM_HANDLER);
     }
@@ -92,7 +92,7 @@ public class DrmSessionCreatorFactoryTest {
         drmSessionCreatorFactory = new DrmSessionCreatorFactory(UNSUPPORTED_MEDIA_DRM_DEVICE_VERSION, provisionExecutorCreator, handler);
 
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_DOWNLOAD";
-        thrown.expect(ExceptionMatcher.matches(message, PlayerFactory.UnableToCreatePlayerException.class));
+        thrown.expect(ExceptionMatcher.matches(message, UnableToCreatePlayerException.class));
 
         drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, IGNORED_DRM_HANDLER);
     }

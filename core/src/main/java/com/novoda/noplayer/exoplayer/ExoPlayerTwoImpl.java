@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
+import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
@@ -30,7 +31,7 @@ class ExoPlayerTwoImpl implements Player {
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
     private final DrmSessionCreator drmSessionCreator;
-    private final boolean downgradeSecureDecoder;
+    private final MediaCodecSelector mediaCodecSelector;
     private final LoadTimeout loadTimeout;
 
     private SurfaceHolderRequester surfaceHolderRequester;
@@ -47,14 +48,14 @@ class ExoPlayerTwoImpl implements Player {
                      LoadTimeout loadTimeoutParam,
                      Heart heart,
                      DrmSessionCreator drmSessionCreator,
-                     boolean downgradeSecureDecoder) {
+                     MediaCodecSelector mediaCodecSelector) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.heart = heart;
         this.drmSessionCreator = drmSessionCreator;
-        this.downgradeSecureDecoder = downgradeSecureDecoder;
+        this.mediaCodecSelector = mediaCodecSelector;
     }
 
     void initialise() {
@@ -174,7 +175,7 @@ class ExoPlayerTwoImpl implements Player {
             reset();
         }
         listenersHolder.getPreparedListeners().resetPreparedState();
-        exoPlayer.loadVideo(drmSessionCreator, uri, contentType, forwarder, downgradeSecureDecoder);
+        exoPlayer.loadVideo(drmSessionCreator, uri, contentType, forwarder, mediaCodecSelector);
     }
 
     @Override

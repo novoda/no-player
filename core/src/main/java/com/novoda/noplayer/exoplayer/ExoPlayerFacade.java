@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.model.PlayerAudioTrack;
@@ -100,8 +101,8 @@ class ExoPlayerFacade {
         exoPlayer.stop();
     }
 
-    void loadVideo(DrmSessionCreator drmSessionCreator, Uri uri, ContentType contentType, ExoPlayerForwarder forwarder, boolean downgradeSecureDecoder) {
-        exoPlayer = exoPlayerCreator.create(drmSessionCreator, forwarder.drmSessionEventListener(), downgradeSecureDecoder);
+    void loadVideo(DrmSessionCreator drmSessionCreator, Uri uri, ContentType contentType, ExoPlayerForwarder forwarder, MediaCodecSelector mediaCodecSelector) {
+        exoPlayer = exoPlayerCreator.create(drmSessionCreator, forwarder.drmSessionEventListener(), mediaCodecSelector);
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
