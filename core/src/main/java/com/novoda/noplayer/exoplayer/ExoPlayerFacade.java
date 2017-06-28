@@ -8,15 +8,15 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.model.PlayerAudioTrack;
-import com.novoda.noplayer.model.PlayerSubtitleTrack;
-import com.novoda.noplayer.model.VideoDuration;
-import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.exoplayer.mediasource.MediaSourceFactory;
+import com.novoda.noplayer.model.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.VideoDuration;
+import com.novoda.noplayer.model.VideoPosition;
 
 import java.util.List;
 
@@ -52,39 +52,39 @@ class ExoPlayerFacade {
         return exoPlayer != null && exoPlayer.getPlayWhenReady();
     }
 
-    VideoPosition getPlayheadPosition() {
+    VideoPosition getPlayheadPosition() throws IllegalStateException {
         assertVideoLoaded();
         return VideoPosition.fromMillis(exoPlayer.getCurrentPosition());
     }
 
-    VideoDuration getMediaDuration() {
+    VideoDuration getMediaDuration() throws IllegalStateException {
         assertVideoLoaded();
         return VideoDuration.fromMillis(exoPlayer.getDuration());
     }
 
-    int getBufferPercentage() {
+    int getBufferPercentage() throws IllegalStateException {
         assertVideoLoaded();
         return exoPlayer.getBufferedPercentage();
     }
 
-    void play(SurfaceHolder surfaceHolder, VideoPosition position) {
+    void play(SurfaceHolder surfaceHolder, VideoPosition position) throws IllegalStateException {
         seekTo(position);
         play(surfaceHolder);
     }
 
-    void play(SurfaceHolder surfaceHolder) {
+    void play(SurfaceHolder surfaceHolder) throws IllegalStateException {
         assertVideoLoaded();
         exoPlayer.clearVideoSurfaceHolder(surfaceHolder);
         exoPlayer.setVideoSurfaceHolder(surfaceHolder);
         exoPlayer.setPlayWhenReady(true);
     }
 
-    void pause() {
+    void pause() throws IllegalStateException {
         assertVideoLoaded();
         exoPlayer.setPlayWhenReady(false);
     }
 
-    void seekTo(VideoPosition position) {
+    void seekTo(VideoPosition position) throws IllegalStateException {
         assertVideoLoaded();
         exoPlayer.seekTo(position.inMillis());
     }
@@ -94,11 +94,6 @@ class ExoPlayerFacade {
             exoPlayer.release();
             exoPlayer = null;
         }
-    }
-
-    void stop() {
-        assertVideoLoaded();
-        exoPlayer.stop();
     }
 
     void loadVideo(DrmSessionCreator drmSessionCreator, Uri uri, ContentType contentType, ExoPlayerForwarder forwarder, MediaCodecSelector mediaCodecSelector) {
@@ -115,32 +110,32 @@ class ExoPlayerFacade {
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
     }
 
-    boolean selectAudioTrack(PlayerAudioTrack audioTrack) {
+    boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException {
         assertVideoLoaded();
         return audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester);
     }
 
-    List<PlayerAudioTrack> getAudioTracks() {
+    List<PlayerAudioTrack> getAudioTracks() throws IllegalStateException {
         assertVideoLoaded();
         return audioTrackSelector.getAudioTracks(rendererTypeRequester);
     }
 
-    void setSubtitleRendererOutput(TextRendererOutput textRendererOutput) {
+    void setSubtitleRendererOutput(TextRendererOutput textRendererOutput) throws IllegalStateException {
         assertVideoLoaded();
         exoPlayer.setTextOutput(textRendererOutput.output());
     }
 
-    void removeSubtitleRendererOutput() {
+    void removeSubtitleRendererOutput() throws IllegalStateException {
         assertVideoLoaded();
         exoPlayer.setTextOutput(null);
     }
 
-    boolean selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+    boolean selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException {
         assertVideoLoaded();
         return subtitleTrackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester);
     }
 
-    List<PlayerSubtitleTrack> getSubtitleTracks() {
+    List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException {
         assertVideoLoaded();
         return subtitleTrackSelector.getSubtitleTracks(rendererTypeRequester);
     }
@@ -149,7 +144,7 @@ class ExoPlayerFacade {
         return exoPlayer != null;
     }
 
-    void clearSubtitleTrack() {
+    void clearSubtitleTrack() throws IllegalStateException {
         assertVideoLoaded();
         subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
     }

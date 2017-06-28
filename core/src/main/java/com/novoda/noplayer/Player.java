@@ -17,31 +17,37 @@ public interface Player extends PlayerState {
     /**
      * Plays content of a prepared Player.
      *
+     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
      * @see Player.PreparedListener
      */
-    void play();
+    void play() throws IllegalStateException;
 
     /**
      * Plays content of a prepared Player at a position.
      *
      * @param position to start playing content from.
+     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
      * @see Player.PreparedListener
      */
-    void play(VideoPosition position);
+    void play(VideoPosition position) throws IllegalStateException;
 
     /**
-     * Pauses content of a Player.
+     * Pauses content of a prepared Player.
+     *
+     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
+     * @see Player.PreparedListener
      */
-    void pause();
+    void pause() throws IllegalStateException;
 
     /**
      * Seeks content of a prepared Player to a given position.
      * Will not cause content to play if not already playing.
      *
      * @param position to seek content to.
+     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
      * @see Player.PreparedListener
      */
-    void seekTo(VideoPosition position);
+    void seekTo(VideoPosition position) throws IllegalStateException;
 
     /**
      * Stops playback of content and then requires call to {@link Player#loadVideo(Uri, ContentType)} to continue playback.
@@ -97,38 +103,44 @@ public interface Player extends PlayerState {
      * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player.
      *
      * @return A list of available {@link PlayerAudioTrack}.
+     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
      * @see Player.PreparedListener
      */
-    List<PlayerAudioTrack> getAudioTracks();
+    List<PlayerAudioTrack> getAudioTracks() throws IllegalStateException;
 
     /**
      * Selects a given {@link PlayerAudioTrack}.
      *
      * @param audioTrack the audio track to select.
      * @return whether the selection was successful.
+     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
      */
-    boolean selectAudioTrack(PlayerAudioTrack audioTrack);
+    boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException;
 
     /**
      * Retrieves all of the available {@link PlayerSubtitleTrack} of a prepared Player.
      *
      * @return A list of available {@link PlayerSubtitleTrack}.
+     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
      * @see Player.PreparedListener
      */
-    List<PlayerSubtitleTrack> getSubtitleTracks();
+    List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException;
 
     /**
-     * Selects a given {@link PlayerSubtitleTrack}.
+     * Selects a given {@link PlayerSubtitleTrack} on an attached PlayerView.
      *
      * @param subtitleTrack the subtitle track to select.
      * @return whether the selection was successful.
+     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
      */
-    boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack);
+    boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException;
 
     /**
-     * Clear and hide the subtitles.
+     * Clear and hide the subtitles on an attached PlayerView.
+     *
+     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
      */
-    void hideSubtitleTrack();
+    void hideSubtitleTrack() throws IllegalStateException;
 
     /**
      * Retrieves a holder, which allows you to add and remove listeners to on the Player.

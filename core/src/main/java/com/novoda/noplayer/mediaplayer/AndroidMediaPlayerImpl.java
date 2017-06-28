@@ -22,7 +22,6 @@ import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.noplayer.player.PlayerInformation;
 
-import java.util.Collections;
 import java.util.List;
 
 class AndroidMediaPlayerImpl implements Player {
@@ -112,7 +111,7 @@ class AndroidMediaPlayerImpl implements Player {
     };
 
     @Override
-    public void play() {
+    public void play() throws IllegalStateException {
         heart.startBeatingHeart();
         requestSurface(new SurfaceHolderRequester.Callback() {
             @Override
@@ -124,7 +123,7 @@ class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public void play(final VideoPosition position) {
+    public void play(final VideoPosition position) throws IllegalStateException {
         if (getPlayheadPosition().equals(position)) {
             play();
         } else {
@@ -141,7 +140,7 @@ class AndroidMediaPlayerImpl implements Player {
      * Workaround to fix some devices (nexus 7 2013 in particular) from natively crashing the mediaplayer
      * by starting the mediaplayer before seeking it.
      */
-    private void initialSeekWorkaround(SurfaceHolder surfaceHolder, final VideoPosition initialPlayPosition) {
+    private void initialSeekWorkaround(SurfaceHolder surfaceHolder, final VideoPosition initialPlayPosition) throws IllegalStateException {
         listenersHolder.getBufferStateListeners().onBufferStarted();
         initialisePlaybackForSeeking(surfaceHolder);
         handler.postDelayed(new Runnable() {
@@ -164,7 +163,7 @@ class AndroidMediaPlayerImpl implements Player {
         surfaceHolderRequester.requestSurfaceHolder(callback);
     }
 
-    private void seekWithIntentToPlay(VideoPosition position) {
+    private void seekWithIntentToPlay(VideoPosition position) throws IllegalStateException {
         seekingWithIntentToPlay = true;
         seekTo(position);
     }
@@ -175,13 +174,13 @@ class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public void seekTo(VideoPosition position) {
+    public void seekTo(VideoPosition position) throws IllegalStateException {
         seekToPosition = position;
         mediaPlayer.seekTo(position.inImpreciseMillis());
     }
 
     @Override
-    public void pause() {
+    public void pause() {  // TODO: throw to match ExoPlayer?
         mediaPlayer.pause();
         if (heart.isBeating()) {
             heart.stopBeatingHeart();
@@ -211,7 +210,7 @@ class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public VideoPosition getPlayheadPosition() {
+    public VideoPosition getPlayheadPosition() throws IllegalStateException {
         return isSeeking() ? seekToPosition : VideoPosition.fromMillis(mediaPlayer.getCurrentPosition());
     }
 
@@ -220,12 +219,12 @@ class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public VideoDuration getMediaDuration() {
+    public VideoDuration getMediaDuration() throws IllegalStateException {
         return VideoDuration.fromMillis(mediaPlayer.getDuration());
     }
 
     @Override
-    public int getBufferPercentage() {
+    public int getBufferPercentage() throws IllegalStateException {
         return mediaPlayer.getBufferPercentage();
     }
 
@@ -261,33 +260,28 @@ class AndroidMediaPlayerImpl implements Player {
     }
 
     @Override
-    public boolean selectAudioTrack(PlayerAudioTrack audioTrack) {
+    public boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException {
         return mediaPlayer.selectAudioTrack(audioTrack);
     }
 
     @Override
     public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
-        SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
-        listenersHolder.getErrorListeners().onError(this, subtitlesError);
-        return false;
+        return mediaPlayer.selectSubtitleTrack(subtitleTrack);
     }
 
     @Override
     public void hideSubtitleTrack() {
-        SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
-        listenersHolder.getErrorListeners().onError(this, subtitlesError);
+        mediaPlayer.clearSubtitleTrack();
     }
 
     @Override
-    public List<PlayerAudioTrack> getAudioTracks() {
+    public List<PlayerAudioTrack> getAudioTracks() throws IllegalStateException {
         return mediaPlayer.getAudioTracks();
     }
 
     @Override
     public List<PlayerSubtitleTrack> getSubtitleTracks() {
-        SubtitlesError subtitlesError = new SubtitlesError("Subtitles not implemented for Android Media Player", new IllegalStateException());
-        listenersHolder.getErrorListeners().onError(this, subtitlesError);
-        return Collections.emptyList();
+        return mediaPlayer.getSubtitleTracks();
     }
 
     @Override

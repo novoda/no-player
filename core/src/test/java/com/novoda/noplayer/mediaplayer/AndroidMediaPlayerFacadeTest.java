@@ -6,9 +6,10 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
-import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.model.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.utils.NoPlayerLog;
 
 import java.io.IOException;
@@ -335,6 +336,18 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
+    public void givenMediaPlayerIsNotInPlaybackState_whenPausing_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
+        given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
+                .willReturn(IS_NOT_IN_PLAYBACK_STATE);
+
+        facade.pause();
+
+        verify(mediaPlayer).pause();
+    }
+
+    @Test
     public void givenMediaPlayerIsInPlaybackState_whenGettingDuration_thenReturnsDuration() {
         givenMediaPlayerIsPrepared();
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
@@ -418,19 +431,13 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
-    public void givenMediaPlayerIsPrepared_whenStopping_thenStopsMediaPlayer() {
-        givenMediaPlayerIsPrepared();
-
-        facade.stop();
-
-        verify(mediaPlayer).stop();
-    }
-
-    @Test
-    public void givenNoMediaPlayer_whenStopping_thenThrowsIllegalStateException() {
+    public void givenMediaPlayerIsNotInPlaybackState_whenGettingAudioTracks_thenThrowsIllegalStateException() {
         thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
 
-        facade.stop();
+        given(playbackStateChecker.isPlaying(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
+                .willReturn(IS_PLAYING);
+
+        facade.getAudioTracks();
     }
 
     @Test
@@ -444,6 +451,16 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
+    public void givenMediaPlayerIsNotInPlaybackState_whenSelectingAudioTracks_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
+        given(playbackStateChecker.isPlaying(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
+                .willReturn(IS_PLAYING);
+
+        facade.selectAudioTrack(mock(PlayerAudioTrack.class));
+    }
+
+    @Test
     public void whenSelectingAudioTrack_thenDelegatesToTrackSelector() {
         givenMediaPlayerIsPrepared();
         PlayerAudioTrack audioTrack = mock(PlayerAudioTrack.class);
@@ -454,6 +471,54 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
+    public void givenMediaPlayerIsNotInPlaybackState_whenSelectingSubtitleTrack_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
+        given(playbackStateChecker.isPlaying(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
+                .willReturn(IS_PLAYING);
+
+        facade.selectSubtitleTrack(mock(PlayerSubtitleTrack.class));
+    }
+
+    @Test
+    public void givenMediaPlayerIsNotInPlaybackState_whenClearingSubtitleTrack_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
+        given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
+                .willReturn(IS_NOT_IN_PLAYBACK_STATE);
+
+        facade.clearSubtitleTrack();
+    }
+
+    @Test
+    public void givenMediaPlayerIsNotInPlaybackState_whenGettingSubtitleTracks_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
+        given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
+                .willReturn(IS_NOT_IN_PLAYBACK_STATE);
+
+        facade.getSubtitleTracks();
+    }
+
+    @Test
+    public void whenGettingSubtitleTracks_thenReturnsEmptyList() {
+        givenMediaPlayerIsPrepared();
+
+        List<PlayerSubtitleTrack> subtitleTracks = facade.getSubtitleTracks();
+
+        assertThat(subtitleTracks).isEmpty();
+    }
+
+    @Test
+    public void whenSelectingSubtitleTrack_thenReturnsFalse() {
+        givenMediaPlayerIsPrepared();
+
+        boolean result = facade.selectSubtitleTrack(mock(PlayerSubtitleTrack.class));
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
     public void whenSettingOnSeekCompleteListener_thenSetsOnSeekCompleteListener() {
         givenMediaPlayerIsPrepared();
 
@@ -461,6 +526,16 @@ public class AndroidMediaPlayerFacadeTest {
         facade.setOnSeekCompleteListener(onSeekCompleteListener);
 
         verify(mediaPlayer).setOnSeekCompleteListener(onSeekCompleteListener);
+    }
+
+    @Test
+    public void givenMediaPlayerIsNotInPlaybackState_whenSettingOnSeekCompleteListener_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
+        given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
+                .willReturn(IS_NOT_IN_PLAYBACK_STATE);
+
+        facade.setOnSeekCompleteListener(mock(MediaPlayer.OnSeekCompleteListener.class));
     }
 
     private void givenMediaPlayerIsPrepared() {

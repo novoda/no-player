@@ -145,13 +145,6 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void whenStopping_thenThrowsIllegalStateException() {
-            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
-
-            facade.stop();
-        }
-
-        @Test
         public void whenSelectingAudioTrack_thenThrowsIllegalStateException() {
             thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
@@ -217,14 +210,6 @@ public class ExoPlayerFacadeTest {
             facade.seekTo(videoPosition);
 
             verify(exoPlayer).seekTo(videoPosition.inMillis());
-        }
-
-        @Test
-        public void whenStopping_thenStopsPlayer() {
-
-            facade.stop();
-
-            verify(exoPlayer).stop();
         }
 
         @Test
