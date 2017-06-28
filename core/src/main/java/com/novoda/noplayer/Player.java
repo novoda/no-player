@@ -14,6 +14,8 @@ import java.util.Map;
 
 public interface Player extends PlayerState {
 
+
+
     /**
      * Plays content of a prepared Player.
      *

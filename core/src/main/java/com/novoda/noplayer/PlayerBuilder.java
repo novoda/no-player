@@ -1,10 +1,9 @@
-package com.novoda.noplayer.player;
+package com.novoda.noplayer;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
@@ -13,6 +12,7 @@ import com.novoda.noplayer.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
+import com.novoda.noplayer.player.PlayerType;
 import com.novoda.utils.AndroidDeviceVersion;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class PlayerBuilder {
 
     private DrmType drmType = DrmType.NONE;
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
-    private PrioritizedPlayerTypes prioritizedPlayerTypes = PrioritizedPlayerTypes.prioritizeExoPlayer();
+    private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
     private boolean downgradeSecureDecoder = false;
 
     /**
@@ -87,7 +87,7 @@ public class PlayerBuilder {
         List<PlayerType> types = new ArrayList<>();
         types.add(playerType);
         types.addAll(Arrays.asList(playerTypes));
-        prioritizedPlayerTypes = new PrioritizedPlayerTypes(types);
+        prioritizedPlayerTypes = types;
         return this;
     }
 

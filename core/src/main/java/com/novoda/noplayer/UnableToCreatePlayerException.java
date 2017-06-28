@@ -1,16 +1,13 @@
-package com.novoda.noplayer.player;
+package com.novoda.noplayer;
 
 import com.novoda.noplayer.drm.DrmType;
+import com.novoda.noplayer.player.PlayerType;
 import com.novoda.utils.AndroidDeviceVersion;
 
 public class UnableToCreatePlayerException extends RuntimeException {
 
     static UnableToCreatePlayerException unhandledDrmType(DrmType drmType) {
         return new UnableToCreatePlayerException("Unhandled DrmType: " + drmType);
-    }
-
-    public static UnableToCreatePlayerException noDrmHandlerFor(DrmType drmType) {
-        return new UnableToCreatePlayerException("No DrmHandler for DrmType: " + drmType);
     }
 
     static UnableToCreatePlayerException unhandledPlayerType(PlayerType playerType) {
@@ -30,7 +27,11 @@ public class UnableToCreatePlayerException extends RuntimeException {
         );
     }
 
-    UnableToCreatePlayerException(String reason) {
+    UnableToCreatePlayerException(Throwable cause) {
+        super(cause);
+    }
+
+    private UnableToCreatePlayerException(String reason) {
         super(reason);
     }
 }

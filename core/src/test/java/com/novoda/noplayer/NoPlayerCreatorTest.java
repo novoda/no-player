@@ -1,16 +1,20 @@
-package com.novoda.noplayer.player;
+package com.novoda.noplayer;
 
 import android.content.Context;
 
-import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorException;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
+import com.novoda.noplayer.player.PlayerType;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,8 +25,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import static com.novoda.noplayer.player.PrioritizedPlayerTypes.prioritizeExoPlayer;
-import static com.novoda.noplayer.player.PrioritizedPlayerTypes.prioritizeMediaPlayer;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -57,21 +59,21 @@ public class NoPlayerCreatorTest {
         NoPlayerCreator noPlayerCreator;
 
         @Before
-        public void setUp() {
+        public void setUp() throws DrmSessionCreatorException {
             given(drmSessionCreatorFactory.createFor(any(DrmType.class), any(DrmHandler.class))).willReturn(drmSessionCreator);
             given(noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, USE_SECURE_CODEC)).willReturn(EXO_PLAYER);
             given(noPlayerMediaPlayerCreator.createMediaPlayer(context)).willReturn(MEDIA_PLAYER);
             noPlayerCreator = new NoPlayerCreator(context, prioritizedPlayerTypes(), noPlayerExoPlayerCreator, noPlayerMediaPlayerCreator, drmSessionCreatorFactory);
         }
 
-        abstract PrioritizedPlayerTypes prioritizedPlayerTypes();
+        abstract List<PlayerType> prioritizedPlayerTypes();
     }
 
     public static class GivenMediaPlayerPrioritized extends Base {
 
         @Override
-        PrioritizedPlayerTypes prioritizedPlayerTypes() {
-            return prioritizeMediaPlayer();
+        List<PlayerType> prioritizedPlayerTypes() {
+            return Arrays.asList(PlayerType.MEDIA_PLAYER, PlayerType.EXO_PLAYER);
         }
 
         @Test
@@ -106,8 +108,8 @@ public class NoPlayerCreatorTest {
     public static class GivenExoPlayerPlayerPrioritized extends Base {
 
         @Override
-        PrioritizedPlayerTypes prioritizedPlayerTypes() {
-            return prioritizeExoPlayer();
+        List<PlayerType> prioritizedPlayerTypes() {
+            return Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
         }
 
         @Test

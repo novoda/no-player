@@ -1,25 +1,28 @@
-package com.novoda.noplayer.player;
+package com.novoda.noplayer;
 
 import android.content.Context;
 
-import com.novoda.noplayer.Player;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorException;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
+import com.novoda.noplayer.player.PlayerType;
+
+import java.util.List;
 
 class NoPlayerCreator {
 
     private final Context context;
-    private final PrioritizedPlayerTypes prioritizedPlayerTypes;
+    private final List<PlayerType> prioritizedPlayerTypes;
     private final NoPlayerExoPlayerCreator noPlayerExoPlayerCreator;
     private final NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator;
     private final DrmSessionCreatorFactory drmSessionCreatorFactory;
 
     NoPlayerCreator(Context context,
-                    PrioritizedPlayerTypes prioritizedPlayerTypes,
+                    List<PlayerType> prioritizedPlayerTypes,
                     NoPlayerExoPlayerCreator noPlayerExoPlayerCreator,
                     NoPlayerMediaPlayerCreator noPlayerMediaPlayerCreator,
                     DrmSessionCreatorFactory drmSessionCreatorFactory) {
@@ -44,8 +47,12 @@ class NoPlayerCreator {
             case MEDIA_PLAYER:
                 return noPlayerMediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
-                DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler);
-                return noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, downgradeSecureDecoder);
+                try {
+                    DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler);
+                    return noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, downgradeSecureDecoder);
+                } catch (DrmSessionCreatorException exception) {
+                    throw new UnableToCreatePlayerException(exception);
+                }
             default:
                 throw UnableToCreatePlayerException.unhandledPlayerType(playerType);
         }

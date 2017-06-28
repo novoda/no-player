@@ -3,13 +3,13 @@ package com.novoda.noplayer.internal.exoplayer.drm;
 import android.os.Build;
 import android.os.Handler;
 
+import com.novoda.noplayer.UnableToCreatePlayerException;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.drm.provision.ProvisionExecutorCreator;
-import com.novoda.noplayer.player.UnableToCreatePlayerException;
 import com.novoda.utils.AndroidDeviceVersion;
 
 public class DrmSessionCreatorFactory {
@@ -24,7 +24,7 @@ public class DrmSessionCreatorFactory {
         this.handler = handler;
     }
 
-    public DrmSessionCreator createFor(DrmType drmType, DrmHandler drmHandler) {
+    public DrmSessionCreator createFor(DrmType drmType, DrmHandler drmHandler) throws DrmSessionCreatorException {
         switch (drmType) {
             case NONE:
                 // Fall-through.
@@ -37,7 +37,7 @@ public class DrmSessionCreatorFactory {
                 assertThatApiLevelIsJellyBeanEighteenOrAbove(drmType);
                 return createModularDownload((DownloadedModularDrm) drmHandler);
             default:
-                throw UnableToCreatePlayerException.noDrmHandlerFor(drmType);
+                throw DrmSessionCreatorException.noDrmHandlerFor(drmType);
         }
     }
 

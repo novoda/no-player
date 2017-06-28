@@ -2,12 +2,12 @@ package com.novoda.noplayer.internal.exoplayer.drm;
 
 import android.os.Handler;
 
+import com.novoda.noplayer.UnableToCreatePlayerException;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.drm.provision.ProvisionExecutorCreator;
-import com.novoda.noplayer.player.UnableToCreatePlayerException;
 import com.novoda.utils.AndroidDeviceVersion;
 
 import org.junit.Before;
@@ -50,28 +50,28 @@ public class DrmSessionCreatorFactoryTest {
     }
 
     @Test
-    public void givenDrmTypeNone_whenCreatingDrmSessionCreator_thenReturnsNoDrmSession() {
+    public void givenDrmTypeNone_whenCreatingDrmSessionCreator_thenReturnsNoDrmSession() throws DrmSessionCreatorException {
         DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.NONE, IGNORED_DRM_HANDLER);
 
         assertThat(drmSessionCreator).isInstanceOf(NoDrmSessionCreator.class);
     }
 
     @Test
-    public void givenDrmTypeWidevineClassic_whenCreatingDrmSessionCreator_thenReturnsNoDrmSession() {
+    public void givenDrmTypeWidevineClassic_whenCreatingDrmSessionCreator_thenReturnsNoDrmSession() throws DrmSessionCreatorException {
         DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_CLASSIC, IGNORED_DRM_HANDLER);
 
         assertThat(drmSessionCreator).isInstanceOf(NoDrmSessionCreator.class);
     }
 
     @Test
-    public void givenDrmTypeWidevineModularStream_whenCreatingDrmSessionCreator_thenReturnsStreaming() {
+    public void givenDrmTypeWidevineModularStream_whenCreatingDrmSessionCreator_thenReturnsStreaming() throws DrmSessionCreatorException {
         DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, streamingModularDrm);
 
         assertThat(drmSessionCreator).isInstanceOf(StreamingDrmSessionCreator.class);
     }
 
     @Test
-    public void givenDrmTypeWidevineModularStream_andAndroidVersionDoesNotSupportMediaDrmApis_whenCreatingDrmSessionCreator_thenThrowsUnableToCreatePlayerException() {
+    public void givenDrmTypeWidevineModularStream_andAndroidVersionDoesNotSupportMediaDrmApis_whenCreatingDrmSessionCreator_thenThrowsUnableToCreatePlayerException() throws DrmSessionCreatorException {
         drmSessionCreatorFactory = new DrmSessionCreatorFactory(UNSUPPORTED_MEDIA_DRM_DEVICE_VERSION, provisionExecutorCreator, handler);
 
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_STREAM";
@@ -81,14 +81,14 @@ public class DrmSessionCreatorFactoryTest {
     }
 
     @Test
-    public void givenDrmTypeWidevineModularDownload_whenCreatingDrmSessionCreator_thenReturnsDownload() {
+    public void givenDrmTypeWidevineModularDownload_whenCreatingDrmSessionCreator_thenReturnsDownload() throws DrmSessionCreatorException {
         DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm);
 
         assertThat(drmSessionCreator).isInstanceOf(DownloadDrmSessionCreator.class);
     }
 
     @Test
-    public void givenDrmTypeWidevineDownloadStream_andAndroidVersionDoesNotSupportMediaDrmApis_whenCreatingDrmSessionCreator_thenThrowsUnableToCreatePlayerException() {
+    public void givenDrmTypeWidevineDownloadStream_andAndroidVersionDoesNotSupportMediaDrmApis_whenCreatingDrmSessionCreator_thenThrowsUnableToCreatePlayerException() throws DrmSessionCreatorException {
         drmSessionCreatorFactory = new DrmSessionCreatorFactory(UNSUPPORTED_MEDIA_DRM_DEVICE_VERSION, provisionExecutorCreator, handler);
 
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_DOWNLOAD";
