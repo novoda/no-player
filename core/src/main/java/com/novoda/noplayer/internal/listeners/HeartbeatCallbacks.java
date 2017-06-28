@@ -1,6 +1,6 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.Heart;
+import com.novoda.noplayer.internal.Heart;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;

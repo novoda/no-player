@@ -1,7 +1,6 @@
 package com.novoda.noplayer;
 
 import com.novoda.noplayer.drm.DrmType;
-import com.novoda.noplayer.player.PlayerType;
 import com.novoda.utils.AndroidDeviceVersion;
 
 public class UnableToCreatePlayerException extends RuntimeException {

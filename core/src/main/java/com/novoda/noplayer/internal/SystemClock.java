@@ -1,4 +1,4 @@
-package com.novoda.noplayer;
+package com.novoda.noplayer.internal;
 
 public class SystemClock implements Clock {
 

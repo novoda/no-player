@@ -7,7 +7,6 @@ import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoPosition;
-import com.novoda.noplayer.player.PlayerInformation;
 
 import java.util.List;
 import java.util.Map;

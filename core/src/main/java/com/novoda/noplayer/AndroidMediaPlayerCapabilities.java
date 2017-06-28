@@ -1,4 +1,4 @@
-package com.novoda.noplayer.player;
+package com.novoda.noplayer;
 
 import com.novoda.noplayer.drm.DrmType;
 

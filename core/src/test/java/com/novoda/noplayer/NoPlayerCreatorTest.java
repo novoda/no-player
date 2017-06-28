@@ -11,7 +11,6 @@ import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorException;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
-import com.novoda.noplayer.player.PlayerType;
 
 import java.util.Arrays;
 import java.util.List;

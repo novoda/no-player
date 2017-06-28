@@ -6,7 +6,7 @@ import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.Heart;
+import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
@@ -20,7 +20,7 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
-import com.novoda.noplayer.player.PlayerInformation;
+import com.novoda.noplayer.PlayerInformation;
 
 import java.util.List;
 

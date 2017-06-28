@@ -2,8 +2,8 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.os.Build;
 
-import com.novoda.noplayer.player.PlayerInformation;
-import com.novoda.noplayer.player.PlayerType;
+import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerType;
 
 class MediaPlayerInformation implements PlayerInformation {
 

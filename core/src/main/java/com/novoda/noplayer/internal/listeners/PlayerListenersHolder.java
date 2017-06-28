@@ -1,6 +1,6 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.Heart;
+import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.Player.BitrateChangedListener;

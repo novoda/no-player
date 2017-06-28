@@ -1,6 +1,6 @@
 package com.novoda.noplayer.internal.mediaplayer;
 
-import com.novoda.noplayer.Heart;
+import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.model.VideoPosition;
 

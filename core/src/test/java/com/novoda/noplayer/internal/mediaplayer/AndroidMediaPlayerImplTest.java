@@ -8,7 +8,7 @@ import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.Heart;
+import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
@@ -19,8 +19,8 @@ import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
-import com.novoda.noplayer.player.PlayerInformation;
-import com.novoda.noplayer.player.PlayerType;
+import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerType;
 import com.novoda.utils.NoPlayerLog;
 
 import java.util.Collections;

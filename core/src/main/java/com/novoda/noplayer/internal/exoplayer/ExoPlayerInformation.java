@@ -1,8 +1,8 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
-import com.novoda.noplayer.player.PlayerInformation;
-import com.novoda.noplayer.player.PlayerType;
+import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerType;
 
 class ExoPlayerInformation implements PlayerInformation {
     @Override

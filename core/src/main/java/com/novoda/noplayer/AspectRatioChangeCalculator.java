@@ -8,7 +8,7 @@ class AspectRatioChangeCalculator {
         this.listener = listener;
     }
 
-    public void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio) {
+    void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio) {
         float aspectRatio = determineAspectRatio(width, height, pixelWidthHeightRatio);
         listener.onNewAspectRatio(aspectRatio);
     }

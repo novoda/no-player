@@ -1,4 +1,4 @@
-package com.novoda.noplayer;
+package com.novoda.noplayer.internal;
 
 import android.os.Handler;
 

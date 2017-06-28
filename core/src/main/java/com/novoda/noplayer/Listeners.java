@@ -1,5 +1,7 @@
 package com.novoda.noplayer;
 
+import com.novoda.noplayer.internal.Heart;
+
 public interface Listeners {
 
     void addErrorListener(Player.ErrorListener errorListener);

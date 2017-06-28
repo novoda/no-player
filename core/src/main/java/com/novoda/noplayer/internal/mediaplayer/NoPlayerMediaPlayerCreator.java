@@ -3,11 +3,11 @@ package com.novoda.noplayer.internal.mediaplayer;
 import android.content.Context;
 import android.os.Handler;
 
-import com.novoda.noplayer.Heart;
+import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
-import com.novoda.noplayer.SystemClock;
+import com.novoda.noplayer.internal.SystemClock;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 
 public class NoPlayerMediaPlayerCreator {
