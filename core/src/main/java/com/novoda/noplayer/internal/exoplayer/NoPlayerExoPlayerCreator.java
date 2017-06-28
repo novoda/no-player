@@ -9,7 +9,7 @@ import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.Heart;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.listeners.PlayerListenersHolder;
+import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.SystemClock;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;

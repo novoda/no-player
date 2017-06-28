@@ -1,4 +1,4 @@
-package com.novoda.noplayer.listeners;
+package com.novoda.noplayer.internal.listeners;
 
 import com.novoda.noplayer.Heart;
 
