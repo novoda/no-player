@@ -1,6 +1,5 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.Player.BitrateChangedListener;
@@ -16,7 +15,7 @@ public class PlayerListenersHolder implements Listeners {
     private final VideoSizeChangedListeners videoSizeChangedListeners;
     private final BitrateChangedListeners bitrateChangedListeners;
 
-    private final HeartbeatCallbacks<Player> heartbeatCallbacks;
+    private final HeartbeatCallbacks heartbeatCallbacks;
 
     public PlayerListenersHolder() {
         errorListeners = new ErrorListeners();
@@ -27,7 +26,7 @@ public class PlayerListenersHolder implements Listeners {
         infoListeners = new InfoListeners();
         videoSizeChangedListeners = new VideoSizeChangedListeners();
         bitrateChangedListeners = new BitrateChangedListeners();
-        heartbeatCallbacks = new HeartbeatCallbacks<>();
+        heartbeatCallbacks = new HeartbeatCallbacks();
     }
 
     @Override
@@ -101,13 +100,13 @@ public class PlayerListenersHolder implements Listeners {
     }
 
     @Override
-    public void addHeartbeatCallback(Heart.Heartbeat.Callback<Player> callback) {
-        heartbeatCallbacks.registerCallback(callback);
+    public void addHeartbeatCallback(Player.HeartbeatCallback heartbeatCallback) {
+        heartbeatCallbacks.registerCallback(heartbeatCallback);
     }
 
     @Override
-    public void removeHeartbeatCallback(Heart.Heartbeat.Callback<Player> callback) {
-        heartbeatCallbacks.unregisterCallback(callback);
+    public void removeHeartbeatCallback(Player.HeartbeatCallback heartbeatCallback) {
+        heartbeatCallbacks.unregisterCallback(heartbeatCallback);
     }
 
     @Override
@@ -144,7 +143,7 @@ public class PlayerListenersHolder implements Listeners {
         return infoListeners;
     }
 
-    public Heart.Heartbeat.Callback<Player> getHeartbeatCallbacks() {
+    public Player.HeartbeatCallback getHeartbeatCallbacks() {
         return heartbeatCallbacks;
     }
 

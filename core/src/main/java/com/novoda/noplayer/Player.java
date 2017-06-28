@@ -13,8 +13,6 @@ import java.util.Map;
 
 public interface Player extends PlayerState {
 
-
-
     /**
      * Plays content of a prepared Player.
      *
@@ -225,5 +223,10 @@ public interface Player extends PlayerState {
         };
 
         void onLoadTimeout();
+    }
+
+    interface HeartbeatCallback {
+
+        void onBeat(Player player);
     }
 }

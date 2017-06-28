@@ -1,10 +1,9 @@
 package com.novoda.noplayer.internal.mediaplayer;
 
-import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.model.VideoPosition;
 
-public class CheckBufferHeartbeatCallback implements Heart.Heartbeat.Callback<Player> {
+public class CheckBufferHeartbeatCallback implements Player.HeartbeatCallback {
 
     private static final int FORCED_BUFFERING_BEATS_THRESHOLD = 4;
 

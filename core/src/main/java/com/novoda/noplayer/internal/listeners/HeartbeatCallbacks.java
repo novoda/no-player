@@ -1,16 +1,16 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.internal.Heart;
+import com.novoda.noplayer.Player;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-class HeartbeatCallbacks<T> implements Heart.Heartbeat.Callback<T> {
+class HeartbeatCallbacks implements Player.HeartbeatCallback {
 
-    private final Set<Heart.Heartbeat.Callback<T>> callbacks = new CopyOnWriteArraySet<>();
+    private final Set<Player.HeartbeatCallback> callbacks = new CopyOnWriteArraySet<>();
 
-    void registerCallback(Heart.Heartbeat.Callback<T> callback) {
-        callbacks.add(callback);
+    void registerCallback(Player.HeartbeatCallback heartbeatCallback) {
+        callbacks.add(heartbeatCallback);
     }
 
     void clear() {
@@ -18,13 +18,13 @@ class HeartbeatCallbacks<T> implements Heart.Heartbeat.Callback<T> {
     }
 
     @Override
-    public void onBeat(T object) {
-        for (Heart.Heartbeat.Callback<T> callback : callbacks) {
-            callback.onBeat(object);
+    public void onBeat(Player player) {
+        for (Player.HeartbeatCallback callback : callbacks) {
+            callback.onBeat(player);
         }
     }
 
-    void unregisterCallback(Heart.Heartbeat.Callback callback) {
-        callbacks.remove(callback);
+    void unregisterCallback(Player.HeartbeatCallback heartbeatCallback) {
+        callbacks.remove(heartbeatCallback);
     }
 }

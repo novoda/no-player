@@ -6,21 +6,21 @@ import android.os.Handler;
 import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
-import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
+import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
-import com.novoda.noplayer.PlayerInformation;
 
 import java.util.List;
 
@@ -73,7 +73,7 @@ class AndroidMediaPlayerImpl implements Player {
 
         bufferHeartbeatCallback.bind(forwarder.onHeartbeatListener());
 
-        heart.bind(new Heart.Heartbeat<>(listenersHolder.getHeartbeatCallbacks(), this));
+        heart.bind(new Heart.Heartbeat(listenersHolder.getHeartbeatCallbacks(), this));
 
         listenersHolder.addHeartbeatCallback(bufferHeartbeatCallback);
         listenersHolder.addPreparedListener(new PreparedListener() {

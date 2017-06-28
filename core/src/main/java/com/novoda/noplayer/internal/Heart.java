@@ -2,6 +2,8 @@ package com.novoda.noplayer.internal;
 
 import android.os.Handler;
 
+import com.novoda.noplayer.Player;
+
 public class Heart {
 
     private static final long HEART_BEAT_FREQUENCY_IN_MILLIS = 500;
@@ -63,24 +65,19 @@ public class Heart {
         return beating;
     }
 
-    public static class Heartbeat<T> implements Runnable {
+    public static class Heartbeat implements Runnable {
 
-        private final Callback<T> callback;
-        private final T object;
+        private final Player.HeartbeatCallback callback;
+        private final Player player;
 
-        public Heartbeat(Callback<T> callback, T object) {
+        public Heartbeat(Player.HeartbeatCallback callback, Player player) {
             this.callback = callback;
-            this.object = object;
+            this.player = player;
         }
 
         @Override
         public void run() {
-            callback.onBeat(object);
-        }
-
-        public interface Callback<T> {
-
-            void onBeat(T object);
+            callback.onBeat(player);
         }
     }
 }
