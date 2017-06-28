@@ -104,22 +104,22 @@ class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public VideoPosition getPlayheadPosition() {
+    public VideoPosition getPlayheadPosition() throws IllegalStateException {
         return exoPlayer.getPlayheadPosition();
     }
 
     @Override
-    public VideoDuration getMediaDuration() {
+    public VideoDuration getMediaDuration() throws IllegalStateException {
         return exoPlayer.getMediaDuration();
     }
 
     @Override
-    public int getBufferPercentage() {
+    public int getBufferPercentage() throws IllegalStateException {
         return exoPlayer.getBufferPercentage();
     }
 
     @Override
-    public void play() {
+    public void play() throws IllegalStateException {
         heart.startBeatingHeart();
         surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
             @Override
@@ -131,13 +131,13 @@ class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public void play(VideoPosition position) {
+    public void play(VideoPosition position) throws IllegalStateException {
         seekTo(position);
         play();
     }
 
     @Override
-    public void pause() {
+    public void pause() throws IllegalStateException {
         exoPlayer.pause();
         listenersHolder.getStateChangedListeners().onVideoPaused();
         if (heart.isBeating()) {
@@ -147,7 +147,7 @@ class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public void seekTo(VideoPosition position) {
+    public void seekTo(VideoPosition position) throws IllegalStateException {
         exoPlayer.seekTo(position);
     }
 
@@ -206,43 +206,37 @@ class ExoPlayerTwoImpl implements Player {
         this.playerView = null;
     }
 
-    /**
-     * @return Whether the selection was successful
-     */
     @Override
-    public boolean selectAudioTrack(PlayerAudioTrack audioTrack) {
+    public boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException {
         return exoPlayer.selectAudioTrack(audioTrack);
     }
 
-    /**
-     * @return Whether the selection was successful
-     */
     @Override
-    public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) {
+    public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException {
         setSubtitleRendererOutput();
         playerView.showSubtitles();
         return exoPlayer.selectSubtitleTrack(subtitleTrack);
     }
 
-    private void setSubtitleRendererOutput() {
+    private void setSubtitleRendererOutput() throws IllegalStateException {
         TextRendererOutput textRendererOutput = new TextRendererOutput(playerView);
         exoPlayer.setSubtitleRendererOutput(textRendererOutput);
     }
 
     @Override
-    public void hideSubtitleTrack() {
+    public void hideSubtitleTrack() throws IllegalStateException {
         exoPlayer.clearSubtitleTrack();
         playerView.hideSubtitles();
         exoPlayer.removeSubtitleRendererOutput();
     }
 
     @Override
-    public List<PlayerAudioTrack> getAudioTracks() {
+    public List<PlayerAudioTrack> getAudioTracks() throws IllegalStateException {
         return exoPlayer.getAudioTracks();
     }
 
     @Override
-    public List<PlayerSubtitleTrack> getSubtitleTracks() {
+    public List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException {
         return exoPlayer.getSubtitleTracks();
     }
 

@@ -6,12 +6,14 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
-import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.model.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.utils.NoPlayerLog;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -75,7 +77,7 @@ class AndroidMediaPlayerFacade {
         audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 
-    private MediaPlayer createAndBindMediaPlayer(SurfaceHolder surfaceHolder, Uri videoUri) throws IOException {
+    private MediaPlayer createAndBindMediaPlayer(SurfaceHolder surfaceHolder, Uri videoUri) throws IOException, IllegalStateException, IllegalArgumentException {
         MediaPlayer mediaPlayer = mediaPlayerCreator.createMediaPlayer();
         mediaPlayer.setOnPreparedListener(internalPreparedListener);
         mediaPlayer.setOnVideoSizeChangedListener(internalSizeChangedListener);
@@ -163,31 +165,33 @@ class AndroidMediaPlayerFacade {
         }
     }
 
-    void start(SurfaceHolder surfaceHolder) {
+    void start(SurfaceHolder surfaceHolder) throws IllegalStateException {
         assertIsInPlaybackState();
         mediaPlayer.setDisplay(surfaceHolder);
         currentState = PLAYING;
         mediaPlayer.start();
     }
 
-    void pause() {
+    void pause() throws IllegalStateException {
+        assertIsInPlaybackState();
+
         if (isPlaying()) {
             mediaPlayer.pause();
             currentState = PAUSED;
         }
     }
 
-    int getDuration() {
+    int getDuration() throws IllegalStateException {
         assertIsInPlaybackState();
         return mediaPlayer.getDuration();
     }
 
-    int getCurrentPosition() {
+    int getCurrentPosition() throws IllegalStateException {
         assertIsInPlaybackState();
         return mediaPlayer.getCurrentPosition();
     }
 
-    void seekTo(int msec) {
+    void seekTo(int msec) throws IllegalStateException {
         assertIsInPlaybackState();
         mediaPlayer.seekTo(msec);
     }
@@ -196,35 +200,24 @@ class AndroidMediaPlayerFacade {
         return playbackStateChecker.isPlaying(mediaPlayer, currentState);
     }
 
-    int getBufferPercentage() {
+    int getBufferPercentage() throws IllegalStateException {
         assertIsInPlaybackState();
         return currentBufferPercentage;
     }
 
-    void stop() {
-        assertIsInPlaybackState();
-        mediaPlayer.stop();
-    }
-
-    List<PlayerAudioTrack> getAudioTracks() {
+    List<PlayerAudioTrack> getAudioTracks() throws IllegalStateException {
         assertIsInPlaybackState();
         return trackSelector.getAudioTracks(mediaPlayer);
     }
 
-    boolean selectAudioTrack(PlayerAudioTrack playerAudioTrack) {
+    boolean selectAudioTrack(PlayerAudioTrack playerAudioTrack) throws IllegalStateException {
         assertIsInPlaybackState();
         return trackSelector.selectAudioTrack(mediaPlayer, playerAudioTrack);
     }
 
-    void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener) {
+    void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener) throws IllegalStateException {
         assertIsInPlaybackState();
         mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
-    }
-
-    private void assertIsInPlaybackState() {
-        if (!playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
-            throw new IllegalStateException("Video must be loaded and not in an error state before trying to interact with the player");
-        }
     }
 
     boolean hasPlayedContent() {
@@ -233,5 +226,28 @@ class AndroidMediaPlayerFacade {
 
     private boolean hasPlayer() {
         return mediaPlayer != null;
+    }
+
+    void clearSubtitleTrack() throws IllegalStateException {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to hide subtitle track but has not been implemented for MediaPlayer.");
+    }
+
+    boolean selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to show subtitle track but has not been implemented for MediaPlayer.");
+        return false;
+    }
+
+    List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to get subtitle tracks but has not been implemented for MediaPlayer.");
+        return Collections.emptyList();
+    }
+
+    private void assertIsInPlaybackState() throws IllegalStateException {
+        if (!playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
+            throw new IllegalStateException("Video must be loaded and not in an error state before trying to interact with the player");
+        }
     }
 }
