@@ -10,9 +10,9 @@ import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.drm.provision.ProvisionExecutorCreator;
-import com.novoda.noplayer.exoplayer.NoPlayerExoPlayerCreator;
-import com.novoda.noplayer.exoplayer.drm.DrmSessionCreatorFactory;
-import com.novoda.noplayer.mediaplayer.NoPlayerMediaPlayerCreator;
+import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
+import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
 import com.novoda.utils.AndroidDeviceVersion;
 
 import java.util.ArrayList;

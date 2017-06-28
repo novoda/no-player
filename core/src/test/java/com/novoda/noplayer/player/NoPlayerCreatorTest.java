@@ -7,10 +7,10 @@ import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
-import com.novoda.noplayer.exoplayer.NoPlayerExoPlayerCreator;
-import com.novoda.noplayer.exoplayer.drm.DrmSessionCreator;
-import com.novoda.noplayer.exoplayer.drm.DrmSessionCreatorFactory;
-import com.novoda.noplayer.mediaplayer.NoPlayerMediaPlayerCreator;
+import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
+import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
 
 import org.junit.Before;
 import org.junit.Rule;
