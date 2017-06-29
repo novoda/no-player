@@ -25,18 +25,18 @@ public class BuggyVideoDriverPreventerTest {
     private Player player;
 
     @Mock
-    private PlayerChecker playerChecker;
+    private InternalMediaPlayerTypeReader mediaPlayerTypeReader;
 
     private BuggyVideoDriverPreventer buggyVideoDriverPreventer;
 
     @Before
     public void setUp() {
-        buggyVideoDriverPreventer = new BuggyVideoDriverPreventer(playerChecker);
+        buggyVideoDriverPreventer = new BuggyVideoDriverPreventer(mediaPlayerTypeReader);
     }
 
     @Test
     public void givenVideoDriverIsNotBuggy_whenPreventingVideoDriverBug_thenNothingHappens() {
-        when(playerChecker.getPlayerType()).thenReturn(AndroidMediaPlayerType.NU);
+        when(mediaPlayerTypeReader.getPlayerType()).thenReturn(AndroidMediaPlayerType.NU);
 
         buggyVideoDriverPreventer.preventVideoDriverBug(player, videoContainer);
 
@@ -45,7 +45,7 @@ public class BuggyVideoDriverPreventerTest {
 
     @Test
     public void givenVideoDriverCanBeBuggy_whenPreventingVideoDriverBug_thenABuggyDriverLayoutListenerIsAddedToTheVideoContainer() {
-        when(playerChecker.getPlayerType()).thenReturn(AndroidMediaPlayerType.AWESOME);
+        when(mediaPlayerTypeReader.getPlayerType()).thenReturn(AndroidMediaPlayerType.AWESOME);
 
         buggyVideoDriverPreventer.preventVideoDriverBug(player, videoContainer);
 

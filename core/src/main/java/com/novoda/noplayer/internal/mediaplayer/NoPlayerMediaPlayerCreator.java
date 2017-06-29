@@ -45,9 +45,9 @@ public class NoPlayerMediaPlayerCreator {
             PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
             CheckBufferHeartbeatCallback bufferHeartbeatCallback = new CheckBufferHeartbeatCallback();
             Heart heart = Heart.newInstance(handler);
-            PlayerChecker playerChecker = new PlayerChecker(new SystemProperties(), Build.VERSION.SDK_INT);
-            BuggyVideoDriverPreventer preventer = new BuggyVideoDriverPreventer(playerChecker);
-            MediaPlayerInformation mediaPlayerInformation = new MediaPlayerInformation(playerChecker);
+            InternalMediaPlayerTypeReader mediaPlayerTypeReader = new InternalMediaPlayerTypeReader(new SystemProperties(), Build.VERSION.SDK_INT);
+            BuggyVideoDriverPreventer preventer = new BuggyVideoDriverPreventer(mediaPlayerTypeReader);
+            MediaPlayerInformation mediaPlayerInformation = new MediaPlayerInformation(mediaPlayerTypeReader);
             return new AndroidMediaPlayerImpl(
                     mediaPlayerInformation,
                     facade,

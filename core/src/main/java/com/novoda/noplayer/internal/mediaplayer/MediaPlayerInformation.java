@@ -7,10 +7,10 @@ import com.novoda.noplayer.PlayerType;
 
 class MediaPlayerInformation implements PlayerInformation {
 
-    private final PlayerChecker playerChecker;
+    private final InternalMediaPlayerTypeReader mediaPlayerTypeReader;
 
-    MediaPlayerInformation(PlayerChecker playerChecker) {
-        this.playerChecker = playerChecker;
+    MediaPlayerInformation(InternalMediaPlayerTypeReader mediaPlayerTypeReader) {
+        this.mediaPlayerTypeReader = mediaPlayerTypeReader;
     }
 
     @Override
@@ -25,6 +25,6 @@ class MediaPlayerInformation implements PlayerInformation {
 
     @Override
     public String getName() {
-        return "MediaPlayer: " + playerChecker.getPlayerType().getName();
+        return "MediaPlayer: " + mediaPlayerTypeReader.getPlayerType().getName();
     }
 }

@@ -13,12 +13,12 @@ import com.novoda.noplayer.Player;
  */
 class BuggyVideoDriverPreventer {
 
-    private final PlayerChecker playerChecker;
+    private final InternalMediaPlayerTypeReader mediaPlayerTypeReader;
 
     private OnPotentialBuggyDriverLayoutListener preventerListener;
 
-    BuggyVideoDriverPreventer(PlayerChecker playerChecker) {
-        this.playerChecker = playerChecker;
+    BuggyVideoDriverPreventer(InternalMediaPlayerTypeReader mediaPlayerTypeReader) {
+        this.mediaPlayerTypeReader = mediaPlayerTypeReader;
     }
 
     void preventVideoDriverBug(Player player, View containerView) {
@@ -28,7 +28,7 @@ class BuggyVideoDriverPreventer {
     }
 
     private boolean videoDriverCanBeBuggy() {
-        return playerChecker.getPlayerType() == AndroidMediaPlayerType.AWESOME;
+        return mediaPlayerTypeReader.getPlayerType() == AndroidMediaPlayerType.AWESOME;
     }
 
     private void attemptToCorrectMediaPlayerStatus(Player player, View containerView) {

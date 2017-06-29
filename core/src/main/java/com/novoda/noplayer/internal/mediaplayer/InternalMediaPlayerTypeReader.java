@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.os.Build;
 
-class PlayerChecker {
+class InternalMediaPlayerTypeReader {
 
     private static final String PROP_USE_NU_PLAYER = "media.stagefright.use-nuplayer";
     private static final String PROP_USE_AWESOME_PLAYER_PERSIST = "persist.sys.media.use-awesome";
@@ -11,7 +11,7 @@ class PlayerChecker {
     private final int deviceOSVersion;
     private final SystemProperties systemProperties;
 
-    PlayerChecker(SystemProperties systemProperties, int deviceOSVersion) {
+    InternalMediaPlayerTypeReader(SystemProperties systemProperties, int deviceOSVersion) {
         this.systemProperties = systemProperties;
         this.deviceOSVersion = deviceOSVersion;
     }
