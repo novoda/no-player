@@ -68,7 +68,7 @@ class AndroidMediaPlayerImpl implements Player {
 
     void initialise() {
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
-        forwarder.bind(listenersHolder.getBufferStateListeners(), listenersHolder.getErrorListeners(), this);
+        forwarder.bind(listenersHolder.getBufferStateListeners(), listenersHolder.getErrorListeners());
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
         forwarder.bind(listenersHolder.getInfoListeners());
@@ -87,7 +87,7 @@ class AndroidMediaPlayerImpl implements Player {
         });
         listenersHolder.addErrorListener(new ErrorListener() {
             @Override
-            public void onError(Player player, PlayerError error) {
+            public void onError(PlayerError error) {
                 loadTimeout.cancel();
             }
         });

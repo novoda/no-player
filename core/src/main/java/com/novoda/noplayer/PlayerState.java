@@ -16,5 +16,4 @@ public interface PlayerState {
     VideoDuration getMediaDuration();
 
     int getBufferPercentage();
-
 }

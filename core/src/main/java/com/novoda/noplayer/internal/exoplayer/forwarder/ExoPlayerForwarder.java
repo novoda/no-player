@@ -52,10 +52,10 @@ public class ExoPlayerForwarder {
         exoPlayerEventListener.add(new OnCompletionStateChangedForwarder(stateChangedListener));
     }
 
-    public void bind(Player.ErrorListener errorListener, Player player) {
-        exoPlayerEventListener.add(new PlayerOnErrorForwarder(player, errorListener));
-        extractorMediaSourceListener.add(new MediaSourceOnErrorForwarder(player, errorListener));
-        drmSessionEventListener.add(new DrmSessionErrorForwarder(player, errorListener));
+    public void bind(Player.ErrorListener errorListener) {
+        exoPlayerEventListener.add(new PlayerOnErrorForwarder(errorListener));
+        extractorMediaSourceListener.add(new MediaSourceOnErrorForwarder(errorListener));
+        drmSessionEventListener.add(new DrmSessionErrorForwarder(errorListener));
     }
 
     public void bind(Player.BufferStateListener bufferStateListener) {
