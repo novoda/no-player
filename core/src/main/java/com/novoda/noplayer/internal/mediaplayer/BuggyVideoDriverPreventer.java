@@ -13,11 +13,11 @@ import com.novoda.noplayer.Player;
  */
 class BuggyVideoDriverPreventer {
 
-    private final InternalMediaPlayerTypeReader mediaPlayerTypeReader;
+    private final MediaPlayerTypeReader mediaPlayerTypeReader;
 
     private OnPotentialBuggyDriverLayoutListener preventerListener;
 
-    BuggyVideoDriverPreventer(InternalMediaPlayerTypeReader mediaPlayerTypeReader) {
+    BuggyVideoDriverPreventer(MediaPlayerTypeReader mediaPlayerTypeReader) {
         this.mediaPlayerTypeReader = mediaPlayerTypeReader;
     }
 

@@ -25,7 +25,7 @@ public class BuggyVideoDriverPreventerTest {
     private Player player;
 
     @Mock
-    private InternalMediaPlayerTypeReader mediaPlayerTypeReader;
+    private MediaPlayerTypeReader mediaPlayerTypeReader;
 
     private BuggyVideoDriverPreventer buggyVideoDriverPreventer;
 

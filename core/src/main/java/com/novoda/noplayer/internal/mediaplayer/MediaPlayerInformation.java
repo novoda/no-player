@@ -7,9 +7,9 @@ import com.novoda.noplayer.PlayerType;
 
 class MediaPlayerInformation implements PlayerInformation {
 
-    private final InternalMediaPlayerTypeReader mediaPlayerTypeReader;
+    private final MediaPlayerTypeReader mediaPlayerTypeReader;
 
-    MediaPlayerInformation(InternalMediaPlayerTypeReader mediaPlayerTypeReader) {
+    MediaPlayerInformation(MediaPlayerTypeReader mediaPlayerTypeReader) {
         this.mediaPlayerTypeReader = mediaPlayerTypeReader;
     }
 

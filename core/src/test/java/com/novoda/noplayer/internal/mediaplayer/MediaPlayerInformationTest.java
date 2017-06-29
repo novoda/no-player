@@ -20,7 +20,7 @@ public class MediaPlayerInformationTest {
     public MockitoRule rule = MockitoJUnit.rule();
 
     @Mock
-    private InternalMediaPlayerTypeReader playerTypeReader;
+    private MediaPlayerTypeReader playerTypeReader;
 
     private MediaPlayerInformation playerInformation;
 
