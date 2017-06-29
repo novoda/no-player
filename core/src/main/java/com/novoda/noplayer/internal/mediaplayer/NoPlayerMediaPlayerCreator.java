@@ -48,7 +48,17 @@ public class NoPlayerMediaPlayerCreator {
             PlayerChecker playerChecker = new PlayerChecker(new SystemProperties(), Build.VERSION.SDK_INT);
             BuggyVideoDriverPreventer preventer = new BuggyVideoDriverPreventer(playerChecker);
             MediaPlayerInformation mediaPlayerInformation = new MediaPlayerInformation(playerChecker);
-            return new AndroidMediaPlayerImpl(mediaPlayerInformation, facade, forwarder, listenersHolder, bufferHeartbeatCallback, loadTimeout, heart, handler, preventer);
+            return new AndroidMediaPlayerImpl(
+                    mediaPlayerInformation,
+                    facade,
+                    forwarder,
+                    listenersHolder,
+                    bufferHeartbeatCallback,
+                    loadTimeout,
+                    heart,
+                    handler,
+                    preventer
+            );
         }
     }
 }
