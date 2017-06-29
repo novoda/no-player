@@ -15,7 +15,7 @@ import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
-import com.novoda.noplayer.player.PlayerBuilder;
+import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.utils.NoPlayerLog;
 
 import java.util.ArrayList;

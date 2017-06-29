@@ -30,9 +30,9 @@ public interface Listeners {
 
     void removeBitrateChangedListener(Player.BitrateChangedListener bitrateChangedListener);
 
-    void addHeartbeatCallback(Heart.Heartbeat.Callback<Player> callback);
+    void addHeartbeatCallback(Player.HeartbeatCallback heartbeatCallback);
 
-    void removeHeartbeatCallback(Heart.Heartbeat.Callback<Player> callback);
+    void removeHeartbeatCallback(Player.HeartbeatCallback heartbeatCallback);
 
     void addVideoSizeChangedListener(Player.VideoSizeChangedListener videoSizeChangedListener);
 

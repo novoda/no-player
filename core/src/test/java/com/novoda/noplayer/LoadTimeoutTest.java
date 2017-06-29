@@ -2,6 +2,7 @@ package com.novoda.noplayer;
 
 import android.os.Handler;
 
+import com.novoda.noplayer.internal.Clock;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.Timeout;
 

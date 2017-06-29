@@ -1,6 +1,5 @@
 package com.novoda.demo;
 
-import com.novoda.noplayer.drm.DrmRequestException;
 import com.novoda.noplayer.drm.ModularDrmKeyRequest;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 
