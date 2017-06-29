@@ -1,6 +1,6 @@
 package com.novoda.noplayer.internal.mediaplayer;
 
-public enum AndroidMediaPlayerType {
+enum AndroidMediaPlayerType {
 
     AWESOME("AwesomePlayer"),
     NU("NuPlayer"),
@@ -12,7 +12,7 @@ public enum AndroidMediaPlayerType {
         this.name = name;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 }
