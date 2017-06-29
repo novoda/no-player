@@ -10,17 +10,17 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 public class ExoPlayerInformationTest {
 
-    private ExoPlayerInformation exoPlayerInformation;
+    private ExoPlayerInformation playerInformation;
 
     @Before
     public void setUp() {
-        exoPlayerInformation = new ExoPlayerInformation();
+        playerInformation = new ExoPlayerInformation();
     }
 
     @Test
     public void whenReadingName_thenReturnsExoPlayer() {
 
-        String name = exoPlayerInformation.getName();
+        String name = playerInformation.getName();
 
         assertThat(name).isEqualTo("ExoPlayer");
     }
@@ -28,7 +28,7 @@ public class ExoPlayerInformationTest {
     @Test
     public void whenReadingVersion_thenReturnsExoPlayerLibraryVersion() {
 
-        String version = exoPlayerInformation.getVersion();
+        String version = playerInformation.getVersion();
 
         assertThat(version).isEqualTo(ExoPlayerLibraryInfo.VERSION);
     }
@@ -36,7 +36,7 @@ public class ExoPlayerInformationTest {
     @Test
     public void whenPlayerType_thenReturnsExoPlayer() {
 
-        PlayerType playerType = exoPlayerInformation.getPlayerType();
+        PlayerType playerType = playerInformation.getPlayerType();
 
         assertThat(playerType).isEqualTo(PlayerType.EXO_PLAYER);
     }
