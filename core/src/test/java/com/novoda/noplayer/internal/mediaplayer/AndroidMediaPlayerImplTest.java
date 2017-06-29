@@ -2,7 +2,6 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.view.View;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerInformation;
-import com.novoda.noplayer.PlayerType;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.Heart;
@@ -72,7 +70,7 @@ public class AndroidMediaPlayerImplTest {
             player.initialise();
 
             verify(forwarder).bind(preparedListener, player);
-            verify(forwarder).bind(bufferStateListener, errorListener, player);
+            verify(forwarder).bind(bufferStateListener, errorListener);
             verify(forwarder).bind(completionListener, stateChangedListener);
             verify(forwarder).bind(videoSizeChangedListener);
             verify(forwarder).bind(infoListener);
@@ -131,7 +129,7 @@ public class AndroidMediaPlayerImplTest {
             verify(listenersHolder).addErrorListener(errorListenerCaptor.capture());
 
             Player.ErrorListener errorListener = errorListenerCaptor.getValue();
-            errorListener.onError(player, mock(Player.PlayerError.class));
+            errorListener.onError(mock(Player.PlayerError.class));
 
             verify(loadTimeout).cancel();
         }

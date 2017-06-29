@@ -157,7 +157,7 @@ public interface Player extends PlayerState {
 
     interface ErrorListener {
 
-        void onError(Player player, PlayerError error);
+        void onError(PlayerError error);
     }
 
     interface PreparedListener {

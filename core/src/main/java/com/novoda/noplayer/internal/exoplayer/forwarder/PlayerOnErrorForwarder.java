@@ -10,18 +10,16 @@ import com.novoda.noplayer.Player;
 
 class PlayerOnErrorForwarder implements ExoPlayer.EventListener {
 
-    private final Player player;
     private final Player.ErrorListener errorListener;
 
-    PlayerOnErrorForwarder(Player player, Player.ErrorListener errorListener) {
-        this.player = player;
+    PlayerOnErrorForwarder(Player.ErrorListener errorListener) {
         this.errorListener = errorListener;
     }
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
         Player.PlayerError playerError = ExoPlayerErrorMapper.errorFor(error);
-        errorListener.onError(player, playerError);
+        errorListener.onError(playerError);
     }
 
     @Override

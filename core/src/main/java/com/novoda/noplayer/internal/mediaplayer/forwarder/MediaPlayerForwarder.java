@@ -26,10 +26,10 @@ public class MediaPlayerForwarder {
         this.preparedListener.add(new OnPreparedForwarder(preparedListener, playerState));
     }
 
-    public void bind(Player.BufferStateListener bufferStateListener, Player.ErrorListener errorListener, Player player) {
+    public void bind(Player.BufferStateListener bufferStateListener, Player.ErrorListener errorListener) {
         preparedListener.add(new BufferOnPreparedListener(bufferStateListener));
         heartBeatListener.add(new BufferHeartbeatListener(bufferStateListener));
-        this.errorListener.add(new ErrorForwarder(bufferStateListener, errorListener, player));
+        this.errorListener.add(new ErrorForwarder(bufferStateListener, errorListener));
     }
 
     public void bind(Player.CompletionListener completionListener, Player.StateChangedListener stateChangedListener) {

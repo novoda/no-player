@@ -62,7 +62,7 @@ class ExoPlayerTwoImpl implements Player {
         heart.bind(new Heart.Heartbeat(listenersHolder.getHeartbeatCallbacks(), this));
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
-        forwarder.bind(listenersHolder.getErrorListeners(), this);
+        forwarder.bind(listenersHolder.getErrorListeners());
         forwarder.bind(listenersHolder.getBufferStateListeners());
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
         forwarder.bind(listenersHolder.getBitrateChangedListeners());
@@ -75,7 +75,7 @@ class ExoPlayerTwoImpl implements Player {
         });
         listenersHolder.addErrorListener(new ErrorListener() {
             @Override
-            public void onError(Player player, PlayerError error) {
+            public void onError(PlayerError error) {
                 loadTimeout.cancel();
             }
         });

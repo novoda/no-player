@@ -22,9 +22,9 @@ class ErrorListeners implements Player.ErrorListener {
     }
 
     @Override
-    public void onError(Player player, Player.PlayerError error) {
+    public void onError(Player.PlayerError error) {
         for (Player.ErrorListener listener : listeners) {
-            listener.onError(player, error);
+            listener.onError(error);
         }
     }
 }

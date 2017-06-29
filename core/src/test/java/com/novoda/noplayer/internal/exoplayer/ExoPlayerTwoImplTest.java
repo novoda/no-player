@@ -85,7 +85,7 @@ public class ExoPlayerTwoImplTest {
 
             verify(forwarder).bind(preparedListener, player);
             verify(forwarder).bind(completionListener, stateChangedListener);
-            verify(forwarder).bind(errorListener, player);
+            verify(forwarder).bind(errorListener);
             verify(forwarder).bind(bufferStateListener);
             verify(forwarder).bind(videoSizeChangedListener);
             verify(forwarder).bind(bitrateChangedListener);
@@ -121,7 +121,7 @@ public class ExoPlayerTwoImplTest {
 
             verify(listenersHolder).addErrorListener(argumentCaptor.capture());
             Player.ErrorListener errorListener = argumentCaptor.getValue();
-            errorListener.onError(player, mock(Player.PlayerError.class));
+            errorListener.onError(mock(Player.PlayerError.class));
 
             verify(loadTimeout).cancel();
         }
