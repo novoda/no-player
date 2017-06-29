@@ -39,7 +39,7 @@ public class MediaPlayerInformationTest {
     }
 
     @Test
-    public void whenReadingVersion_thenReturnsExoPlayerLibraryVersion() {
+    public void whenReadingVersion_thenReturnsAndroidBuildVersion() {
 
         String version = playerInformation.getVersion();
 
@@ -47,7 +47,7 @@ public class MediaPlayerInformationTest {
     }
 
     @Test
-    public void whenPlayerType_thenReturnsExoPlayer() {
+    public void whenPlayerType_thenReturnsMediaPlayer() {
 
         PlayerType playerType = playerInformation.getPlayerType();
 
