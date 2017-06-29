@@ -155,6 +155,10 @@ public class PlayerListenersHolder implements Listeners {
         return bitrateChangedListeners;
     }
 
+    public void resetPreparedState() {
+        preparedListeners.resetPreparedState();
+    }
+
     public void clear() {
         errorListeners.clear();
         preparedListeners.clear();
