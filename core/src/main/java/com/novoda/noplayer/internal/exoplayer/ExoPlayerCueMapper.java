@@ -5,6 +5,7 @@ import com.novoda.noplayer.model.NoPlayerCue;
 import com.novoda.noplayer.model.TextCues;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 final class ExoPlayerCueMapper {
@@ -14,6 +15,10 @@ final class ExoPlayerCueMapper {
     }
 
     static TextCues map(List<Cue> cues) {
+        if (cues == null) {
+            return TextCues.of(Collections.<NoPlayerCue>emptyList());
+        }
+
         List<NoPlayerCue> noPlayerCues = new ArrayList<>(cues.size());
 
         for (Cue cue : cues) {

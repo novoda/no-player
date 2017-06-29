@@ -19,7 +19,6 @@ public final class SubtitleView extends View {
     private static final boolean APPLY_EMBEDDED_FONT_STYLES = true;
 
     private static final int ZERO_PIXELS = 0;
-    private static final int NO_CUES = 0;
 
     private final List<SubtitlePainter> painters;
 
@@ -31,12 +30,12 @@ public final class SubtitleView extends View {
     }
 
     public void setCues(TextCues textCues) {
-        if (this.textCues.equals(textCues)) {
+        if (textCues.equals(this.textCues)) {
             return;
         }
 
         this.textCues = textCues;
-        int cueCount = (textCues == null) ? NO_CUES : textCues.size();
+        int cueCount = textCues.size();
 
         while (painters.size() < cueCount) {
             painters.add(new SubtitlePainter(getContext()));

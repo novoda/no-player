@@ -11,11 +11,11 @@ import android.widget.Toast;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
-import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.utils.NoPlayerLog;
 
 import java.util.ArrayList;
@@ -30,28 +30,24 @@ public class MainActivity extends Activity {
     private static final String EXAMPLE_MODULAR_LICENSE_SERVER_PROXY = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
 
     private Player player;
-    private PlayerView playerView;
-    private View audioSelectionButton;
-    private View subtitleSelectionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
-        playerView = (PlayerView) findViewById(R.id.player_view);
-        audioSelectionButton = findViewById(R.id.button_audio_selection);
-        subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
-    }
+        PlayerView playerView = (PlayerView) findViewById(R.id.player_view);
+        View audioSelectionButton = findViewById(R.id.button_audio_selection);
+        View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // TODO: Add switch in UI to avoid redeploy.
+        audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
+        subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
+
         DataPostingModularDrm drmHandler = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
 
         player = new PlayerBuilder()
                 .withWidevineModularStreamingDrm(drmHandler)
+                .withDowngradedSecureDecoder()
                 .build(this);
 
         player.getListeners().addPreparedListener(new Player.PreparedListener() {
@@ -62,10 +58,12 @@ public class MainActivity extends Activity {
         });
 
         player.attach(playerView);
+    }
 
-        audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
-        subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // TODO: Add switch in UI to avoid redeploy.
         Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
         player.loadVideo(uri, ContentType.DASH);
     }
@@ -148,7 +146,12 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
+        player.stop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         player.release();
-        audioSelectionButton.setOnClickListener(null);
     }
 }
