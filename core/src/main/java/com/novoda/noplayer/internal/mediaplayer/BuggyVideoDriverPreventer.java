@@ -17,11 +17,6 @@ class BuggyVideoDriverPreventer {
 
     private OnPotentialBuggyDriverLayoutListener preventerListener;
 
-    static BuggyVideoDriverPreventer newInstance() {
-        PlayerChecker playerChecker = PlayerChecker.newInstance();
-        return new BuggyVideoDriverPreventer(playerChecker);
-    }
-
     BuggyVideoDriverPreventer(PlayerChecker playerChecker) {
         this.playerChecker = playerChecker;
     }
