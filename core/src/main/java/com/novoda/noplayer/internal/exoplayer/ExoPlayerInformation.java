@@ -14,4 +14,9 @@ class ExoPlayerInformation implements PlayerInformation {
     public String getVersion() {
         return ExoPlayerLibraryInfo.VERSION;
     }
+
+    @Override
+    public String getName() {
+        return "ExoPlayer";
+    }
 }

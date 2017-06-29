@@ -27,9 +27,9 @@ import java.util.List;
 class AndroidMediaPlayerImpl implements Player {
 
     private static final VideoPosition NO_SEEK_TO_POSITION = VideoPosition.INVALID;
-    private static final MediaPlayerInformation MEDIA_PLAYER_INFORMATION = new MediaPlayerInformation();
     private static final int INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
 
+    private final MediaPlayerInformation mediaPlayerInformation;
     private final AndroidMediaPlayerFacade mediaPlayer;
     private final MediaPlayerForwarder forwarder;
     private final CheckBufferHeartbeatCallback bufferHeartbeatCallback;
@@ -46,7 +46,8 @@ class AndroidMediaPlayerImpl implements Player {
     private boolean seekingWithIntentToPlay;
     private SurfaceHolderRequester surfaceHolderRequester;
 
-    AndroidMediaPlayerImpl(AndroidMediaPlayerFacade mediaPlayer,
+    AndroidMediaPlayerImpl(MediaPlayerInformation mediaPlayerInformation,
+                           AndroidMediaPlayerFacade mediaPlayer,
                            MediaPlayerForwarder forwarder,
                            PlayerListenersHolder listenersHolder,
                            CheckBufferHeartbeatCallback bufferHeartbeatCallback,
@@ -54,6 +55,7 @@ class AndroidMediaPlayerImpl implements Player {
                            Heart heart,
                            Handler handler,
                            BuggyVideoDriverPreventer buggyVideoDriverPreventer) {
+        this.mediaPlayerInformation = mediaPlayerInformation;
         this.mediaPlayer = mediaPlayer;
         this.forwarder = forwarder;
         this.listenersHolder = listenersHolder;
@@ -240,7 +242,7 @@ class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public PlayerInformation getPlayerInformation() {
-        return MEDIA_PLAYER_INFORMATION;
+        return mediaPlayerInformation;
     }
 
     @Override

@@ -45,8 +45,8 @@ public class NoPlayerMediaPlayerCreator {
             CheckBufferHeartbeatCallback bufferHeartbeatCallback = new CheckBufferHeartbeatCallback();
             Heart heart = Heart.newInstance(handler);
             BuggyVideoDriverPreventer preventer = BuggyVideoDriverPreventer.newInstance();
-
-            return new AndroidMediaPlayerImpl(facade, forwarder, listenersHolder, bufferHeartbeatCallback, loadTimeout, heart, handler, preventer);
+            MediaPlayerInformation mediaPlayerInformation = new MediaPlayerInformation(PlayerChecker.newInstance());
+            return new AndroidMediaPlayerImpl(mediaPlayerInformation, facade, forwarder, listenersHolder, bufferHeartbeatCallback, loadTimeout, heart, handler, preventer);
         }
     }
 }

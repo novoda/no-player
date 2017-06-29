@@ -6,4 +6,5 @@ public interface PlayerInformation {
 
     String getVersion();
 
+    String getName();
 }
