@@ -3,7 +3,7 @@ package com.novoda.noplayer;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.notils.exception.DeveloperError;
 
-public enum PlayerType implements PlayerCapabilities {
+public enum PlayerType {
     MEDIA_PLAYER(new AndroidMediaPlayerCapabilities()),
     EXO_PLAYER(new ExoPlayerCapabilities());
 
@@ -13,8 +13,7 @@ public enum PlayerType implements PlayerCapabilities {
         this.playerCapabilities = playerCapabilities;
     }
 
-    @Override
-    public boolean supports(DrmType drmType) {
+    boolean supports(DrmType drmType) {
         return playerCapabilities.supports(drmType);
     }
 

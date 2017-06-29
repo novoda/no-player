@@ -8,19 +8,19 @@ import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerType;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
-import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
+import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
-import com.novoda.noplayer.PlayerInformation;
-import com.novoda.noplayer.PlayerType;
 import com.novoda.utils.NoPlayerLog;
 
 import java.util.Collections;
@@ -257,8 +257,7 @@ public class AndroidMediaPlayerImplTest {
         public void whenGettingPlayerInformation_thenReturnsMediaPlayerInformation() {
             PlayerInformation playerInformation = player.getPlayerInformation();
 
-            assertThat(playerInformation.getPlayerType()).isEqualTo(PlayerType.MEDIA_PLAYER);
-            assertThat(playerInformation.getVersion()).isEqualTo(Build.VERSION.RELEASE);
+            assertThat(playerInformation).isEqualTo(mediaPlayerInformation);
         }
 
         @Test
@@ -569,6 +568,8 @@ public class AndroidMediaPlayerImplTest {
         public MockitoRule mockitoRule = MockitoJUnit.rule();
 
         @Mock
+        MediaPlayerInformation mediaPlayerInformation;
+        @Mock
         AndroidMediaPlayerFacade mediaPlayer;
         @Mock
         MediaPlayerForwarder forwarder;
@@ -647,7 +648,17 @@ public class AndroidMediaPlayerImplTest {
             given(forwarder.onSizeChangedListener()).willReturn(onSizeChangedListener);
             given(forwarder.onHeartbeatListener()).willReturn(bufferListener);
 
-            player = new AndroidMediaPlayerImpl(mediaPlayer, forwarder, listenersHolder, checkBufferHeartbeatCallback, loadTimeout, heart, handler, buggyVideoDriverPreventer);
+            player = new AndroidMediaPlayerImpl(
+                    mediaPlayerInformation,
+                    mediaPlayer,
+                    forwarder,
+                    listenersHolder,
+                    checkBufferHeartbeatCallback,
+                    loadTimeout,
+                    heart,
+                    handler,
+                    buggyVideoDriverPreventer
+            );
         }
     }
 }

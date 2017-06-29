@@ -1,14 +1,15 @@
 package com.novoda.noplayer.internal.mediaplayer;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 
-import com.novoda.noplayer.internal.Heart;
-import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
+import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.SystemClock;
+import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.model.LoadTimeout;
 
 public class NoPlayerMediaPlayerCreator {
 
@@ -44,9 +45,20 @@ public class NoPlayerMediaPlayerCreator {
             PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
             CheckBufferHeartbeatCallback bufferHeartbeatCallback = new CheckBufferHeartbeatCallback();
             Heart heart = Heart.newInstance(handler);
-            BuggyVideoDriverPreventer preventer = BuggyVideoDriverPreventer.newInstance();
-
-            return new AndroidMediaPlayerImpl(facade, forwarder, listenersHolder, bufferHeartbeatCallback, loadTimeout, heart, handler, preventer);
+            MediaPlayerTypeReader mediaPlayerTypeReader = new MediaPlayerTypeReader(new SystemProperties(), Build.VERSION.SDK_INT);
+            BuggyVideoDriverPreventer preventer = new BuggyVideoDriverPreventer(mediaPlayerTypeReader);
+            MediaPlayerInformation mediaPlayerInformation = new MediaPlayerInformation(mediaPlayerTypeReader);
+            return new AndroidMediaPlayerImpl(
+                    mediaPlayerInformation,
+                    facade,
+                    forwarder,
+                    listenersHolder,
+                    bufferHeartbeatCallback,
+                    loadTimeout,
+                    heart,
+                    handler,
+                    preventer
+            );
         }
     }
 }

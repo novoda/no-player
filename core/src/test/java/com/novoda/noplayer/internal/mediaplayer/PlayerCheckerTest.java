@@ -20,7 +20,7 @@ public class PlayerCheckerTest {
     @Mock
     SystemProperties systemProperties;
 
-    private PlayerChecker checker;
+    private MediaPlayerTypeReader checker;
 
     @Before
     public void setUp() {
@@ -82,7 +82,7 @@ public class PlayerCheckerTest {
     }
 
     private void givenTheUserIsOnOSVersion(int deviceOSVersion) {
-        checker = new PlayerChecker(systemProperties, deviceOSVersion);
+        checker = new MediaPlayerTypeReader(systemProperties, deviceOSVersion);
     }
 
     private void whenPropertyisPresent(String property) throws SystemProperties.MissingSystemPropertiesException {
