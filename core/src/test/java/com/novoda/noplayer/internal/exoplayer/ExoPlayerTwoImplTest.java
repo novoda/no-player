@@ -201,24 +201,6 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenLoadingVideo_thenAddsStateChangedListenerToListenersHolder() {
-            player.attach(playerView);
-
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
-
-            verify(listenersHolder).addStateChangedListener(playerView.getStateChangedListener());
-        }
-
-        @Test
-        public void whenLoadingVideo_thenAddsVideoSizeChangedListenerToListenersHolder() {
-            player.attach(playerView);
-
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
-
-            verify(listenersHolder).addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
-        }
-
-        @Test
         public void whenQueryingIsPlaying_thenReturnsFalse() {
 
             boolean isPlaying = player.isPlaying();
@@ -318,6 +300,22 @@ public class ExoPlayerTwoImplTest {
             super.setUp();
             player.attach(playerView);
             player.loadVideo(uri, ANY_CONTENT_TYPE);
+        }
+
+        @Test
+        public void whenLoadingVideo_thenAddsStateChangedListenerToListenersHolder() {
+
+            player.loadVideo(uri, ANY_CONTENT_TYPE);
+
+            verify(listenersHolder).addStateChangedListener(playerView.getStateChangedListener());
+        }
+
+        @Test
+        public void whenLoadingVideo_thenAddsVideoSizeChangedListenerToListenersHolder() {
+
+            player.loadVideo(uri, ANY_CONTENT_TYPE);
+
+            verify(listenersHolder).addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         }
 
         @Test
