@@ -10,7 +10,7 @@ public class ErrorFormatterTest {
 
     @Test
     public void givenThrowable_whenFormattingMessage_thenReturnsExpectedMessageFormat() {
-        String expectedFormat = "com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormatingTest$IncorrectFormatThrowable: message";
+        String expectedFormat = "com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormatterTest$IncorrectFormatThrowable: message";
 
         String actualFormat = ErrorFormatter.formatMessage(new IncorrectFormatThrowable(MESSAGE));
 
