@@ -1,7 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
@@ -27,7 +26,6 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -37,7 +35,6 @@ import utils.ExceptionMatcher;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -213,19 +210,9 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void whenStartingPlayback_thenClearsAndSetsVideoSurfaceHolder() {
-
-            facade.play(surfaceHolder);
-
-            InOrder inOrder = inOrder(exoPlayer);
-            inOrder.verify(exoPlayer).clearVideoSurfaceHolder(surfaceHolder);
-            inOrder.verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
-        }
-
-        @Test
         public void whenStartingPlay_thenSetsPlayWhenReadyToTrue() {
 
-            facade.play(surfaceHolder);
+            facade.play();
 
             verify(exoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
         }
@@ -233,7 +220,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenStartingPlayAtVideoPosition_thenSeeksToPosition() {
 
-            facade.play(surfaceHolder, VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
+            facade.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
             verify(exoPlayer).seekTo(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS).inMillis());
         }
@@ -241,7 +228,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenStartingPlayAtVideoPosition_thenSetsPlayWhenReadyToTrue() {
 
-            facade.play(surfaceHolder, VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
+            facade.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
 
             verify(exoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
         }
@@ -367,8 +354,6 @@ public class ExoPlayerFacadeTest {
         ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
         @Mock
         Uri uri;
-        @Mock
-        SurfaceHolder surfaceHolder;
         @Mock
         RendererTypeRequester rendererTypeRequester;
         @Mock
