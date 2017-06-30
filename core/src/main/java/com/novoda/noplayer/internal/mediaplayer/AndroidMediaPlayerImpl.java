@@ -22,12 +22,15 @@ import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class AndroidMediaPlayerImpl implements Player {
 
     private static final VideoPosition NO_SEEK_TO_POSITION = VideoPosition.INVALID;
     private static final int INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
+
+    private final List<SurfaceHolderRequester.Callback> surfaceHolderRequesterCallbacks = new ArrayList<>();
 
     private final MediaPlayerInformation mediaPlayerInformation;
     private final AndroidMediaPlayerFacade mediaPlayer;
@@ -162,6 +165,7 @@ class AndroidMediaPlayerImpl implements Player {
         if (surfaceHolderRequester == null) {
             throw new IllegalStateException("Must attach a PlayerView before interacting with Player");
         }
+        surfaceHolderRequesterCallbacks.add(callback);
         surfaceHolderRequester.requestSurfaceHolder(callback);
     }
 
@@ -255,10 +259,18 @@ class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void detach(PlayerView playerView) {
+        clearSurfaceHolderCallbacks();
         surfaceHolderRequester = null;
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         buggyVideoDriverPreventer.clear(playerView.getContainerView());
+    }
+
+    private void clearSurfaceHolderCallbacks() {
+        for (SurfaceHolderRequester.Callback callback : surfaceHolderRequesterCallbacks) {
+            surfaceHolderRequester.removeCallback(callback);
+        }
+        surfaceHolderRequesterCallbacks.clear();
     }
 
     @Override

@@ -7,11 +7,13 @@ import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.text.Cue;
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.Player.StateChangedListener;
+import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerType;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
+import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerTrackSelector;
@@ -21,8 +23,6 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.TextCues;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoPosition;
-import com.novoda.noplayer.PlayerInformation;
-import com.novoda.noplayer.PlayerType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -201,24 +201,6 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenLoadingVideo_thenAddsStateChangedListenerToListenersHolder() {
-            player.attach(playerView);
-
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
-
-            verify(listenersHolder).addStateChangedListener(playerView.getStateChangedListener());
-        }
-
-        @Test
-        public void whenLoadingVideo_thenAddsVideoSizeChangedListenerToListenersHolder() {
-            player.attach(playerView);
-
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
-
-            verify(listenersHolder).addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
-        }
-
-        @Test
         public void whenQueryingIsPlaying_thenReturnsFalse() {
 
             boolean isPlaying = player.isPlaying();
@@ -243,7 +225,16 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenDetachingPlayerView_thenRemovesVideoSizeChangedListener() {
+        public void whenAttachingPlayerView_thenExoPlayerIsAttachedToSurfaceHolder() {
+
+            player.attach(playerView);
+
+            verify(exoPlayerFacade).attachToSurface(surfaceHolder);
+        }
+
+        @Test
+        public void givenAttachedPlayerView_whenDetachingPlayerView_thenRemovesVideoSizeChangedListener() {
+            player.attach(playerView);
 
             player.detach(playerView);
 
@@ -251,7 +242,8 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenDetachingPlayerView_thenRemovesStateChangedListener() {
+        public void givenAttachedPlayerView_whenDetachingPlayerView_thenRemovesStateChangedListener() {
+            player.attach(playerView);
 
             player.detach(playerView);
 
@@ -316,6 +308,22 @@ public class ExoPlayerTwoImplTest {
             super.setUp();
             player.attach(playerView);
             player.loadVideo(uri, ANY_CONTENT_TYPE);
+        }
+
+        @Test
+        public void whenLoadingVideo_thenAddsStateChangedListenerToListenersHolder() {
+
+            player.loadVideo(uri, ANY_CONTENT_TYPE);
+
+            verify(listenersHolder).addStateChangedListener(playerView.getStateChangedListener());
+        }
+
+        @Test
+        public void whenLoadingVideo_thenAddsVideoSizeChangedListenerToListenersHolder() {
+
+            player.loadVideo(uri, ANY_CONTENT_TYPE);
+
+            verify(listenersHolder).addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         }
 
         @Test
@@ -391,7 +399,7 @@ public class ExoPlayerTwoImplTest {
 
             player.play();
 
-            verify(exoPlayerFacade).play(surfaceHolder);
+            verify(exoPlayerFacade).play();
         }
 
         @Test

@@ -67,15 +67,18 @@ class ExoPlayerFacade {
         return exoPlayer.getBufferedPercentage();
     }
 
-    void play(SurfaceHolder surfaceHolder, VideoPosition position) throws IllegalStateException {
-        seekTo(position);
-        play(surfaceHolder);
+    void attachToSurface(SurfaceHolder surfaceHolder) {
+        assertVideoLoaded();
+        exoPlayer.setVideoSurfaceHolder(surfaceHolder);
     }
 
-    void play(SurfaceHolder surfaceHolder) throws IllegalStateException {
+    void play(VideoPosition position) throws IllegalStateException {
+        seekTo(position);
+        play();
+    }
+
+    void play() throws IllegalStateException {
         assertVideoLoaded();
-        exoPlayer.clearVideoSurfaceHolder(surfaceHolder);
-        exoPlayer.setVideoSurfaceHolder(surfaceHolder);
         exoPlayer.setPlayWhenReady(true);
     }
 

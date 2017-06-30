@@ -34,10 +34,10 @@ class ExoPlayerTwoImpl implements Player {
     private final MediaCodecSelector mediaCodecSelector;
     private final LoadTimeout loadTimeout;
 
-    private SurfaceHolderRequester surfaceHolderRequester;
-
     @Nullable
     private PlayerView playerView;
+    @Nullable
+    private SurfaceHolderRequester surfaceHolderRequester;
 
     private int videoWidth;
     private int videoHeight;
@@ -121,13 +121,8 @@ class ExoPlayerTwoImpl implements Player {
     @Override
     public void play() throws IllegalStateException {
         heart.startBeatingHeart();
-        surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
-            @Override
-            public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                exoPlayer.play(surfaceHolder);
-                listenersHolder.getStateChangedListeners().onVideoPlaying();
-            }
-        });
+        exoPlayer.play();
+        listenersHolder.getStateChangedListeners().onVideoPlaying();
     }
 
     @Override
@@ -195,14 +190,23 @@ class ExoPlayerTwoImpl implements Player {
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        surfaceHolderRequester.requestSurfaceHolder(onSurfaceReady);
     }
+
+    private final SurfaceHolderRequester.Callback onSurfaceReady = new SurfaceHolderRequester.Callback() {
+        @Override
+        public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
+            exoPlayer.attachToSurface(surfaceHolder);
+        }
+    };
 
     @Override
     public void detach(PlayerView playerView) {
-        surfaceHolderRequester = null;
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         exoPlayer.removeSubtitleRendererOutput();
+        surfaceHolderRequester.removeCallback(onSurfaceReady);
+        surfaceHolderRequester = null;
         this.playerView = null;
     }
 
