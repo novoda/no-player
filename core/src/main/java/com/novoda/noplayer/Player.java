@@ -150,7 +150,7 @@ public interface Player extends PlayerState {
 
     interface PlayerError {
 
-        String getType();
+        PlayerErrorType getType();
 
         Throwable getCause();
     }

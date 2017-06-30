@@ -1,8 +1,9 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.novoda.noplayer.NoPlayerError;
 import com.novoda.noplayer.Player;
-import com.novoda.noplayer.internal.exoplayer.playererror.DrmInitiatingError;
+import com.novoda.noplayer.PlayerErrorType;
 
 class DrmSessionErrorForwarder implements DefaultDrmSessionManager.EventListener {
 
@@ -19,7 +20,7 @@ class DrmSessionErrorForwarder implements DefaultDrmSessionManager.EventListener
 
     @Override
     public void onDrmSessionManagerError(Exception e) {
-        Player.PlayerError playerError = new DrmInitiatingError(e);
+        Player.PlayerError playerError = new NoPlayerError(PlayerErrorType.FAILED_DRM_INITIATING, e);
         errorListener.onError(playerError);
     }
 
