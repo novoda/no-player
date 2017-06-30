@@ -2,7 +2,9 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.media.MediaPlayer;
 
+import com.novoda.noplayer.NoPlayerError;
 import com.novoda.noplayer.Player;
+import com.novoda.noplayer.PlayerErrorType;
 
 public final class ErrorFactory {
 
@@ -13,69 +15,13 @@ public final class ErrorFactory {
     public static Player.PlayerError createErrorFrom(int type, int extra) {
         switch (type) {
             case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-                return new StreamedVideoError(type, extra);
+                return new NoPlayerError(PlayerErrorType.STREAMED_VIDEO_ERROR, new Throwable(String.valueOf(extra)));
             case MediaPlayer.MEDIA_ERROR_UNKNOWN:
-                return new MediaFormatNotRecognizedError(type, extra);
+                return new NoPlayerError(PlayerErrorType.MEDIA_FORMAT_NOT_RECOGNISED, new Throwable(String.valueOf(extra)));
             case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-                return new MediaServerDiedError(type, extra);
+                return new NoPlayerError(PlayerErrorType.MEDIA_SERVER_DIED, new Throwable(String.valueOf(extra)));
             default:
-                return new UnknownMediaPlayerError(type, extra);
-        }
-    }
-
-    private abstract static class MediaPlayerError implements Player.PlayerError {
-
-        private final int type;
-        private final int extra;
-
-        MediaPlayerError(int type, int extra) {
-            this.type = type;
-            this.extra = extra;
-        }
-
-        @Override
-        public String getType() {
-            return String.valueOf(type);
-        }
-
-        @Override
-        public Throwable getCause() {
-            return new MediaPlayerErrorThrowable(extra);
-        }
-    }
-
-    private static class MediaPlayerErrorThrowable extends Throwable {
-
-        MediaPlayerErrorThrowable(int playerErrorExtra) {
-            super(String.valueOf(playerErrorExtra));
-        }
-    }
-
-    public static class StreamedVideoError extends MediaPlayerError {
-
-        StreamedVideoError(int type, int extra) {
-            super(type, extra);
-        }
-    }
-
-    public static class MediaFormatNotRecognizedError extends MediaPlayerError {
-
-        MediaFormatNotRecognizedError(int type, int extra) {
-            super(type, extra);
-        }
-    }
-
-    public static class MediaServerDiedError extends MediaPlayerError {
-
-        protected MediaServerDiedError(int type, int extra) {
-            super(type, extra);
-        }
-    }
-
-    public static class UnknownMediaPlayerError extends MediaPlayerError {
-
-        UnknownMediaPlayerError(int type, int extra) {
-            super(type, extra);
+                return new NoPlayerError(PlayerErrorType.UNKNOWN, new Throwable(String.valueOf(extra)));
         }
     }
 }
