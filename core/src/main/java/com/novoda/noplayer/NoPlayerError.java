@@ -11,8 +11,8 @@ public class NoPlayerError implements Player.PlayerError {
     }
 
     @Override
-    public String getType() {
-        return playerErrorType.name(); // TODO: return the type.
+    public PlayerErrorType getType() {
+        return playerErrorType;
     }
 
     @Override
