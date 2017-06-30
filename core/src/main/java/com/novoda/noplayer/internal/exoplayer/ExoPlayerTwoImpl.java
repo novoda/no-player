@@ -41,6 +41,7 @@ class ExoPlayerTwoImpl implements Player {
 
     private int videoWidth;
     private int videoHeight;
+    private SurfaceHolderRequester.Callback onSurfaceReadyCallback;
 
     ExoPlayerTwoImpl(ExoPlayerFacade exoPlayer,
                      PlayerListenersHolder listenersHolder,
@@ -166,11 +167,18 @@ class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public void loadVideo(Uri uri, ContentType contentType) {
+    public void loadVideo(final Uri uri, final ContentType contentType) {
         if (exoPlayer.hasPlayedContent()) {
             reset();
         }
-        exoPlayer.loadVideo(drmSessionCreator, uri, contentType, forwarder, mediaCodecSelector);
+        surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);
+        onSurfaceReadyCallback = new SurfaceHolderRequester.Callback() {
+            @Override
+            public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
+                exoPlayer.loadVideo(surfaceHolder, drmSessionCreator, uri, contentType, forwarder, mediaCodecSelector);
+            }
+        };
+        surfaceHolderRequester.requestSurfaceHolder(onSurfaceReadyCallback);
     }
 
     @Override
@@ -190,22 +198,14 @@ class ExoPlayerTwoImpl implements Player {
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
-        surfaceHolderRequester.requestSurfaceHolder(onSurfaceReady);
     }
-
-    private final SurfaceHolderRequester.Callback onSurfaceReady = new SurfaceHolderRequester.Callback() {
-        @Override
-        public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-            exoPlayer.attachToSurface(surfaceHolder);
-        }
-    };
 
     @Override
     public void detach(PlayerView playerView) {
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         exoPlayer.removeSubtitleRendererOutput();
-        surfaceHolderRequester.removeCallback(onSurfaceReady);
+        surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);
         surfaceHolderRequester = null;
         this.playerView = null;
     }

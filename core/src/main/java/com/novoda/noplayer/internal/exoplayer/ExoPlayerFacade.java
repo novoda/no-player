@@ -67,11 +67,6 @@ class ExoPlayerFacade {
         return exoPlayer.getBufferedPercentage();
     }
 
-    void attachToSurface(SurfaceHolder surfaceHolder) {
-        assertVideoLoaded();
-        exoPlayer.setVideoSurfaceHolder(surfaceHolder);
-    }
-
     void play(VideoPosition position) throws IllegalStateException {
         seekTo(position);
         play();
@@ -99,7 +94,12 @@ class ExoPlayerFacade {
         }
     }
 
-    void loadVideo(DrmSessionCreator drmSessionCreator, Uri uri, ContentType contentType, ExoPlayerForwarder forwarder, MediaCodecSelector mediaCodecSelector) {
+    void loadVideo(SurfaceHolder surfaceHolder,
+                   DrmSessionCreator drmSessionCreator,
+                   Uri uri,
+                   ContentType contentType,
+                   ExoPlayerForwarder forwarder,
+                   MediaCodecSelector mediaCodecSelector) {
         exoPlayer = exoPlayerCreator.create(drmSessionCreator, forwarder.drmSessionEventListener(), mediaCodecSelector);
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
@@ -110,7 +110,12 @@ class ExoPlayerFacade {
                 forwarder.extractorMediaSourceListener(),
                 forwarder.mediaSourceEventListener()
         );
+        attachToSurface(surfaceHolder);
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
+    }
+
+    private void attachToSurface(SurfaceHolder surfaceHolder) {
+        exoPlayer.setVideoSurfaceHolder(surfaceHolder);
     }
 
     boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException {

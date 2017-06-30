@@ -170,22 +170,25 @@ public class ExoPlayerTwoImplTest {
 
         @Test
         public void whenLoadingVideo_thenDelegatesLoadingToFacade() {
+            player.attach(playerView);
 
             player.loadVideo(uri, ANY_CONTENT_TYPE);
 
-            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
         }
 
         @Test
         public void whenLoadingVideoWithTimeout_thenDelegatesLoadingToFacade() {
+            player.attach(playerView);
 
             player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
         }
 
         @Test
         public void whenLoadingVideoWithTimeout_thenStartsLoadTimeout() {
+            player.attach(playerView);
 
             player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
@@ -225,14 +228,6 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenAttachingPlayerView_thenExoPlayerIsAttachedToSurfaceHolder() {
-
-            player.attach(playerView);
-
-            verify(exoPlayerFacade).attachToSurface(surfaceHolder);
-        }
-
-        @Test
         public void givenAttachedPlayerView_whenDetachingPlayerView_thenRemovesVideoSizeChangedListener() {
             player.attach(playerView);
 
@@ -253,6 +248,7 @@ public class ExoPlayerTwoImplTest {
         @Test
         public void givenPlayerHasPlayedVideo_whenLoadingVideo_thenPlayerIsReleased_andNotListeners() {
             given(exoPlayerFacade.hasPlayedContent()).willReturn(true);
+            player.attach(playerView);
 
             player.loadVideo(URI, ContentType.HLS);
 
@@ -266,6 +262,7 @@ public class ExoPlayerTwoImplTest {
         @Test
         public void givenPlayerHasPlayedVideo_whenLoadingVideoWithTimeout_thenPlayerResourcesAreReleased_andNotListeners() {
             given(exoPlayerFacade.hasPlayedContent()).willReturn(true);
+            player.attach(playerView);
 
             player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
@@ -279,6 +276,7 @@ public class ExoPlayerTwoImplTest {
         @Test
         public void givenPlayerHasNotPlayedVideo_whenLoadingVideo_thenPlayerResourcesAreNotReleased() {
             given(exoPlayerFacade.hasPlayedContent()).willReturn(false);
+            player.attach(playerView);
 
             player.loadVideo(URI, ContentType.HLS);
 
@@ -291,6 +289,7 @@ public class ExoPlayerTwoImplTest {
         @Test
         public void givenPlayerHasNotPlayedVideo_whenLoadingVideoWithTimeout_thenPlayerResourcesAreNotReleased() {
             given(exoPlayerFacade.hasPlayedContent()).willReturn(false);
+            player.attach(playerView);
 
             player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
