@@ -243,7 +243,8 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenDetachingPlayerView_thenRemovesVideoSizeChangedListener() {
+        public void givenAttachedPlayerView_whenDetachingPlayerView_thenRemovesVideoSizeChangedListener() {
+            player.attach(playerView);
 
             player.detach(playerView);
 
@@ -251,7 +252,8 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenDetachingPlayerView_thenRemovesStateChangedListener() {
+        public void givenAttachedPlayerView_whenDetachingPlayerView_thenRemovesStateChangedListener() {
+            player.attach(playerView);
 
             player.detach(playerView);
 
