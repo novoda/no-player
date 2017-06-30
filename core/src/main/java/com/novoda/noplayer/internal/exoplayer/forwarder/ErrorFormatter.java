@@ -1,12 +1,11 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
-final class ErrorFormating {
+final class ErrorFormatter {
 
-    private ErrorFormating() {
+    private ErrorFormatter() {
     }
 
     static String formatMessage(Throwable throwable) {
         return throwable.getClass().getName() + ": " + throwable.getMessage();
     }
-
 }

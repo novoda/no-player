@@ -1,8 +1,8 @@
 package com.novoda.noplayer.internal.mediaplayer;
 
-final class ErrorFormating {
+final class ErrorFormatter {
 
-    private ErrorFormating() {
+    private ErrorFormatter() {
     }
 
     static String formatMessage(int type, int extra) {

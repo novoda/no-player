@@ -7,7 +7,7 @@ import com.novoda.noplayer.PlayerErrorType;
 
 import java.io.IOException;
 
-import static com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormating.formatMessage;
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormatter.formatMessage;
 
 class MediaSourceOnErrorForwarder implements ExtractorMediaSource.EventListener {
 

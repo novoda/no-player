@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class ErrorFormatingTest {
+public class ErrorFormatterTest {
 
     private static final String MESSAGE = "message";
 
@@ -12,7 +12,7 @@ public class ErrorFormatingTest {
     public void givenThrowable_whenFormattingMessage_thenReturnsExpectedMessageFormat() {
         String expectedFormat = "com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormatingTest$IncorrectFormatThrowable: message";
 
-        String actualFormat = ErrorFormating.formatMessage(new IncorrectFormatThrowable(MESSAGE));
+        String actualFormat = ErrorFormatter.formatMessage(new IncorrectFormatThrowable(MESSAGE));
 
         assertThat(actualFormat).isEqualTo(expectedFormat);
     }

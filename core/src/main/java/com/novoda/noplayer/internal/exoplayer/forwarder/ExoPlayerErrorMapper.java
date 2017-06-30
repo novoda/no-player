@@ -11,7 +11,7 @@ import com.novoda.noplayer.drm.StreamingModularDrm;
 
 import java.io.IOException;
 
-import static com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormating.formatMessage;
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormatter.formatMessage;
 
 final class ExoPlayerErrorMapper {
 

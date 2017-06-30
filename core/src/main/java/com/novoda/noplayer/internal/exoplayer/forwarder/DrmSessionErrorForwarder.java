@@ -5,7 +5,7 @@ import com.novoda.noplayer.NoPlayerError;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerErrorType;
 
-import static com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormating.formatMessage;
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormatter.formatMessage;
 
 class DrmSessionErrorForwarder implements DefaultDrmSessionManager.EventListener {
 
