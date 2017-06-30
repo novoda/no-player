@@ -17,7 +17,7 @@ public final class ErrorFactory {
             case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
                 return new NoPlayerError(PlayerErrorType.STREAMED_VIDEO_ERROR, new Throwable(String.valueOf(extra)));
             case MediaPlayer.MEDIA_ERROR_UNKNOWN:
-                return new NoPlayerError(PlayerErrorType.MEDIA_FORMAT_NOT_RECOGNISED, new Throwable(String.valueOf(extra)));
+                return new NoPlayerError(PlayerErrorType.MEDIA_FORMAT_NOT_RECOGNIZED, new Throwable(String.valueOf(extra)));
             case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
                 return new NoPlayerError(PlayerErrorType.MEDIA_SERVER_DIED, new Throwable(String.valueOf(extra)));
             default:
