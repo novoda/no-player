@@ -7,6 +7,8 @@ import com.novoda.noplayer.PlayerErrorType;
 
 import java.io.IOException;
 
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormating.formatMessage;
+
 class MediaSourceOnErrorForwarder implements ExtractorMediaSource.EventListener {
 
     private final Player.ErrorListener errorListener;
@@ -17,7 +19,7 @@ class MediaSourceOnErrorForwarder implements ExtractorMediaSource.EventListener 
 
     @Override
     public void onLoadError(IOException error) {
-        Player.PlayerError playerError = new NoPlayerError(PlayerErrorType.MEDIA_SOURCE_ERROR, error);
+        Player.PlayerError playerError = new NoPlayerError(PlayerErrorType.MEDIA_SOURCE_ERROR, formatMessage(error));
         errorListener.onError(playerError);
     }
 }

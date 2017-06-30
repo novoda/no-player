@@ -5,6 +5,8 @@ import com.novoda.noplayer.NoPlayerError;
 import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerErrorType;
 
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormating.formatMessage;
+
 class DrmSessionErrorForwarder implements DefaultDrmSessionManager.EventListener {
 
     private final Player.ErrorListener errorListener;
@@ -20,7 +22,7 @@ class DrmSessionErrorForwarder implements DefaultDrmSessionManager.EventListener
 
     @Override
     public void onDrmSessionManagerError(Exception e) {
-        Player.PlayerError playerError = new NoPlayerError(PlayerErrorType.FAILED_DRM_INITIATING, e);
+        Player.PlayerError playerError = new NoPlayerError(PlayerErrorType.FAILED_DRM_INITIATING, formatMessage(e));
         errorListener.onError(playerError);
     }
 

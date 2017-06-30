@@ -3,20 +3,20 @@ package com.novoda.noplayer;
 public class NoPlayerError implements Player.PlayerError {
 
     private final PlayerErrorType playerErrorType;
-    private final Throwable cause;
+    private final String message;
 
-    public NoPlayerError(PlayerErrorType playerErrorType, Throwable cause) {
+    public NoPlayerError(PlayerErrorType playerErrorType, String message) {
         this.playerErrorType = playerErrorType;
-        this.cause = cause;
+        this.message = message;
     }
 
     @Override
-    public PlayerErrorType getType() {
+    public PlayerErrorType type() {
         return playerErrorType;
     }
 
     @Override
-    public Throwable getCause() {
-        return cause;
+    public String message() {
+        return message;
     }
 }
