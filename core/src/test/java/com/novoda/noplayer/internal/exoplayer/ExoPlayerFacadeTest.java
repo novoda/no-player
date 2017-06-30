@@ -77,7 +77,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenAddsPlayerEventListener() {
 
-            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).addListener(exoPlayerForwarder.exoPlayerEventListener());
         }
@@ -85,16 +85,24 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenSetsVideoDebugListener() {
 
-            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).setVideoDebugListener(exoPlayerForwarder.videoRendererEventListener());
+        }
+
+        @Test
+        public void whenLoadingVideo_thenSetsSurfaceHolderOnExoPlayer() {
+
+            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
         }
 
         @Test
         public void givenMediaSource_whenLoadingVideo_thenPreparesInternalExoPlayer() {
             MediaSource mediaSource = givenMediaSource();
 
-            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
         }
@@ -168,15 +176,6 @@ public class ExoPlayerFacadeTest {
 
             facade.selectSubtitleTrack(subtitleTrack);
         }
-
-        @Test
-        public void whenAttachingToSurface_thenThrowsIllegalStateException() {
-            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
-
-            facade.attachToSurface(surfaceHolder);
-
-            verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
-        }
     }
 
     public static class GivenVideoIsLoaded extends Base {
@@ -192,7 +191,7 @@ public class ExoPlayerFacadeTest {
 
         private void givenPlayerIsLoaded() {
             givenMediaSource();
-            facade.loadVideo(drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
         }
 
         @Test
@@ -344,14 +343,6 @@ public class ExoPlayerFacadeTest {
             List<PlayerAudioTrack> audioTracks = facade.getAudioTracks();
 
             assertThat(audioTracks).isEqualTo(AUDIO_TRACKS);
-        }
-
-        @Test
-        public void whenAttachingToSurface_thenDelegatesToExoPlayer() {
-
-            facade.attachToSurface(surfaceHolder);
-
-            verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
         }
     }
 
