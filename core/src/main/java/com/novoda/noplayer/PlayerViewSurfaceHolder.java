@@ -50,4 +50,9 @@ class PlayerViewSurfaceHolder implements SurfaceHolder.Callback, SurfaceHolderRe
     private boolean isSurfaceHolderReady() {
         return surfaceHolder != null;
     }
+
+    @Override
+    public void removeCallback(Callback callback) {
+        callbacks.remove(callback);
+    }
 }
