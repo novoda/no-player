@@ -1,6 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
+import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
@@ -166,6 +167,15 @@ public class ExoPlayerFacadeTest {
             PlayerSubtitleTrack subtitleTrack = mock(PlayerSubtitleTrack.class);
 
             facade.selectSubtitleTrack(subtitleTrack);
+        }
+
+        @Test
+        public void whenAttachingToSurface_thenThrowsIllegalStateException() {
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
+
+            facade.attachToSurface(surfaceHolder);
+
+            verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
         }
     }
 
@@ -335,6 +345,14 @@ public class ExoPlayerFacadeTest {
 
             assertThat(audioTracks).isEqualTo(AUDIO_TRACKS);
         }
+
+        @Test
+        public void whenAttachingToSurface_thenDelegatesToExoPlayer() {
+
+            facade.attachToSurface(surfaceHolder);
+
+            verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
+        }
     }
 
     public abstract static class Base {
@@ -364,6 +382,8 @@ public class ExoPlayerFacadeTest {
         DefaultDrmSessionManager.EventListener drmSessionEventListener;
         @Mock
         MediaCodecSelector mediaCodecSelector;
+        @Mock
+        SurfaceHolder surfaceHolder;
 
         ExoPlayerFacade facade;
 
