@@ -41,6 +41,7 @@ class ExoPlayerTwoImpl implements Player {
 
     private int videoWidth;
     private int videoHeight;
+    private SurfaceHolderRequester.Callback onSurfaceReadyCallback;
 
     ExoPlayerTwoImpl(ExoPlayerFacade exoPlayer,
                      PlayerListenersHolder listenersHolder,
@@ -170,12 +171,14 @@ class ExoPlayerTwoImpl implements Player {
         if (exoPlayer.hasPlayedContent()) {
             reset();
         }
-        surfaceHolderRequester.requestSurfaceHolder(new SurfaceHolderRequester.Callback() {
+        surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);
+        onSurfaceReadyCallback = new SurfaceHolderRequester.Callback() {
             @Override
             public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
                 exoPlayer.loadVideo(surfaceHolder, drmSessionCreator, uri, contentType, forwarder, mediaCodecSelector);
             }
-        });
+        };
+        surfaceHolderRequester.requestSurfaceHolder(onSurfaceReadyCallback);
     }
 
     @Override
@@ -202,7 +205,7 @@ class ExoPlayerTwoImpl implements Player {
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         exoPlayer.removeSubtitleRendererOutput();
-//        surfaceHolderRequester.removeCallback(onSurfaceReady);
+        surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);
         surfaceHolderRequester = null;
         this.playerView = null;
     }
