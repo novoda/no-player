@@ -225,6 +225,14 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
+        public void whenAttachingPlayerView_thenExoPlayerIsAttachedToSurfaceHolder() {
+
+            player.attach(playerView);
+
+            verify(exoPlayerFacade).attachToSurface(surfaceHolder);
+        }
+
+        @Test
         public void givenAttachedPlayerView_whenDetachingPlayerView_thenRemovesVideoSizeChangedListener() {
             player.attach(playerView);
 
