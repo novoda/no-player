@@ -11,6 +11,8 @@ import com.novoda.noplayer.drm.StreamingModularDrm;
 
 import java.io.IOException;
 
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormatter.formatMessage;
+
 final class ExoPlayerErrorMapper {
 
     private ExoPlayerErrorMapper() {
@@ -19,25 +21,25 @@ final class ExoPlayerErrorMapper {
 
     static Player.PlayerError errorFor(Exception e) {
         if (e instanceof HttpDataSource.InvalidResponseCodeException) {
-            return new NoPlayerError(PlayerErrorType.INVALID_RESPONSE_CODE, e);
+            return new NoPlayerError(PlayerErrorType.INVALID_RESPONSE_CODE, formatMessage(e));
         }
 
         if (e instanceof ParserException) {
-            return new NoPlayerError(PlayerErrorType.MALFORMED_CONTENT, e);
+            return new NoPlayerError(PlayerErrorType.MALFORMED_CONTENT, formatMessage(e));
         }
 
         Throwable cause = e.getCause();
         if (e.getCause() instanceof MediaCodec.CryptoException) {
-            return new NoPlayerError(PlayerErrorType.FAILED_DRM_DECRYPTION, e);
+            return new NoPlayerError(PlayerErrorType.FAILED_DRM_DECRYPTION, formatMessage(e));
         }
 
         if (cause instanceof StreamingModularDrm.DrmRequestException) {
-            return new NoPlayerError(PlayerErrorType.FAILED_DRM_REQUEST, e);
+            return new NoPlayerError(PlayerErrorType.FAILED_DRM_REQUEST, formatMessage(e));
         }
 
         if (e instanceof IOException || cause instanceof IOException) {
-            return new NoPlayerError(PlayerErrorType.CONNECTIVITY_ERROR, cause == null ? e : cause);
+            return new NoPlayerError(PlayerErrorType.CONNECTIVITY_ERROR, cause == null ? formatMessage(e) : formatMessage(cause));
         }
-        return new NoPlayerError(PlayerErrorType.UNKNOWN, e);
+        return new NoPlayerError(PlayerErrorType.UNKNOWN, formatMessage(e));
     }
 }
