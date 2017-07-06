@@ -2,7 +2,7 @@ package com.novoda.noplayer;
 
 import android.view.View;
 
-import com.google.android.exoplayer.text.SubtitleLayout;
+import com.novoda.noplayer.model.TextCues;
 
 public interface PlayerView {
 
@@ -10,11 +10,13 @@ public interface PlayerView {
 
     SurfaceHolderRequester getSurfaceHolderRequester();
 
-    SubtitleLayout getSubtitleLayout();
+    Player.VideoSizeChangedListener getVideoSizeChangedListener();
+
+    Player.StateChangedListener getStateChangedListener();
 
     void showSubtitles();
 
     void hideSubtitles();
 
-    Player.VideoSizeChangedListener getVideoSizeChangedListener();
+    void setSubtitleCue(TextCues textCues);
 }

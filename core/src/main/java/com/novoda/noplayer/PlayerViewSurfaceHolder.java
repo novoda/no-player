@@ -5,7 +5,7 @@ import android.view.SurfaceHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerViewSurfaceHolder implements SurfaceHolder.Callback, SurfaceHolderRequester {
+class PlayerViewSurfaceHolder implements SurfaceHolder.Callback, SurfaceHolderRequester {
 
     private final List<Callback> callbacks = new ArrayList<>();
     private SurfaceHolder surfaceHolder;
@@ -49,5 +49,10 @@ public class PlayerViewSurfaceHolder implements SurfaceHolder.Callback, SurfaceH
 
     private boolean isSurfaceHolderReady() {
         return surfaceHolder != null;
+    }
+
+    @Override
+    public void removeCallback(Callback callback) {
+        callbacks.remove(callback);
     }
 }

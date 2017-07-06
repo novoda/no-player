@@ -1,6 +1,8 @@
 package com.novoda.noplayer.drm;
 
+import com.novoda.noplayer.model.KeySetId;
+
 public interface DownloadedModularDrm extends DrmHandler {
 
-    byte[] getKeySetId();
+    KeySetId getKeySetId();
 }

@@ -6,19 +6,18 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.google.android.exoplayer.AspectRatioFrameLayout;
-import com.google.android.exoplayer.text.SubtitleLayout;
-import com.novoda.noplayer.exoplayer.AspectRatioChangeListener;
-import com.novoda.notils.caster.Views;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.novoda.noplayer.model.TextCues;
 
-public class NoPlayerView extends FrameLayout implements AspectRatioChangeListener.Listener, PlayerView {
+public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
     private final PlayerViewSurfaceHolder surfaceHolderProvider;
-    private final AspectRatioChangeListener aspectRatioChangeListener;
+    private final AspectRatioChangeCalculator aspectRatioChangeCalculator;
 
     private AspectRatioFrameLayout videoFrame;
     private SurfaceView surfaceView;
-    private SubtitleLayout subtitleLayout;
+    private SubtitleView subtitleView;
+    private View shutterView;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -27,18 +26,18 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         surfaceHolderProvider = new PlayerViewSurfaceHolder();
-        aspectRatioChangeListener = new AspectRatioChangeListener(this);
+        aspectRatioChangeCalculator = new AspectRatioChangeCalculator(this);
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
-        videoFrame = Views.findById(this, R.id.video_frame);
-        surfaceView = Views.findById(this, R.id.surface_view);
-        subtitleLayout = Views.findById(this, R.id.subtitles_layout);
-
+        videoFrame = (AspectRatioFrameLayout) findViewById(R.id.video_frame);
+        shutterView = findViewById(R.id.shutter);
+        surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
+        subtitleView = (SubtitleView) findViewById(R.id.subtitles_layout);
     }
 
     @Override
@@ -57,29 +56,51 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeListen
     }
 
     @Override
-    public SubtitleLayout getSubtitleLayout() {
-        return subtitleLayout;
+    public Player.VideoSizeChangedListener getVideoSizeChangedListener() {
+        return videoSizeChangedListener;
+    }
+
+    @Override
+    public Player.StateChangedListener getStateChangedListener() {
+        return stateChangedListener;
     }
 
     @Override
     public void showSubtitles() {
-        subtitleLayout.setVisibility(VISIBLE);
+        subtitleView.setVisibility(VISIBLE);
     }
 
     @Override
     public void hideSubtitles() {
-        subtitleLayout.setVisibility(INVISIBLE);
+        subtitleView.setVisibility(GONE);
     }
 
     @Override
-    public Player.VideoSizeChangedListener getVideoSizeChangedListener() {
-        return videoSizeChangedListener;
+    public void setSubtitleCue(TextCues textCues) {
+        subtitleView.setCues(textCues);
     }
 
     private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-            aspectRatioChangeListener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+            aspectRatioChangeCalculator.onVideoSizeChanged(width, height, pixelWidthHeightRatio);
+        }
+    };
+
+    private final Player.StateChangedListener stateChangedListener = new Player.StateChangedListener() {
+        @Override
+        public void onVideoPlaying() {
+            shutterView.setVisibility(INVISIBLE);
+        }
+
+        @Override
+        public void onVideoPaused() {
+            // We don't care
+        }
+
+        @Override
+        public void onVideoStopped() {
+            shutterView.setVisibility(VISIBLE);
         }
     };
 }
