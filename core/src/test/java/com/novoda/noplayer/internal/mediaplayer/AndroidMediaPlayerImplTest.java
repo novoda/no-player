@@ -340,6 +340,7 @@ public class AndroidMediaPlayerImplTest {
 
             player.stop();
 
+            verify(listenersHolder).resetPreparedState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
@@ -352,6 +353,7 @@ public class AndroidMediaPlayerImplTest {
 
             player.release();
 
+            verify(listenersHolder).resetPreparedState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();

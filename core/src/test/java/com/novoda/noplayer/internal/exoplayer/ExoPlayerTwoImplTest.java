@@ -157,10 +157,23 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
+        public void whenStopping_thenPlayerResourcesAreReleased() {
+
+            player.stop();
+
+            verify(listenersHolder).resetPreparedState();
+            verify(stateChangedListener).onVideoStopped();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(exoPlayerFacade).release();
+        }
+
+        @Test
         public void whenReleasing_thenPlayerResourcesAreReleased() {
 
             player.release();
 
+            verify(listenersHolder).resetPreparedState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
