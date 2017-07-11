@@ -315,6 +315,7 @@ class AndroidMediaPlayerImpl implements Player {
     }
 
     private void reset() {
+        listenersHolder.resetPreparedState();
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         mediaPlayer.release();
