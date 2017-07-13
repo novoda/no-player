@@ -121,8 +121,11 @@ class AndroidMediaPlayerImpl implements Player {
         requestSurface(new SurfaceHolderRequester.Callback() {
             @Override
             public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
+                boolean videoWasNotPlaying = !isPlaying();
                 mediaPlayer.start(surfaceHolder);
-                listenersHolder.getStateChangedListeners().onVideoPlaying();
+                if (videoWasNotPlaying) {
+                    listenersHolder.getStateChangedListeners().onVideoPlaying();
+                }
             }
         });
     }
