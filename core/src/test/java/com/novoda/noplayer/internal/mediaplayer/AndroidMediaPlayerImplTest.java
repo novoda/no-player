@@ -47,6 +47,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(Enclosed.class)
 public class AndroidMediaPlayerImplTest {
@@ -365,6 +366,8 @@ public class AndroidMediaPlayerImplTest {
     public static class GivenPlayerIsAttached extends Base {
 
         private static final long DELAY_MILLIS = 500;
+        private static final boolean IS_PLAYING = true;
+        private static final boolean IS_NOT_PLAYING = false;
 
         @Override
         public void setUp() {
@@ -536,6 +539,24 @@ public class AndroidMediaPlayerImplTest {
             runnableCaptor.getValue().run();
 
             verify(mediaPlayer).seekTo(differentPosition.inImpreciseMillis());
+        }
+
+        @Test
+        public void givenPlayerIsAlreadyPlaying_whenPlaying_thenDoesNotNotifyOnVideoPlaying() {
+            given(mediaPlayer.isPlaying()).willReturn(IS_PLAYING);
+
+            player.play();
+
+            verifyZeroInteractions(stateChangedListener);
+        }
+
+        @Test
+        public void givenPlayerIsAlreadyPlaying_whenPlaying_thenNotifiesnVideoPlaying() {
+            given(mediaPlayer.isPlaying()).willReturn(IS_NOT_PLAYING);
+
+            player.play();
+
+            verify(stateChangedListener).onVideoPlaying();
         }
 
         private VideoPosition givenPositionThatDiffersFromPlayheadPosition() {
