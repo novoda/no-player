@@ -149,6 +149,7 @@ public class AndroidMediaPlayerImplTest {
             verify(heart).stopBeatingHeart();
             verify(mediaPlayer).release();
             verify(listenersHolder, never()).clear();
+            verify(stateChangedListener, never()).onVideoStopped();
         }
 
         @Test

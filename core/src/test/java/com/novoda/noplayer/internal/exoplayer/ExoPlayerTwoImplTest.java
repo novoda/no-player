@@ -128,6 +128,7 @@ public class ExoPlayerTwoImplTest {
             verify(heart).stopBeatingHeart();
             verify(exoPlayerFacade).release();
             verify(listenersHolder, never()).clear();
+            verify(stateChangedListener, never()).onVideoStopped();
         }
 
         @Test
