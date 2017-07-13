@@ -77,7 +77,7 @@ class ExoPlayerTwoImpl implements Player {
         listenersHolder.addErrorListener(new ErrorListener() {
             @Override
             public void onError(PlayerError error) {
-                loadTimeout.cancel();
+                reset();
             }
         });
         listenersHolder.addVideoSizeChangedListener(new VideoSizeChangedListener() {
@@ -150,17 +150,17 @@ class ExoPlayerTwoImpl implements Player {
     @Override
     public void stop() {
         reset();
+        listenersHolder.getStateChangedListeners().onVideoStopped();
     }
 
     @Override
     public void release() {
-        reset();
+        stop();
         listenersHolder.clear();
     }
 
     private void reset() {
         listenersHolder.resetPreparedState();
-        listenersHolder.getStateChangedListeners().onVideoStopped();
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         exoPlayer.release();
@@ -169,7 +169,7 @@ class ExoPlayerTwoImpl implements Player {
     @Override
     public void loadVideo(final Uri uri, final ContentType contentType) {
         if (exoPlayer.hasPlayedContent()) {
-            reset();
+            stop();
         }
         surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);
         onSurfaceReadyCallback = new SurfaceHolderRequester.Callback() {
