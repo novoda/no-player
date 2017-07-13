@@ -114,7 +114,7 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void givenPlayerIsInitialised_whenVideoHasError_thenCancelsTimeout() {
+        public void givenPlayerIsInitialised_whenVideoHasError_thenPlayerResourcesAreReleased_andNotListeners() {
             player.initialise();
 
             ArgumentCaptor<Player.ErrorListener> argumentCaptor = ArgumentCaptor.forClass(Player.ErrorListener.class);
@@ -123,7 +123,12 @@ public class ExoPlayerTwoImplTest {
             Player.ErrorListener errorListener = argumentCaptor.getValue();
             errorListener.onError(mock(Player.PlayerError.class));
 
+            verify(listenersHolder).resetPreparedState();
             verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(exoPlayerFacade).release();
+            verify(listenersHolder, never()).clear();
+            verify(stateChangedListener, never()).onVideoStopped();
         }
 
         @Test

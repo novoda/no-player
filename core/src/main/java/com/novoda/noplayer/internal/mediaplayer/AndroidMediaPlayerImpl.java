@@ -54,7 +54,7 @@ class AndroidMediaPlayerImpl implements Player {
                            MediaPlayerForwarder forwarder,
                            PlayerListenersHolder listenersHolder,
                            CheckBufferHeartbeatCallback bufferHeartbeatCallback,
-                           LoadTimeout loadTimeoutParam,
+                           LoadTimeout loadTimeout,
                            Heart heart,
                            Handler handler,
                            BuggyVideoDriverPreventer buggyVideoDriverPreventer) {
@@ -63,7 +63,7 @@ class AndroidMediaPlayerImpl implements Player {
         this.forwarder = forwarder;
         this.listenersHolder = listenersHolder;
         this.bufferHeartbeatCallback = bufferHeartbeatCallback;
-        this.loadTimeout = loadTimeoutParam;
+        this.loadTimeout = loadTimeout;
         this.heart = heart;
         this.handler = handler;
         this.buggyVideoDriverPreventer = buggyVideoDriverPreventer;
@@ -91,7 +91,7 @@ class AndroidMediaPlayerImpl implements Player {
         listenersHolder.addErrorListener(new ErrorListener() {
             @Override
             public void onError(PlayerError error) {
-                loadTimeout.cancel();
+                reset();
             }
         });
         listenersHolder.addVideoSizeChangedListener(new VideoSizeChangedListener() {
@@ -201,7 +201,7 @@ class AndroidMediaPlayerImpl implements Player {
     @Override
     public void loadVideo(final Uri uri, ContentType contentType) {
         if (mediaPlayer.hasPlayedContent()) {
-            reset();
+            stop();
         }
         listenersHolder.getBufferStateListeners().onBufferStarted();
         requestSurface(new SurfaceHolderRequester.Callback() {
@@ -309,11 +309,12 @@ class AndroidMediaPlayerImpl implements Player {
     @Override
     public void stop() {
         reset();
+        listenersHolder.getStateChangedListeners().onVideoStopped();
     }
 
     @Override
     public void release() {
-        reset();
+        stop();
         listenersHolder.clear();
     }
 
@@ -322,6 +323,5 @@ class AndroidMediaPlayerImpl implements Player {
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         mediaPlayer.release();
-        listenersHolder.getStateChangedListeners().onVideoStopped();
     }
 }

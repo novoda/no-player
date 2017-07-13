@@ -136,6 +136,23 @@ public class AndroidMediaPlayerImplTest {
         }
 
         @Test
+        public void givenInitialised_whenCallingOnError_thenPlayerResourcesAreReleased_andNotListeners() {
+            player.initialise();
+            ArgumentCaptor<Player.ErrorListener> errorListenerCaptor = ArgumentCaptor.forClass(Player.ErrorListener.class);
+            verify(listenersHolder).addErrorListener(errorListenerCaptor.capture());
+
+            Player.ErrorListener errorListener = errorListenerCaptor.getValue();
+            errorListener.onError(mock(Player.PlayerError.class));
+
+            verify(listenersHolder).resetPreparedState();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(mediaPlayer).release();
+            verify(listenersHolder, never()).clear();
+            verify(stateChangedListener, never()).onVideoStopped();
+        }
+
+        @Test
         public void givenInitialised_whenCallingOnVideoSizeChanged_thenVideoWidthAndHeightMatches() {
             player.initialise();
             ArgumentCaptor<Player.VideoSizeChangedListener> videoSizeChangedListenerCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
