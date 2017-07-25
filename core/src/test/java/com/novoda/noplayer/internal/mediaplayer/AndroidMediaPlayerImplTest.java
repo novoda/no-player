@@ -298,9 +298,6 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenAttachingPlayerView_thenPreventsVideoDriverBug() {
-            PlayerView playerView = mock(PlayerView.class);
-            View containerView = mock(View.class);
-            given(playerView.getContainerView()).willReturn(containerView);
             player.attach(playerView);
 
             verify(buggyVideoDriverPreventer).preventVideoDriverBug(player, containerView);
@@ -378,6 +375,36 @@ public class AndroidMediaPlayerImplTest {
             verify(mediaPlayer).release();
             verify(listenersHolder).clear();
         }
+
+        @Test
+        public void givenAttachedPlayerView_whenStopping_thenPlayerResourcesAreReleased_andNotListeners() {
+            player.attach(playerView);
+
+            player.stop();
+
+            verify(listenersHolder).resetPreparedState();
+            verify(stateChangedListener).onVideoStopped();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(mediaPlayer).release();
+            verify(containerView).setVisibility(View.GONE);
+            verify(listenersHolder, never()).clear();
+        }
+
+        @Test
+        public void givenAttachedPlayerView_whenReleasing_thenPlayerResourcesAreReleased() {
+            player.attach(playerView);
+
+            player.release();
+
+            verify(listenersHolder).resetPreparedState();
+            verify(stateChangedListener).onVideoStopped();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(mediaPlayer).release();
+            verify(containerView).setVisibility(View.GONE);
+            verify(listenersHolder).clear();
+        }
     }
 
     public static class GivenPlayerIsAttached extends Base {
@@ -425,6 +452,13 @@ public class AndroidMediaPlayerImplTest {
             player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
             verify(loadTimeout).start(ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+        }
+
+        @Test
+        public void whenLoadingVideo_thenShowsContainerView() {
+            player.loadVideo(URI, ContentType.HLS);
+
+            verify(containerView).setVisibility(View.VISIBLE);
         }
 
         @Test
@@ -653,6 +687,8 @@ public class AndroidMediaPlayerImplTest {
         MediaPlayer.OnVideoSizeChangedListener onSizeChangedListener;
         @Mock
         CheckBufferHeartbeatCallback.BufferListener bufferListener;
+        @Mock
+        View containerView;
 
         AndroidMediaPlayerImpl player;
 
@@ -663,6 +699,7 @@ public class AndroidMediaPlayerImplTest {
             given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
+            given(playerView.getContainerView()).willReturn(containerView);
             doAnswer(new Answer<Void>() {
                 @Override
                 public Void answer(InvocationOnMock invocation) throws Throwable {

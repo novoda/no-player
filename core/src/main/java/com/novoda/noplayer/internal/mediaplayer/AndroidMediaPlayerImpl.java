@@ -268,11 +268,11 @@ class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void attach(PlayerView playerView) {
+        containerView = playerView.getContainerView();
         buggyVideoDriverPreventer.preventVideoDriverBug(this, containerView);
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
-        containerView = playerView.getContainerView();
     }
 
     @Override

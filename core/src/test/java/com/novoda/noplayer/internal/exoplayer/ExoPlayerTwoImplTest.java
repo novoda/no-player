@@ -190,7 +190,7 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void givenAttachedPlayer_whenStopping_thenPlayerResourcesAreReleased() {
+        public void givenAttachedPlayerView_whenStopping_thenPlayerResourcesAreReleased() {
             player.attach(playerView);
 
             player.stop();
@@ -204,7 +204,7 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void givenAttachedPlayer_whenReleasing_thenPlayerResourcesAreReleased() {
+        public void givenAttachedPlayerView_whenReleasing_thenPlayerResourcesAreReleased() {
             player.attach(playerView);
 
             player.release();
