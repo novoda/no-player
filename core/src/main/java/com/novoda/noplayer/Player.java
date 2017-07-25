@@ -64,8 +64,9 @@ public interface Player extends PlayerState {
      *
      * @param uri         link to the content.
      * @param contentType format of the content.
+     * @throws IllegalStateException - if called before {@link Player#attach(PlayerView)}.
      */
-    void loadVideo(Uri uri, ContentType contentType);
+    void loadVideo(Uri uri, ContentType contentType) throws IllegalStateException;
 
     /**
      * Loads the video content and triggers the {@link Player.PreparedListener}.
@@ -74,6 +75,7 @@ public interface Player extends PlayerState {
      * @param contentType         format of the content.
      * @param timeout             amount of time to wait before triggering {@link LoadTimeoutCallback}.
      * @param loadTimeoutCallback callback when loading has hit the timeout.
+     * @throws IllegalStateException - if called before {@link Player#attach(PlayerView)}.
      */
     void loadVideoWithTimeout(Uri uri, ContentType contentType, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback);
 
