@@ -206,7 +206,7 @@ class AndroidMediaPlayerImpl implements Player {
             stop();
         }
         assertPlayerViewIsAttached();
-        forceSurfaceCreation();
+        createSurfaceByShowingVideoContainer();
         listenersHolder.getBufferStateListeners().onBufferStarted();
         requestSurface(new SurfaceHolderRequester.Callback() {
             @Override
@@ -216,7 +216,7 @@ class AndroidMediaPlayerImpl implements Player {
         });
     }
 
-    private void forceSurfaceCreation() {
+    private void createSurfaceByShowingVideoContainer() {
         containerView.setVisibility(View.VISIBLE);
     }
 
@@ -339,10 +339,10 @@ class AndroidMediaPlayerImpl implements Player {
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         mediaPlayer.release();
-        destroySurface();
+        destroySurfaceByHidingVideoContainer();
     }
 
-    private void destroySurface() {
+    private void destroySurfaceByHidingVideoContainer() {
         if (containerView != null) {
             containerView.setVisibility(View.GONE);
         }

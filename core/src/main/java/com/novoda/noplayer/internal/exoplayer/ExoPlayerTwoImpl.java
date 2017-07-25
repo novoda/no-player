@@ -165,10 +165,10 @@ class ExoPlayerTwoImpl implements Player {
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         exoPlayer.release();
-        destroySurface();
+        destroySurfaceByHidingVideoContainer();
     }
 
-    private void destroySurface() {
+    private void destroySurfaceByHidingVideoContainer() {
         if (playerView != null) {
             playerView.getContainerView().setVisibility(View.GONE);
         }
@@ -188,7 +188,7 @@ class ExoPlayerTwoImpl implements Player {
         };
 
         assertPlayerViewIsAttached();
-        forceSurfaceCreation();
+        createSurfaceByShowingVideoContainer();
         surfaceHolderRequester.requestSurfaceHolder(onSurfaceReadyCallback);
     }
 
@@ -198,7 +198,7 @@ class ExoPlayerTwoImpl implements Player {
         }
     }
 
-    private void forceSurfaceCreation() {
+    private void createSurfaceByShowingVideoContainer() {
         playerView.getContainerView().setVisibility(View.VISIBLE);
     }
 
