@@ -188,7 +188,7 @@ class ExoPlayerTwoImpl implements Player {
         };
 
         assertPlayerViewIsAttached();
-        forceSurfaceToBeCreated();
+        forceSurfaceCreation();
         surfaceHolderRequester.requestSurfaceHolder(onSurfaceReadyCallback);
     }
 
@@ -198,7 +198,7 @@ class ExoPlayerTwoImpl implements Player {
         }
     }
 
-    private void forceSurfaceToBeCreated() {
+    private void forceSurfaceCreation() {
         playerView.getContainerView().setVisibility(View.VISIBLE);
     }
 

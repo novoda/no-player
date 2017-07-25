@@ -206,7 +206,7 @@ class AndroidMediaPlayerImpl implements Player {
             stop();
         }
         assertPlayerViewIsAttached();
-        forceSurfaceToBeCreated();
+        forceSurfaceCreation();
         listenersHolder.getBufferStateListeners().onBufferStarted();
         requestSurface(new SurfaceHolderRequester.Callback() {
             @Override
@@ -216,7 +216,7 @@ class AndroidMediaPlayerImpl implements Player {
         });
     }
 
-    private void forceSurfaceToBeCreated() {
+    private void forceSurfaceCreation() {
         containerView.setVisibility(View.VISIBLE);
     }
 
