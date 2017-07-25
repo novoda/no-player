@@ -164,10 +164,14 @@ class ExoPlayerTwoImpl implements Player {
         listenersHolder.resetPreparedState();
         loadTimeout.cancel();
         heart.stopBeatingHeart();
+        exoPlayer.release();
+        destroySurface();
+    }
+
+    private void destroySurface() {
         if (playerView != null) {
             playerView.getContainerView().setVisibility(View.GONE);
         }
-        exoPlayer.release();
     }
 
     @Override
@@ -184,7 +188,7 @@ class ExoPlayerTwoImpl implements Player {
         };
 
         assertPlayerViewIsAttached();
-        playerView.getContainerView().setVisibility(View.VISIBLE);
+        forceSurfaceToBeCreated();
         surfaceHolderRequester.requestSurfaceHolder(onSurfaceReadyCallback);
     }
 
@@ -192,6 +196,10 @@ class ExoPlayerTwoImpl implements Player {
         if (playerView == null) {
             throw new IllegalStateException("A PlayerView must be attached in order to loadVideo");
         }
+    }
+
+    private void forceSurfaceToBeCreated() {
+        playerView.getContainerView().setVisibility(View.VISIBLE);
     }
 
     @Override
