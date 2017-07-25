@@ -4,6 +4,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.view.SurfaceHolder;
+import android.view.View;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Listeners;
@@ -48,6 +49,7 @@ class AndroidMediaPlayerImpl implements Player {
 
     private boolean seekingWithIntentToPlay;
     private SurfaceHolderRequester surfaceHolderRequester;
+    private View containerView;
 
     AndroidMediaPlayerImpl(MediaPlayerInformation mediaPlayerInformation,
                            AndroidMediaPlayerFacade mediaPlayer,
@@ -203,6 +205,8 @@ class AndroidMediaPlayerImpl implements Player {
         if (mediaPlayer.hasPlayedContent()) {
             stop();
         }
+        assertPlayerViewIsAttached();
+        forceSurfaceCreation();
         listenersHolder.getBufferStateListeners().onBufferStarted();
         requestSurface(new SurfaceHolderRequester.Callback() {
             @Override
@@ -210,6 +214,16 @@ class AndroidMediaPlayerImpl implements Player {
                 mediaPlayer.prepareVideo(uri, surfaceHolder);
             }
         });
+    }
+
+    private void forceSurfaceCreation() {
+        containerView.setVisibility(View.VISIBLE);
+    }
+
+    private void assertPlayerViewIsAttached() {
+        if (containerView == null) {
+            throw new IllegalStateException("A PlayerView must be attached in order to loadVideo");
+        }
     }
 
     @Override
@@ -254,19 +268,21 @@ class AndroidMediaPlayerImpl implements Player {
 
     @Override
     public void attach(PlayerView playerView) {
-        surfaceHolderRequester = playerView.getSurfaceHolderRequester();
-        buggyVideoDriverPreventer.preventVideoDriverBug(this, playerView.getContainerView());
+        containerView = playerView.getContainerView();
+        buggyVideoDriverPreventer.preventVideoDriverBug(this, containerView);
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
+        surfaceHolderRequester = playerView.getSurfaceHolderRequester();
     }
 
     @Override
     public void detach(PlayerView playerView) {
         clearSurfaceHolderCallbacks();
-        surfaceHolderRequester = null;
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         buggyVideoDriverPreventer.clear(playerView.getContainerView());
+        surfaceHolderRequester = null;
+        containerView = null;
     }
 
     private void clearSurfaceHolderCallbacks() {
@@ -323,5 +339,12 @@ class AndroidMediaPlayerImpl implements Player {
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         mediaPlayer.release();
+        destroySurface();
+    }
+
+    private void destroySurface() {
+        if (containerView != null) {
+            containerView.setVisibility(View.GONE);
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
+import android.view.View;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.ContentType;
@@ -164,6 +165,13 @@ class ExoPlayerTwoImpl implements Player {
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         exoPlayer.release();
+        destroySurface();
+    }
+
+    private void destroySurface() {
+        if (playerView != null) {
+            playerView.getContainerView().setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -178,7 +186,20 @@ class ExoPlayerTwoImpl implements Player {
                 exoPlayer.loadVideo(surfaceHolder, drmSessionCreator, uri, contentType, forwarder, mediaCodecSelector);
             }
         };
+
+        assertPlayerViewIsAttached();
+        forceSurfaceCreation();
         surfaceHolderRequester.requestSurfaceHolder(onSurfaceReadyCallback);
+    }
+
+    private void assertPlayerViewIsAttached() {
+        if (playerView == null) {
+            throw new IllegalStateException("A PlayerView must be attached in order to loadVideo");
+        }
+    }
+
+    private void forceSurfaceCreation() {
+        playerView.getContainerView().setVisibility(View.VISIBLE);
     }
 
     @Override
