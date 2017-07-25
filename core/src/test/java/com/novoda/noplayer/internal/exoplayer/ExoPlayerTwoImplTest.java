@@ -2,6 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.view.SurfaceHolder;
+import android.view.View;
 
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
@@ -34,6 +35,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
@@ -45,6 +47,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -187,6 +190,35 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
+        public void givenAttachedPlayer_whenStopping_thenPlayerResourcesAreReleased() {
+            player.attach(playerView);
+
+            player.stop();
+
+            verify(listenersHolder).resetPreparedState();
+            verify(stateChangedListener).onVideoStopped();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(containerView).setVisibility(View.GONE);
+            verify(exoPlayerFacade).release();
+        }
+
+        @Test
+        public void givenAttachedPlayer_whenReleasing_thenPlayerResourcesAreReleased() {
+            player.attach(playerView);
+
+            player.release();
+
+            verify(listenersHolder).resetPreparedState();
+            verify(stateChangedListener).onVideoStopped();
+            verify(loadTimeout).cancel();
+            verify(heart).stopBeatingHeart();
+            verify(containerView).setVisibility(View.GONE);
+            verify(exoPlayerFacade).release();
+            verify(listenersHolder).clear();
+        }
+
+        @Test
         public void whenLoadingVideo_thenDelegatesLoadingToFacade() {
             player.attach(playerView);
 
@@ -261,6 +293,15 @@ public class ExoPlayerTwoImplTest {
             player.detach(playerView);
 
             verify(listenersHolder).removeStateChangedListener(stateChangeListener);
+        }
+
+        @Test
+        public void givenAttachedPlayerView_whenLoadingVideo_thenMakesContainerVisible() {
+            player.attach(playerView);
+
+            player.loadVideo(uri, ANY_CONTENT_TYPE);
+
+            verify(containerView).setVisibility(View.VISIBLE);
         }
 
         @Test
@@ -559,6 +600,8 @@ public class ExoPlayerTwoImplTest {
         DrmSessionCreator drmSessionCreator;
         @Mock
         MediaCodecSelector mediaCodecSelector;
+        @Mock
+        View containerView;
 
         ExoPlayerTwoImpl player;
 
@@ -567,6 +610,7 @@ public class ExoPlayerTwoImplTest {
             given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
+            given(playerView.getContainerView()).willReturn(containerView);
             doAnswer(new Answer<Void>() {
                 @Override
                 public Void answer(InvocationOnMock invocation) throws Throwable {
