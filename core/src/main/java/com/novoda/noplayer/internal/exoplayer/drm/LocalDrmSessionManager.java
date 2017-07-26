@@ -1,9 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer.drm;
 
 import android.annotation.TargetApi;
-import android.media.MediaCryptoException;
-import android.media.NotProvisionedException;
-import android.media.ResourceBusyException;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -38,7 +35,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
         this.handler = handler;
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public DrmSession<FrameworkMediaCrypto> acquireSession(Looper playbackLooper, DrmInitData drmInitData) {
         DrmSession<FrameworkMediaCrypto> drmSession;
@@ -50,11 +47,10 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
             mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore.asBytes());
 
             drmSession = new LocalDrmSession(mediaCrypto, keySetIdToRestore, sessionId);
-        } catch (NotProvisionedException | MediaCryptoException | ResourceBusyException exception) {
+        } catch (Exception exception) { // We are forced to catch Exception as ResourceBusyException is api level 19.
             drmSession = new InvalidDrmSession(new DrmSession.DrmSessionException(exception));
             notifyErrorListener(drmSession);
         }
-
         return drmSession;
     }
 
