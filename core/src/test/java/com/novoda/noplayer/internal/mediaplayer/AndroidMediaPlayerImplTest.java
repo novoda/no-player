@@ -47,7 +47,6 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(Enclosed.class)
 public class AndroidMediaPlayerImplTest {
@@ -593,16 +592,7 @@ public class AndroidMediaPlayerImplTest {
         }
 
         @Test
-        public void givenPlayerIsAlreadyPlaying_whenPlaying_thenDoesNotNotifyOnVideoPlaying() {
-            given(mediaPlayer.isPlaying()).willReturn(IS_PLAYING);
-
-            player.play();
-
-            verifyZeroInteractions(stateChangedListener);
-        }
-
-        @Test
-        public void givenPlayerIsAlreadyPlaying_whenPlaying_thenNotifiesnVideoPlaying() {
+        public void givenPlayerIsAlreadyPlaying_whenPlaying_thenNotifiesVideoPlaying() {
             given(mediaPlayer.isPlaying()).willReturn(IS_NOT_PLAYING);
 
             player.play();
