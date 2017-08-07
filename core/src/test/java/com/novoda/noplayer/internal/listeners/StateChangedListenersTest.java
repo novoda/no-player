@@ -1,6 +1,7 @@
 package com.novoda.noplayer.internal.listeners;
 
 import com.novoda.noplayer.Player;
+import com.novoda.utils.NoPlayerLog;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -23,6 +24,7 @@ public class StateChangedListenersTest {
 
     @Before
     public void setUp() {
+        NoPlayerLog.setLoggingEnabled(false);
         stateChangedListeners = new StateChangedListeners();
         stateChangedListeners.add(stateChangedListener);
     }

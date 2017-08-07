@@ -1,6 +1,7 @@
 package com.novoda.noplayer.internal.listeners;
 
 import com.novoda.noplayer.Player;
+import com.novoda.utils.NoPlayerLog;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -32,6 +33,7 @@ class StateChangedListeners implements Player.StateChangedListener {
     @Override
     public void onVideoPlaying() {
         if (currentState == State.PLAYING) {
+            NoPlayerLog.e("Tried calling onVideoPlaying() but video is already playing.");
             return;
         }
 
@@ -45,6 +47,7 @@ class StateChangedListeners implements Player.StateChangedListener {
     @Override
     public void onVideoPaused() {
         if (currentState == State.PAUSED) {
+            NoPlayerLog.e("Tried calling onVideoPaused() but video is already paused.");
             return;
         }
 
@@ -58,6 +61,7 @@ class StateChangedListeners implements Player.StateChangedListener {
     @Override
     public void onVideoStopped() {
         if (currentState == State.STOPPED) {
+            NoPlayerLog.e("Tried calling onVideoStopped() but video has already stopped.");
             return;
         }
 
