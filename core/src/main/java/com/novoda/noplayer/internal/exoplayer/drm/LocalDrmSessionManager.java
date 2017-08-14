@@ -37,8 +37,8 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
 
     @Override
     public boolean canAcquireSession(DrmInitData drmInitData) {
-        // TODO: How do we know a local session is valid?
-        return true;
+        DrmInitData.SchemeData schemeData = drmInitData.get(drmScheme);
+        return schemeData != null;
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
