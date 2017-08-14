@@ -16,7 +16,7 @@ import static com.novoda.noplayer.internal.exoplayer.forwarder.ErrorFormatter.fo
 final class ExoPlayerErrorMapper {
 
     private ExoPlayerErrorMapper() {
-        // static class.
+        // Static class.
     }
 
     static Player.PlayerError errorFor(Exception e) {

@@ -33,11 +33,6 @@ class LocalDrmSession implements FrameworkDrmSession {
         return mediaCrypto;
     }
 
-    @Override
-    public boolean requiresSecureDecoderComponent(String mimeType) {
-        return mediaCrypto.requiresSecureDecoderComponent(mimeType);
-    }
-
     @Nullable
     @Override
     public DrmSessionException getError() {

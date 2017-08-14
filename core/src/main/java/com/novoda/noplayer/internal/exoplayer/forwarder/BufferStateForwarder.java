@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.novoda.noplayer.Player;
 
-class BufferStateForwarder implements ExoPlayer.EventListener {
+class BufferStateForwarder implements com.google.android.exoplayer2.Player.EventListener {
 
     private final Player.BufferStateListener bufferStateListener;
 
@@ -26,32 +26,37 @@ class BufferStateForwarder implements ExoPlayer.EventListener {
     }
 
     @Override
+    public void onRepeatModeChanged(@com.google.android.exoplayer2.Player.RepeatMode int repeatMode) {
+        // TODO: should we send?
+    }
+
+    @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {
-        //TODO should we send ?
+        // TODO: should we send?
     }
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-        //TODO should we send ?
+        // TODO: should we send?
     }
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
-        //TODO should we send ?
+        // TODO: should we send?
     }
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-        //Sent by ErrorForwarder
+        // Sent by ErrorForwarder.
     }
 
     @Override
     public void onPositionDiscontinuity() {
-        //TODO should we send ?
+        // TODO: should we send?
     }
 
     @Override
     public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-        //TODO should we send ?
+        // TODO: should we send?
     }
 }

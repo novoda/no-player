@@ -28,11 +28,6 @@ class InvalidDrmSession implements FrameworkDrmSession {
     }
 
     @Override
-    public boolean requiresSecureDecoderComponent(String mimeType) {
-        throw new IllegalStateException();
-    }
-
-    @Override
     public DrmSessionException getError() {
         return drmSessionException;
     }
