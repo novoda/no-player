@@ -17,7 +17,7 @@ class DrmSessionErrorForwarder implements DefaultDrmSessionManager.EventListener
 
     @Override
     public void onDrmKeysLoaded() {
-        // TODO: Are we interested?
+        // TODO: should we send?
     }
 
     @Override
@@ -28,11 +28,11 @@ class DrmSessionErrorForwarder implements DefaultDrmSessionManager.EventListener
 
     @Override
     public void onDrmKeysRestored() {
-        // TODO: Are we interested?
+        // TODO: should we send?
     }
 
     @Override
     public void onDrmKeysRemoved() {
-        // TODO: Are we interested?
+        // TODO: should we send?
     }
 }

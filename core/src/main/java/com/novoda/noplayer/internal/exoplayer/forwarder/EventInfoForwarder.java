@@ -1,7 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -10,7 +9,7 @@ import com.novoda.noplayer.Player;
 
 import java.util.HashMap;
 
-class EventInfoForwarder implements ExoPlayer.EventListener {
+class EventInfoForwarder implements com.google.android.exoplayer2.Player.EventListener {
 
     private final Player.InfoListener infoListener;
 
@@ -55,6 +54,15 @@ class EventInfoForwarder implements ExoPlayer.EventListener {
         callingMethodParameters.put("playbackState", String.valueOf(playbackState));
 
         infoListener.onNewInfo("onPlayerStateChanged", callingMethodParameters);
+    }
+
+    @Override
+    public void onRepeatModeChanged(@com.google.android.exoplayer2.Player.RepeatMode int repeatMode) {
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
+
+        callingMethodParameters.put("repeatMode", String.valueOf(repeatMode));
+
+        infoListener.onNewInfo("onRepeatModeChanged", callingMethodParameters);
     }
 
     @Override

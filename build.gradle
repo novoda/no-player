@@ -3,7 +3,7 @@ task wrapper(type: Wrapper) {
 }
 
 allprojects {
-    version = "2.0.6"
+    version = "2.0.7"
 }
 
 buildscript {
@@ -19,5 +19,8 @@ buildscript {
 subprojects {
     repositories {
         jcenter()
+        maven {
+            url "https://maven.google.com"
+        }
     }
 }
