@@ -47,4 +47,23 @@ class InvalidDrmSession implements FrameworkDrmSession {
     public SessionId getSessionId() {
         return SessionId.absent();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        InvalidDrmSession that = (InvalidDrmSession) o;
+
+        return drmSessionException != null ? drmSessionException.equals(that.drmSessionException) : that.drmSessionException == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return drmSessionException != null ? drmSessionException.hashCode() : 0;
+    }
 }
