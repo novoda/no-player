@@ -1,7 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -18,9 +17,9 @@ class BufferStateForwarder implements com.google.android.exoplayer2.Player.Event
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == ExoPlayer.STATE_BUFFERING) {
+        if (playbackState == com.google.android.exoplayer2.Player.STATE_BUFFERING) {
             bufferStateListener.onBufferStarted();
-        } else if (playbackState == ExoPlayer.STATE_READY) {
+        } else if (playbackState == com.google.android.exoplayer2.Player.STATE_READY) {
             bufferStateListener.onBufferCompleted();
         }
     }

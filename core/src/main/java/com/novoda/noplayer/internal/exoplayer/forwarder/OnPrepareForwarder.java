@@ -1,7 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -32,7 +31,7 @@ class OnPrepareForwarder implements com.google.android.exoplayer2.Player.EventLi
     }
 
     private boolean isReady(int playbackState) {
-        return playbackState == ExoPlayer.STATE_READY;
+        return playbackState == com.google.android.exoplayer2.Player.STATE_READY;
     }
 
     @Override

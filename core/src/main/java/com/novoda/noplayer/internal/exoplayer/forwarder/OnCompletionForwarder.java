@@ -1,7 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -18,7 +17,7 @@ class OnCompletionForwarder implements com.google.android.exoplayer2.Player.Even
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == ExoPlayer.STATE_ENDED) {
+        if (playbackState == com.google.android.exoplayer2.Player.STATE_ENDED) {
             completionListener.onCompletion();
         }
     }
