@@ -3,11 +3,11 @@ package com.novoda.noplayer.internal.mediaplayer;
 import android.media.MediaPlayer;
 
 import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
+import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -70,7 +70,7 @@ public class AndroidMediaPlayerAudioTrackSelectorTest {
     public void givenTrackSelectorContainsUnsupportedTracks_whenGettingAudioTracks_thenReturnsOnlySupportedTracks() {
         givenTrackSelectorContainsUnsupportedTracks();
 
-        List<PlayerAudioTrack> audioTracks = trackSelector.getAudioTracks(mediaPlayer);
+        AudioTracks audioTracks = trackSelector.getAudioTracks(mediaPlayer);
 
         assertThat(audioTracks).isEqualTo(expectedAudioTrack());
     }
@@ -110,17 +110,19 @@ public class AndroidMediaPlayerAudioTrackSelectorTest {
         given(trackInfosFactory.createFrom(mediaPlayer)).willReturn(noPlayerTrackInfos);
     }
 
-    private List<PlayerAudioTrack> expectedAudioTrack() {
-        return Collections.singletonList(
-                new PlayerAudioTrack(
-                        AUDIO_TRACK_INDEX,
-                        NO_FORMAT,
-                        String.valueOf(AUDIO_TRACK_INFO.hashCode()),
-                        AUDIO_TRACK_INFO.language(),
-                        NO_MIME_TYPE,
-                        NO_CHANNELS,
-                        NO_FREQUENCY,
-                        AudioTrackType.MAIN
+    private AudioTracks expectedAudioTrack() {
+        return AudioTracks.from(
+                Collections.singletonList(
+                        new PlayerAudioTrack(
+                                AUDIO_TRACK_INDEX,
+                                NO_FORMAT,
+                                String.valueOf(AUDIO_TRACK_INFO.hashCode()),
+                                AUDIO_TRACK_INFO.language(),
+                                NO_MIME_TYPE,
+                                NO_CHANNELS,
+                                NO_FREQUENCY,
+                                AudioTrackType.MAIN
+                        )
                 )
         );
     }

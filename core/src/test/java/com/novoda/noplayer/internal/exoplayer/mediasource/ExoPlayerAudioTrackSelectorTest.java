@@ -6,10 +6,10 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
+import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -76,7 +76,7 @@ public class ExoPlayerAudioTrackSelectorTest {
     public void givenTrackSelectorContainsUnsupportedTracks_whenGettingAudioTracks_thenReturnsOnlySupportedTracks() {
         givenTrackSelectorContainsUnsupportedTracks();
 
-        List<PlayerAudioTrack> actualAudioTracks = exoPlayerAudioTrackSelector.getAudioTracks(rendererTypeRequester);
+        AudioTracks actualAudioTracks = exoPlayerAudioTrackSelector.getAudioTracks(rendererTypeRequester);
 
         assertThat(actualAudioTracks).isEqualTo(expectedSupportedAudioTracks());
     }
@@ -118,17 +118,21 @@ public class ExoPlayerAudioTrackSelectorTest {
                 .willReturn(false);
     }
 
-    private List<PlayerAudioTrack> expectedSupportedAudioTracks() {
-        return Collections.singletonList(
-                new PlayerAudioTrack(
-                        FIRST_GROUP,
-                        FIRST_TRACK,
-                        AUDIO_FORMAT.id,
-                        AUDIO_FORMAT.language,
-                        AUDIO_FORMAT.sampleMimeType,
-                        AUDIO_FORMAT.channelCount,
-                        AUDIO_FORMAT.bitrate,
-                        AudioTrackType.from(AUDIO_FORMAT.selectionFlags))
+    private AudioTracks expectedSupportedAudioTracks() {
+        return AudioTracks.from(
+                Collections.singletonList(
+                        new PlayerAudioTrack(
+                                FIRST_GROUP,
+                                FIRST_TRACK,
+                                AUDIO_FORMAT.id,
+                                AUDIO_FORMAT.language,
+                                AUDIO_FORMAT.sampleMimeType,
+                                AUDIO_FORMAT.channelCount,
+                                AUDIO_FORMAT.bitrate,
+                                AudioTrackType.from(AUDIO_FORMAT.selectionFlags)
+
+                        )
+                )
         );
     }
 }

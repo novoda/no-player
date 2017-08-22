@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.mediaplayer;
 import android.media.MediaPlayer;
 
 import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
+import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ class AndroidMediaPlayerAudioTrackSelector {
         this.trackInfosFactory = trackInfosFactory;
     }
 
-    List<PlayerAudioTrack> getAudioTracks(MediaPlayer mediaPlayer) {
+    AudioTracks getAudioTracks(MediaPlayer mediaPlayer) {
         if (mediaPlayer == null) {
             throw new NullPointerException("You can only call getAudioTracks() when video is prepared.");
         }
@@ -46,7 +47,7 @@ class AndroidMediaPlayerAudioTrackSelector {
                 );
             }
         }
-        return audioTracks;
+        return AudioTracks.from(audioTracks);
     }
 
     boolean selectAudioTrack(MediaPlayer mediaPlayer, PlayerAudioTrack playerAudioTrack) {

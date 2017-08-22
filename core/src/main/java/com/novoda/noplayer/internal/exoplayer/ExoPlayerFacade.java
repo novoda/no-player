@@ -13,6 +13,7 @@ import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
+import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.VideoDuration;
@@ -123,7 +124,7 @@ class ExoPlayerFacade {
         return audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester);
     }
 
-    List<PlayerAudioTrack> getAudioTracks() throws IllegalStateException {
+    AudioTracks getAudioTracks() throws IllegalStateException {
         assertVideoLoaded();
         return audioTrackSelector.getAudioTracks(rendererTypeRequester);
     }

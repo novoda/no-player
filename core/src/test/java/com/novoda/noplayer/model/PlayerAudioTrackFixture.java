@@ -2,7 +2,7 @@ package com.novoda.noplayer.model;
 
 import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
 
-class PlayerAudioTrackFixture {
+public class PlayerAudioTrackFixture {
 
     private int groupIndex = 0;
     private int formatIndex = 0;
@@ -57,7 +57,7 @@ class PlayerAudioTrackFixture {
         return this;
     }
 
-    PlayerAudioTrack build() {
+    public PlayerAudioTrack build() {
         return new PlayerAudioTrack(
                 groupIndex,
                 formatIndex,

@@ -16,6 +16,7 @@ import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
+import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
@@ -256,7 +257,7 @@ class ExoPlayerTwoImpl implements Player {
     }
 
     @Override
-    public List<PlayerAudioTrack> getAudioTracks() throws IllegalStateException {
+    public AudioTracks getAudioTracks() throws IllegalStateException {
         return exoPlayer.getAudioTracks();
     }
 

@@ -8,6 +8,7 @@ import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.utils.NoPlayerLog;
@@ -205,7 +206,7 @@ class AndroidMediaPlayerFacade {
         return currentBufferPercentage;
     }
 
-    List<PlayerAudioTrack> getAudioTracks() throws IllegalStateException {
+    AudioTracks getAudioTracks() throws IllegalStateException {
         assertIsInPlaybackState();
         return trackSelector.getAudioTracks(mediaPlayer);
     }

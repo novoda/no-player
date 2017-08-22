@@ -4,9 +4,10 @@ import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
 import com.novoda.utils.Optional;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
-public class AudioTracks {
+public class AudioTracks implements Iterable<PlayerAudioTrack> {
 
     private final List<PlayerAudioTrack> audioTracks;
 
@@ -36,8 +37,13 @@ public class AudioTracks {
         return Optional.absent();
     }
 
-    public PlayerAudioTrack getPlayerAudioTrack(int index) {
-        return audioTracks.get(index);
+    public PlayerAudioTrack getPlayerAudioTrackAt(int position) {
+        return audioTracks.get(position);
+    }
+
+    @Override
+    public Iterator<PlayerAudioTrack> iterator() {
+        return audioTracks.iterator();
     }
 
     @Override
@@ -57,5 +63,12 @@ public class AudioTracks {
     @Override
     public int hashCode() {
         return audioTracks != null ? audioTracks.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "AudioTracks{" +
+                "audioTracks=" + audioTracks +
+                '}';
     }
 }

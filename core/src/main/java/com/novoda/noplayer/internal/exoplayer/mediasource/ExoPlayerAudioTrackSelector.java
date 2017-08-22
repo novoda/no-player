@@ -6,6 +6,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
+import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class ExoPlayerAudioTrackSelector {
         return trackSelector.setSelectionOverride(AUDIO, rendererTypeRequester, trackGroups, selectionOverride);
     }
 
-    public List<PlayerAudioTrack> getAudioTracks(RendererTypeRequester rendererTypeRequester) {
+    public AudioTracks getAudioTracks(RendererTypeRequester rendererTypeRequester) {
         TrackGroupArray trackGroups = trackSelector.trackGroups(AUDIO, rendererTypeRequester);
 
         List<PlayerAudioTrack> audioTracks = new ArrayList<>();
@@ -61,6 +62,6 @@ public class ExoPlayerAudioTrackSelector {
             }
         }
 
-        return audioTracks;
+        return AudioTracks.from(audioTracks);
     }
 }

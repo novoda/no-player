@@ -57,7 +57,7 @@ public class AudioTracksTest {
     public void givenAudioTracks_whenGettingPlayerAudioTrack_thenReturnsPlayerAudioTrack() {
         AudioTracks audioTracks = AudioTracks.from(Collections.singletonList(MAIN_TRACK));
 
-        PlayerAudioTrack playerAudioTrack = audioTracks.getPlayerAudioTrack(FIRST_INDEX);
+        PlayerAudioTrack playerAudioTrack = audioTracks.getPlayerAudioTrackAt(FIRST_INDEX);
 
         assertThat(playerAudioTrack).isEqualTo(MAIN_TRACK);
     }

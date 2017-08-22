@@ -12,18 +12,18 @@ import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.Heart;
-import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.utils.NoPlayerLog;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -63,8 +63,8 @@ public class AndroidMediaPlayerImplTest {
         private static final long TWO_MINUTES_IN_MILLIS = 120000;
         private static final int ONE_SECOND_IN_MILLIS = 1000;
         private static final boolean IS_PLAYING = true;
-        private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120, AudioTrackType.MAIN);
-        private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
+        private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = PlayerAudioTrackFixture.aPlayerAudioTrack().build();
+        private static final AudioTracks AUDIO_TRACKS = AudioTracks.from(Collections.singletonList(PLAYER_AUDIO_TRACK));
 
         @Test
         public void whenInitialising_thenBindsListenersToForwarder() {
@@ -345,7 +345,7 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void whenGettingAudioTracks_thenDelegatesToMediaPlayer() {
             given(mediaPlayer.getAudioTracks()).willReturn(AUDIO_TRACKS);
-            List<PlayerAudioTrack> audioTracks = player.getAudioTracks();
+            AudioTracks audioTracks = player.getAudioTracks();
 
             assertThat(audioTracks).isEqualTo(AUDIO_TRACKS);
         }
