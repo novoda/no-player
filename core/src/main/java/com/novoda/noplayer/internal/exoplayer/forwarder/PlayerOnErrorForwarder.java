@@ -2,12 +2,13 @@ package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.novoda.noplayer.NoPlayer;
 
-class PlayerOnErrorForwarder implements com.google.android.exoplayer2.Player.EventListener {
+class PlayerOnErrorForwarder implements Player.EventListener {
 
     private final NoPlayer.ErrorListener errorListener;
 
@@ -42,7 +43,7 @@ class PlayerOnErrorForwarder implements com.google.android.exoplayer2.Player.Eve
     }
 
     @Override
-    public void onRepeatModeChanged(@com.google.android.exoplayer2.Player.RepeatMode int repeatMode) {
+    public void onRepeatModeChanged(@Player.RepeatMode int repeatMode) {
         // TODO: should we send?
     }
 
