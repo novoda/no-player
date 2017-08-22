@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer.mediasource;
 
 public enum AudioTrackType {
     MAIN(0),
-    AUDIO_DESCRIBED(1),
+    ALTERNATIVE(1),
     UNKNOWN(-1);
 
     private final int selectionFlag;
