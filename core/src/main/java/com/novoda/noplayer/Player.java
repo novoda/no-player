@@ -102,7 +102,7 @@ public interface Player extends PlayerState {
     void detach(PlayerView playerView);
 
     /**
-     * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player as a first class collection.
+     * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player.
      *
      * @return {@link AudioTracks} that contains a list of available {@link PlayerAudioTrack}.
      * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
