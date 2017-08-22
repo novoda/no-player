@@ -41,6 +41,10 @@ public class AudioTracks implements Iterable<PlayerAudioTrack> {
         return audioTracks.get(position);
     }
 
+    public int size() {
+        return audioTracks.size();
+    }
+
     @Override
     public Iterator<PlayerAudioTrack> iterator() {
         return audioTracks.iterator();

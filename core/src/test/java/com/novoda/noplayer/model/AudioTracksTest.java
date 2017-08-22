@@ -15,6 +15,7 @@ public class AudioTracksTest {
     private static final PlayerAudioTrack MAIN_TRACK = PlayerAudioTrackFixture.aPlayerAudioTrack().withAudioTrackType(AudioTrackType.MAIN).build();
     private static final PlayerAudioTrack AUDIO_DESCRIBED_TRACK = PlayerAudioTrackFixture.aPlayerAudioTrack().withAudioTrackType(AudioTrackType.AUDIO_DESCRIBED).build();
     private static final int FIRST_INDEX = 0;
+    private static final int EXPECTED_SIZE = 2;
 
     @Test
     public void givenAudioTracks_withAudioDescribedTrack_whenCheckingContainsAudioDescribedTrack_thenReturnsTrue() {
@@ -60,5 +61,14 @@ public class AudioTracksTest {
         PlayerAudioTrack playerAudioTrack = audioTracks.getPlayerAudioTrackAt(FIRST_INDEX);
 
         assertThat(playerAudioTrack).isEqualTo(MAIN_TRACK);
+    }
+
+    @Test
+    public void givenAudioTracks_whenGettingSize_thenReturnsSize() {
+        AudioTracks audioTracks = AudioTracks.from(Arrays.asList(MAIN_TRACK, AUDIO_DESCRIBED_TRACK));
+
+        int size = audioTracks.size();
+
+        assertThat(size).isEqualTo(EXPECTED_SIZE);
     }
 }
