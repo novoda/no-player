@@ -1,6 +1,6 @@
-package com.novoda.noplayer.internal.exoplayer.mediasource;
+package com.novoda.noplayer.model;
 
-import com.novoda.noplayer.model.PlayerAudioTrack;
+import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
 
 class PlayerAudioTrackFixture {
 
