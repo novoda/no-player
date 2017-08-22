@@ -29,7 +29,7 @@ public class PlayerBuilder {
     private boolean downgradeSecureDecoder = false;
 
     /**
-     * Sets {@link PlayerBuilder} to build a Player which supports Widevine classic DRM.
+     * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine classic DRM.
      *
      * @return {@link PlayerBuilder}
      * @see NoPlayer
@@ -39,7 +39,7 @@ public class PlayerBuilder {
     }
 
     /**
-     * Sets {@link PlayerBuilder} to build a Player which supports Widevine modular streaming DRM.
+     * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine modular streaming DRM.
      *
      * @param streamingModularDrm Implementation of {@link StreamingModularDrm}.
      * @return {@link PlayerBuilder}
@@ -50,7 +50,7 @@ public class PlayerBuilder {
     }
 
     /**
-     * Sets {@link PlayerBuilder} to build a Player which supports Widevine modular download DRM.
+     * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine modular download DRM.
      *
      * @param downloadedModularDrm Implementation of {@link DownloadedModularDrm}.
      * @return {@link PlayerBuilder}
@@ -61,7 +61,7 @@ public class PlayerBuilder {
     }
 
     /**
-     * Sets {@link PlayerBuilder} to build a Player which supports the specified parameters.
+     * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports the specified parameters.
      *
      * @param drmType    {@link DrmType}
      * @param drmHandler {@link DrmHandler}
@@ -75,7 +75,7 @@ public class PlayerBuilder {
     }
 
     /**
-     * Sets {@link PlayerBuilder} to build a Player which will prioritise the underlying player when
+     * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will prioritise the underlying player when
      * multiple underlying players share the same features.
      *
      * @param playerTypes Priority order of {@link PlayerType} with the first being the highest.
@@ -102,10 +102,10 @@ public class PlayerBuilder {
     }
 
     /**
-     * Builds a new Player instance.
+     * Builds a new {@link NoPlayer} instance.
      *
      * @param context
-     * @return a Player instance.
+     * @return a {@link NoPlayer} instance.
      * @throws UnableToCreatePlayerException thrown when the configuration is not supported and there is no way to recover.
      * @see NoPlayer
      */
