@@ -17,24 +17,6 @@ public class AudioTracksTest {
     private static final int EXPECTED_SIZE = 2;
 
     @Test
-    public void givenAudioTracks_withAlternativeTrack_whenCheckingContainsAlternativeTrack_thenReturnsTrue() {
-        AudioTracks audioTracks = AudioTracks.from(Arrays.asList(MAIN_TRACK, ALTERNATIVE_TRACK));
-
-        boolean containsAlternativeTrack = audioTracks.containsTrackWith(AudioTrackType.ALTERNATIVE);
-
-        assertThat(containsAlternativeTrack).isTrue();
-    }
-
-    @Test
-    public void givenAudioTracks_withoutAlternativeTrack_whenCheckingContainsAlternativeTrack_thenReturnsFalse() {
-        AudioTracks audioTracks = AudioTracks.from(Collections.singletonList(MAIN_TRACK));
-
-        boolean containsAlternativeTrack = audioTracks.containsTrackWith(AudioTrackType.ALTERNATIVE);
-
-        assertThat(containsAlternativeTrack).isFalse();
-    }
-
-    @Test
     public void givenAudioTracks_whenGettingTrack_thenReturnsTrack() {
         AudioTracks audioTracks = AudioTracks.from(Collections.singletonList(MAIN_TRACK));
 

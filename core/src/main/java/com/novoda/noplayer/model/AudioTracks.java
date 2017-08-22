@@ -1,7 +1,5 @@
 package com.novoda.noplayer.model;
 
-import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -16,15 +14,6 @@ public class AudioTracks implements Iterable<PlayerAudioTrack> {
 
     private AudioTracks(List<PlayerAudioTrack> audioTracks) {
         this.audioTracks = audioTracks;
-    }
-
-    public boolean containsTrackWith(AudioTrackType trackType) {
-        for (PlayerAudioTrack audioTrack : audioTracks) {
-            if (audioTrack.audioTrackType() == trackType) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public PlayerAudioTrack get(int index) {
