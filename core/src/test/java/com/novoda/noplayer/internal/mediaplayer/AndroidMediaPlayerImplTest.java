@@ -12,6 +12,7 @@ import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.Heart;
+import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.model.LoadTimeout;
@@ -62,7 +63,7 @@ public class AndroidMediaPlayerImplTest {
         private static final long TWO_MINUTES_IN_MILLIS = 120000;
         private static final int ONE_SECOND_IN_MILLIS = 1000;
         private static final boolean IS_PLAYING = true;
-        private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
+        private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120, AudioTrackType.MAIN);
         private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
 
         @Test

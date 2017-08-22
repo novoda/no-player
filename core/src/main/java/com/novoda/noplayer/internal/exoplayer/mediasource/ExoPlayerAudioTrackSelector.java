@@ -5,8 +5,8 @@ import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
+import com.novoda.noplayer.model.PlayerAudioTrack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +45,7 @@ public class ExoPlayerAudioTrackSelector {
 
                 for (int formatIndex = 0; formatIndex < trackGroup.length; formatIndex++) {
                     Format format = trackGroup.getFormat(formatIndex);
+
                     PlayerAudioTrack playerAudioTrack = new PlayerAudioTrack(
                             groupIndex,
                             formatIndex,
@@ -52,7 +53,8 @@ public class ExoPlayerAudioTrackSelector {
                             format.language,
                             format.sampleMimeType,
                             format.channelCount,
-                            format.bitrate
+                            format.bitrate,
+                            AudioTrackType.from(format.selectionFlags)
                     );
                     audioTracks.add(playerAudioTrack);
                 }

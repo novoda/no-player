@@ -10,6 +10,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
+import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
@@ -60,7 +61,7 @@ public class ExoPlayerFacadeTest {
     public static class GivenVideoNotLoaded extends Base {
 
         private static final VideoPosition ANY_POSITION = VideoPosition.fromMillis(1000);
-        private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
+        private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120, AudioTrackType.MAIN);
         private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
 
         @Rule
@@ -180,7 +181,7 @@ public class ExoPlayerFacadeTest {
 
     public static class GivenVideoIsLoaded extends Base {
 
-        private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
+        private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120, AudioTrackType.MAIN);
         private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
 
         @Override

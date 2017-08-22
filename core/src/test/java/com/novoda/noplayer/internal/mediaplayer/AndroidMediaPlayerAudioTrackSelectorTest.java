@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.media.MediaPlayer;
 
-import utils.ExceptionMatcher;
+import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 
 import java.util.Arrays;
@@ -17,11 +17,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import static utils.ExceptionMatcher.matches;
+import utils.ExceptionMatcher;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static utils.ExceptionMatcher.matches;
 
 public class AndroidMediaPlayerAudioTrackSelectorTest {
 
@@ -117,7 +119,8 @@ public class AndroidMediaPlayerAudioTrackSelectorTest {
                         AUDIO_TRACK_INFO.language(),
                         NO_MIME_TYPE,
                         NO_CHANNELS,
-                        NO_FREQUENCY
+                        NO_FREQUENCY,
+                        AudioTrackType.MAIN
                 )
         );
     }

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.SurfaceHolderRequester;
+import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
@@ -59,7 +60,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     private static final Map<String, String> NO_HEADERS = null;
     private static final Uri ANY_URI = mock(Uri.class);
-    private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120);
+    private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = new PlayerAudioTrack(0, 0, "id", "english", ".mp4", 1, 120, AudioTrackType.MAIN);
     private static final List<PlayerAudioTrack> AUDIO_TRACKS = Collections.singletonList(PLAYER_AUDIO_TRACK);
     private static final String ERROR_MESSAGE = "Video must be loaded and not in an error state before trying to interact with the player";
 

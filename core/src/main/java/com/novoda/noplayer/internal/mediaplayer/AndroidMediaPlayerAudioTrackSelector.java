@@ -2,6 +2,7 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.media.MediaPlayer;
 
+import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 
 import java.util.ArrayList;
@@ -39,7 +40,9 @@ class AndroidMediaPlayerAudioTrackSelector {
                                 trackInfo.language(),
                                 NO_MIME_TYPE,
                                 NO_CHANNELS,
-                                NO_FREQUENCY)
+                                NO_FREQUENCY,
+                                AudioTrackType.MAIN
+                        )
                 );
             }
         }

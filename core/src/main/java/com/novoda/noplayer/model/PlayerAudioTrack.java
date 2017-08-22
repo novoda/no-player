@@ -1,5 +1,7 @@
 package com.novoda.noplayer.model;
 
+import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
+
 public class PlayerAudioTrack {
 
     private final int groupIndex;
@@ -9,8 +11,16 @@ public class PlayerAudioTrack {
     private final String mimeType;
     private final int numberOfChannels;
     private final int frequency;
+    private final AudioTrackType audioTrackType;
 
-    public PlayerAudioTrack(int groupIndex, int formatIndex, String trackId, String language, String mimeType, int numberOfChannels, int frequency) {
+    public PlayerAudioTrack(int groupIndex,
+                            int formatIndex,
+                            String trackId,
+                            String language,
+                            String mimeType,
+                            int numberOfChannels,
+                            int frequency,
+                            AudioTrackType audioTrackType) {
         this.groupIndex = groupIndex;
         this.formatIndex = formatIndex;
         this.trackId = trackId;
@@ -18,6 +28,7 @@ public class PlayerAudioTrack {
         this.mimeType = mimeType;
         this.numberOfChannels = numberOfChannels;
         this.frequency = frequency;
+        this.audioTrackType = audioTrackType;
     }
 
     public int groupIndex() {
@@ -46,6 +57,10 @@ public class PlayerAudioTrack {
 
     public int frequency() {
         return frequency;
+    }
+
+    public AudioTrackType audioTrackType() {
+        return audioTrackType;
     }
 
     @Override
@@ -77,7 +92,10 @@ public class PlayerAudioTrack {
         if (language != null ? !language.equals(that.language) : that.language != null) {
             return false;
         }
-        return mimeType != null ? mimeType.equals(that.mimeType) : that.mimeType == null;
+        if (mimeType != null ? !mimeType.equals(that.mimeType) : that.mimeType != null) {
+            return false;
+        }
+        return audioTrackType == that.audioTrackType;
     }
 
     @Override
@@ -89,6 +107,7 @@ public class PlayerAudioTrack {
         result = 31 * result + (mimeType != null ? mimeType.hashCode() : 0);
         result = 31 * result + numberOfChannels;
         result = 31 * result + frequency;
+        result = 31 * result + (audioTrackType != null ? audioTrackType.hashCode() : 0);
         return result;
     }
 
@@ -102,6 +121,7 @@ public class PlayerAudioTrack {
                 ", mimeType='" + mimeType + '\'' +
                 ", numberOfChannels=" + numberOfChannels +
                 ", frequency=" + frequency +
+                ", audioTrackType=" + audioTrackType +
                 '}';
     }
 }
