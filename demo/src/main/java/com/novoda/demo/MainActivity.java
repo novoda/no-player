@@ -21,6 +21,7 @@ import com.novoda.utils.NoPlayerLog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends Activity {
 
@@ -95,7 +96,14 @@ public class MainActivity extends Activity {
         private List<String> mapAudioTrackToLabel(AudioTracks audioTracks) {
             List<String> labels = new ArrayList<>();
             for (PlayerAudioTrack audioTrack : audioTracks) {
-                labels.add("Group: " + audioTrack.groupIndex() + " Format: " + audioTrack.formatIndex());
+                String label = String.format(
+                        Locale.UK,
+                        "Group: %s Format: %s Type: %s",
+                        audioTrack.groupIndex(),
+                        audioTrack.formatIndex(),
+                        audioTrack.audioTrackType()
+                );
+                labels.add(label);
             }
             return labels;
         }
