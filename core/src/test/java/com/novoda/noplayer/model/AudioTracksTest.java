@@ -1,7 +1,6 @@
 package com.novoda.noplayer.model;
 
 import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
-import com.novoda.utils.Optional;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,26 +35,7 @@ public class AudioTracksTest {
     }
 
     @Test
-    public void givenAudioTracks_withAlternativeTrack_whenGettingFirstAlternativeTrack_thenReturnsAlternativeTrack() {
-        AudioTracks audioTracks = AudioTracks.from(Arrays.asList(MAIN_TRACK, ALTERNATIVE_TRACK));
-
-        Optional<PlayerAudioTrack> playerAudioTrack = audioTracks.firstTrackWith(AudioTrackType.ALTERNATIVE);
-
-        assertThat(playerAudioTrack.isPresent()).isTrue();
-        assertThat(playerAudioTrack.get()).isEqualTo(ALTERNATIVE_TRACK);
-    }
-
-    @Test
-    public void givenAudioTracks_withoutAlternativeTrack_whenGettingFirstAlternativeTrack_thenReturnsAbsent() {
-        AudioTracks audioTracks = AudioTracks.from(Collections.singletonList(MAIN_TRACK));
-
-        Optional<PlayerAudioTrack> playerAudioTrack = audioTracks.firstTrackWith(AudioTrackType.ALTERNATIVE);
-
-        assertThat(playerAudioTrack.isPresent()).isFalse();
-    }
-
-    @Test
-    public void givenAudioTracks_whenGettingPlayerAudioTrack_thenReturnsPlayerAudioTrack() {
+    public void givenAudioTracks_whenGettingTrack_thenReturnsTrack() {
         AudioTracks audioTracks = AudioTracks.from(Collections.singletonList(MAIN_TRACK));
 
         PlayerAudioTrack playerAudioTrack = audioTracks.get(FIRST_INDEX);
