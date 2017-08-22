@@ -4,8 +4,8 @@ import android.media.MediaCodec;
 
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.NoPlayerError;
-import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerErrorType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 
@@ -19,7 +19,7 @@ final class ExoPlayerErrorMapper {
         // Static class.
     }
 
-    static Player.PlayerError errorFor(Exception e) {
+    static NoPlayer.PlayerError errorFor(Exception e) {
         if (e instanceof HttpDataSource.InvalidResponseCodeException) {
             return new NoPlayerError(PlayerErrorType.INVALID_RESPONSE_CODE, formatMessage(e));
         }

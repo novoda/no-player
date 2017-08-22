@@ -1,6 +1,6 @@
 package com.novoda.noplayer;
 
-public class NoPlayerError implements Player.PlayerError {
+public class NoPlayerError implements NoPlayer.PlayerError {
 
     private final PlayerErrorType playerErrorType;
     private final String message;

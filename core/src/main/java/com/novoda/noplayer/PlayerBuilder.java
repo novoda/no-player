@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Builds instances of {@link Player} for given configurations.
+ * Builds instances of {@link NoPlayer} for given configurations.
  */
 public class PlayerBuilder {
 
@@ -32,7 +32,7 @@ public class PlayerBuilder {
      * Sets {@link PlayerBuilder} to build a Player which supports Widevine classic DRM.
      *
      * @return {@link PlayerBuilder}
-     * @see Player
+     * @see NoPlayer
      */
     public PlayerBuilder withWidevineClassicDrm() {
         return withDrm(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM);
@@ -43,7 +43,7 @@ public class PlayerBuilder {
      *
      * @param streamingModularDrm Implementation of {@link StreamingModularDrm}.
      * @return {@link PlayerBuilder}
-     * @see Player
+     * @see NoPlayer
      */
     public PlayerBuilder withWidevineModularStreamingDrm(StreamingModularDrm streamingModularDrm) {
         return withDrm(DrmType.WIDEVINE_MODULAR_STREAM, streamingModularDrm);
@@ -54,7 +54,7 @@ public class PlayerBuilder {
      *
      * @param downloadedModularDrm Implementation of {@link DownloadedModularDrm}.
      * @return {@link PlayerBuilder}
-     * @see Player
+     * @see NoPlayer
      */
     public PlayerBuilder withWidevineModularDownloadDrm(DownloadedModularDrm downloadedModularDrm) {
         return withDrm(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm);
@@ -66,7 +66,7 @@ public class PlayerBuilder {
      * @param drmType    {@link DrmType}
      * @param drmHandler {@link DrmHandler}
      * @return {@link PlayerBuilder}
-     * @see Player
+     * @see NoPlayer
      */
     public PlayerBuilder withDrm(DrmType drmType, DrmHandler drmHandler) {
         this.drmType = drmType;
@@ -80,7 +80,7 @@ public class PlayerBuilder {
      *
      * @param playerTypes Priority order of {@link PlayerType} with the first being the highest.
      * @return {@link PlayerBuilder}
-     * @see Player
+     * @see NoPlayer
      */
     public PlayerBuilder withPriority(PlayerType playerType, PlayerType... playerTypes) {
         List<PlayerType> types = new ArrayList<>();
@@ -107,9 +107,9 @@ public class PlayerBuilder {
      * @param context
      * @return a Player instance.
      * @throws UnableToCreatePlayerException thrown when the configuration is not supported and there is no way to recover.
-     * @see Player
+     * @see NoPlayer
      */
-    public Player build(Context context) throws UnableToCreatePlayerException {
+    public NoPlayer build(Context context) throws UnableToCreatePlayerException {
         Handler handler = new Handler(Looper.getMainLooper());
         ProvisionExecutorCreator provisionExecutorCreator = new ProvisionExecutorCreator();
         DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(

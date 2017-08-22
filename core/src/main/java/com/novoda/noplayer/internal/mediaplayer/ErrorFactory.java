@@ -2,8 +2,8 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.media.MediaPlayer;
 
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.NoPlayerError;
-import com.novoda.noplayer.Player;
 import com.novoda.noplayer.PlayerErrorType;
 
 import static com.novoda.noplayer.internal.mediaplayer.ErrorFormatter.formatMessage;
@@ -14,7 +14,7 @@ public final class ErrorFactory {
         // no instances
     }
 
-    public static Player.PlayerError createErrorFrom(int type, int extra) {
+    public static NoPlayer.PlayerError createErrorFrom(int type, int extra) {
         switch (type) {
             case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
                 return new NoPlayerError(PlayerErrorType.STREAMED_VIDEO_ERROR, formatMessage(type, extra));

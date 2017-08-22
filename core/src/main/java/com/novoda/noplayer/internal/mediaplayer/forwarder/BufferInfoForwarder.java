@@ -1,15 +1,15 @@
 package com.novoda.noplayer.internal.mediaplayer.forwarder;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.mediaplayer.CheckBufferHeartbeatCallback;
 
 import java.util.HashMap;
 
 class BufferInfoForwarder implements CheckBufferHeartbeatCallback.BufferListener {
 
-    private final Player.InfoListener infoListener;
+    private final NoPlayer.InfoListener infoListener;
 
-    BufferInfoForwarder(Player.InfoListener infoListener) {
+    BufferInfoForwarder(NoPlayer.InfoListener infoListener) {
         this.infoListener = infoListener;
     }
 

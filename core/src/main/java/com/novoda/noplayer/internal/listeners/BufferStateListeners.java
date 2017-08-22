@@ -1,19 +1,19 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-class BufferStateListeners implements Player.BufferStateListener {
+class BufferStateListeners implements NoPlayer.BufferStateListener {
 
-    private final Set<Player.BufferStateListener> listeners = new CopyOnWriteArraySet<>();
+    private final Set<NoPlayer.BufferStateListener> listeners = new CopyOnWriteArraySet<>();
 
-    void add(Player.BufferStateListener listener) {
+    void add(NoPlayer.BufferStateListener listener) {
         listeners.add(listener);
     }
 
-    void remove(Player.BufferStateListener listener) {
+    void remove(NoPlayer.BufferStateListener listener) {
         listeners.remove(listener);
     }
 
@@ -23,14 +23,14 @@ class BufferStateListeners implements Player.BufferStateListener {
 
     @Override
     public void onBufferStarted() {
-        for (Player.BufferStateListener listener : listeners) {
+        for (NoPlayer.BufferStateListener listener : listeners) {
             listener.onBufferStarted();
         }
     }
 
     @Override
     public void onBufferCompleted() {
-        for (Player.BufferStateListener listener : listeners) {
+        for (NoPlayer.BufferStateListener listener : listeners) {
             listener.onBufferCompleted();
         }
     }

@@ -5,13 +5,13 @@ import android.view.Surface;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 class VideoSizeChangedForwarder implements VideoRendererEventListener {
 
-    private final Player.VideoSizeChangedListener videoSizeChangedListener;
+    private final NoPlayer.VideoSizeChangedListener videoSizeChangedListener;
 
-    VideoSizeChangedForwarder(Player.VideoSizeChangedListener videoSizeChangedListener) {
+    VideoSizeChangedForwarder(NoPlayer.VideoSizeChangedListener videoSizeChangedListener) {
         this.videoSizeChangedListener = videoSizeChangedListener;
     }
 

@@ -37,8 +37,8 @@ public class NoPlayerCreatorTest {
         static final boolean USE_SECURE_CODEC = false;
         static final StreamingModularDrm STREAMING_MODULAR_DRM = mock(StreamingModularDrm.class);
         static final DownloadedModularDrm DOWNLOADED_MODULAR_DRM = mock(DownloadedModularDrm.class);
-        static final Player EXO_PLAYER = mock(Player.class);
-        static final Player MEDIA_PLAYER = mock(Player.class);
+        static final NoPlayer EXO_PLAYER = mock(NoPlayer.class);
+        static final NoPlayer MEDIA_PLAYER = mock(NoPlayer.class);
 
         @Rule
         public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -77,28 +77,28 @@ public class NoPlayerCreatorTest {
 
         @Test
         public void whenCreatingPlayerWithDrmTypeNone_thenReturnsMediaPlayer() {
-            Player player = noPlayerCreator.create(DrmType.NONE, DrmHandler.NO_DRM, USE_SECURE_CODEC);
+            NoPlayer player = noPlayerCreator.create(DrmType.NONE, DrmHandler.NO_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(MEDIA_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineClassic_thenReturnsMediaPlayer() {
-            Player player = noPlayerCreator.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, USE_SECURE_CODEC);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(MEDIA_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularStream_thenReturnsExoPlayer() {
-            Player player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM, USE_SECURE_CODEC);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularDownload_thenReturnsExoPlayer() {
-            Player player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM, USE_SECURE_CODEC);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
@@ -113,28 +113,28 @@ public class NoPlayerCreatorTest {
 
         @Test
         public void whenCreatingPlayerWithDrmTypeNone_thenReturnsExoPlayer() {
-            Player player = noPlayerCreator.create(DrmType.NONE, DrmHandler.NO_DRM, USE_SECURE_CODEC);
+            NoPlayer player = noPlayerCreator.create(DrmType.NONE, DrmHandler.NO_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineClassic_thenReturnsMediaPlayer() {
-            Player player = noPlayerCreator.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, USE_SECURE_CODEC);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(MEDIA_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularStream_thenReturnsExoPlayer() {
-            Player player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM, USE_SECURE_CODEC);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularDownload_thenReturnsExoPlayer() {
-            Player player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM, USE_SECURE_CODEC);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM, USE_SECURE_CODEC);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }

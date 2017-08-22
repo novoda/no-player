@@ -1,22 +1,22 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-class PreparedListeners implements Player.PreparedListener {
+class PreparedListeners implements NoPlayer.PreparedListener {
 
-    private final Set<Player.PreparedListener> listeners = new CopyOnWriteArraySet<>();
+    private final Set<NoPlayer.PreparedListener> listeners = new CopyOnWriteArraySet<>();
 
     private boolean hasPrepared = false;
 
-    void add(Player.PreparedListener listener) {
+    void add(NoPlayer.PreparedListener listener) {
         listeners.add(listener);
     }
 
-    void remove(Player.PreparedListener listener) {
+    void remove(NoPlayer.PreparedListener listener) {
         listeners.remove(listener);
     }
 
@@ -28,7 +28,7 @@ class PreparedListeners implements Player.PreparedListener {
     public void onPrepared(PlayerState playerState) {
         if (hasNotPreviouslyPrepared()) {
             hasPrepared = true;
-            for (Player.PreparedListener listener : listeners) {
+            for (NoPlayer.PreparedListener listener : listeners) {
                 listener.onPrepared(playerState);
             }
         }

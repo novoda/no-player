@@ -2,15 +2,15 @@ package com.novoda.noplayer.internal.mediaplayer.forwarder;
 
 import android.media.MediaPlayer;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.mediaplayer.ErrorFactory;
 
 class ErrorForwarder implements MediaPlayer.OnErrorListener {
 
-    private final Player.BufferStateListener bufferStateListener;
-    private final Player.ErrorListener errorListener;
+    private final NoPlayer.BufferStateListener bufferStateListener;
+    private final NoPlayer.ErrorListener errorListener;
 
-    ErrorForwarder(Player.BufferStateListener bufferStateListener, Player.ErrorListener errorListener) {
+    ErrorForwarder(NoPlayer.BufferStateListener bufferStateListener, NoPlayer.ErrorListener errorListener) {
         this.bufferStateListener = bufferStateListener;
         this.errorListener = errorListener;
     }
@@ -18,7 +18,7 @@ class ErrorForwarder implements MediaPlayer.OnErrorListener {
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         bufferStateListener.onBufferCompleted();
-        Player.PlayerError error = ErrorFactory.createErrorFrom(what, extra);
+        NoPlayer.PlayerError error = ErrorFactory.createErrorFrom(what, extra);
         errorListener.onError(error);
         return true;
     }

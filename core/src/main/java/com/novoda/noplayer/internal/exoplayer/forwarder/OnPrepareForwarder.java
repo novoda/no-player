@@ -5,15 +5,15 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
 
 class OnPrepareForwarder implements com.google.android.exoplayer2.Player.EventListener {
 
-    private final Player.PreparedListener preparedListener;
+    private final NoPlayer.PreparedListener preparedListener;
     private final PlayerState playerState;
 
-    OnPrepareForwarder(Player.PreparedListener preparedListener, PlayerState playerState) {
+    OnPrepareForwarder(NoPlayer.PreparedListener preparedListener, PlayerState playerState) {
         this.preparedListener = preparedListener;
         this.playerState = playerState;
     }

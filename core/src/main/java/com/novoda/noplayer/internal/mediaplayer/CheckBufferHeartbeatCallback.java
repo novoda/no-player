@@ -1,9 +1,9 @@
 package com.novoda.noplayer.internal.mediaplayer;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.model.VideoPosition;
 
-public class CheckBufferHeartbeatCallback implements Player.HeartbeatCallback {
+public class CheckBufferHeartbeatCallback implements NoPlayer.HeartbeatCallback {
 
     private static final int FORCED_BUFFERING_BEATS_THRESHOLD = 4;
 
@@ -16,7 +16,7 @@ public class CheckBufferHeartbeatCallback implements Player.HeartbeatCallback {
     }
 
     @Override
-    public void onBeat(Player player) {
+    public void onBeat(NoPlayer player) {
         if (mediaPlayerIsUnavailable(player)) {
             stopBuffering();
             return;
@@ -47,7 +47,7 @@ public class CheckBufferHeartbeatCallback implements Player.HeartbeatCallback {
         bufferListener.onBufferStart();
     }
 
-    private boolean mediaPlayerIsUnavailable(Player player) {
+    private boolean mediaPlayerIsUnavailable(NoPlayer player) {
         try {
             return !player.isPlaying();
         } catch (IllegalStateException e) {

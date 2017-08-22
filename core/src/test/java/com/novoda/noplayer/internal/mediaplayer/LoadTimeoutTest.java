@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.os.Handler;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.Clock;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.Timeout;
@@ -37,7 +37,7 @@ public class LoadTimeoutTest {
     @Test
     public void whenStartingATimeout_thenAnyPreviouslySetTimeoutRunnableAreRemoved() {
 
-        loadTimeout.start(ANY_TIME, any(Player.LoadTimeoutCallback.class));
+        loadTimeout.start(ANY_TIME, any(NoPlayer.LoadTimeoutCallback.class));
 
         verify(handler).removeCallbacks(any(Runnable.class));
     }
@@ -45,7 +45,7 @@ public class LoadTimeoutTest {
     @Test
     public void whenStartingATimeout_thenTheTimeoutRunnableIsPosted() {
 
-        loadTimeout.start(ANY_TIME, any(Player.LoadTimeoutCallback.class));
+        loadTimeout.start(ANY_TIME, any(NoPlayer.LoadTimeoutCallback.class));
 
         verify(handler).post(any(Runnable.class));
     }

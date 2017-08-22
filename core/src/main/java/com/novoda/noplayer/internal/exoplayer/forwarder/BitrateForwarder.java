@@ -4,7 +4,7 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.upstream.DataSpec;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.model.Bitrate;
 
 import java.io.IOException;
@@ -14,9 +14,9 @@ class BitrateForwarder implements AdaptiveMediaSourceEventListener {
     private Bitrate videoBitrate = Bitrate.fromBitsPerSecond(0);
     private Bitrate audioBitrate = Bitrate.fromBitsPerSecond(0);
 
-    private final Player.BitrateChangedListener bitrateChangedListener;
+    private final NoPlayer.BitrateChangedListener bitrateChangedListener;
 
-    BitrateForwarder(Player.BitrateChangedListener bitrateChangedListener) {
+    BitrateForwarder(NoPlayer.BitrateChangedListener bitrateChangedListener) {
         this.bitrateChangedListener = bitrateChangedListener;
     }
 

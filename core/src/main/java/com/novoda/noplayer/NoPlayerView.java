@@ -56,12 +56,12 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     }
 
     @Override
-    public Player.VideoSizeChangedListener getVideoSizeChangedListener() {
+    public NoPlayer.VideoSizeChangedListener getVideoSizeChangedListener() {
         return videoSizeChangedListener;
     }
 
     @Override
-    public Player.StateChangedListener getStateChangedListener() {
+    public NoPlayer.StateChangedListener getStateChangedListener() {
         return stateChangedListener;
     }
 
@@ -80,14 +80,14 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         subtitleView.setCues(textCues);
     }
 
-    private final Player.VideoSizeChangedListener videoSizeChangedListener = new Player.VideoSizeChangedListener() {
+    private final NoPlayer.VideoSizeChangedListener videoSizeChangedListener = new NoPlayer.VideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
             aspectRatioChangeCalculator.onVideoSizeChanged(width, height, pixelWidthHeightRatio);
         }
     };
 
-    private final Player.StateChangedListener stateChangedListener = new Player.StateChangedListener() {
+    private final NoPlayer.StateChangedListener stateChangedListener = new NoPlayer.StateChangedListener() {
         @Override
         public void onVideoPlaying() {
             shutterView.setVisibility(INVISIBLE);

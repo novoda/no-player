@@ -1,19 +1,19 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-class CompletionListeners implements Player.CompletionListener {
+class CompletionListeners implements NoPlayer.CompletionListener {
 
-    private final Set<Player.CompletionListener> listeners = new CopyOnWriteArraySet<>();
+    private final Set<NoPlayer.CompletionListener> listeners = new CopyOnWriteArraySet<>();
 
-    void add(Player.CompletionListener listener) {
+    void add(NoPlayer.CompletionListener listener) {
         listeners.add(listener);
     }
 
-    void remove(Player.CompletionListener listener) {
+    void remove(NoPlayer.CompletionListener listener) {
         listeners.remove(listener);
     }
 
@@ -23,7 +23,7 @@ class CompletionListeners implements Player.CompletionListener {
 
     @Override
     public void onCompletion() {
-        for (Player.CompletionListener listener : listeners) {
+        for (NoPlayer.CompletionListener listener : listeners) {
             listener.onCompletion();
         }
     }

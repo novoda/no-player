@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.view.View;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class OnPotentialBuggyDriverLayoutListenerTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
-    Player player;
+    NoPlayer player;
 
     @InjectMocks
     OnPotentialBuggyDriverLayoutListener buggyDriverLayoutListener;

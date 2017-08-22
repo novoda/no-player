@@ -1,6 +1,6 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,10 +17,10 @@ public class BufferStateListenersTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
-    private Player.BufferStateListener aBufferStateListener;
+    private NoPlayer.BufferStateListener aBufferStateListener;
 
     @Mock
-    private Player.BufferStateListener anotherBufferStateListener;
+    private NoPlayer.BufferStateListener anotherBufferStateListener;
 
     private BufferStateListeners bufferStateListeners;
 

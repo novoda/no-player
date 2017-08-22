@@ -5,15 +5,15 @@ import android.view.Surface;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 import java.util.HashMap;
 
 class VideoRendererInfoForwarder implements VideoRendererEventListener {
 
-    private final Player.InfoListener infoListener;
+    private final NoPlayer.InfoListener infoListener;
 
-    VideoRendererInfoForwarder(Player.InfoListener infoListener) {
+    VideoRendererInfoForwarder(NoPlayer.InfoListener infoListener) {
         this.infoListener = infoListener;
     }
 

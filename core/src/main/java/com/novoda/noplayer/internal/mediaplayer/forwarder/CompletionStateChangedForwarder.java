@@ -2,13 +2,13 @@ package com.novoda.noplayer.internal.mediaplayer.forwarder;
 
 import android.media.MediaPlayer;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 class CompletionStateChangedForwarder implements MediaPlayer.OnCompletionListener {
 
-    private final Player.StateChangedListener stateChangedListener;
+    private final NoPlayer.StateChangedListener stateChangedListener;
 
-    CompletionStateChangedForwarder(Player.StateChangedListener stateChangedListener) {
+    CompletionStateChangedForwarder(NoPlayer.StateChangedListener stateChangedListener) {
         this.stateChangedListener = stateChangedListener;
     }
 

@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.view.View;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,7 +22,7 @@ public class BuggyVideoDriverPreventerTest {
     private View videoContainer;
 
     @Mock
-    private Player player;
+    private NoPlayer player;
 
     @Mock
     private MediaPlayerTypeReader mediaPlayerTypeReader;

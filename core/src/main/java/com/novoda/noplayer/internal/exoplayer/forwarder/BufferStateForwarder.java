@@ -5,13 +5,13 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 class BufferStateForwarder implements com.google.android.exoplayer2.Player.EventListener {
 
-    private final Player.BufferStateListener bufferStateListener;
+    private final NoPlayer.BufferStateListener bufferStateListener;
 
-    BufferStateForwarder(Player.BufferStateListener bufferStateListener) {
+    BufferStateForwarder(NoPlayer.BufferStateListener bufferStateListener) {
         this.bufferStateListener = bufferStateListener;
     }
 

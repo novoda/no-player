@@ -2,39 +2,39 @@ package com.novoda.noplayer;
 
 public interface Listeners {
 
-    void addErrorListener(Player.ErrorListener errorListener);
+    void addErrorListener(NoPlayer.ErrorListener errorListener);
 
-    void removeErrorListener(Player.ErrorListener errorListener);
+    void removeErrorListener(NoPlayer.ErrorListener errorListener);
 
-    void addPreparedListener(Player.PreparedListener preparedListener);
+    void addPreparedListener(NoPlayer.PreparedListener preparedListener);
 
-    void removePreparedListener(Player.PreparedListener preparedListener);
+    void removePreparedListener(NoPlayer.PreparedListener preparedListener);
 
-    void addBufferStateListener(Player.BufferStateListener bufferStateListener);
+    void addBufferStateListener(NoPlayer.BufferStateListener bufferStateListener);
 
-    void removeBufferStateListener(Player.BufferStateListener bufferStateListener);
+    void removeBufferStateListener(NoPlayer.BufferStateListener bufferStateListener);
 
-    void addCompletionListener(Player.CompletionListener completionListener);
+    void addCompletionListener(NoPlayer.CompletionListener completionListener);
 
-    void removeCompletionListener(Player.CompletionListener completionListener);
+    void removeCompletionListener(NoPlayer.CompletionListener completionListener);
 
-    void addStateChangedListener(Player.StateChangedListener stateChangedListener);
+    void addStateChangedListener(NoPlayer.StateChangedListener stateChangedListener);
 
-    void removeStateChangedListener(Player.StateChangedListener stateChangedListener);
+    void removeStateChangedListener(NoPlayer.StateChangedListener stateChangedListener);
 
-    void addInfoListener(Player.InfoListener infoListener);
+    void addInfoListener(NoPlayer.InfoListener infoListener);
 
-    void removeInfoListener(Player.InfoListener infoListener);
+    void removeInfoListener(NoPlayer.InfoListener infoListener);
 
-    void addBitrateChangedListener(Player.BitrateChangedListener bitrateChangedListener);
+    void addBitrateChangedListener(NoPlayer.BitrateChangedListener bitrateChangedListener);
 
-    void removeBitrateChangedListener(Player.BitrateChangedListener bitrateChangedListener);
+    void removeBitrateChangedListener(NoPlayer.BitrateChangedListener bitrateChangedListener);
 
-    void addHeartbeatCallback(Player.HeartbeatCallback heartbeatCallback);
+    void addHeartbeatCallback(NoPlayer.HeartbeatCallback heartbeatCallback);
 
-    void removeHeartbeatCallback(Player.HeartbeatCallback heartbeatCallback);
+    void removeHeartbeatCallback(NoPlayer.HeartbeatCallback heartbeatCallback);
 
-    void addVideoSizeChangedListener(Player.VideoSizeChangedListener videoSizeChangedListener);
+    void addVideoSizeChangedListener(NoPlayer.VideoSizeChangedListener videoSizeChangedListener);
 
-    void removeVideoSizeChangedListener(Player.VideoSizeChangedListener videoSizeChangedListener);
+    void removeVideoSizeChangedListener(NoPlayer.VideoSizeChangedListener videoSizeChangedListener);
 }

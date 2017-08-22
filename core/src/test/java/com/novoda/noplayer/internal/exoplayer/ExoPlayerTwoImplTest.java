@@ -8,8 +8,8 @@ import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.text.Cue;
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.Player;
-import com.novoda.noplayer.Player.StateChangedListener;
+import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.NoPlayer.StateChangedListener;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerType;
 import com.novoda.noplayer.PlayerView;
@@ -67,7 +67,7 @@ public class ExoPlayerTwoImplTest {
 
     private static final ContentType ANY_CONTENT_TYPE = ContentType.DASH;
     private static final Timeout ANY_TIMEOUT = Timeout.fromSeconds(TEN_SECONDS);
-    private static final Player.LoadTimeoutCallback ANY_LOAD_TIMEOUT_CALLBACK = new Player.LoadTimeoutCallback() {
+    private static final NoPlayer.LoadTimeoutCallback ANY_LOAD_TIMEOUT_CALLBACK = new NoPlayer.LoadTimeoutCallback() {
         @Override
         public void onLoadTimeout() {
 
@@ -105,10 +105,10 @@ public class ExoPlayerTwoImplTest {
         public void givenPlayerIsInitialised_whenVideoIsPrepared_thenCancelsTimeout() {
             player.initialise();
 
-            ArgumentCaptor<Player.PreparedListener> argumentCaptor = ArgumentCaptor.forClass(Player.PreparedListener.class);
+            ArgumentCaptor<NoPlayer.PreparedListener> argumentCaptor = ArgumentCaptor.forClass(NoPlayer.PreparedListener.class);
 
             verify(listenersHolder).addPreparedListener(argumentCaptor.capture());
-            Player.PreparedListener preparedListener = argumentCaptor.getValue();
+            NoPlayer.PreparedListener preparedListener = argumentCaptor.getValue();
             preparedListener.onPrepared(player);
 
             verify(loadTimeout).cancel();
@@ -118,11 +118,11 @@ public class ExoPlayerTwoImplTest {
         public void givenPlayerIsInitialised_whenVideoHasError_thenPlayerResourcesAreReleased_andNotListeners() {
             player.initialise();
 
-            ArgumentCaptor<Player.ErrorListener> argumentCaptor = ArgumentCaptor.forClass(Player.ErrorListener.class);
+            ArgumentCaptor<NoPlayer.ErrorListener> argumentCaptor = ArgumentCaptor.forClass(NoPlayer.ErrorListener.class);
 
             verify(listenersHolder).addErrorListener(argumentCaptor.capture());
-            Player.ErrorListener errorListener = argumentCaptor.getValue();
-            errorListener.onError(mock(Player.PlayerError.class));
+            NoPlayer.ErrorListener errorListener = argumentCaptor.getValue();
+            errorListener.onError(mock(NoPlayer.PlayerError.class));
 
             verify(listenersHolder).resetPreparedState();
             verify(loadTimeout).cancel();
@@ -137,10 +137,10 @@ public class ExoPlayerTwoImplTest {
             player.initialise();
             player.attach(playerView);
 
-            ArgumentCaptor<Player.VideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
+            ArgumentCaptor<NoPlayer.VideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(NoPlayer.VideoSizeChangedListener.class);
             verify(listenersHolder, times(2)).addVideoSizeChangedListener(argumentCaptor.capture());
 
-            Player.VideoSizeChangedListener videoSizeChangedListener = argumentCaptor.getAllValues().get(INDEX_INTERNAL_VIDEO_SIZE_CHANGED_LISTENER);
+            NoPlayer.VideoSizeChangedListener videoSizeChangedListener = argumentCaptor.getAllValues().get(INDEX_INTERNAL_VIDEO_SIZE_CHANGED_LISTENER);
             videoSizeChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
 
             int actualWidth = player.getVideoWidth();
@@ -156,9 +156,9 @@ public class ExoPlayerTwoImplTest {
 
             player.attach(playerView);
 
-            ArgumentCaptor<Player.VideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
+            ArgumentCaptor<NoPlayer.VideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(NoPlayer.VideoSizeChangedListener.class);
             verify(listenersHolder, times(2)).addVideoSizeChangedListener(argumentCaptor.capture());
-            Player.VideoSizeChangedListener videoSizeChangedListener = argumentCaptor.getAllValues().get(1);
+            NoPlayer.VideoSizeChangedListener videoSizeChangedListener = argumentCaptor.getAllValues().get(1);
             assertThat(videoSizeChangedListener).isSameAs(playerView.getVideoSizeChangedListener());
         }
 
@@ -573,23 +573,23 @@ public class ExoPlayerTwoImplTest {
         @Mock
         StateChangedListener stateChangeListener;
         @Mock
-        Player.VideoSizeChangedListener videoSizeChangedListener;
+        NoPlayer.VideoSizeChangedListener videoSizeChangedListener;
         @Mock
         PlayerListenersHolder listenersHolder;
         @Mock
-        Player.ErrorListener errorListener;
+        NoPlayer.ErrorListener errorListener;
         @Mock
-        Player.PreparedListener preparedListener;
+        NoPlayer.PreparedListener preparedListener;
         @Mock
-        Player.BufferStateListener bufferStateListener;
+        NoPlayer.BufferStateListener bufferStateListener;
         @Mock
-        Player.CompletionListener completionListener;
+        NoPlayer.CompletionListener completionListener;
         @Mock
-        Player.StateChangedListener stateChangedListener;
+        NoPlayer.StateChangedListener stateChangedListener;
         @Mock
-        Player.InfoListener infoListener;
+        NoPlayer.InfoListener infoListener;
         @Mock
-        Player.BitrateChangedListener bitrateChangedListener;
+        NoPlayer.BitrateChangedListener bitrateChangedListener;
         @Mock
         ExoPlayerFacade exoPlayerFacade;
         @Mock

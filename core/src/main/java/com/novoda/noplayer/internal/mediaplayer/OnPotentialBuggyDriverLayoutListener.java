@@ -2,13 +2,13 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.view.View;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 class OnPotentialBuggyDriverLayoutListener implements View.OnLayoutChangeListener {
 
-    private final Player player;
+    private final NoPlayer player;
 
-    OnPotentialBuggyDriverLayoutListener(Player player) {
+    OnPotentialBuggyDriverLayoutListener(NoPlayer player) {
         this.player = player;
     }
 

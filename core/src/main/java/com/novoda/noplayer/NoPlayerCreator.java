@@ -32,7 +32,7 @@ class NoPlayerCreator {
         this.drmSessionCreatorFactory = drmSessionCreatorFactory;
     }
 
-    Player create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
+    NoPlayer create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
         for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
                 return createPlayerForType(player, drmType, drmHandler, downgradeSecureDecoder);
@@ -41,7 +41,7 @@ class NoPlayerCreator {
         throw UnableToCreatePlayerException.unhandledDrmType(drmType);
     }
 
-    private Player createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
+    private NoPlayer createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
         switch (playerType) {
             case MEDIA_PLAYER:
                 return noPlayerMediaPlayerCreator.createMediaPlayer(context);

@@ -3,16 +3,16 @@ package com.novoda.noplayer.internal.exoplayer.forwarder;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.upstream.DataSpec;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
 
-    private final Player.InfoListener infoListener;
+    private final NoPlayer.InfoListener infoListener;
 
-    MediaSourceInfoForwarder(Player.InfoListener infoListener) {
+    MediaSourceInfoForwarder(NoPlayer.InfoListener infoListener) {
         this.infoListener = infoListener;
     }
 
