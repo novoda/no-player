@@ -1,8 +1,8 @@
 package com.novoda.noplayer.internal.exoplayer.mediasource;
 
 public enum AudioTrackType {
-    MAIN(1),
-    AUDIO_DESCRIBED(0),
+    MAIN(0),
+    AUDIO_DESCRIBED(1),
     UNKNOWN(-1);
 
     private final int selectionFlag;

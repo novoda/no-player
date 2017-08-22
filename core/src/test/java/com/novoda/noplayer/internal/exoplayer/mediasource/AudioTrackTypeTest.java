@@ -6,8 +6,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 public class AudioTrackTypeTest {
 
-    private static final int AUDIO_DESCRIBED_SELECTION_FLAG = 0;
-    private static final int MAIN_SELECTION_FLAG = 1;
+    private static final int MAIN_SELECTION_FLAG = 0;
+    private static final int AUDIO_DESCRIBED_SELECTION_FLAG = 1;
     private static final int RANDOM_SELECTION_FLAG = 2;
 
     @Test
