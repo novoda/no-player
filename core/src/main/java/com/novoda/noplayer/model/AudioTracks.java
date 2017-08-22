@@ -19,7 +19,7 @@ public class AudioTracks implements Iterable<PlayerAudioTrack> {
         this.audioTracks = audioTracks;
     }
 
-    public boolean containsPlayerAudioTrackWith(AudioTrackType trackType) {
+    public boolean containsTrackWith(AudioTrackType trackType) {
         for (PlayerAudioTrack audioTrack : audioTracks) {
             if (audioTrack.audioTrackType() == trackType) {
                 return true;
@@ -28,7 +28,7 @@ public class AudioTracks implements Iterable<PlayerAudioTrack> {
         return false;
     }
 
-    public Optional<PlayerAudioTrack> firstPlayerAudioTrackWith(AudioTrackType audioTrackType) {
+    public Optional<PlayerAudioTrack> firstTrackWith(AudioTrackType audioTrackType) {
         for (PlayerAudioTrack audioTrack : audioTracks) {
             if (audioTrack.audioTrackType() == audioTrackType) {
                 return Optional.of(audioTrack);
@@ -37,8 +37,8 @@ public class AudioTracks implements Iterable<PlayerAudioTrack> {
         return Optional.absent();
     }
 
-    public PlayerAudioTrack getPlayerAudioTrackAt(int position) {
-        return audioTracks.get(position);
+    public PlayerAudioTrack get(int index) {
+        return audioTracks.get(index);
     }
 
     public int size() {

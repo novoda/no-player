@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
-                            PlayerAudioTrack audioTrack = audioTracks.getPlayerAudioTrackAt(position);
+                            PlayerAudioTrack audioTrack = audioTracks.get(position);
                             player.selectAudioTrack(audioTrack);
                         }
                     }).create();

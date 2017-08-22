@@ -21,7 +21,7 @@ public class AudioTracksTest {
     public void givenAudioTracks_withAudioDescribedTrack_whenCheckingContainsAudioDescribedTrack_thenReturnsTrue() {
         AudioTracks audioTracks = AudioTracks.from(Arrays.asList(MAIN_TRACK, AUDIO_DESCRIBED_TRACK));
 
-        boolean containsAudioDescribedTrack = audioTracks.containsPlayerAudioTrackWith(AudioTrackType.AUDIO_DESCRIBED);
+        boolean containsAudioDescribedTrack = audioTracks.containsTrackWith(AudioTrackType.AUDIO_DESCRIBED);
 
         assertThat(containsAudioDescribedTrack).isTrue();
     }
@@ -30,7 +30,7 @@ public class AudioTracksTest {
     public void givenAudioTracks_withoutAudioDescribedTrack_whenCheckingContainsAudioDescribedTrack_thenReturnsFalse() {
         AudioTracks audioTracks = AudioTracks.from(Collections.singletonList(MAIN_TRACK));
 
-        boolean containsAudioDescribedTrack = audioTracks.containsPlayerAudioTrackWith(AudioTrackType.AUDIO_DESCRIBED);
+        boolean containsAudioDescribedTrack = audioTracks.containsTrackWith(AudioTrackType.AUDIO_DESCRIBED);
 
         assertThat(containsAudioDescribedTrack).isFalse();
     }
@@ -39,7 +39,7 @@ public class AudioTracksTest {
     public void givenAudioTracks_withAudioDescribedTrack_whenGettingFirstAudioDescribedTrack_thenReturnsAudioDescribedTrack() {
         AudioTracks audioTracks = AudioTracks.from(Arrays.asList(MAIN_TRACK, AUDIO_DESCRIBED_TRACK));
 
-        Optional<PlayerAudioTrack> playerAudioTrack = audioTracks.firstPlayerAudioTrackWith(AudioTrackType.AUDIO_DESCRIBED);
+        Optional<PlayerAudioTrack> playerAudioTrack = audioTracks.firstTrackWith(AudioTrackType.AUDIO_DESCRIBED);
 
         assertThat(playerAudioTrack.isPresent()).isTrue();
         assertThat(playerAudioTrack.get()).isEqualTo(AUDIO_DESCRIBED_TRACK);
@@ -49,7 +49,7 @@ public class AudioTracksTest {
     public void givenAudioTracks_withoutAudioDescribedTrack_whenGettingFirstAudioDescribedTrack_thenReturnsAbsent() {
         AudioTracks audioTracks = AudioTracks.from(Collections.singletonList(MAIN_TRACK));
 
-        Optional<PlayerAudioTrack> playerAudioTrack = audioTracks.firstPlayerAudioTrackWith(AudioTrackType.AUDIO_DESCRIBED);
+        Optional<PlayerAudioTrack> playerAudioTrack = audioTracks.firstTrackWith(AudioTrackType.AUDIO_DESCRIBED);
 
         assertThat(playerAudioTrack.isPresent()).isFalse();
     }
@@ -58,7 +58,7 @@ public class AudioTracksTest {
     public void givenAudioTracks_whenGettingPlayerAudioTrack_thenReturnsPlayerAudioTrack() {
         AudioTracks audioTracks = AudioTracks.from(Collections.singletonList(MAIN_TRACK));
 
-        PlayerAudioTrack playerAudioTrack = audioTracks.getPlayerAudioTrackAt(FIRST_INDEX);
+        PlayerAudioTrack playerAudioTrack = audioTracks.get(FIRST_INDEX);
 
         assertThat(playerAudioTrack).isEqualTo(MAIN_TRACK);
     }
