@@ -1,8 +1,5 @@
 package com.novoda.noplayer.model;
 
-import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
-import com.novoda.utils.Optional;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -19,26 +16,8 @@ public class AudioTracks implements Iterable<PlayerAudioTrack> {
         this.audioTracks = audioTracks;
     }
 
-    public boolean containsPlayerAudioTrackWith(AudioTrackType trackType) {
-        for (PlayerAudioTrack audioTrack : audioTracks) {
-            if (audioTrack.audioTrackType() == trackType) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Optional<PlayerAudioTrack> firstPlayerAudioTrackWith(AudioTrackType audioTrackType) {
-        for (PlayerAudioTrack audioTrack : audioTracks) {
-            if (audioTrack.audioTrackType() == audioTrackType) {
-                return Optional.of(audioTrack);
-            }
-        }
-        return Optional.absent();
-    }
-
-    public PlayerAudioTrack getPlayerAudioTrackAt(int position) {
-        return audioTracks.get(position);
+    public PlayerAudioTrack get(int index) {
+        return audioTracks.get(index);
     }
 
     public int size() {
