@@ -2,6 +2,7 @@ package com.novoda.noplayer;
 
 import android.net.Uri;
 
+import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.Bitrate;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
@@ -103,11 +104,11 @@ public interface Player extends PlayerState {
     /**
      * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player.
      *
-     * @return A list of available {@link PlayerAudioTrack}.
+     * @return {@link AudioTracks} that contains a list of available {@link PlayerAudioTrack}.
      * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
      * @see Player.PreparedListener
      */
-    List<PlayerAudioTrack> getAudioTracks() throws IllegalStateException;
+    AudioTracks getAudioTracks() throws IllegalStateException;
 
     /**
      * Selects a given {@link PlayerAudioTrack}.

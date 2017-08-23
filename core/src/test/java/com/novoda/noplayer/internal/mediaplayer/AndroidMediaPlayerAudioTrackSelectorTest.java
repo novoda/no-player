@@ -2,12 +2,12 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.media.MediaPlayer;
 
-import utils.ExceptionMatcher;
+import com.novoda.noplayer.internal.exoplayer.mediasource.AudioTrackType;
+import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,11 +17,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import static utils.ExceptionMatcher.matches;
+import utils.ExceptionMatcher;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static utils.ExceptionMatcher.matches;
 
 public class AndroidMediaPlayerAudioTrackSelectorTest {
 
@@ -68,7 +70,7 @@ public class AndroidMediaPlayerAudioTrackSelectorTest {
     public void givenTrackSelectorContainsUnsupportedTracks_whenGettingAudioTracks_thenReturnsOnlySupportedTracks() {
         givenTrackSelectorContainsUnsupportedTracks();
 
-        List<PlayerAudioTrack> audioTracks = trackSelector.getAudioTracks(mediaPlayer);
+        AudioTracks audioTracks = trackSelector.getAudioTracks(mediaPlayer);
 
         assertThat(audioTracks).isEqualTo(expectedAudioTrack());
     }
@@ -108,16 +110,19 @@ public class AndroidMediaPlayerAudioTrackSelectorTest {
         given(trackInfosFactory.createFrom(mediaPlayer)).willReturn(noPlayerTrackInfos);
     }
 
-    private List<PlayerAudioTrack> expectedAudioTrack() {
-        return Collections.singletonList(
-                new PlayerAudioTrack(
-                        AUDIO_TRACK_INDEX,
-                        NO_FORMAT,
-                        String.valueOf(AUDIO_TRACK_INFO.hashCode()),
-                        AUDIO_TRACK_INFO.language(),
-                        NO_MIME_TYPE,
-                        NO_CHANNELS,
-                        NO_FREQUENCY
+    private AudioTracks expectedAudioTrack() {
+        return AudioTracks.from(
+                Collections.singletonList(
+                        new PlayerAudioTrack(
+                                AUDIO_TRACK_INDEX,
+                                NO_FORMAT,
+                                String.valueOf(AUDIO_TRACK_INFO.hashCode()),
+                                AUDIO_TRACK_INFO.language(),
+                                NO_MIME_TYPE,
+                                NO_CHANNELS,
+                                NO_FREQUENCY,
+                                AudioTrackType.MAIN
+                        )
                 )
         );
     }
