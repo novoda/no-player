@@ -7,7 +7,7 @@ import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
@@ -95,10 +95,10 @@ public class AndroidMediaPlayerImplTest {
         public void givenInitialised_whenCallingOnPrepared_thenCancelsTimeout() {
             player.initialise();
 
-            ArgumentCaptor<Player.PreparedListener> preparedListenerCaptor = ArgumentCaptor.forClass(Player.PreparedListener.class);
+            ArgumentCaptor<NoPlayer.PreparedListener> preparedListenerCaptor = ArgumentCaptor.forClass(NoPlayer.PreparedListener.class);
             verify(listenersHolder).addPreparedListener(preparedListenerCaptor.capture());
 
-            Player.PreparedListener preparedListener = preparedListenerCaptor.getValue();
+            NoPlayer.PreparedListener preparedListener = preparedListenerCaptor.getValue();
             preparedListener.onPrepared(player);
 
             verify(loadTimeout).cancel();
@@ -114,10 +114,10 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void givenInitialised_whenCallingOnPrepared_thenSetsOnSeekCompleteListener() {
             player.initialise();
-            ArgumentCaptor<Player.PreparedListener> preparedListenerCaptor = ArgumentCaptor.forClass(Player.PreparedListener.class);
+            ArgumentCaptor<NoPlayer.PreparedListener> preparedListenerCaptor = ArgumentCaptor.forClass(NoPlayer.PreparedListener.class);
             verify(listenersHolder).addPreparedListener(preparedListenerCaptor.capture());
 
-            Player.PreparedListener preparedListener = preparedListenerCaptor.getValue();
+            NoPlayer.PreparedListener preparedListener = preparedListenerCaptor.getValue();
             preparedListener.onPrepared(player);
 
             verify(mediaPlayer).setOnSeekCompleteListener(any(MediaPlayer.OnSeekCompleteListener.class));
@@ -126,11 +126,11 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void givenInitialised_whenCallingOnError_thenCancelsTimeout() {
             player.initialise();
-            ArgumentCaptor<Player.ErrorListener> errorListenerCaptor = ArgumentCaptor.forClass(Player.ErrorListener.class);
+            ArgumentCaptor<NoPlayer.ErrorListener> errorListenerCaptor = ArgumentCaptor.forClass(NoPlayer.ErrorListener.class);
             verify(listenersHolder).addErrorListener(errorListenerCaptor.capture());
 
-            Player.ErrorListener errorListener = errorListenerCaptor.getValue();
-            errorListener.onError(mock(Player.PlayerError.class));
+            NoPlayer.ErrorListener errorListener = errorListenerCaptor.getValue();
+            errorListener.onError(mock(NoPlayer.PlayerError.class));
 
             verify(loadTimeout).cancel();
         }
@@ -138,11 +138,11 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void givenInitialised_whenCallingOnError_thenPlayerResourcesAreReleased_andNotListeners() {
             player.initialise();
-            ArgumentCaptor<Player.ErrorListener> errorListenerCaptor = ArgumentCaptor.forClass(Player.ErrorListener.class);
+            ArgumentCaptor<NoPlayer.ErrorListener> errorListenerCaptor = ArgumentCaptor.forClass(NoPlayer.ErrorListener.class);
             verify(listenersHolder).addErrorListener(errorListenerCaptor.capture());
 
-            Player.ErrorListener errorListener = errorListenerCaptor.getValue();
-            errorListener.onError(mock(Player.PlayerError.class));
+            NoPlayer.ErrorListener errorListener = errorListenerCaptor.getValue();
+            errorListener.onError(mock(NoPlayer.PlayerError.class));
 
             verify(listenersHolder).resetPreparedState();
             verify(loadTimeout).cancel();
@@ -155,10 +155,10 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void givenInitialised_whenCallingOnVideoSizeChanged_thenVideoWidthAndHeightMatches() {
             player.initialise();
-            ArgumentCaptor<Player.VideoSizeChangedListener> videoSizeChangedListenerCaptor = ArgumentCaptor.forClass(Player.VideoSizeChangedListener.class);
+            ArgumentCaptor<NoPlayer.VideoSizeChangedListener> videoSizeChangedListenerCaptor = ArgumentCaptor.forClass(NoPlayer.VideoSizeChangedListener.class);
             verify(listenersHolder).addVideoSizeChangedListener(videoSizeChangedListenerCaptor.capture());
 
-            Player.VideoSizeChangedListener videoSizeChangedListener = videoSizeChangedListenerCaptor.getValue();
+            NoPlayer.VideoSizeChangedListener videoSizeChangedListener = videoSizeChangedListenerCaptor.getValue();
             videoSizeChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
 
             assertThat(player.getVideoWidth()).isEqualTo(WIDTH);
@@ -279,7 +279,7 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void whenAttachingPlayerView_thenAddsVideoSizeChangedListener() {
             PlayerView playerView = mock(PlayerView.class);
-            Player.VideoSizeChangedListener videoSizeChangedListener = mock(Player.VideoSizeChangedListener.class);
+            NoPlayer.VideoSizeChangedListener videoSizeChangedListener = mock(NoPlayer.VideoSizeChangedListener.class);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             player.attach(playerView);
 
@@ -289,7 +289,7 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void whenAttachingPlayerView_thenAddsStateChangedListener() {
             PlayerView playerView = mock(PlayerView.class);
-            Player.StateChangedListener stateChangedListener = mock(Player.StateChangedListener.class);
+            NoPlayer.StateChangedListener stateChangedListener = mock(NoPlayer.StateChangedListener.class);
             given(playerView.getStateChangedListener()).willReturn(stateChangedListener);
             player.attach(playerView);
 
@@ -306,7 +306,7 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void whenDetachingPlayerView_thenRemovesVideoSizeChangedListener() {
             PlayerView playerView = mock(PlayerView.class);
-            Player.VideoSizeChangedListener videoSizeChangedListener = mock(Player.VideoSizeChangedListener.class);
+            NoPlayer.VideoSizeChangedListener videoSizeChangedListener = mock(NoPlayer.VideoSizeChangedListener.class);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             player.detach(playerView);
 
@@ -316,7 +316,7 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void whenDetachingPlayerView_thenRemovesStateChangedListener() {
             PlayerView playerView = mock(PlayerView.class);
-            Player.StateChangedListener stateChangedListener = mock(Player.StateChangedListener.class);
+            NoPlayer.StateChangedListener stateChangedListener = mock(NoPlayer.StateChangedListener.class);
             given(playerView.getStateChangedListener()).willReturn(stateChangedListener);
             player.detach(playerView);
 
@@ -620,7 +620,7 @@ public class AndroidMediaPlayerImplTest {
         static final Uri URI = Mockito.mock(Uri.class);
         static final int TEN_SECONDS = 10;
         static final Timeout ANY_TIMEOUT = Timeout.fromSeconds(TEN_SECONDS);
-        static final Player.LoadTimeoutCallback ANY_LOAD_TIMEOUT_CALLBACK = new Player.LoadTimeoutCallback() {
+        static final NoPlayer.LoadTimeoutCallback ANY_LOAD_TIMEOUT_CALLBACK = new NoPlayer.LoadTimeoutCallback() {
             @Override
             public void onLoadTimeout() {
 
@@ -649,25 +649,25 @@ public class AndroidMediaPlayerImplTest {
         @Mock
         BuggyVideoDriverPreventer buggyVideoDriverPreventer;
         @Mock
-        Player.PreparedListener preparedListener;
+        NoPlayer.PreparedListener preparedListener;
         @Mock
-        Player.BufferStateListener bufferStateListener;
+        NoPlayer.BufferStateListener bufferStateListener;
         @Mock
-        Player.ErrorListener errorListener;
+        NoPlayer.ErrorListener errorListener;
         @Mock
-        Player.CompletionListener completionListener;
+        NoPlayer.CompletionListener completionListener;
         @Mock
-        Player.VideoSizeChangedListener videoSizeChangedListener;
+        NoPlayer.VideoSizeChangedListener videoSizeChangedListener;
         @Mock
-        Player.InfoListener infoListener;
+        NoPlayer.InfoListener infoListener;
         @Mock
-        Player.StateChangedListener stateChangedListener;
+        NoPlayer.StateChangedListener stateChangedListener;
         @Mock
         SurfaceHolder surfaceHolder;
         @Mock
         PlayerView playerView;
         @Mock
-        Player.StateChangedListener stateChangeListener;
+        NoPlayer.StateChangedListener stateChangeListener;
         @Mock
         MediaPlayer.OnPreparedListener onPreparedListener;
         @Mock

@@ -3,7 +3,7 @@ package com.novoda.noplayer.model;
 import android.os.Handler;
 
 import com.novoda.noplayer.internal.Clock;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 public class LoadTimeout {
 
@@ -14,14 +14,14 @@ public class LoadTimeout {
 
     private long startTime;
     private long endTime;
-    private Player.LoadTimeoutCallback loadTimeoutCallback;
+    private NoPlayer.LoadTimeoutCallback loadTimeoutCallback;
 
     public LoadTimeout(Clock clock, Handler handler) {
         this.clock = clock;
         this.handler = handler;
     }
 
-    public void start(Timeout timeout, Player.LoadTimeoutCallback loadTimeoutCallback) {
+    public void start(Timeout timeout, NoPlayer.LoadTimeoutCallback loadTimeoutCallback) {
         cancel();
         this.loadTimeoutCallback = loadTimeoutCallback;
         startTime = clock.getCurrentTime();
@@ -43,7 +43,7 @@ public class LoadTimeout {
 
     public void cancel() {
         startTime = 0;
-        loadTimeoutCallback = Player.LoadTimeoutCallback.NULL_IMPL;
+        loadTimeoutCallback = NoPlayer.LoadTimeoutCallback.NULL_IMPL;
         handler.removeCallbacks(loadTimeoutCheck);
     }
 

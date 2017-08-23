@@ -12,13 +12,13 @@ import com.novoda.noplayer.model.VideoPosition;
 import java.util.List;
 import java.util.Map;
 
-public interface Player extends PlayerState {
+public interface NoPlayer extends PlayerState {
 
     /**
      * Plays content of a prepared Player.
      *
-     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
-     * @see Player.PreparedListener
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @see NoPlayer.PreparedListener
      */
     void play() throws IllegalStateException;
 
@@ -26,16 +26,16 @@ public interface Player extends PlayerState {
      * Plays content of a prepared Player at a position.
      *
      * @param position to start playing content from.
-     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
-     * @see Player.PreparedListener
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @see NoPlayer.PreparedListener
      */
     void play(VideoPosition position) throws IllegalStateException;
 
     /**
      * Pauses content of a prepared Player.
      *
-     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
-     * @see Player.PreparedListener
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @see NoPlayer.PreparedListener
      */
     void pause() throws IllegalStateException;
 
@@ -44,13 +44,13 @@ public interface Player extends PlayerState {
      * Will not cause content to play if not already playing.
      *
      * @param position to seek content to.
-     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
-     * @see Player.PreparedListener
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @see NoPlayer.PreparedListener
      */
     void seekTo(VideoPosition position) throws IllegalStateException;
 
     /**
-     * Stops playback of content and then requires call to {@link Player#loadVideo(Uri, ContentType)} to continue playback.
+     * Stops playback of content and then requires call to {@link NoPlayer#loadVideo(Uri, ContentType)} to continue playback.
      */
     void stop();
 
@@ -61,22 +61,22 @@ public interface Player extends PlayerState {
     void release();
 
     /**
-     * Loads the video content and triggers the {@link Player.PreparedListener}.
+     * Loads the video content and triggers the {@link NoPlayer.PreparedListener}.
      *
      * @param uri         link to the content.
      * @param contentType format of the content.
-     * @throws IllegalStateException - if called before {@link Player#attach(PlayerView)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#attach(PlayerView)}.
      */
     void loadVideo(Uri uri, ContentType contentType) throws IllegalStateException;
 
     /**
-     * Loads the video content and triggers the {@link Player.PreparedListener}.
+     * Loads the video content and triggers the {@link NoPlayer.PreparedListener}.
      *
      * @param uri                 link to the content.
      * @param contentType         format of the content.
      * @param timeout             amount of time to wait before triggering {@link LoadTimeoutCallback}.
      * @param loadTimeoutCallback callback when loading has hit the timeout.
-     * @throws IllegalStateException - if called before {@link Player#attach(PlayerView)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#attach(PlayerView)}.
      */
     void loadVideoWithTimeout(Uri uri, ContentType contentType, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback);
 
@@ -105,8 +105,8 @@ public interface Player extends PlayerState {
      * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player.
      *
      * @return {@link AudioTracks} that contains a list of available {@link PlayerAudioTrack}.
-     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
-     * @see Player.PreparedListener
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @see NoPlayer.PreparedListener
      */
     AudioTracks getAudioTracks() throws IllegalStateException;
 
@@ -115,7 +115,7 @@ public interface Player extends PlayerState {
      *
      * @param audioTrack the audio track to select.
      * @return whether the selection was successful.
-     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
     boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException;
 
@@ -123,8 +123,8 @@ public interface Player extends PlayerState {
      * Retrieves all of the available {@link PlayerSubtitleTrack} of a prepared Player.
      *
      * @return A list of available {@link PlayerSubtitleTrack}.
-     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
-     * @see Player.PreparedListener
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @see NoPlayer.PreparedListener
      */
     List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException;
 
@@ -133,14 +133,14 @@ public interface Player extends PlayerState {
      *
      * @param subtitleTrack the subtitle track to select.
      * @return whether the selection was successful.
-     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
     boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException;
 
     /**
      * Clear and hide the subtitles on an attached PlayerView.
      *
-     * @throws IllegalStateException - if called before {@link Player#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
     void hideSubtitleTrack() throws IllegalStateException;
 
@@ -205,7 +205,7 @@ public interface Player extends PlayerState {
     interface InfoListener {
 
         /**
-         * All event listeners attached to implementations of Player will
+         * All event listeners attached to implementations of {@link NoPlayer} will
          * forward information through this to provide debugging
          * information to client applications.
          *
@@ -230,6 +230,6 @@ public interface Player extends PlayerState {
 
     interface HeartbeatCallback {
 
-        void onBeat(Player player);
+        void onBeat(NoPlayer player);
     }
 }

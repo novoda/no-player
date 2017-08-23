@@ -39,7 +39,7 @@ public class LoadTimeoutTest {
     Handler handler;
 
     @Mock
-    Player.LoadTimeoutCallback loadTimeoutCallback;
+    NoPlayer.LoadTimeoutCallback loadTimeoutCallback;
 
     private LoadTimeout loadTimeout;
 

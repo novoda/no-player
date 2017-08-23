@@ -10,9 +10,9 @@ public interface PlayerView {
 
     SurfaceHolderRequester getSurfaceHolderRequester();
 
-    Player.VideoSizeChangedListener getVideoSizeChangedListener();
+    NoPlayer.VideoSizeChangedListener getVideoSizeChangedListener();
 
-    Player.StateChangedListener getStateChangedListener();
+    NoPlayer.StateChangedListener getStateChangedListener();
 
     void showSubtitles();
 

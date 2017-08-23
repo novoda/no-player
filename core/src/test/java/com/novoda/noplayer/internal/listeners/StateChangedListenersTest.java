@@ -1,6 +1,6 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.utils.NoPlayerLog;
 
 import org.junit.Before;
@@ -18,7 +18,7 @@ public class StateChangedListenersTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
-    private Player.StateChangedListener stateChangedListener;
+    private NoPlayer.StateChangedListener stateChangedListener;
 
     private StateChangedListeners stateChangedListeners;
 

@@ -2,30 +2,31 @@ package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
-class BufferStateForwarder implements com.google.android.exoplayer2.Player.EventListener {
+class BufferStateForwarder implements Player.EventListener {
 
-    private final Player.BufferStateListener bufferStateListener;
+    private final NoPlayer.BufferStateListener bufferStateListener;
 
-    BufferStateForwarder(Player.BufferStateListener bufferStateListener) {
+    BufferStateForwarder(NoPlayer.BufferStateListener bufferStateListener) {
         this.bufferStateListener = bufferStateListener;
     }
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == com.google.android.exoplayer2.Player.STATE_BUFFERING) {
+        if (playbackState == Player.STATE_BUFFERING) {
             bufferStateListener.onBufferStarted();
-        } else if (playbackState == com.google.android.exoplayer2.Player.STATE_READY) {
+        } else if (playbackState == Player.STATE_READY) {
             bufferStateListener.onBufferCompleted();
         }
     }
 
     @Override
-    public void onRepeatModeChanged(@com.google.android.exoplayer2.Player.RepeatMode int repeatMode) {
+    public void onRepeatModeChanged(@Player.RepeatMode int repeatMode) {
         // TODO: should we send?
     }
 

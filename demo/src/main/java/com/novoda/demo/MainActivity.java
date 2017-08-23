@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
     private static final String URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD = "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd";
     private static final String EXAMPLE_MODULAR_LICENSE_SERVER_PROXY = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
 
-    private Player player;
+    private NoPlayer player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
                 .withDowngradedSecureDecoder()
                 .build(this);
 
-        player.getListeners().addPreparedListener(new Player.PreparedListener() {
+        player.getListeners().addPreparedListener(new NoPlayer.PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
                 player.play();

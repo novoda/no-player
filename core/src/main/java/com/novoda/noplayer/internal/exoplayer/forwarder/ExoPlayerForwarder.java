@@ -4,7 +4,7 @@ import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
 
 public class ExoPlayerForwarder {
@@ -43,34 +43,34 @@ public class ExoPlayerForwarder {
         return drmSessionEventListener;
     }
 
-    public void bind(Player.PreparedListener preparedListener, PlayerState playerState) {
+    public void bind(NoPlayer.PreparedListener preparedListener, PlayerState playerState) {
         exoPlayerEventListener.add(new OnPrepareForwarder(preparedListener, playerState));
     }
 
-    public void bind(Player.CompletionListener completionListener, Player.StateChangedListener stateChangedListener) {
+    public void bind(NoPlayer.CompletionListener completionListener, NoPlayer.StateChangedListener stateChangedListener) {
         exoPlayerEventListener.add(new OnCompletionForwarder(completionListener));
         exoPlayerEventListener.add(new OnCompletionStateChangedForwarder(stateChangedListener));
     }
 
-    public void bind(Player.ErrorListener errorListener) {
+    public void bind(NoPlayer.ErrorListener errorListener) {
         exoPlayerEventListener.add(new PlayerOnErrorForwarder(errorListener));
         extractorMediaSourceListener.add(new MediaSourceOnErrorForwarder(errorListener));
         drmSessionEventListener.add(new DrmSessionErrorForwarder(errorListener));
     }
 
-    public void bind(Player.BufferStateListener bufferStateListener) {
+    public void bind(NoPlayer.BufferStateListener bufferStateListener) {
         exoPlayerEventListener.add(new BufferStateForwarder(bufferStateListener));
     }
 
-    public void bind(Player.VideoSizeChangedListener videoSizeChangedListener) {
+    public void bind(NoPlayer.VideoSizeChangedListener videoSizeChangedListener) {
         videoRendererEventListener.add(new VideoSizeChangedForwarder(videoSizeChangedListener));
     }
 
-    public void bind(Player.BitrateChangedListener bitrateChangedListener) {
+    public void bind(NoPlayer.BitrateChangedListener bitrateChangedListener) {
         mediaSourceEventListener.add(new BitrateForwarder(bitrateChangedListener));
     }
 
-    public void bind(Player.InfoListener infoListeners) {
+    public void bind(NoPlayer.InfoListener infoListeners) {
         exoPlayerEventListener.add(new EventInfoForwarder(infoListeners));
         mediaSourceEventListener.add(new MediaSourceInfoForwarder(infoListeners));
         videoRendererEventListener.add(new VideoRendererInfoForwarder(infoListeners));

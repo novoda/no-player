@@ -1,12 +1,12 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.utils.NoPlayerLog;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-class StateChangedListeners implements Player.StateChangedListener {
+class StateChangedListeners implements NoPlayer.StateChangedListener {
 
     private enum State {
         PLAYING,
@@ -16,13 +16,13 @@ class StateChangedListeners implements Player.StateChangedListener {
 
     private State currentState;
 
-    private final Set<Player.StateChangedListener> listeners = new CopyOnWriteArraySet<>();
+    private final Set<NoPlayer.StateChangedListener> listeners = new CopyOnWriteArraySet<>();
 
-    void add(Player.StateChangedListener listener) {
+    void add(NoPlayer.StateChangedListener listener) {
         listeners.add(listener);
     }
 
-    void remove(Player.StateChangedListener listener) {
+    void remove(NoPlayer.StateChangedListener listener) {
         listeners.remove(listener);
     }
 
@@ -37,7 +37,7 @@ class StateChangedListeners implements Player.StateChangedListener {
             return;
         }
 
-        for (Player.StateChangedListener listener : listeners) {
+        for (NoPlayer.StateChangedListener listener : listeners) {
             listener.onVideoPlaying();
         }
 
@@ -51,7 +51,7 @@ class StateChangedListeners implements Player.StateChangedListener {
             return;
         }
 
-        for (Player.StateChangedListener listener : listeners) {
+        for (NoPlayer.StateChangedListener listener : listeners) {
             listener.onVideoPaused();
         }
 
@@ -65,7 +65,7 @@ class StateChangedListeners implements Player.StateChangedListener {
             return;
         }
 
-        for (Player.StateChangedListener listener : listeners) {
+        for (NoPlayer.StateChangedListener listener : listeners) {
             listener.onVideoStopped();
         }
 

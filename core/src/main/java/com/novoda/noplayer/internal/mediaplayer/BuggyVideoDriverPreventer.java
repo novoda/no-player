@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.view.View;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 /**
  * The intent for this component is to workaround a buggy video driver affecting AwesomePlayer on Nexus 5.
@@ -21,7 +21,7 @@ class BuggyVideoDriverPreventer {
         this.mediaPlayerTypeReader = mediaPlayerTypeReader;
     }
 
-    void preventVideoDriverBug(Player player, View containerView) {
+    void preventVideoDriverBug(NoPlayer player, View containerView) {
         if (videoDriverCanBeBuggy()) {
             attemptToCorrectMediaPlayerStatus(player, containerView);
         }
@@ -31,7 +31,7 @@ class BuggyVideoDriverPreventer {
         return mediaPlayerTypeReader.getPlayerType() == AndroidMediaPlayerType.AWESOME;
     }
 
-    private void attemptToCorrectMediaPlayerStatus(Player player, View containerView) {
+    private void attemptToCorrectMediaPlayerStatus(NoPlayer player, View containerView) {
         preventerListener = new OnPotentialBuggyDriverLayoutListener(player);
         containerView.addOnLayoutChangeListener(preventerListener);
     }

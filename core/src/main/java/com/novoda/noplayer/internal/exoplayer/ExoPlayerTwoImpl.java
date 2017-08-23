@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
@@ -26,7 +26,7 @@ import com.novoda.noplayer.model.VideoPosition;
 
 import java.util.List;
 
-class ExoPlayerTwoImpl implements Player {
+class ExoPlayerTwoImpl implements NoPlayer {
 
     private final ExoPlayerFacade exoPlayer;
     private final PlayerListenersHolder listenersHolder;

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.SystemClock;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
@@ -24,7 +24,7 @@ public class NoPlayerMediaPlayerCreator {
         this.internalCreator = internalCreator;
     }
 
-    public Player createMediaPlayer(Context context) {
+    public NoPlayer createMediaPlayer(Context context) {
         AndroidMediaPlayerImpl player = internalCreator.create(context);
         player.initialise();
         return player;

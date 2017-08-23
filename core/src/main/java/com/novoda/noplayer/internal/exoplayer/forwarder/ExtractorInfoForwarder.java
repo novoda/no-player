@@ -1,16 +1,16 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 class ExtractorInfoForwarder implements ExtractorMediaSource.EventListener {
 
-    private final Player.InfoListener infoListener;
+    private final NoPlayer.InfoListener infoListener;
 
-    ExtractorInfoForwarder(Player.InfoListener infoListener) {
+    ExtractorInfoForwarder(NoPlayer.InfoListener infoListener) {
         this.infoListener = infoListener;
     }
 

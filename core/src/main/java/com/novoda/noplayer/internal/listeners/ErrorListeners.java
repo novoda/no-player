@@ -1,19 +1,19 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-class ErrorListeners implements Player.ErrorListener {
+class ErrorListeners implements NoPlayer.ErrorListener {
 
-    private final Set<Player.ErrorListener> listeners = new CopyOnWriteArraySet<>();
+    private final Set<NoPlayer.ErrorListener> listeners = new CopyOnWriteArraySet<>();
 
-    void add(Player.ErrorListener listener) {
+    void add(NoPlayer.ErrorListener listener) {
         listeners.add(listener);
     }
 
-    void remove(Player.ErrorListener listener) {
+    void remove(NoPlayer.ErrorListener listener) {
         listeners.remove(listener);
     }
 
@@ -22,8 +22,8 @@ class ErrorListeners implements Player.ErrorListener {
     }
 
     @Override
-    public void onError(Player.PlayerError error) {
-        for (Player.ErrorListener listener : listeners) {
+    public void onError(NoPlayer.PlayerError error) {
+        for (NoPlayer.ErrorListener listener : listeners) {
             listener.onError(error);
         }
     }

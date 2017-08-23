@@ -8,7 +8,7 @@ import android.view.View;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Listeners;
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
@@ -27,7 +27,7 @@ import com.novoda.noplayer.model.VideoPosition;
 import java.util.ArrayList;
 import java.util.List;
 
-class AndroidMediaPlayerImpl implements Player {
+class AndroidMediaPlayerImpl implements NoPlayer {
 
     private static final VideoPosition NO_SEEK_TO_POSITION = VideoPosition.INVALID;
     private static final int INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;

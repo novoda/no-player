@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal;
 
 import android.os.Handler;
 
-import com.novoda.noplayer.Player;
+import com.novoda.noplayer.NoPlayer;
 
 public class Heart {
 
@@ -67,10 +67,10 @@ public class Heart {
 
     public static class Heartbeat implements Runnable {
 
-        private final Player.HeartbeatCallback callback;
-        private final Player player;
+        private final NoPlayer.HeartbeatCallback callback;
+        private final NoPlayer player;
 
-        public Heartbeat(Player.HeartbeatCallback callback, Player player) {
+        public Heartbeat(NoPlayer.HeartbeatCallback callback, NoPlayer player) {
             this.callback = callback;
             this.player = player;
         }
