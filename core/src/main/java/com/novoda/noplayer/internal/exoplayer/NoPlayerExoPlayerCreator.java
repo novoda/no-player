@@ -50,10 +50,11 @@ public class NoPlayerExoPlayerCreator {
         }
 
         ExoPlayerTwoImpl create(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
-            DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
+            DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+            DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent", bandwidthMeter);
             MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
 
-            TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
+            TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
             DefaultTrackSelector trackSelector = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
 
             MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder ? SecurityDowngradingCodecSelector.newInstance() : MediaCodecSelector.DEFAULT;
