@@ -4,12 +4,14 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.NoPlayer;
-import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
+import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.SystemClock;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
@@ -17,6 +19,7 @@ import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSel
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
+import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.model.LoadTimeout;
 
 public class NoPlayerExoPlayerCreator {
@@ -50,7 +53,8 @@ public class NoPlayerExoPlayerCreator {
             DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent");
             MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
 
-            DefaultTrackSelector trackSelector = new DefaultTrackSelector();
+            TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
+            DefaultTrackSelector trackSelector = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
 
             MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder ? SecurityDowngradingCodecSelector.newInstance() : MediaCodecSelector.DEFAULT;
 
