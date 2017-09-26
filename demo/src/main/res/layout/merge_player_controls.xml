@@ -5,9 +5,8 @@
   android:layout_height="wrap_content"
   tools:parentTag="LinearLayout">
 
-  <ImageButton
+  <ImageView
     android:id="@+id/player_controls_play_pause"
-    style="?android:borderlessButtonStyle"
     android:layout_width="48dp"
     android:layout_height="48dp"
     android:layout_marginLeft="12dp"
