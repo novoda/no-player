@@ -37,6 +37,12 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center" />
 
+    <com.novoda.demo.ControllerView
+      android:id="@+id/controller_view"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_gravity="bottom" />
+
   </LinearLayout>
 
 </merge>
