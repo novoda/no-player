@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_height="wrap_content"
+  tools:parentTag="LinearLayout">
+
+  <ImageButton
+    android:id="@+id/player_controls_play_pause"
+    style="?android:borderlessButtonStyle"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:layout_marginLeft="12dp"
+    android:layout_marginRight="12dp"
+    android:src="@drawable/exo_controls_play" />
+
+  <TextView
+    android:id="@+id/player_controls_elapsed_time"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:textColor="@android:color/white"
+    android:text="00:00"
+    tools:text="00:00" />
+
+  <SeekBar
+    android:id="@+id/player_controls_progress"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="100"
+    android:layout_gravity="center_vertical"
+    android:layout_marginLeft="12dp"
+    android:layout_marginRight="12dp" />
+
+  <TextView
+    android:id="@+id/player_controls_time_remaining"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:layout_marginRight="12dp"
+    android:textColor="@android:color/white"
+    android:text="01:00"
+    tools:text="01:00" />
 
 </merge>
