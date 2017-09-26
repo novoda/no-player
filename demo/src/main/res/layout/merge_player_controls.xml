@@ -11,7 +11,7 @@
     android:layout_height="48dp"
     android:layout_marginLeft="12dp"
     android:layout_marginRight="12dp"
-    android:src="@drawable/exo_controls_play" />
+    android:src="@drawable/play" />
 
   <TextView
     android:id="@+id/player_controls_elapsed_time"
