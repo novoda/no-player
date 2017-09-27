@@ -17,7 +17,7 @@ import com.novoda.notils.exception.DeveloperError;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class ControllerView extends LinearLayout {
+public class AndroidControllerView extends LinearLayout {
 
     private static final int MAX_PROGRESS_INCREMENTS = 1000;
     private static final int MAX_PROGRESS_PERCENT = 1000;
@@ -27,11 +27,11 @@ public class ControllerView extends LinearLayout {
     private SeekBar progressView;
     private TextView timeRemainingView;
 
-    public ControllerView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public AndroidControllerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs, 0);
     }
 
-    public ControllerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public AndroidControllerView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         super.setOrientation(HORIZONTAL);
     }
