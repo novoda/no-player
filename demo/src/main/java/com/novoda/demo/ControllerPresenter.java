@@ -17,6 +17,19 @@ public class ControllerPresenter {
         this.controllerView = controllerView;
     }
 
+    public void update(VideoPosition position, VideoDuration duration, int bufferPercentage) {
+        controllerView.setTogglePlayPauseAction(onTogglePlayPause);
+        updateProgress(position, duration, bufferPercentage);
+        updateTiming(position, duration);
+    }
+
+    private final ControllerView.TogglePlayPauseAction onTogglePlayPause = new ControllerView.TogglePlayPauseAction() {
+        @Override
+        public void perform() {
+            // Check current state and perform toggle.
+        }
+    };
+
     private void updateProgress(VideoPosition position, VideoDuration duration, int bufferPercentage) {
         float proportionOfDuration = position.inMillis() / (float) duration.inMillis();
         int progress = (int) (MAX_PROGRESS_INCREMENTS * proportionOfDuration);

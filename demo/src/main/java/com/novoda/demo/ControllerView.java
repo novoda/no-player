@@ -11,4 +11,11 @@ interface ControllerView {
     void updateElapsedTime(String elapsedTime);
 
     void updateTimeRemaining(String timeRemaining);
+
+    void setTogglePlayPauseAction(TogglePlayPauseAction togglePlayPauseAction);
+
+    interface TogglePlayPauseAction {
+
+        void perform();
+    }
 }
