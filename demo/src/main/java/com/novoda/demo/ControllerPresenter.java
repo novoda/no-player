@@ -3,9 +3,6 @@ package com.novoda.demo;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
 
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-
 public class ControllerPresenter {
 
     private static final int MAX_PROGRESS_INCREMENTS = 1000;
@@ -43,19 +40,7 @@ public class ControllerPresenter {
         VideoDuration elapsedDuration = VideoDuration.fromMillis(position.inMillis());
         VideoDuration remainingDuration = VideoDuration.fromMillis(duration.inMillis()).minus(elapsedDuration);
 
-        controllerView.updateElapsedTime(stringFor(elapsedDuration.inImpreciseSeconds()));
-        controllerView.updateTimeRemaining(stringFor(remainingDuration.inImpreciseSeconds()));
-    }
-
-    private String stringFor(int timeInSeconds) {
-        int hours = (int) TimeUnit.SECONDS.toHours(timeInSeconds);
-        int minutes = (int) TimeUnit.SECONDS.toMinutes(timeInSeconds - TimeUnit.HOURS.toSeconds(hours));
-        int seconds = (int) (timeInSeconds - TimeUnit.HOURS.toSeconds(hours) - TimeUnit.MINUTES.toSeconds(minutes));
-
-        if (hours > 0) {
-            return String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, seconds);
-        } else {
-            return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-        }
+        controllerView.updateElapsedTime(TimeFormatter.asHoursMinutesSeconds(elapsedDuration.inImpreciseSeconds()));
+        controllerView.updateTimeRemaining(TimeFormatter.asHoursMinutesSeconds(remainingDuration.inImpreciseSeconds()));
     }
 }
