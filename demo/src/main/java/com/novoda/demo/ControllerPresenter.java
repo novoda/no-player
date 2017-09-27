@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 public class ControllerPresenter {
 
     private static final int MAX_PROGRESS_INCREMENTS = 1000;
-    private static final int MAX_PROGRESS_PERCENT = 1000;
+    private static final int MAX_PROGRESS_PERCENT = 100;
 
     private final ControllerView controllerView;
 
