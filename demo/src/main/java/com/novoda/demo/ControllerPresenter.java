@@ -28,12 +28,13 @@ public class ControllerPresenter {
     };
 
     private void updateProgress(VideoPosition position, VideoDuration duration, int bufferPercentage) {
-        float proportionOfDuration = position.inMillis() / (float) duration.inMillis();
-        int progress = (int) (MAX_PROGRESS_INCREMENTS * proportionOfDuration);
+        double percentageOfDuration = position.asPercentageOf(duration);
+        int progressAsIncrements = (int) (MAX_PROGRESS_INCREMENTS * percentageOfDuration);
 
-        int buffer = (bufferPercentage * MAX_PROGRESS_INCREMENTS) / MAX_PROGRESS_PERCENT;
+        int bufferAsIncrements = (bufferPercentage * MAX_PROGRESS_INCREMENTS) / MAX_PROGRESS_PERCENT;
 
-        controllerView.updateProgress(progress, buffer);
+        controllerView.updateContentProgress(progressAsIncrements);
+        controllerView.updateBufferProgress(bufferAsIncrements);
     }
 
     private void updateTiming(VideoPosition position, VideoDuration duration) {

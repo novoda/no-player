@@ -6,7 +6,9 @@ interface ControllerView {
 
     void setPlaying();
 
-    void updateProgress(int progress, int buffer);
+    void updateContentProgress(int progress);
+
+    void updateBufferProgress(int buffer);
 
     void updateElapsedTime(String elapsedTime);
 

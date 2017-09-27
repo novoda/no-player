@@ -56,8 +56,12 @@ public class AndroidControllerView extends LinearLayout implements ControllerVie
     }
 
     @Override
-    public void updateProgress(int progress, int buffer) {
+    public void updateContentProgress(int progress) {
         progressView.setProgress(progress);
+    }
+
+    @Override
+    public void updateBufferProgress(int buffer) {
         progressView.setSecondaryProgress(buffer);
     }
 
