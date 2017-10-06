@@ -124,7 +124,7 @@ public class ExoPlayerTwoImplTest {
             NoPlayer.ErrorListener errorListener = argumentCaptor.getValue();
             errorListener.onError(mock(NoPlayer.PlayerError.class));
 
-            verify(listenersHolder).resetPreparedState();
+            verify(listenersHolder).resetState();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
             verify(exoPlayerFacade).release();
@@ -167,7 +167,7 @@ public class ExoPlayerTwoImplTest {
 
             player.stop();
 
-            verify(listenersHolder).resetPreparedState();
+            verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
@@ -179,7 +179,7 @@ public class ExoPlayerTwoImplTest {
 
             player.release();
 
-            verify(listenersHolder).resetPreparedState();
+            verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
@@ -193,7 +193,7 @@ public class ExoPlayerTwoImplTest {
 
             player.stop();
 
-            verify(listenersHolder).resetPreparedState();
+            verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
@@ -207,7 +207,7 @@ public class ExoPlayerTwoImplTest {
 
             player.release();
 
-            verify(listenersHolder).resetPreparedState();
+            verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();

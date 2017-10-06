@@ -9,6 +9,8 @@ class CompletionListeners implements NoPlayer.CompletionListener {
 
     private final Set<NoPlayer.CompletionListener> listeners = new CopyOnWriteArraySet<>();
 
+    private boolean hasCompleted = false;
+
     void add(NoPlayer.CompletionListener listener) {
         listeners.add(listener);
     }
@@ -23,8 +25,15 @@ class CompletionListeners implements NoPlayer.CompletionListener {
 
     @Override
     public void onCompletion() {
-        for (NoPlayer.CompletionListener listener : listeners) {
-            listener.onCompletion();
+        if (!hasCompleted) {
+            hasCompleted = true;
+            for (NoPlayer.CompletionListener listener : listeners) {
+                listener.onCompletion();
+            }
         }
+    }
+
+    void resetCompletedState() {
+        hasCompleted = false;
     }
 }

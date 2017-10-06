@@ -162,7 +162,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     private void reset() {
-        listenersHolder.resetPreparedState();
+        listenersHolder.resetState();
         loadTimeout.cancel();
         heart.stopBeatingHeart();
         exoPlayer.release();
