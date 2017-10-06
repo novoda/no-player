@@ -144,7 +144,7 @@ public class AndroidMediaPlayerImplTest {
             NoPlayer.ErrorListener errorListener = errorListenerCaptor.getValue();
             errorListener.onError(mock(NoPlayer.PlayerError.class));
 
-            verify(listenersHolder).resetPreparedState();
+            verify(listenersHolder).resetState();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
             verify(mediaPlayer).release();
@@ -355,7 +355,7 @@ public class AndroidMediaPlayerImplTest {
 
             player.stop();
 
-            verify(listenersHolder).resetPreparedState();
+            verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
@@ -368,7 +368,7 @@ public class AndroidMediaPlayerImplTest {
 
             player.release();
 
-            verify(listenersHolder).resetPreparedState();
+            verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
@@ -382,7 +382,7 @@ public class AndroidMediaPlayerImplTest {
 
             player.stop();
 
-            verify(listenersHolder).resetPreparedState();
+            verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
@@ -397,7 +397,7 @@ public class AndroidMediaPlayerImplTest {
 
             player.release();
 
-            verify(listenersHolder).resetPreparedState();
+            verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
