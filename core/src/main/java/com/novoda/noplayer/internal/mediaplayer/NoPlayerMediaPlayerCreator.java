@@ -11,6 +11,8 @@ import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.model.LoadTimeout;
 
+import java.util.HashMap;
+
 public class NoPlayerMediaPlayerCreator {
 
     private final InternalCreator internalCreator;
@@ -46,6 +48,7 @@ public class NoPlayerMediaPlayerCreator {
             CheckBufferHeartbeatCallback bufferHeartbeatCallback = new CheckBufferHeartbeatCallback();
             Heart heart = Heart.newInstance(handler);
             MediaPlayerTypeReader mediaPlayerTypeReader = new MediaPlayerTypeReader(new SystemProperties(), Build.VERSION.SDK_INT);
+            DelayedActionExecutor delayedActionExecutor = new DelayedActionExecutor(handler, new HashMap<DelayedActionExecutor.Action, Runnable>());
             BuggyVideoDriverPreventer preventer = new BuggyVideoDriverPreventer(mediaPlayerTypeReader);
             MediaPlayerInformation mediaPlayerInformation = new MediaPlayerInformation(mediaPlayerTypeReader);
             return new AndroidMediaPlayerImpl(
@@ -56,7 +59,7 @@ public class NoPlayerMediaPlayerCreator {
                     bufferHeartbeatCallback,
                     loadTimeout,
                     heart,
-                    handler,
+                    delayedActionExecutor,
                     preventer
             );
         }
