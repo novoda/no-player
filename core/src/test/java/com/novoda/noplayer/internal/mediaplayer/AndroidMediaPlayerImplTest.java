@@ -413,8 +413,7 @@ public class AndroidMediaPlayerImplTest {
 
     public static class GivenPlayerIsAttached extends Base {
 
-        private static final int DELAY_MILLIS = 500;
-        private static final boolean IS_PLAYING = true;
+        private static final long DELAY_MILLIS = 500;
         private static final boolean IS_NOT_PLAYING = false;
 
         @Override
