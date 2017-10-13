@@ -333,6 +333,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     private void reset() {
+        handler.removeCallbacksAndMessages(null);
         listenersHolder.resetState();
         loadTimeout.cancel();
         heart.stopBeatingHeart();
