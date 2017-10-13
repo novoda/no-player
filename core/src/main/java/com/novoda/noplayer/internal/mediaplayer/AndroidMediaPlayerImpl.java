@@ -2,7 +2,6 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.View;
 
@@ -30,7 +29,7 @@ import java.util.List;
 class AndroidMediaPlayerImpl implements NoPlayer {
 
     private static final VideoPosition NO_SEEK_TO_POSITION = VideoPosition.INVALID;
-    private static final int INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
+    private static final long INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
 
     private final List<SurfaceHolderRequester.Callback> surfaceHolderRequesterCallbacks = new ArrayList<>();
 
@@ -38,7 +37,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     private final AndroidMediaPlayerFacade mediaPlayer;
     private final MediaPlayerForwarder forwarder;
     private final CheckBufferHeartbeatCallback bufferHeartbeatCallback;
-    private final Handler handler;
+    private final DelayedActionExecutor delayedActionExecutor;
     private final Heart heart;
     private final PlayerListenersHolder listenersHolder;
     private final LoadTimeout loadTimeout;
@@ -59,7 +58,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
                            CheckBufferHeartbeatCallback bufferHeartbeatCallback,
                            LoadTimeout loadTimeout,
                            Heart heart,
-                           Handler handler,
+                           DelayedActionExecutor delayedActionExecutor,
                            BuggyVideoDriverPreventer buggyVideoDriverPreventer) {
         this.mediaPlayerInformation = mediaPlayerInformation;
         this.mediaPlayer = mediaPlayer;
@@ -68,7 +67,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         this.bufferHeartbeatCallback = bufferHeartbeatCallback;
         this.loadTimeout = loadTimeout;
         this.heart = heart;
-        this.handler = handler;
+        this.delayedActionExecutor = delayedActionExecutor;
         this.buggyVideoDriverPreventer = buggyVideoDriverPreventer;
     }
 
@@ -151,9 +150,9 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     private void initialSeekWorkaround(SurfaceHolder surfaceHolder, final VideoPosition initialPlayPosition) throws IllegalStateException {
         listenersHolder.getBufferStateListeners().onBufferStarted();
         initialisePlaybackForSeeking(surfaceHolder);
-        handler.postDelayed(new Runnable() {
+        delayedActionExecutor.performAfterDelay(new DelayedActionExecutor.Action() {
             @Override
-            public void run() {
+            public void perform() {
                 seekWithIntentToPlay(initialPlayPosition);
             }
         }, INITIAL_PLAY_SEEK_DELAY_IN_MILLIS);
@@ -333,6 +332,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     private void reset() {
+        delayedActionExecutor.clearAllActions();
         listenersHolder.resetState();
         loadTimeout.cancel();
         heart.stopBeatingHeart();

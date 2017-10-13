@@ -2,7 +2,6 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.View;
 
@@ -144,6 +143,7 @@ public class AndroidMediaPlayerImplTest {
             NoPlayer.ErrorListener errorListener = errorListenerCaptor.getValue();
             errorListener.onError(mock(NoPlayer.PlayerError.class));
 
+            verify(delayedActionExecutor).clearAllActions();
             verify(listenersHolder).resetState();
             verify(loadTimeout).cancel();
             verify(heart).stopBeatingHeart();
@@ -355,6 +355,7 @@ public class AndroidMediaPlayerImplTest {
 
             player.stop();
 
+            verify(delayedActionExecutor).clearAllActions();
             verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
@@ -368,6 +369,7 @@ public class AndroidMediaPlayerImplTest {
 
             player.release();
 
+            verify(delayedActionExecutor).clearAllActions();
             verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
@@ -382,6 +384,7 @@ public class AndroidMediaPlayerImplTest {
 
             player.stop();
 
+            verify(delayedActionExecutor).clearAllActions();
             verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
@@ -397,6 +400,7 @@ public class AndroidMediaPlayerImplTest {
 
             player.release();
 
+            verify(delayedActionExecutor).clearAllActions();
             verify(listenersHolder).resetState();
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
@@ -410,7 +414,6 @@ public class AndroidMediaPlayerImplTest {
     public static class GivenPlayerIsAttached extends Base {
 
         private static final long DELAY_MILLIS = 500;
-        private static final boolean IS_PLAYING = true;
         private static final boolean IS_NOT_PLAYING = false;
 
         @Override
@@ -585,9 +588,9 @@ public class AndroidMediaPlayerImplTest {
             VideoPosition differentPosition = givenPositionThatDiffersFromPlayheadPosition();
 
             player.play(differentPosition);
-            ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-            verify(handler).postDelayed(runnableCaptor.capture(), eq(DELAY_MILLIS));
-            runnableCaptor.getValue().run();
+            ArgumentCaptor<DelayedActionExecutor.Action> argumentCaptor = ArgumentCaptor.forClass(DelayedActionExecutor.Action.class);
+            verify(delayedActionExecutor).performAfterDelay(argumentCaptor.capture(), eq(DELAY_MILLIS));
+            argumentCaptor.getValue().perform();
 
             verify(mediaPlayer).seekTo(differentPosition.inImpreciseMillis());
         }
@@ -645,7 +648,7 @@ public class AndroidMediaPlayerImplTest {
         @Mock
         Heart heart;
         @Mock
-        Handler handler;
+        DelayedActionExecutor delayedActionExecutor;
         @Mock
         BuggyVideoDriverPreventer buggyVideoDriverPreventer;
         @Mock
@@ -722,7 +725,7 @@ public class AndroidMediaPlayerImplTest {
                     checkBufferHeartbeatCallback,
                     loadTimeout,
                     heart,
-                    handler,
+                    delayedActionExecutor,
                     buggyVideoDriverPreventer
             );
         }
