@@ -29,7 +29,7 @@ import java.util.List;
 class AndroidMediaPlayerImpl implements NoPlayer {
 
     private static final VideoPosition NO_SEEK_TO_POSITION = VideoPosition.INVALID;
-    private static final int INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
+    private static final long INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
 
     private final List<SurfaceHolderRequester.Callback> surfaceHolderRequesterCallbacks = new ArrayList<>();
 
