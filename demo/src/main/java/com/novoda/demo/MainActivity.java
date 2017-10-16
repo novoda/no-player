@@ -41,9 +41,11 @@ public class MainActivity extends Activity {
         PlayerView playerView = (PlayerView) findViewById(R.id.player_view);
         View audioSelectionButton = findViewById(R.id.button_audio_selection);
         View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
+        View animationButton = findViewById(R.id.button_animation);
 
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
+        animationButton.setOnClickListener(animateVideo);
 
         DataPostingModularDrm drmHandler = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
 
@@ -149,6 +151,13 @@ public class MainActivity extends Activity {
                 labels.add("Group: " + subtitleTrack.groupIndex() + " Format: " + subtitleTrack.formatIndex());
             }
             return labels;
+        }
+    };
+
+    private final View.OnClickListener animateVideo = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
         }
     };
 

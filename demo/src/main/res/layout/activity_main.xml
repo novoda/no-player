@@ -23,6 +23,12 @@
         android:layout_height="wrap_content"
         android:text="Subtitle" />
 
+      <Button
+        android:id="@+id/button_animation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Animate" />
+
     </LinearLayout>
 
     <com.novoda.noplayer.NoPlayerView
