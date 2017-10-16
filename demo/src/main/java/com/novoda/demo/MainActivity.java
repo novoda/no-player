@@ -53,10 +53,7 @@ public class MainActivity extends Activity {
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
         animationButton.setOnClickListener(animateVideo);
 
-        DataPostingModularDrm drmHandler = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
-
         player = new PlayerBuilder()
-                .withWidevineModularStreamingDrm(drmHandler)
                 .withDowngradedSecureDecoder()
                 .build(this);
 
@@ -74,8 +71,8 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         // TODO: Add switch in UI to avoid redeploy.
-        Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
-        player.loadVideo(uri, ContentType.DASH);
+        Uri uri = Uri.parse(URI_VIDEO_MP4);
+        player.loadVideo(uri, ContentType.H264);
     }
 
     private final View.OnClickListener showAudioSelectionDialog = new View.OnClickListener() {
