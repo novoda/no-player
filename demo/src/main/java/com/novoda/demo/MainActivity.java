@@ -1,11 +1,15 @@
 package com.novoda.demo;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -32,13 +36,14 @@ public class MainActivity extends Activity {
     private static final String EXAMPLE_MODULAR_LICENSE_SERVER_PROXY = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
 
     private NoPlayer player;
+    private PlayerView playerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
-        PlayerView playerView = (PlayerView) findViewById(R.id.player_view);
+        playerView = (PlayerView) findViewById(R.id.player_view);
         View audioSelectionButton = findViewById(R.id.button_audio_selection);
         View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
         View animationButton = findViewById(R.id.button_animation);
@@ -157,7 +162,47 @@ public class MainActivity extends Activity {
     private final View.OnClickListener animateVideo = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            final View noPlayerView = playerView.getContainerView();
+            ValueAnimator heightAnimator = createHeightAnimator(noPlayerView);
+            ValueAnimator widthAnimator = createWidthAnimator(noPlayerView);
 
+            ObjectAnimator translationYAnimator = ObjectAnimator.ofFloat(noPlayerView, "y", 0f);
+            ObjectAnimator translationXAnimator = ObjectAnimator.ofFloat(noPlayerView, "x", 0f);
+
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.playTogether(heightAnimator, widthAnimator, translationXAnimator, translationYAnimator);
+            animatorSet.setDuration(2000);
+            animatorSet.start();
+        }
+
+        private ValueAnimator createHeightAnimator(final View noPlayerView) {
+            int halfPlayerViewHeight = (int) (noPlayerView.getMeasuredHeight() * 0.5);
+            ValueAnimator heightAnimator = ValueAnimator.ofInt(noPlayerView.getMeasuredHeight(), halfPlayerViewHeight);
+            heightAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int currentValue = (Integer) animation.getAnimatedValue();
+                    ViewGroup.LayoutParams layoutParams = noPlayerView.getLayoutParams();
+                    layoutParams.height = currentValue;
+                    noPlayerView.setLayoutParams(layoutParams);
+                }
+            });
+            return heightAnimator;
+        }
+
+        private ValueAnimator createWidthAnimator(final View noPlayerView) {
+            int halfPlayerViewWidth = (int) (noPlayerView.getMeasuredWidth() * 0.5);
+            ValueAnimator widthAnimator = ValueAnimator.ofInt(noPlayerView.getMeasuredWidth(), halfPlayerViewWidth);
+            widthAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int currentValue = (Integer) animation.getAnimatedValue();
+                    ViewGroup.LayoutParams layoutParams = noPlayerView.getLayoutParams();
+                    layoutParams.width = currentValue;
+                    noPlayerView.setLayoutParams(layoutParams);
+                }
+            });
+            return widthAnimator;
         }
     };
 
