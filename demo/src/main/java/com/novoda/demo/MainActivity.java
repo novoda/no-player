@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -173,8 +174,8 @@ public class MainActivity extends Activity {
 
             AnimatorSet animatorSet = new AnimatorSet();
             animatorSet.playTogether(shrinkAnimator, translationXAnimator, translationYAnimator);
-            animatorSet.setInterpolator(new LinearInterpolator());
-            animatorSet.setDuration(2000);
+            animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
+            animatorSet.setDuration(getResources().getInteger(R.integer.animation_duration_millis));
             animatorSet.start();
         }
 

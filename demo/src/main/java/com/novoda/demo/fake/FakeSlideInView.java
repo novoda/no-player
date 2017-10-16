@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -74,8 +75,8 @@ public class FakeSlideInView extends FrameLayout {
         moreThingsContainer.setTranslationX(getWidth());
         moreThingsContainer.setVisibility(VISIBLE);
         moreThingsContainer.animate().translationX(translationXForPeekMode())
-        .setDuration(2000)
-        .setInterpolator(new LinearInterpolator());
+                .setDuration(getResources().getInteger(R.integer.animation_duration_millis))
+                .setInterpolator(new AccelerateDecelerateInterpolator());
         updateButtonWithExpandAction();
         setDismissPeekViewClickListener();
     }
@@ -128,7 +129,8 @@ public class FakeSlideInView extends FrameLayout {
 
     private void dismissPeekView() {
         int parentWidth = getWidth();
-        moreThingsContainer.animate().translationX(parentWidth);
+        moreThingsContainer.animate().translationX(parentWidth)
+                .setDuration(getResources().getInteger(R.integer.animation_duration_millis));
         removeDismissPeekViewClickListener();
     }
 
