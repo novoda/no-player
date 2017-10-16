@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -46,6 +45,7 @@ public class FakeSlideInView extends FrameLayout {
                 if (moreThingsContainer.getTranslationX() != translationXForPeekMode()) {
                     return false;
                 }
+                callback.onPeekViewDismissed();
                 showExpandedView();
                 return true;
             }
@@ -71,7 +71,13 @@ public class FakeSlideInView extends FrameLayout {
         );
     }
 
-    public void animateOut() {
+    public interface Callback {
+        void onPeekViewDismissed();
+    }
+
+    public void animateOut(Callback callback) {
+        this.callback = callback;
+
         moreThingsContainer.setTranslationX(getWidth());
         moreThingsContainer.setVisibility(VISIBLE);
         moreThingsContainer.animate().translationX(translationXForPeekMode())
@@ -107,11 +113,17 @@ public class FakeSlideInView extends FrameLayout {
         removeDismissPeekViewClickListener();
     }
 
+    @Nullable
+    private Callback callback;
+
     private void setDismissPeekViewClickListener() {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismissPeekView();
+                if (callback != null) {
+                    callback.onPeekViewDismissed();
+                }
             }
         });
     }

@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -55,7 +54,7 @@ public class MainActivity extends Activity {
 
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
-        animationButton.setOnClickListener(animateVideo);
+        animationButton.setOnClickListener(onClickAnimate);
 
         player = new PlayerBuilder()
                 .withDowngradedSecureDecoder()
@@ -161,45 +160,44 @@ public class MainActivity extends Activity {
         }
     };
 
-    private final View.OnClickListener animateVideo = new View.OnClickListener() {
+    private final View.OnClickListener onClickAnimate = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            fakeSlideInView.animateOut();
-
-            final View noPlayerView = (View) playerView;
-            ValueAnimator shrinkAnimator = createShrinkAnimator(noPlayerView);
-
-            ObjectAnimator translationXAnimator = ObjectAnimator.ofFloat(noPlayerView, View.X, noPlayerView.getX(), 0f);
-            ObjectAnimator translationYAnimator = ObjectAnimator.ofFloat(noPlayerView, View.Y, noPlayerView.getY(), 0f);
-
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.playTogether(shrinkAnimator, translationXAnimator, translationYAnimator);
-            animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
-            animatorSet.setDuration(getResources().getInteger(R.integer.animation_duration_millis));
-            animatorSet.start();
-        }
-
-        private ValueAnimator createShrinkAnimator(final View noPlayerView) {
-            int initialWidth = noPlayerView.getMeasuredWidth();
-            int desiredWidth = initialWidth - getResources().getDimensionPixelSize(R.dimen.peek_width);
-
-            ValueAnimator shrinkAnimator = ValueAnimator.ofFloat(1f, 1f * desiredWidth / initialWidth);
-            final int startingHeight = noPlayerView.getMeasuredHeight();
-            final int startingWidth = initialWidth;
-
-            shrinkAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    float currentValue = (Float) animation.getAnimatedValue();
-                    ViewGroup.LayoutParams layoutParams = noPlayerView.getLayoutParams();
-                    layoutParams.height = (int) (startingHeight * currentValue);
-                    layoutParams.width = (int) (startingWidth * currentValue);
-                    noPlayerView.setLayoutParams(layoutParams);
-                }
-            });
-            return shrinkAnimator;
+            foooScaleDown();
+            animateExpandMoreThingsView();
         }
     };
+
+    private void foooScaleDown() {
+        View noPlayerView = (View) playerView;
+        int initialWidth = noPlayerView.getMeasuredWidth();
+        int desiredWidth = initialWidth - getResources().getDimensionPixelSize(R.dimen.peek_width);
+        noPlayerView.setPivotX(0);
+        noPlayerView.setPivotY(0);
+        float value = 1f * desiredWidth / initialWidth;
+        noPlayerView.animate()
+                .setDuration(getResources().getInteger(R.integer.animation_duration_millis))
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .scaleX(value)
+                .scaleY(value);
+    }
+
+    private void foooScaleUp() {
+        ((View) playerView).animate()
+                .setDuration(getResources().getInteger(R.integer.animation_duration_millis))
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .scaleX(1f)
+                .scaleY(1f);
+    }
+
+    private void animateExpandMoreThingsView() {
+        fakeSlideInView.animateOut(new FakeSlideInView.Callback() {
+            @Override
+            public void onPeekViewDismissed() {
+                foooScaleUp();
+            }
+        });
+    }
 
     @Override
     protected void onStop() {
