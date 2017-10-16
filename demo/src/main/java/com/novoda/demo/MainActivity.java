@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -166,7 +165,7 @@ public class MainActivity extends Activity {
         public void onClick(View v) {
             fakeSlideInView.animateOut();
 
-            final View noPlayerView = playerView.getContainerView();
+            final View noPlayerView = (View) playerView;
             ValueAnimator shrinkAnimator = createShrinkAnimator(noPlayerView);
 
             ObjectAnimator translationXAnimator = ObjectAnimator.ofFloat(noPlayerView, View.X, noPlayerView.getX(), 0f);
@@ -180,9 +179,12 @@ public class MainActivity extends Activity {
         }
 
         private ValueAnimator createShrinkAnimator(final View noPlayerView) {
-            ValueAnimator shrinkAnimator = ValueAnimator.ofFloat(1f, 0.5f);
+            int initialWidth = noPlayerView.getMeasuredWidth();
+            int desiredWidth = initialWidth - getResources().getDimensionPixelSize(R.dimen.peek_width);
+
+            ValueAnimator shrinkAnimator = ValueAnimator.ofFloat(1f, 1f * desiredWidth / initialWidth);
             final int startingHeight = noPlayerView.getMeasuredHeight();
-            final int startingWidth = noPlayerView.getMeasuredWidth();
+            final int startingWidth = initialWidth;
 
             shrinkAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
