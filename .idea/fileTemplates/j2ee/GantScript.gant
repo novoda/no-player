@@ -1,3 +1,0 @@
-target('default': 'The default target') {
-  
-}

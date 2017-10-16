@@ -10,10 +10,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.novoda.demo.fake.FakeSlideInView;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerBuilder;
@@ -38,6 +40,7 @@ public class MainActivity extends Activity {
 
     private NoPlayer player;
     private PlayerView playerView;
+    private FakeSlideInView fakeSlideInView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class MainActivity extends Activity {
         View audioSelectionButton = findViewById(R.id.button_audio_selection);
         View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
         View animationButton = findViewById(R.id.button_animation);
+        fakeSlideInView = (FakeSlideInView) findViewById(R.id.fake_slide_in_view);
 
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
@@ -160,6 +164,8 @@ public class MainActivity extends Activity {
     private final View.OnClickListener animateVideo = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            fakeSlideInView.animateOut();
+
             final View noPlayerView = playerView.getContainerView();
             ValueAnimator shrinkAnimator = createShrinkAnimator(noPlayerView);
 

@@ -1,57 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  xmlns:tools="http://schemas.android.com/tools">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <android.support.constraint.ConstraintLayout
+  <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    tools:layout_editor_absoluteY="0dp"
-    tools:layout_editor_absoluteX="0dp">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+      <Button
+        android:id="@+id/button_audio_selection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Audio" />
+
+      <Button
+        android:id="@+id/button_subtitle_selection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Subtitle" />
+
+      <Button
+        android:id="@+id/button_animation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Animate" />
+
+    </LinearLayout>
 
     <com.novoda.noplayer.NoPlayerView
       android:id="@+id/player_view"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:layout_marginTop="8dp"
-      android:layout_marginLeft="0dp"
-      android:layout_marginRight="0dp"
-      app:layout_constraintTop_toBottomOf="@+id/button_subtitle_selection"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintRight_toRightOf="parent" />
+      android:layout_gravity="center" />
 
-    <Button
-      android:id="@+id/button_audio_selection"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
-      android:layout_marginLeft="8dp"
-      android:text="Audio"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintLeft_toLeftOf="parent" />
+  </LinearLayout>
 
-    <Button
-      android:id="@+id/button_subtitle_selection"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
-      android:layout_marginLeft="8dp"
-      android:text="Subtitle"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintLeft_toRightOf="@+id/button_audio_selection" />
-
-    <Button
-      android:id="@+id/button_animation"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
-      android:layout_marginLeft="8dp"
-      android:text="Animate"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintLeft_toRightOf="@+id/button_subtitle_selection" />
-
-  </android.support.constraint.ConstraintLayout>
+  <com.novoda.demo.fake.FakeSlideInView
+    android:id="@+id/fake_slide_in_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
 
 </merge>

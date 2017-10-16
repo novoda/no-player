@@ -1,5 +1,0 @@
-import junit.framework.TestCase;
-
-public class ${NAME} extends TestCase {
-  ${BODY}
-}
