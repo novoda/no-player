@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -163,46 +164,34 @@ public class MainActivity extends Activity {
         @Override
         public void onClick(View v) {
             final View noPlayerView = playerView.getContainerView();
-            ValueAnimator heightAnimator = createHeightAnimator(noPlayerView);
-            ValueAnimator widthAnimator = createWidthAnimator(noPlayerView);
+            ValueAnimator shrinkAnimator = createShrinkAnimator(noPlayerView);
 
-            ObjectAnimator translationYAnimator = ObjectAnimator.ofFloat(noPlayerView, "y", 0f);
-            ObjectAnimator translationXAnimator = ObjectAnimator.ofFloat(noPlayerView, "x", 0f);
+            ObjectAnimator translationXAnimator = ObjectAnimator.ofFloat(noPlayerView, View.X, noPlayerView.getX(), 0f);
+            ObjectAnimator translationYAnimator = ObjectAnimator.ofFloat(noPlayerView, View.Y, noPlayerView.getY(), 0f);
 
             AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.playTogether(heightAnimator, widthAnimator, translationXAnimator, translationYAnimator);
+            animatorSet.playTogether(shrinkAnimator, translationXAnimator, translationYAnimator);
+            animatorSet.setInterpolator(new LinearInterpolator());
             animatorSet.setDuration(2000);
             animatorSet.start();
         }
 
-        private ValueAnimator createHeightAnimator(final View noPlayerView) {
-            int halfPlayerViewHeight = (int) (noPlayerView.getMeasuredHeight() * 0.5);
-            ValueAnimator heightAnimator = ValueAnimator.ofInt(noPlayerView.getMeasuredHeight(), halfPlayerViewHeight);
-            heightAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    int currentValue = (Integer) animation.getAnimatedValue();
-                    ViewGroup.LayoutParams layoutParams = noPlayerView.getLayoutParams();
-                    layoutParams.height = currentValue;
-                    noPlayerView.setLayoutParams(layoutParams);
-                }
-            });
-            return heightAnimator;
-        }
+        private ValueAnimator createShrinkAnimator(final View noPlayerView) {
+            ValueAnimator shrinkAnimator = ValueAnimator.ofFloat(1f, 0.5f);
+            final int startingHeight = noPlayerView.getMeasuredHeight();
+            final int startingWidth = noPlayerView.getMeasuredWidth();
 
-        private ValueAnimator createWidthAnimator(final View noPlayerView) {
-            int halfPlayerViewWidth = (int) (noPlayerView.getMeasuredWidth() * 0.5);
-            ValueAnimator widthAnimator = ValueAnimator.ofInt(noPlayerView.getMeasuredWidth(), halfPlayerViewWidth);
-            widthAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            shrinkAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    int currentValue = (Integer) animation.getAnimatedValue();
+                    float currentValue = (Float) animation.getAnimatedValue();
                     ViewGroup.LayoutParams layoutParams = noPlayerView.getLayoutParams();
-                    layoutParams.width = currentValue;
+                    layoutParams.height = (int) (startingHeight * currentValue);
+                    layoutParams.width = (int) (startingWidth * currentValue);
                     noPlayerView.setLayoutParams(layoutParams);
                 }
             });
-            return widthAnimator;
+            return shrinkAnimator;
         }
     };
 
