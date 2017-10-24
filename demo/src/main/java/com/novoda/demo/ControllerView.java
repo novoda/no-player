@@ -16,8 +16,15 @@ public interface ControllerView {
 
     void setTogglePlayPauseAction(TogglePlayPauseAction togglePlayPauseAction);
 
+    void setSeekAction(SeekAction seekAction);
+
     interface TogglePlayPauseAction {
 
         void perform();
+    }
+
+    interface SeekAction {
+
+        void perform(int progress, int max);
     }
 }

@@ -33,6 +33,7 @@ class DemoPresenter {
         listeners.addHeartbeatCallback(updateControllerView());
 
         controllerView.setTogglePlayPauseAction(onTogglePlayPause);
+        controllerView.setSeekAction(onSeekPerformed);
 
         noPlayer.attach(playerView);
         noPlayer.loadVideo(uri, contentType);
@@ -108,6 +109,20 @@ class DemoPresenter {
             }
         }
     };
+
+    private final ControllerView.SeekAction onSeekPerformed = new ControllerView.SeekAction() {
+        @Override
+        public void perform(int progress, int max) {
+            VideoPosition seekToPosition = calculateSeekToPosition(progress, max);
+            noPlayer.seekTo(seekToPosition);
+        }
+    };
+
+    private VideoPosition calculateSeekToPosition(int progress, int max) {
+        VideoDuration duration = noPlayer.getMediaDuration();
+        float progressMultiplier = (float) progress / max;
+        return duration.positionAtPercentage(progressMultiplier);
+    }
 
     void stopPresenting() {
         noPlayer.stop();

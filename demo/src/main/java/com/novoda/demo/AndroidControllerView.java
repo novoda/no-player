@@ -84,4 +84,26 @@ public class AndroidControllerView extends LinearLayout implements ControllerVie
             }
         });
     }
+
+    @Override
+    public void setSeekAction(final SeekAction seekAction) {
+        progressView.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Not required.
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Not required.
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                int max = seekBar.getMax();
+                seekAction.perform(progress, max);
+            }
+        });
+    }
 }
