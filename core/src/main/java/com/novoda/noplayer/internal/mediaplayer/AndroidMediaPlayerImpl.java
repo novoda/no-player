@@ -311,6 +311,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
+    public PlayerVideoTrack getSelectedVideoTrack() throws IllegalStateException {
+        return mediaPlayer.getSelectedVideoTrack();
+    }
+
+    @Override
     public List<PlayerVideoTrack> getVideoTracks() throws IllegalStateException {
         return mediaPlayer.getVideoTracks();
     }

@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
+import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.model.AudioTracks;
@@ -251,6 +252,12 @@ class AndroidMediaPlayerFacade {
         if (!playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             throw new IllegalStateException("Video must be loaded and not in an error state before trying to interact with the player");
         }
+    }
+
+    PlayerVideoTrack getSelectedVideoTrack() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to get the currently playing video track but has not been implemented for MediaPlayer.");
+        return new PlayerVideoTrack(ContentType.DASH, 0, 0, 0, 0);
     }
 
     List<PlayerVideoTrack> getVideoTracks() {

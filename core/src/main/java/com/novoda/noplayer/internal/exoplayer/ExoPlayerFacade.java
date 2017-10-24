@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -132,6 +133,12 @@ class ExoPlayerFacade {
     AudioTracks getAudioTracks() throws IllegalStateException {
         assertVideoLoaded();
         return audioTrackSelector.getAudioTracks(rendererTypeRequester);
+    }
+
+    PlayerVideoTrack getSelectedVideoTrack() {
+        assertVideoLoaded();
+        Format videoFormat = exoPlayer.getVideoFormat();
+        return new PlayerVideoTrack(ContentType.H264, videoFormat.width, videoFormat.height, (int) videoFormat.frameRate, videoFormat.bitrate);
     }
 
     List<PlayerVideoTrack> getVideoTracks() {
