@@ -1,5 +1,6 @@
 package com.novoda.demo;
 
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
 
@@ -9,9 +10,11 @@ public class ControllerPresenter {
     private static final int MAX_PROGRESS_PERCENT = 100;
 
     private final ControllerView controllerView;
+    private final NoPlayer noPlayer;
 
-    public ControllerPresenter(ControllerView controllerView) {
+    public ControllerPresenter(ControllerView controllerView, NoPlayer noPlayer) {
         this.controllerView = controllerView;
+        this.noPlayer = noPlayer;
     }
 
     public void update(VideoPosition position, VideoDuration duration, int bufferPercentage) {
@@ -23,7 +26,11 @@ public class ControllerPresenter {
     private final ControllerView.TogglePlayPauseAction onTogglePlayPause = new ControllerView.TogglePlayPauseAction() {
         @Override
         public void perform() {
-            // Check current state and perform toggle.
+            if (noPlayer.isPlaying()) {
+                noPlayer.pause();
+            } else {
+                noPlayer.play();
+            }
         }
     };
 
