@@ -5,10 +5,8 @@ import android.util.AttributeSet;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.TextCues;
 
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
@@ -20,7 +18,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     private SurfaceView surfaceView;
     private SubtitleView subtitleView;
     private View shutterView;
-    private TextView videoFormatInformation;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -36,7 +33,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
-        videoFormatInformation = (TextView) findViewById(R.id.video_format_information);
         videoFrame = (AspectRatioFrameLayout) findViewById(R.id.video_frame);
         shutterView = findViewById(R.id.shutter);
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
@@ -67,12 +63,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     @Override
     public NoPlayer.StateChangedListener getStateChangedListener() {
         return stateChangedListener;
-    }
-
-    @Override
-    public void updateVideoFormat(PlayerVideoTrack videoFormat) {
-        videoFormatInformation.setText(videoFormat.contentType() + " " + videoFormat.height() + "p " + videoFormat.fps() + "fps " + (videoFormat.bitrate() / 1000) + "kbps");
-        videoFormatInformation.setVisibility(VISIBLE);
     }
 
     @Override
