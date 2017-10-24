@@ -57,6 +57,8 @@ public class MainActivity extends Activity {
                 .withDowngradedSecureDecoder()
                 .build(this);
 
+        final ControllerPresenter controllerPresenter = new ControllerPresenter(controllerView, player);
+
         Listeners playerListeners = player.getListeners();
         playerListeners.addPreparedListener(new NoPlayer.PreparedListener() {
             @Override
@@ -64,20 +66,28 @@ public class MainActivity extends Activity {
                 player.play();
             }
         });
+
         playerListeners.addStateChangedListener(new NoPlayer.StateChangedListener() {
             @Override
             public void onVideoPlaying() {
-                controllerView.setPlaying();
+                controllerPresenter.onVideoPlaying();
             }
 
             @Override
             public void onVideoPaused() {
-                controllerView.setPaused();
+                controllerPresenter.onVideoPaused();
             }
 
             @Override
             public void onVideoStopped() {
 
+            }
+        });
+
+        playerListeners.addHeartbeatCallback(new NoPlayer.HeartbeatCallback() {
+            @Override
+            public void onBeat(NoPlayer player) {
+                controllerPresenter.update(player.getPlayheadPosition(), player.getMediaDuration(), player.getBufferPercentage());
             }
         });
 
