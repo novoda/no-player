@@ -433,7 +433,7 @@ public class AndroidMediaPlayerImplTest {
         public void whenLoadingVideo_thenPreparesVideo() {
             player.loadVideo(URI, ContentType.HLS);
 
-            verify(mediaPlayer).prepareVideo(URI, surfaceHolder);
+            verify(mediaPlayer).prepareVideo(URI, surfaceHolder, ContentType.HLS);
         }
 
         @Test
@@ -447,7 +447,7 @@ public class AndroidMediaPlayerImplTest {
         public void whenLoadingVideoWithTimeout_thenPreparesVideo() {
             player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(mediaPlayer).prepareVideo(URI, surfaceHolder);
+            verify(mediaPlayer).prepareVideo(URI, surfaceHolder, ContentType.HLS);
         }
 
         @Test

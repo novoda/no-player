@@ -40,6 +40,7 @@ class AndroidMediaPlayerFacade {
     private int currentBufferPercentage;
 
     private MediaPlayerCreator mediaPlayerCreator;
+    private ContentType contentType;
 
     static AndroidMediaPlayerFacade newInstance(Context context, MediaPlayerForwarder forwarder) {
         TrackInfosFactory trackInfosFactory = new TrackInfosFactory();
@@ -64,11 +65,12 @@ class AndroidMediaPlayerFacade {
         this.mediaPlayerCreator = mediaPlayerCreator;
     }
 
-    void prepareVideo(Uri videoUri, SurfaceHolder surfaceHolder) {
+    void prepareVideo(Uri videoUri, SurfaceHolder surfaceHolder, ContentType contentType) {
         requestAudioFocus();
         release();
         try {
             currentState = PlaybackState.PREPARING;
+            this.contentType = contentType;
             mediaPlayer = createAndBindMediaPlayer(surfaceHolder, videoUri);
             mediaPlayer.prepareAsync();
         } catch (IOException | IllegalArgumentException | IllegalStateException ex) {
@@ -257,7 +259,7 @@ class AndroidMediaPlayerFacade {
     PlayerVideoTrack getSelectedVideoTrack() {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to get the currently playing video track but has not been implemented for MediaPlayer.");
-        return new PlayerVideoTrack(ContentType.DASH, 0, 0, 0, 0);
+        return new PlayerVideoTrack(contentType, 0, 0, 0, 0);
     }
 
     List<PlayerVideoTrack> getVideoTracks() {

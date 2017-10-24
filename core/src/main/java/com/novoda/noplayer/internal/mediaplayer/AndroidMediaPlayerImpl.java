@@ -199,7 +199,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
-    public void loadVideo(final Uri uri, ContentType contentType) {
+    public void loadVideo(final Uri uri, final ContentType contentType) {
         if (mediaPlayer.hasPlayedContent()) {
             stop();
         }
@@ -209,7 +209,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         requestSurface(new SurfaceHolderRequester.Callback() {
             @Override
             public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                mediaPlayer.prepareVideo(uri, surfaceHolder);
+                mediaPlayer.prepareVideo(uri, surfaceHolder, contentType);
             }
         });
     }

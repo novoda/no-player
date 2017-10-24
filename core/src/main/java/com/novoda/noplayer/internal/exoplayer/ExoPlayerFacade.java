@@ -40,6 +40,8 @@ class ExoPlayerFacade {
     private SimpleExoPlayer exoPlayer;
     @Nullable
     private RendererTypeRequester rendererTypeRequester;
+    @Nullable
+    private ContentType contentType;
 
     ExoPlayerFacade(MediaSourceFactory mediaSourceFactory,
                     ExoPlayerAudioTrackSelector audioTrackSelector,
@@ -107,6 +109,7 @@ class ExoPlayerFacade {
                    ContentType contentType,
                    ExoPlayerForwarder forwarder,
                    MediaCodecSelector mediaCodecSelector) {
+        this.contentType = contentType;
         exoPlayer = exoPlayerCreator.create(drmSessionCreator, forwarder.drmSessionEventListener(), mediaCodecSelector);
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
@@ -138,12 +141,12 @@ class ExoPlayerFacade {
     PlayerVideoTrack getSelectedVideoTrack() {
         assertVideoLoaded();
         Format videoFormat = exoPlayer.getVideoFormat();
-        return new PlayerVideoTrack(ContentType.H264, videoFormat.width, videoFormat.height, (int) videoFormat.frameRate, videoFormat.bitrate);
+        return new PlayerVideoTrack(contentType, videoFormat.width, videoFormat.height, (int) videoFormat.frameRate, videoFormat.bitrate);
     }
 
     List<PlayerVideoTrack> getVideoTracks() {
         assertVideoLoaded();
-        return exoPlayerVideoTrackSelector.getVideoTracks(rendererTypeRequester);
+        return exoPlayerVideoTrackSelector.getVideoTracks(rendererTypeRequester, contentType);
     }
 
     void setSubtitleRendererOutput(TextRendererOutput textRendererOutput) throws IllegalStateException {

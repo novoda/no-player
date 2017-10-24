@@ -21,7 +21,7 @@ public class ExoPlayerVideoTrackSelector {
         this.trackSelector = trackSelector;
     }
 
-    public List<PlayerVideoTrack> getVideoTracks(RendererTypeRequester rendererTypeRequester) {
+    public List<PlayerVideoTrack> getVideoTracks(RendererTypeRequester rendererTypeRequester, ContentType contentType) {
         TrackGroupArray trackGroups = trackSelector.trackGroups(VIDEO, rendererTypeRequester);
 
         List<PlayerVideoTrack> videoTracks = new ArrayList<>();
@@ -34,7 +34,7 @@ public class ExoPlayerVideoTrackSelector {
                     Format format = trackGroup.getFormat(formatIndex);
 
                     PlayerVideoTrack playerVideoTrack = new PlayerVideoTrack(
-                            ContentType.HLS,
+                            contentType,
                             format.width,
                             format.height,
                             (int) format.frameRate,
