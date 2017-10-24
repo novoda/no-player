@@ -37,7 +37,7 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center" />
 
-    <com.novoda.demo.controller.AndroidControllerView
+    <com.novoda.demo.AndroidControllerView
       android:id="@+id/controller_view"
       android:layout_width="match_parent"
       android:layout_height="48dp"

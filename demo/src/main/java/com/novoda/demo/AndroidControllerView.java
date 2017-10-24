@@ -1,4 +1,4 @@
-package com.novoda.demo.controller;
+package com.novoda.demo;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.novoda.demo.R;
 import com.novoda.notils.exception.DeveloperError;
 
 public class AndroidControllerView extends LinearLayout implements ControllerView {

@@ -1,4 +1,4 @@
-package com.novoda.demo.controller;
+package com.novoda.demo;
 
 public interface ControllerView {
 

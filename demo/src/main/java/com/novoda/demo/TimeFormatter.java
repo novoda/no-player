@@ -1,4 +1,4 @@
-package com.novoda.demo.controller;
+package com.novoda.demo;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;

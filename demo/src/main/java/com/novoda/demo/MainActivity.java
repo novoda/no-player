@@ -9,14 +9,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.novoda.demo.controller.ControllerFactory;
-import com.novoda.demo.controller.ControllerPresenter;
-import com.novoda.demo.controller.ControllerView;
 import com.novoda.noplayer.ContentType;
-import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerBuilder;
-import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
@@ -37,6 +32,7 @@ public class MainActivity extends Activity {
     private static final String EXAMPLE_MODULAR_LICENSE_SERVER_PROXY = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
 
     private NoPlayer player;
+    private DemoPresenter demoPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,41 +56,7 @@ public class MainActivity extends Activity {
                 .withDowngradedSecureDecoder()
                 .build(this);
 
-        final ControllerPresenter controllerPresenter = ControllerFactory.createControllerPresenter(controllerView, player);
-
-        Listeners playerListeners = player.getListeners();
-        playerListeners.addPreparedListener(new NoPlayer.PreparedListener() {
-            @Override
-            public void onPrepared(PlayerState playerState) {
-                player.play();
-            }
-        });
-
-        playerListeners.addStateChangedListener(new NoPlayer.StateChangedListener() {
-            @Override
-            public void onVideoPlaying() {
-                controllerPresenter.onVideoPlaying();
-            }
-
-            @Override
-            public void onVideoPaused() {
-                controllerPresenter.onVideoPaused();
-            }
-
-            @Override
-            public void onVideoStopped() {
-
-            }
-        });
-
-        playerListeners.addHeartbeatCallback(new NoPlayer.HeartbeatCallback() {
-            @Override
-            public void onBeat(NoPlayer player) {
-                controllerPresenter.update(player.getPlayheadPosition(), player.getMediaDuration(), player.getBufferPercentage());
-            }
-        });
-
-        player.attach(playerView);
+        demoPresenter = new DemoPresenter(controllerView, player, player.getListeners(), playerView);
     }
 
     @Override
@@ -102,7 +64,7 @@ public class MainActivity extends Activity {
         super.onStart();
         // TODO: Add switch in UI to avoid redeploy.
         Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
-        player.loadVideo(uri, ContentType.DASH);
+        demoPresenter.startPresenting(uri, ContentType.DASH);
     }
 
     private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {
@@ -221,16 +183,4 @@ public class MainActivity extends Activity {
             return labels;
         }
     };
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        player.stop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        player.release();
-    }
 }
