@@ -1,10 +1,10 @@
-package com.novoda.demo;
+package com.novoda.demo.controller;
 
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
 
-class ControllerPresenter {
+public class ControllerPresenter {
 
     private static final int MAX_PROGRESS_INCREMENTS = 1000;
     private static final int MAX_PROGRESS_PERCENT = 100;
@@ -12,20 +12,20 @@ class ControllerPresenter {
     private final ControllerView controllerView;
     private final NoPlayer noPlayer;
 
-    ControllerPresenter(ControllerView controllerView, NoPlayer noPlayer) {
+    public ControllerPresenter(ControllerView controllerView, NoPlayer noPlayer) {
         this.controllerView = controllerView;
         this.noPlayer = noPlayer;
     }
 
-    void onVideoPlaying() {
+    public void onVideoPlaying() {
         controllerView.setPlaying();
     }
 
-    void onVideoPaused() {
+    public void onVideoPaused() {
         controllerView.setPaused();
     }
 
-    void update(VideoPosition position, VideoDuration duration, int bufferPercentage) {
+    public void update(VideoPosition position, VideoDuration duration, int bufferPercentage) {
         updateProgress(position, duration, bufferPercentage);
         updateTiming(position, duration);
         controllerView.setTogglePlayPauseAction(onTogglePlayPause);

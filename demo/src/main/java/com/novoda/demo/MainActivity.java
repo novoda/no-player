@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.novoda.demo.controller.ControllerPresenter;
+import com.novoda.demo.controller.ControllerView;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
