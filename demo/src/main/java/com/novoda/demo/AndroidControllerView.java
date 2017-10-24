@@ -47,12 +47,12 @@ public class AndroidControllerView extends LinearLayout implements ControllerVie
 
     @Override
     public void setPaused() {
-        playPauseButton.setImageResource(R.drawable.pause);
+        playPauseButton.setImageResource(R.drawable.play);
     }
 
     @Override
     public void setPlaying() {
-        playPauseButton.setImageResource(R.drawable.play);
+        playPauseButton.setImageResource(R.drawable.pause);
     }
 
     @Override
