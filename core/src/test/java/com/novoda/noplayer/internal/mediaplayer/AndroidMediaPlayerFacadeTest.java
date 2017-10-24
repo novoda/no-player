@@ -541,6 +541,26 @@ public class AndroidMediaPlayerFacadeTest {
         facade.setOnSeekCompleteListener(mock(MediaPlayer.OnSeekCompleteListener.class));
     }
 
+    @Test
+    public void givenMediaPlayerIsNotInPlaybackState_whenGettingVideoTracks_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
+        given(playbackStateChecker.isPlaying(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
+                .willReturn(IS_PLAYING);
+
+        facade.getVideoTracks();
+    }
+
+    @Test
+    public void givenMediaPlayerIsNotInPlaybackState_whenGettingSelectedVideoTrack_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
+        given(playbackStateChecker.isPlaying(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
+                .willReturn(IS_PLAYING);
+
+        facade.getSelectedVideoTrack();
+    }
+
     private void givenMediaPlayerIsPrepared() {
         facade.prepareVideo(ANY_URI, surfaceHolder, ContentType.HLS);
         ArgumentCaptor<MediaPlayer.OnPreparedListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnPreparedListener.class);
