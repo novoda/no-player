@@ -82,10 +82,8 @@ class DemoPresenter {
     }
 
     private void updateProgress(VideoPosition position, VideoDuration duration, int bufferPercentage) {
-        double percentageOfDuration = position.asPercentageOf(duration);
-        int progressAsIncrements = (int) (MAX_PROGRESS_INCREMENTS * percentageOfDuration);
-
-        int bufferAsIncrements = (bufferPercentage * MAX_PROGRESS_INCREMENTS) / MAX_PROGRESS_PERCENT;
+        int progressAsIncrements = ProgressCalculator.progressAsIncrements(position, duration);
+        int bufferAsIncrements = ProgressCalculator.bufferAsIncrements(bufferPercentage);
 
         controllerView.updateContentProgress(progressAsIncrements);
         controllerView.updateBufferProgress(bufferAsIncrements);
