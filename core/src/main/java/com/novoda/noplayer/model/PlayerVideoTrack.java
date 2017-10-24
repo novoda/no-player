@@ -5,13 +5,15 @@ import com.novoda.noplayer.ContentType;
 public class PlayerVideoTrack {
 
     private final ContentType contentType;
-    private final int quality;
+    private final int width;
+    private final int height;
     private final int fps;
     private final int bitrate;
 
-    public PlayerVideoTrack(ContentType contentType, int quality, int fps, int bitrate) {
+    public PlayerVideoTrack(ContentType contentType, int width, int height, int fps, int bitrate) {
         this.contentType = contentType;
-        this.quality = quality;
+        this.width = width;
+        this.height = height;
         this.fps = fps;
         this.bitrate = bitrate;
     }
@@ -20,8 +22,12 @@ public class PlayerVideoTrack {
         return contentType;
     }
 
-    public int quality() {
-        return quality;
+    public int width() {
+        return width;
+    }
+
+    public int height() {
+        return height;
     }
 
     public int fps() {
@@ -43,10 +49,13 @@ public class PlayerVideoTrack {
 
         PlayerVideoTrack that = (PlayerVideoTrack) o;
 
-        if (quality != that.quality) {
+        if (width != that.width) {
             return false;
         }
-        if (Float.compare(that.fps, fps) != 0) {
+        if (height != that.height) {
+            return false;
+        }
+        if (fps != that.fps) {
             return false;
         }
         if (bitrate != that.bitrate) {
@@ -58,8 +67,9 @@ public class PlayerVideoTrack {
     @Override
     public int hashCode() {
         int result = contentType != null ? contentType.hashCode() : 0;
-        result = 31 * result + quality;
-        result = 31 * result + (fps != +0.0f ? Float.floatToIntBits(fps) : 0);
+        result = 31 * result + width;
+        result = 31 * result + height;
+        result = 31 * result + fps;
         result = 31 * result + bitrate;
         return result;
     }

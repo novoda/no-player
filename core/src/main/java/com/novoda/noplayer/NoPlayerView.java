@@ -8,8 +8,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.novoda.noplayer.model.TextCues;
 import com.novoda.noplayer.model.PlayerVideoTrack;
+import com.novoda.noplayer.model.TextCues;
 
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
@@ -71,7 +71,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     @Override
     public void updateVideoFormat(PlayerVideoTrack videoFormat) {
-        videoFormatInformation.setText(videoFormat.contentType() + " " + videoFormat.quality() + "p " + videoFormat.fps() + "fps " + (videoFormat.bitrate() / 1000) + "kbps");
+        videoFormatInformation.setText(videoFormat.contentType() + " " + videoFormat.height() + "p " + videoFormat.fps() + "fps " + (videoFormat.bitrate() / 1000) + "kbps");
         videoFormatInformation.setVisibility(VISIBLE);
     }
 

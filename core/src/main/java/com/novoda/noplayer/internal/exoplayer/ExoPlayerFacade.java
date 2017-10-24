@@ -17,8 +17,8 @@ import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
-import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.PlayerVideoTrack;
+import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
 
 import java.util.List;
@@ -65,12 +65,6 @@ class ExoPlayerFacade {
     VideoDuration getMediaDuration() throws IllegalStateException {
         assertVideoLoaded();
         return VideoDuration.fromMillis(exoPlayer.getDuration());
-    }
-
-    PlayerVideoTrack getVideoFormat() {
-        assertVideoLoaded();
-        Format videoFormat = exoPlayer.getVideoFormat();
-        return new PlayerVideoTrack(contentType, videoFormat.height, (int) videoFormat.frameRate, videoFormat.bitrate);
     }
 
     int getBufferPercentage() throws IllegalStateException {
@@ -138,6 +132,12 @@ class ExoPlayerFacade {
     AudioTracks getAudioTracks() throws IllegalStateException {
         assertVideoLoaded();
         return audioTrackSelector.getAudioTracks(rendererTypeRequester);
+    }
+
+    PlayerVideoTrack getVideoTrack() {
+        assertVideoLoaded();
+        Format videoFormat = exoPlayer.getVideoFormat();
+        return new PlayerVideoTrack(contentType, videoFormat.width, videoFormat.height, (int) videoFormat.frameRate, videoFormat.bitrate);
     }
 
     void setSubtitleRendererOutput(TextRendererOutput textRendererOutput) throws IllegalStateException {

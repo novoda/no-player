@@ -11,6 +11,7 @@ import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.utils.NoPlayerLog;
 
 import java.io.IOException;
@@ -250,5 +251,9 @@ class AndroidMediaPlayerFacade {
         if (!playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             throw new IllegalStateException("Video must be loaded and not in an error state before trying to interact with the player");
         }
+    }
+
+    PlayerVideoTrack getVideoTrack() {
+        throw new IllegalStateException("Not currently supported for MediaPlayer.");
     }
 }
