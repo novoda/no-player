@@ -12,9 +12,6 @@ import com.novoda.noplayer.model.VideoPosition;
 
 class DemoPresenter {
 
-    private static final int MAX_PROGRESS_INCREMENTS = 100;
-    private static final int MAX_PROGRESS_PERCENT = 100;
-
     private final ControllerView controllerView;
     private final NoPlayer noPlayer;
     private final Listeners listeners;
@@ -90,7 +87,7 @@ class DemoPresenter {
     }
 
     private void updateTiming(VideoPosition position, VideoDuration duration) {
-        VideoDuration elapsedDuration = VideoDuration.fromMillis(position.inMillis());
+        VideoDuration elapsedDuration = VideoDuration.fromMillis(position.inMillis());  // TODO: Use VideoPosition?
         VideoDuration remainingDuration = VideoDuration.fromMillis(duration.inMillis()).minus(elapsedDuration);
 
         controllerView.updateElapsedTime(TimeFormatter.asHoursMinutesSeconds(elapsedDuration.inImpreciseSeconds()));
@@ -111,16 +108,10 @@ class DemoPresenter {
     private final ControllerView.SeekAction onSeekPerformed = new ControllerView.SeekAction() {
         @Override
         public void perform(int progress, int max) {
-            VideoPosition seekToPosition = calculateSeekToPosition(progress, max);
+            VideoPosition seekToPosition = ProgressCalculator.seekToPosition(noPlayer.getMediaDuration(), progress, max);
             noPlayer.seekTo(seekToPosition);
         }
     };
-
-    private VideoPosition calculateSeekToPosition(int progress, int max) {
-        VideoDuration duration = noPlayer.getMediaDuration();
-        float progressMultiplier = (float) progress / max;
-        return duration.positionAtPercentage(progressMultiplier);
-    }
 
     void stopPresenting() {
         noPlayer.stop();

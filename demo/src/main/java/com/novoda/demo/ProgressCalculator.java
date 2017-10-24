@@ -20,4 +20,9 @@ final class ProgressCalculator {
     static int bufferAsIncrements(int bufferPercentage) {
         return (bufferPercentage * MAX_PROGRESS_INCREMENTS) / MAX_PROGRESS_PERCENT;
     }
+
+    static VideoPosition seekToPosition(VideoDuration mediaDuration, int progress, int max) {
+        float progressMultiplier = (float) progress / max;
+        return mediaDuration.positionAtPercentage(progressMultiplier);
+    }
 }
