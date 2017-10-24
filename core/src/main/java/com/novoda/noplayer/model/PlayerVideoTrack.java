@@ -73,4 +73,15 @@ public class PlayerVideoTrack {
         result = 31 * result + bitrate;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "PlayerVideoTrack{" +
+                "contentType=" + contentType +
+                ", width=" + width +
+                ", height=" + height +
+                ", fps=" + fps +
+                ", bitrate=" + bitrate +
+                '}';
+    }
 }
