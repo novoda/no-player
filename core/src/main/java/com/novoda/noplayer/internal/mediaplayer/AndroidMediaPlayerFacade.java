@@ -259,7 +259,7 @@ class AndroidMediaPlayerFacade {
     PlayerVideoTrack getSelectedVideoTrack() {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to get the currently playing video track but has not been implemented for MediaPlayer.");
-        return new PlayerVideoTrack(contentType, 0, 0, 0, 0);
+        return new PlayerVideoTrack("n/a", contentType, 0, 0, 0, 0);
     }
 
     List<PlayerVideoTrack> getVideoTracks() {

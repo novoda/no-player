@@ -140,8 +140,15 @@ class ExoPlayerFacade {
 
     PlayerVideoTrack getSelectedVideoTrack() {
         assertVideoLoaded();
-        Format videoFormat = exoPlayer.getVideoFormat();
-        return new PlayerVideoTrack(contentType, videoFormat.width, videoFormat.height, (int) videoFormat.frameRate, videoFormat.bitrate);
+        Format format = exoPlayer.getVideoFormat();
+        return new PlayerVideoTrack(
+                format.id,
+                contentType,
+                format.width,
+                format.height,
+                (int) format.frameRate,
+                format.bitrate
+        );
     }
 
     List<PlayerVideoTrack> getVideoTracks() {

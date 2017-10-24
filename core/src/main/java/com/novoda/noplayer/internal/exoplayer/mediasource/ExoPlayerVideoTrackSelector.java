@@ -34,6 +34,7 @@ public class ExoPlayerVideoTrackSelector {
                     Format format = trackGroup.getFormat(formatIndex);
 
                     PlayerVideoTrack playerVideoTrack = new PlayerVideoTrack(
+                            format.id,
                             contentType,
                             format.width,
                             format.height,

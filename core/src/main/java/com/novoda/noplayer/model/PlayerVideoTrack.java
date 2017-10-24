@@ -4,18 +4,24 @@ import com.novoda.noplayer.ContentType;
 
 public class PlayerVideoTrack {
 
+    private String id;
     private final ContentType contentType;
     private final int width;
     private final int height;
     private final int fps;
     private final int bitrate;
 
-    public PlayerVideoTrack(ContentType contentType, int width, int height, int fps, int bitrate) {
+    public PlayerVideoTrack(String id, ContentType contentType, int width, int height, int fps, int bitrate) {
+        this.id = id;
         this.contentType = contentType;
         this.width = width;
         this.height = height;
         this.fps = fps;
         this.bitrate = bitrate;
+    }
+
+    public String id() {
+        return id;
     }
 
     public ContentType contentType() {
@@ -61,12 +67,16 @@ public class PlayerVideoTrack {
         if (bitrate != that.bitrate) {
             return false;
         }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
         return contentType == that.contentType;
     }
 
     @Override
     public int hashCode() {
-        int result = contentType != null ? contentType.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
         result = 31 * result + width;
         result = 31 * result + height;
         result = 31 * result + fps;
@@ -77,7 +87,8 @@ public class PlayerVideoTrack {
     @Override
     public String toString() {
         return "PlayerVideoTrack{" +
-                "contentType=" + contentType +
+                "id='" + id + '\'' +
+                ", contentType=" + contentType +
                 ", width=" + width +
                 ", height=" + height +
                 ", fps=" + fps +
