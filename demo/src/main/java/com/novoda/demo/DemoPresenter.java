@@ -59,7 +59,7 @@ class DemoPresenter {
 
             @Override
             public void onVideoStopped() {
-
+                // Not required.
             }
         };
     }
@@ -87,7 +87,7 @@ class DemoPresenter {
     }
 
     private void updateTiming(VideoPosition position, VideoDuration duration) {
-        VideoDuration elapsedDuration = VideoDuration.fromMillis(position.inMillis());  // TODO: Use VideoPosition?
+        VideoDuration elapsedDuration = VideoDuration.fromMillis(position.inMillis());
         VideoDuration remainingDuration = VideoDuration.fromMillis(duration.inMillis()).minus(elapsedDuration);
 
         controllerView.updateElapsedTime(TimeFormatter.asHoursMinutesSeconds(elapsedDuration.inImpreciseSeconds()));
