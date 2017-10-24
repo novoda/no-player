@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.ContentType;
@@ -33,13 +34,15 @@ class AndroidMediaPlayerFacade {
     private final AudioManager audioManager;
     private final AndroidMediaPlayerAudioTrackSelector trackSelector;
     private final PlaybackStateChecker playbackStateChecker;
+    private final MediaPlayerCreator mediaPlayerCreator;
 
     private PlaybackState currentState = IDLE;
 
-    private MediaPlayer mediaPlayer;
     private int currentBufferPercentage;
 
-    private MediaPlayerCreator mediaPlayerCreator;
+    @Nullable
+    private MediaPlayer mediaPlayer;
+    @Nullable
     private ContentType contentType;
 
     static AndroidMediaPlayerFacade newInstance(Context context, MediaPlayerForwarder forwarder) {
