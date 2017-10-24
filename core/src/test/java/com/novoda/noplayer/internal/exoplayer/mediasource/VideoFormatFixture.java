@@ -6,7 +6,7 @@ import com.google.android.exoplayer2.drm.DrmInitData;
 import java.util.Collections;
 import java.util.List;
 
-class VideoFormatFixture {
+public class VideoFormatFixture {
 
     private String id = "id";
     private String sampleMimeType = "mime_type";
@@ -19,7 +19,7 @@ class VideoFormatFixture {
     private List<byte[]> initializationData = Collections.emptyList();
     private DrmInitData drmInitData = new DrmInitData(Collections.<DrmInitData.SchemeData>emptyList());
 
-    static VideoFormatFixture aVideoFormat() {
+    public static VideoFormatFixture aVideoFormat() {
         return new VideoFormatFixture();
     }
 
@@ -77,7 +77,7 @@ class VideoFormatFixture {
         return this;
     }
 
-    Format build() {
+    public Format build() {
         return Format.createVideoSampleFormat(
                 id,
                 sampleMimeType,
