@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -17,6 +18,7 @@ import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.VideoDuration;
+import com.novoda.noplayer.model.VideoFormat;
 import com.novoda.noplayer.model.VideoPosition;
 
 import java.util.List;
@@ -36,6 +38,8 @@ class ExoPlayerFacade {
     private SimpleExoPlayer exoPlayer;
     @Nullable
     private RendererTypeRequester rendererTypeRequester;
+    @Nullable
+    private ContentType contentType;
 
     ExoPlayerFacade(MediaSourceFactory mediaSourceFactory,
                     ExoPlayerAudioTrackSelector audioTrackSelector,
@@ -61,6 +65,12 @@ class ExoPlayerFacade {
     VideoDuration getMediaDuration() throws IllegalStateException {
         assertVideoLoaded();
         return VideoDuration.fromMillis(exoPlayer.getDuration());
+    }
+
+    VideoFormat getVideoFormat() {
+        assertVideoLoaded();
+        Format videoFormat = exoPlayer.getVideoFormat();
+        return new VideoFormat(contentType, videoFormat.width, videoFormat.frameRate, videoFormat.bitrate);
     }
 
     int getBufferPercentage() throws IllegalStateException {
@@ -101,6 +111,7 @@ class ExoPlayerFacade {
                    ContentType contentType,
                    ExoPlayerForwarder forwarder,
                    MediaCodecSelector mediaCodecSelector) {
+        this.contentType = contentType;
         exoPlayer = exoPlayerCreator.create(drmSessionCreator, forwarder.drmSessionEventListener(), mediaCodecSelector);
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());

@@ -5,11 +5,11 @@ import com.novoda.noplayer.ContentType;
 public class VideoFormat {
 
     private final ContentType contentType;
-    private final String quality;
-    private final int fps;
+    private final int quality;
+    private final float fps;
     private final int bitrate;
 
-    public VideoFormat(ContentType contentType, String quality, int fps, int bitrate) {
+    public VideoFormat(ContentType contentType, int quality, float fps, int bitrate) {
         this.contentType = contentType;
         this.quality = quality;
         this.fps = fps;
@@ -20,11 +20,11 @@ public class VideoFormat {
         return contentType;
     }
 
-    public String quality() {
+    public int quality() {
         return quality;
     }
 
-    public int fps() {
+    public float fps() {
         return fps;
     }
 
@@ -43,23 +43,23 @@ public class VideoFormat {
 
         VideoFormat that = (VideoFormat) o;
 
-        if (fps != that.fps) {
+        if (quality != that.quality) {
+            return false;
+        }
+        if (Float.compare(that.fps, fps) != 0) {
             return false;
         }
         if (bitrate != that.bitrate) {
             return false;
         }
-        if (contentType != that.contentType) {
-            return false;
-        }
-        return quality != null ? quality.equals(that.quality) : that.quality == null;
+        return contentType == that.contentType;
     }
 
     @Override
     public int hashCode() {
         int result = contentType != null ? contentType.hashCode() : 0;
-        result = 31 * result + (quality != null ? quality.hashCode() : 0);
-        result = 31 * result + fps;
+        result = 31 * result + quality;
+        result = 31 * result + (fps != +0.0f ? Float.floatToIntBits(fps) : 0);
         result = 31 * result + bitrate;
         return result;
     }
