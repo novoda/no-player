@@ -183,4 +183,10 @@ public class MainActivity extends Activity {
             return labels;
         }
     };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        demoPresenter.stopPresenting();
+    }
 }
