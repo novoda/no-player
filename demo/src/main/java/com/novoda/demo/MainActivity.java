@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.novoda.demo.controller.ControllerFactory;
 import com.novoda.demo.controller.ControllerPresenter;
 import com.novoda.demo.controller.ControllerView;
 import com.novoda.noplayer.ContentType;
@@ -59,7 +60,7 @@ public class MainActivity extends Activity {
                 .withDowngradedSecureDecoder()
                 .build(this);
 
-        final ControllerPresenter controllerPresenter = new ControllerPresenter(controllerView, player);
+        final ControllerPresenter controllerPresenter = ControllerFactory.createControllerPresenter(controllerView, player);
 
         Listeners playerListeners = player.getListeners();
         playerListeners.addPreparedListener(new NoPlayer.PreparedListener() {

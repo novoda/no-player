@@ -12,7 +12,7 @@ public class ControllerPresenter {
     private final ControllerView controllerView;
     private final NoPlayer noPlayer;
 
-    public ControllerPresenter(ControllerView controllerView, NoPlayer noPlayer) {
+    ControllerPresenter(ControllerView controllerView, NoPlayer noPlayer) {
         this.controllerView = controllerView;
         this.noPlayer = noPlayer;
     }
