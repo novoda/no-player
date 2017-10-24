@@ -26,8 +26,8 @@ class DemoPresenter {
 
     void startPresenting(Uri uri, ContentType contentType) {
         listeners.addPreparedListener(playOnPrepared());
-        listeners.addStateChangedListener(notifyControllerView());
-        listeners.addHeartbeatCallback(updateControllerView());
+        listeners.addStateChangedListener(updatePlayPause());
+        listeners.addHeartbeatCallback(updateProgress());
 
         controllerView.setTogglePlayPauseAction(onTogglePlayPause);
         controllerView.setSeekAction(onSeekPerformed);
@@ -45,7 +45,7 @@ class DemoPresenter {
         };
     }
 
-    private NoPlayer.StateChangedListener notifyControllerView() {
+    private NoPlayer.StateChangedListener updatePlayPause() {
         return new NoPlayer.StateChangedListener() {
             @Override
             public void onVideoPlaying() {
@@ -64,7 +64,7 @@ class DemoPresenter {
         };
     }
 
-    private NoPlayer.HeartbeatCallback updateControllerView() {
+    private NoPlayer.HeartbeatCallback updateProgress() {
         return new NoPlayer.HeartbeatCallback() {
             @Override
             public void onBeat(NoPlayer player) {
