@@ -71,7 +71,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     @Override
     public void updateVideoFormat(VideoFormat videoFormat) {
-        videoFormatInformation.setText(videoFormat.asString());
+        videoFormatInformation.setText(videoFormat.contentType() + " " + videoFormat.quality() + "p " + videoFormat.fps() + "fps " + (videoFormat.bitrate() / 1000) + "kbps");
         videoFormatInformation.setVisibility(VISIBLE);
     }
 

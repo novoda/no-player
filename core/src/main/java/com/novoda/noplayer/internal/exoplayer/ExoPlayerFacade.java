@@ -70,7 +70,7 @@ class ExoPlayerFacade {
     VideoFormat getVideoFormat() {
         assertVideoLoaded();
         Format videoFormat = exoPlayer.getVideoFormat();
-        return new VideoFormat(contentType, videoFormat.width, videoFormat.frameRate, videoFormat.bitrate);
+        return new VideoFormat(contentType, videoFormat.height, (int) videoFormat.frameRate, videoFormat.bitrate);
     }
 
     int getBufferPercentage() throws IllegalStateException {

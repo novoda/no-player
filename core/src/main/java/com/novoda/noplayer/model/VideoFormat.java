@@ -6,10 +6,10 @@ public class VideoFormat {
 
     private final ContentType contentType;
     private final int quality;
-    private final float fps;
+    private final int fps;
     private final int bitrate;
 
-    public VideoFormat(ContentType contentType, int quality, float fps, int bitrate) {
+    public VideoFormat(ContentType contentType, int quality, int fps, int bitrate) {
         this.contentType = contentType;
         this.quality = quality;
         this.fps = fps;
@@ -24,16 +24,12 @@ public class VideoFormat {
         return quality;
     }
 
-    public float fps() {
+    public int fps() {
         return fps;
     }
 
     public int bitrate() {
         return bitrate;
-    }
-
-    public String asString() {
-        return contentType + " " + quality + " " + fps + " " + bitrate;
     }
 
     @Override

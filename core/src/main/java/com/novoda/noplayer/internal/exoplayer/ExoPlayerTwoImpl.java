@@ -215,11 +215,17 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public void attach(PlayerView playerView) {
+    public void attach(final PlayerView playerView) {
         this.playerView = playerView;
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        listenersHolder.addVideoSizeChangedListener(new VideoSizeChangedListener() {
+            @Override
+            public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+                playerView.updateVideoFormat(exoPlayer.getVideoFormat());
+            }
+        });
     }
 
     @Override
