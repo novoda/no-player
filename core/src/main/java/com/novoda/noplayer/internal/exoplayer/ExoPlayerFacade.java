@@ -32,7 +32,7 @@ class ExoPlayerFacade {
     private final MediaSourceFactory mediaSourceFactory;
     private final ExoPlayerAudioTrackSelector audioTrackSelector;
     private final ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
-    private ExoPlayerVideoTrackSelector exoPlayerVideoTrackSelector;
+    private final ExoPlayerVideoTrackSelector exoPlayerVideoTrackSelector;
     private final ExoPlayerCreator exoPlayerCreator;
     private final RendererTypeRequesterCreator rendererTypeRequesterCreator;
 
