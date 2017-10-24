@@ -3,7 +3,7 @@ package com.novoda.noplayer;
 import android.view.View;
 
 import com.novoda.noplayer.model.TextCues;
-import com.novoda.noplayer.model.VideoFormat;
+import com.novoda.noplayer.model.PlayerVideoTrack;
 
 public interface PlayerView {
 
@@ -15,7 +15,7 @@ public interface PlayerView {
 
     NoPlayer.StateChangedListener getStateChangedListener();
 
-    void updateVideoFormat(VideoFormat videoFormat);
+    void updateVideoFormat(PlayerVideoTrack videoFormat);
 
     void showSubtitles();
 

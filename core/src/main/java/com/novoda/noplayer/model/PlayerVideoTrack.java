@@ -2,14 +2,14 @@ package com.novoda.noplayer.model;
 
 import com.novoda.noplayer.ContentType;
 
-public class VideoFormat {
+public class PlayerVideoTrack {
 
     private final ContentType contentType;
     private final int quality;
     private final int fps;
     private final int bitrate;
 
-    public VideoFormat(ContentType contentType, int quality, int fps, int bitrate) {
+    public PlayerVideoTrack(ContentType contentType, int quality, int fps, int bitrate) {
         this.contentType = contentType;
         this.quality = quality;
         this.fps = fps;
@@ -41,7 +41,7 @@ public class VideoFormat {
             return false;
         }
 
-        VideoFormat that = (VideoFormat) o;
+        PlayerVideoTrack that = (PlayerVideoTrack) o;
 
         if (quality != that.quality) {
             return false;
