@@ -1,6 +1,6 @@
 package com.novoda.demo;
 
-public interface ControllerView {
+interface ControllerView {
 
     void setPaused();
 
