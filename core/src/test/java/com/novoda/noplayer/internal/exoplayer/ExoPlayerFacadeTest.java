@@ -354,7 +354,7 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void whenGettingSelectedVideoTrack_thenDelegatesExoPlayer() {
+        public void whenGettingSelectedVideoTrack_thenDelegatesToExoPlayer() {
             given(exoPlayer.getVideoFormat()).willReturn(Format.createVideoContainerFormat(
                     PLAYER_VIDEO_TRACK.id(), "ignored", "ignored", "ignored", PLAYER_VIDEO_TRACK.bitrate(),
                     PLAYER_VIDEO_TRACK.width(), PLAYER_VIDEO_TRACK.height(), PLAYER_VIDEO_TRACK.fps(), Collections.<byte[]>emptyList(), 0
