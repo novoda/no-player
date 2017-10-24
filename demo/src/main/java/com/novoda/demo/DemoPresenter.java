@@ -12,7 +12,7 @@ import com.novoda.noplayer.model.VideoPosition;
 
 class DemoPresenter {
 
-    private static final int MAX_PROGRESS_INCREMENTS = 1000;
+    private static final int MAX_PROGRESS_INCREMENTS = 100;
     private static final int MAX_PROGRESS_PERCENT = 100;
 
     private final ControllerView controllerView;
