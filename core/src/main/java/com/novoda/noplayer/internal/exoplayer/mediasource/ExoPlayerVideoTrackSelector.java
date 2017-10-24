@@ -10,7 +10,6 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.novoda.noplayer.internal.exoplayer.mediasource.TrackType.AUDIO;
 import static com.novoda.noplayer.internal.exoplayer.mediasource.TrackType.VIDEO;
 
 public class ExoPlayerVideoTrackSelector {
@@ -27,23 +26,21 @@ public class ExoPlayerVideoTrackSelector {
         List<PlayerVideoTrack> videoTracks = new ArrayList<>();
 
         for (int groupIndex = 0; groupIndex < trackGroups.length; groupIndex++) {
-            if (trackSelector.supportsTrackSwitching(AUDIO, rendererTypeRequester, trackGroups, groupIndex)) {
-                TrackGroup trackGroup = trackGroups.get(groupIndex);
+            TrackGroup trackGroup = trackGroups.get(groupIndex);
 
-                for (int formatIndex = 0; formatIndex < trackGroup.length; formatIndex++) {
-                    Format format = trackGroup.getFormat(formatIndex);
+            for (int formatIndex = 0; formatIndex < trackGroup.length; formatIndex++) {
+                Format format = trackGroup.getFormat(formatIndex);
 
-                    PlayerVideoTrack playerVideoTrack = new PlayerVideoTrack(
-                            format.id,
-                            contentType,
-                            format.width,
-                            format.height,
-                            (int) format.frameRate,
-                            format.bitrate
-                    );
+                PlayerVideoTrack playerVideoTrack = new PlayerVideoTrack(
+                        format.id,
+                        contentType,
+                        format.width,
+                        format.height,
+                        (int) format.frameRate,
+                        format.bitrate
+                );
 
-                    videoTracks.add(playerVideoTrack);
-                }
+                videoTracks.add(playerVideoTrack);
             }
         }
 
