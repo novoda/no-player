@@ -112,13 +112,13 @@ public interface NoPlayer extends PlayerState {
     AudioTracks getAudioTracks() throws IllegalStateException;
 
     /**
-     * Retrieves the currently playing {@link PlayerVideoTrack} of a prepared Player.
+     * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.
      *
-     * @return {@link PlayerVideoTrack}.
+     * @return a list of available {@link PlayerVideoTrack} of a prepared Player.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      * @see NoPlayer.PreparedListener
      */
-    PlayerVideoTrack getVideoTrack() throws IllegalStateException;
+    List<PlayerVideoTrack> getVideoTracks() throws IllegalStateException;
 
     /**
      * Selects a given {@link PlayerAudioTrack}.

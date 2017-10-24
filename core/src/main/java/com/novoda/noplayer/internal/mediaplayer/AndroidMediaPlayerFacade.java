@@ -253,7 +253,9 @@ class AndroidMediaPlayerFacade {
         }
     }
 
-    PlayerVideoTrack getVideoTrack() {
-        throw new IllegalStateException("Not currently supported for MediaPlayer.");
+    List<PlayerVideoTrack> getVideoTracks() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to get video tracks but has not been implemented for MediaPlayer.");
+        return Collections.emptyList();
     }
 }

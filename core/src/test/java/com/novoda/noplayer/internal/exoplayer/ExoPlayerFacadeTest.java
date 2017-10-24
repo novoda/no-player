@@ -12,6 +12,7 @@ import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
+import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
@@ -363,6 +364,8 @@ public class ExoPlayerFacadeTest {
         @Mock
         ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
         @Mock
+        ExoPlayerVideoTrackSelector videoTrackSelector;
+        @Mock
         Uri uri;
         @Mock
         RendererTypeRequester rendererTypeRequester;
@@ -389,9 +392,9 @@ public class ExoPlayerFacadeTest {
                     mediaSourceFactory,
                     audioTrackSelector,
                     subtitleTrackSelector,
+                    videoTrackSelector,
                     exoPlayerCreator,
-                    rendererTypeRequesterCreator
-            );
+                    rendererTypeRequesterCreator);
         }
 
         MediaSource givenMediaSource() {
