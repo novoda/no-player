@@ -3,7 +3,11 @@ package com.novoda.demo;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-class TimeFormatter {
+final class TimeFormatter {
+
+    private TimeFormatter() {
+        // Uses static methods.
+    }
 
     static String asHoursMinutesSeconds(int timeInSeconds) {
         int hours = (int) TimeUnit.SECONDS.toHours(timeInSeconds);
