@@ -20,6 +20,7 @@ import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
@@ -259,6 +260,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public AudioTracks getAudioTracks() throws IllegalStateException {
         return exoPlayer.getAudioTracks();
+    }
+
+    @Override
+    public PlayerVideoTrack getSelectedVideoTrack() throws IllegalStateException {
+        return exoPlayer.getSelectedVideoTrack();
+    }
+
+    @Override
+    public List<PlayerVideoTrack> getVideoTracks() throws IllegalStateException {
+        return exoPlayer.getVideoTracks();
     }
 
     @Override

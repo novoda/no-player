@@ -6,6 +6,7 @@ import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.Bitrate;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoPosition;
 
@@ -109,6 +110,24 @@ public interface NoPlayer extends PlayerState {
      * @see NoPlayer.PreparedListener
      */
     AudioTracks getAudioTracks() throws IllegalStateException;
+
+    /**
+     * Retrieves the currently playing {@link PlayerVideoTrack} of a prepared Player.
+     *
+     * @return {@link PlayerVideoTrack}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @see NoPlayer.PreparedListener
+     */
+    PlayerVideoTrack getSelectedVideoTrack() throws IllegalStateException;
+
+    /**
+     * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.
+     *
+     * @return a list of available {@link PlayerVideoTrack} of a prepared Player.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @see NoPlayer.PreparedListener
+     */
+    List<PlayerVideoTrack> getVideoTracks() throws IllegalStateException;
 
     /**
      * Selects a given {@link PlayerAudioTrack}.

@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
@@ -12,15 +13,19 @@ import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
+import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerVideoTrack;
+import com.novoda.noplayer.model.PlayerVideoTrackFixture;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -183,6 +188,8 @@ public class ExoPlayerFacadeTest {
 
         private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = PlayerAudioTrackFixture.aPlayerAudioTrack().build();
         private static final AudioTracks AUDIO_TRACKS = AudioTracks.from(Collections.singletonList(PLAYER_AUDIO_TRACK));
+        private static final PlayerVideoTrack PLAYER_VIDEO_TRACK = PlayerVideoTrackFixture.aPlayerVideoTrack().build();
+        private static final List<PlayerVideoTrack> VIDEO_TRACKS = Collections.singletonList(PLAYER_VIDEO_TRACK);
 
         @Override
         public void setUp() {
@@ -345,6 +352,27 @@ public class ExoPlayerFacadeTest {
 
             assertThat(audioTracks).isEqualTo(AUDIO_TRACKS);
         }
+
+        @Test
+        public void whenGettingSelectedVideoTrack_thenDelegatesToExoPlayer() {
+            given(exoPlayer.getVideoFormat()).willReturn(Format.createVideoContainerFormat(
+                    PLAYER_VIDEO_TRACK.id(), "ignored", "ignored", "ignored", PLAYER_VIDEO_TRACK.bitrate(),
+                    PLAYER_VIDEO_TRACK.width(), PLAYER_VIDEO_TRACK.height(), PLAYER_VIDEO_TRACK.fps(), Collections.<byte[]>emptyList(), 0
+            ));
+
+            PlayerVideoTrack videoTrack = facade.getSelectedVideoTrack();
+
+            assertThat(videoTrack).isEqualTo(PLAYER_VIDEO_TRACK);
+        }
+
+        @Test
+        public void whenGettingVideoTracks_thenDelegatesToTrackSelector() {
+            given(videoTrackSelector.getVideoTracks(any(RendererTypeRequester.class), any(ContentType.class))).willReturn(VIDEO_TRACKS);
+
+            List<PlayerVideoTrack> videoTracks = facade.getVideoTracks();
+
+            assertThat(videoTracks).isEqualTo(VIDEO_TRACKS);
+        }
     }
 
     public abstract static class Base {
@@ -362,6 +390,8 @@ public class ExoPlayerFacadeTest {
         ExoPlayerAudioTrackSelector audioTrackSelector;
         @Mock
         ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
+        @Mock
+        ExoPlayerVideoTrackSelector videoTrackSelector;
         @Mock
         Uri uri;
         @Mock
@@ -389,9 +419,9 @@ public class ExoPlayerFacadeTest {
                     mediaSourceFactory,
                     audioTrackSelector,
                     subtitleTrackSelector,
+                    videoTrackSelector,
                     exoPlayerCreator,
-                    rendererTypeRequesterCreator
-            );
+                    rendererTypeRequesterCreator);
         }
 
         MediaSource givenMediaSource() {

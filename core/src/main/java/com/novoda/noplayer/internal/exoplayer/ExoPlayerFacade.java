@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -12,10 +13,12 @@ import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
+import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
 
@@ -29,6 +32,7 @@ class ExoPlayerFacade {
     private final MediaSourceFactory mediaSourceFactory;
     private final ExoPlayerAudioTrackSelector audioTrackSelector;
     private final ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
+    private final ExoPlayerVideoTrackSelector exoPlayerVideoTrackSelector;
     private final ExoPlayerCreator exoPlayerCreator;
     private final RendererTypeRequesterCreator rendererTypeRequesterCreator;
 
@@ -36,15 +40,19 @@ class ExoPlayerFacade {
     private SimpleExoPlayer exoPlayer;
     @Nullable
     private RendererTypeRequester rendererTypeRequester;
+    @Nullable
+    private ContentType contentType;
 
     ExoPlayerFacade(MediaSourceFactory mediaSourceFactory,
                     ExoPlayerAudioTrackSelector audioTrackSelector,
                     ExoPlayerSubtitleTrackSelector subtitleTrackSelector,
+                    ExoPlayerVideoTrackSelector exoPlayerVideoTrackSelector,
                     ExoPlayerCreator exoPlayerCreator,
                     RendererTypeRequesterCreator rendererTypeRequesterCreator) {
         this.mediaSourceFactory = mediaSourceFactory;
         this.audioTrackSelector = audioTrackSelector;
         this.subtitleTrackSelector = subtitleTrackSelector;
+        this.exoPlayerVideoTrackSelector = exoPlayerVideoTrackSelector;
         this.exoPlayerCreator = exoPlayerCreator;
         this.rendererTypeRequesterCreator = rendererTypeRequesterCreator;
     }
@@ -101,6 +109,7 @@ class ExoPlayerFacade {
                    ContentType contentType,
                    ExoPlayerForwarder forwarder,
                    MediaCodecSelector mediaCodecSelector) {
+        this.contentType = contentType;
         exoPlayer = exoPlayerCreator.create(drmSessionCreator, forwarder.drmSessionEventListener(), mediaCodecSelector);
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
@@ -127,6 +136,24 @@ class ExoPlayerFacade {
     AudioTracks getAudioTracks() throws IllegalStateException {
         assertVideoLoaded();
         return audioTrackSelector.getAudioTracks(rendererTypeRequester);
+    }
+
+    PlayerVideoTrack getSelectedVideoTrack() {
+        assertVideoLoaded();
+        Format format = exoPlayer.getVideoFormat();
+        return new PlayerVideoTrack(
+                format.id,
+                contentType,
+                format.width,
+                format.height,
+                (int) format.frameRate,
+                format.bitrate
+        );
+    }
+
+    List<PlayerVideoTrack> getVideoTracks() {
+        assertVideoLoaded();
+        return exoPlayerVideoTrackSelector.getVideoTracks(rendererTypeRequester, contentType);
     }
 
     void setSubtitleRendererOutput(TextRendererOutput textRendererOutput) throws IllegalStateException {

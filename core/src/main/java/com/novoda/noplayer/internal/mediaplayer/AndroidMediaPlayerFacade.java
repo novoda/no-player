@@ -4,13 +4,16 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
+import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.utils.NoPlayerLog;
 
 import java.io.IOException;
@@ -31,13 +34,16 @@ class AndroidMediaPlayerFacade {
     private final AudioManager audioManager;
     private final AndroidMediaPlayerAudioTrackSelector trackSelector;
     private final PlaybackStateChecker playbackStateChecker;
+    private final MediaPlayerCreator mediaPlayerCreator;
 
     private PlaybackState currentState = IDLE;
 
-    private MediaPlayer mediaPlayer;
     private int currentBufferPercentage;
 
-    private MediaPlayerCreator mediaPlayerCreator;
+    @Nullable
+    private MediaPlayer mediaPlayer;
+    @Nullable
+    private ContentType contentType;
 
     static AndroidMediaPlayerFacade newInstance(Context context, MediaPlayerForwarder forwarder) {
         TrackInfosFactory trackInfosFactory = new TrackInfosFactory();
@@ -62,11 +68,12 @@ class AndroidMediaPlayerFacade {
         this.mediaPlayerCreator = mediaPlayerCreator;
     }
 
-    void prepareVideo(Uri videoUri, SurfaceHolder surfaceHolder) {
+    void prepareVideo(Uri videoUri, SurfaceHolder surfaceHolder, ContentType contentType) {
         requestAudioFocus();
         release();
         try {
             currentState = PlaybackState.PREPARING;
+            this.contentType = contentType;
             mediaPlayer = createAndBindMediaPlayer(surfaceHolder, videoUri);
             mediaPlayer.prepareAsync();
         } catch (IOException | IllegalArgumentException | IllegalStateException ex) {
@@ -250,5 +257,17 @@ class AndroidMediaPlayerFacade {
         if (!playbackStateChecker.isInPlaybackState(mediaPlayer, currentState)) {
             throw new IllegalStateException("Video must be loaded and not in an error state before trying to interact with the player");
         }
+    }
+
+    PlayerVideoTrack getSelectedVideoTrack() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to get the currently playing video track but has not been implemented for MediaPlayer.");
+        return new PlayerVideoTrack("n/a", contentType, 0, 0, 0, 0);
+    }
+
+    List<PlayerVideoTrack> getVideoTracks() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to get video tracks but has not been implemented for MediaPlayer.");
+        return Collections.emptyList();
     }
 }
