@@ -112,6 +112,15 @@ public interface NoPlayer extends PlayerState {
     AudioTracks getAudioTracks() throws IllegalStateException;
 
     /**
+     * Selects a given {@link PlayerVideoTrack}.
+     *
+     * @param videoTrack the video track to select.
+     * @return whether the selection was successful.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     */
+    boolean selectVideoTrack(PlayerVideoTrack videoTrack) throws IllegalStateException;
+
+    /**
      * Retrieves the currently playing {@link PlayerVideoTrack} of a prepared Player.
      *
      * @return {@link PlayerVideoTrack}.
