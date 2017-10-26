@@ -1,8 +1,11 @@
 package com.novoda.noplayer.internal.exoplayer.mediasource;
 
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.model.PlayerVideoTrack;
@@ -10,14 +13,28 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.novoda.noplayer.internal.exoplayer.mediasource.TrackType.AUDIO;
 import static com.novoda.noplayer.internal.exoplayer.mediasource.TrackType.VIDEO;
 
 public class ExoPlayerVideoTrackSelector {
 
     private final ExoPlayerTrackSelector trackSelector;
+    private final TrackSelection.Factory trackSelectionFactory;
 
-    public ExoPlayerVideoTrackSelector(ExoPlayerTrackSelector trackSelector) {
+    public ExoPlayerVideoTrackSelector(ExoPlayerTrackSelector trackSelector, TrackSelection.Factory trackSelectionFactory) {
         this.trackSelector = trackSelector;
+        this.trackSelectionFactory = trackSelectionFactory;
+    }
+
+    public boolean selectVideoTrack(PlayerVideoTrack videoTrack, RendererTypeRequester rendererTypeRequester) {
+        TrackGroupArray trackGroups = trackSelector.trackGroups(VIDEO, rendererTypeRequester);
+
+        MappingTrackSelector.SelectionOverride selectionOverride = new MappingTrackSelector.SelectionOverride(
+                trackSelectionFactory,
+                videoTrack.groupIndex(),
+                videoTrack.formatIndex()
+        );
+        return trackSelector.setSelectionOverride(AUDIO, rendererTypeRequester, trackGroups, selectionOverride);
     }
 
     public List<PlayerVideoTrack> getVideoTracks(RendererTypeRequester rendererTypeRequester, ContentType contentType) {
@@ -32,6 +49,8 @@ public class ExoPlayerVideoTrackSelector {
                 Format format = trackGroup.getFormat(formatIndex);
 
                 PlayerVideoTrack playerVideoTrack = new PlayerVideoTrack(
+                        groupIndex,
+                        formatIndex,
                         format.id,
                         contentType,
                         format.width,
@@ -45,5 +64,17 @@ public class ExoPlayerVideoTrackSelector {
         }
 
         return videoTracks;
+    }
+
+    public PlayerVideoTrack getSelectedVideoTrack(SimpleExoPlayer exoPlayer, RendererTypeRequester rendererTypeRequester, ContentType contentType) {
+        Format selectedVideoFormat = exoPlayer.getVideoFormat();
+        List<PlayerVideoTrack> videoTracks = getVideoTracks(rendererTypeRequester, contentType);
+
+        for (PlayerVideoTrack videoTrack : videoTracks) {
+            if (videoTrack.id().equals(selectedVideoFormat.id)) {
+                return videoTrack;
+            }
+        }
+        return new PlayerVideoTrack(0, 0, "", contentType, 0, 0, 0, 0);
     }
 }

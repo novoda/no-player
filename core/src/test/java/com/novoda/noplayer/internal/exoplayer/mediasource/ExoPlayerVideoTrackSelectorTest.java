@@ -41,7 +41,7 @@ public class ExoPlayerVideoTrackSelectorTest {
 
     @Before
     public void setUp() {
-        exoPlayerVideoTrackSelector = new ExoPlayerVideoTrackSelector(trackSelector);
+        exoPlayerVideoTrackSelector = new ExoPlayerVideoTrackSelector(trackSelector, trackSelectionFactory);
     }
 
     @Test
@@ -63,6 +63,8 @@ public class ExoPlayerVideoTrackSelectorTest {
     private List<PlayerVideoTrack> expectedSupportedVideoTracks() {
         return Collections.singletonList(
                 new PlayerVideoTrack(
+                        0,
+                        0,
                         VIDEO_FORMAT.id,
                         ContentType.HLS,
                         VIDEO_FORMAT.width,

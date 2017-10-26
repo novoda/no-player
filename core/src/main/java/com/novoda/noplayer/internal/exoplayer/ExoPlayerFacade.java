@@ -138,17 +138,14 @@ class ExoPlayerFacade {
         return audioTrackSelector.getAudioTracks(rendererTypeRequester);
     }
 
+    boolean selectVideoTrack(PlayerVideoTrack playerVideoTrack) {
+        assertVideoLoaded();
+        return exoPlayerVideoTrackSelector.selectVideoTrack(playerVideoTrack, rendererTypeRequester);
+    }
+
     PlayerVideoTrack getSelectedVideoTrack() {
         assertVideoLoaded();
-        Format format = exoPlayer.getVideoFormat();
-        return new PlayerVideoTrack(
-                format.id,
-                contentType,
-                format.width,
-                format.height,
-                (int) format.frameRate,
-                format.bitrate
-        );
+        return exoPlayerVideoTrackSelector.getSelectedVideoTrack(exoPlayer, rendererTypeRequester, contentType);
     }
 
     List<PlayerVideoTrack> getVideoTracks() {

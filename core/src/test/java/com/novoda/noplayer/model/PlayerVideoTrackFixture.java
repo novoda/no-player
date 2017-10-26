@@ -4,6 +4,8 @@ import com.novoda.noplayer.ContentType;
 
 public class PlayerVideoTrackFixture {
 
+    private int groupIndex = 0;
+    private int formatIndex = 0;
     private String id = "id";
     private ContentType contentType = ContentType.DASH;
     private int width = 1920;
@@ -17,6 +19,16 @@ public class PlayerVideoTrackFixture {
 
     private PlayerVideoTrackFixture() {
         // Uses static factory method.
+    }
+
+    public PlayerVideoTrackFixture withGroupIndex(int groupIndex) {
+        this.groupIndex = groupIndex;
+        return this;
+    }
+
+    public PlayerVideoTrackFixture withFormatIndex(int formatIndex) {
+        this.formatIndex = formatIndex;
+        return this;
     }
 
     public PlayerVideoTrackFixture withId(String id) {
@@ -50,6 +62,6 @@ public class PlayerVideoTrackFixture {
     }
 
     public PlayerVideoTrack build() {
-        return new PlayerVideoTrack(id, contentType, width, height, fps, bitrate);
+        return new PlayerVideoTrack(groupIndex, formatIndex, id, contentType, width, height, fps, bitrate);
     }
 }
