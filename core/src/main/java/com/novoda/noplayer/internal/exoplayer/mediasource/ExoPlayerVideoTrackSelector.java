@@ -9,6 +9,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.model.PlayerVideoTrack;
+import com.novoda.utils.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,15 +66,15 @@ public class ExoPlayerVideoTrackSelector {
         return videoTracks;
     }
 
-    public PlayerVideoTrack getSelectedVideoTrack(SimpleExoPlayer exoPlayer, RendererTypeRequester rendererTypeRequester, ContentType contentType) {
+    public Optional<PlayerVideoTrack> getSelectedVideoTrack(SimpleExoPlayer exoPlayer, RendererTypeRequester rendererTypeRequester, ContentType contentType) {
         Format selectedVideoFormat = exoPlayer.getVideoFormat();
         List<PlayerVideoTrack> videoTracks = getVideoTracks(rendererTypeRequester, contentType);
 
         for (PlayerVideoTrack videoTrack : videoTracks) {
             if (videoTrack.id().equals(selectedVideoFormat.id)) {
-                return videoTrack;
+                return Optional.of(videoTrack);
             }
         }
-        return new PlayerVideoTrack(0, 0, "", contentType, 0, 0, 0, 0);
+        return Optional.absent();
     }
 }

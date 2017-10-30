@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
-import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.model.AudioTracks;
@@ -140,8 +139,8 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void whenPreparingMultipleTimes_thenReleasesMediaPlayer() {
-        facade.prepareVideo(ANY_URI, surfaceHolder, ContentType.HLS);
-        facade.prepareVideo(ANY_URI, surfaceHolder, ContentType.HLS);
+        facade.prepareVideo(ANY_URI, surfaceHolder);
+        facade.prepareVideo(ANY_URI, surfaceHolder);
 
         verify(mediaPlayer).reset();
         verify(mediaPlayer).release();
@@ -199,7 +198,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void givenBoundPreparedListener_andMediaPlayerIsPrepared_whenPrepared_thenForwardsOnPrepared() {
-        facade.prepareVideo(ANY_URI, surfaceHolder, ContentType.HLS);
+        facade.prepareVideo(ANY_URI, surfaceHolder);
         ArgumentCaptor<MediaPlayer.OnPreparedListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnPreparedListener.class);
         verify(mediaPlayer).setOnPreparedListener(argumentCaptor.capture());
         argumentCaptor.getValue().onPrepared(mediaPlayer);
@@ -562,7 +561,7 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     private void givenMediaPlayerIsPrepared() {
-        facade.prepareVideo(ANY_URI, surfaceHolder, ContentType.HLS);
+        facade.prepareVideo(ANY_URI, surfaceHolder);
         ArgumentCaptor<MediaPlayer.OnPreparedListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnPreparedListener.class);
         verify(mediaPlayer).setOnPreparedListener(argumentCaptor.capture());
         argumentCaptor.getValue().onPrepared(mediaPlayer);

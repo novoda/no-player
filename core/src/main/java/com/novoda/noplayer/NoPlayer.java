@@ -9,6 +9,7 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoPosition;
+import com.novoda.utils.Optional;
 
 import java.util.List;
 import java.util.Map;
@@ -121,13 +122,14 @@ public interface NoPlayer extends PlayerState {
     boolean selectVideoTrack(PlayerVideoTrack videoTrack) throws IllegalStateException;
 
     /**
-     * Retrieves the currently playing {@link PlayerVideoTrack} of a prepared Player.
+     * Retrieves the currently playing {@link PlayerVideoTrack} of a prepared Player wrapped
+     * as an {@link Optional} or {@link Optional#absent()} if unavailable.
      *
      * @return {@link PlayerVideoTrack}.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      * @see NoPlayer.PreparedListener
      */
-    PlayerVideoTrack getSelectedVideoTrack() throws IllegalStateException;
+    Optional<PlayerVideoTrack> getSelectedVideoTrack() throws IllegalStateException;
 
     /**
      * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.

@@ -24,6 +24,7 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
+import com.novoda.utils.Optional;
 
 import java.util.List;
 
@@ -268,7 +269,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public PlayerVideoTrack getSelectedVideoTrack() throws IllegalStateException {
+    public Optional<PlayerVideoTrack> getSelectedVideoTrack() throws IllegalStateException {
         return exoPlayer.getSelectedVideoTrack();
     }
 

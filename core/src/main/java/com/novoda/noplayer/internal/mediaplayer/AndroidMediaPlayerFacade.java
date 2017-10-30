@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
-import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.model.AudioTracks;
@@ -15,6 +14,7 @@ import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.utils.NoPlayerLog;
+import com.novoda.utils.Optional;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -42,8 +42,6 @@ class AndroidMediaPlayerFacade {
 
     @Nullable
     private MediaPlayer mediaPlayer;
-    @Nullable
-    private ContentType contentType;
 
     static AndroidMediaPlayerFacade newInstance(Context context, MediaPlayerForwarder forwarder) {
         TrackInfosFactory trackInfosFactory = new TrackInfosFactory();
@@ -68,12 +66,11 @@ class AndroidMediaPlayerFacade {
         this.mediaPlayerCreator = mediaPlayerCreator;
     }
 
-    void prepareVideo(Uri videoUri, SurfaceHolder surfaceHolder, ContentType contentType) {
+    void prepareVideo(Uri videoUri, SurfaceHolder surfaceHolder) {
         requestAudioFocus();
         release();
         try {
             currentState = PlaybackState.PREPARING;
-            this.contentType = contentType;
             mediaPlayer = createAndBindMediaPlayer(surfaceHolder, videoUri);
             mediaPlayer.prepareAsync();
         } catch (IOException | IllegalArgumentException | IllegalStateException ex) {
@@ -259,10 +256,10 @@ class AndroidMediaPlayerFacade {
         }
     }
 
-    PlayerVideoTrack getSelectedVideoTrack() {
+    Optional<PlayerVideoTrack> getSelectedVideoTrack() {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to get the currently playing video track but has not been implemented for MediaPlayer.");
-        return new PlayerVideoTrack(0, 0, "n/a", contentType, 0, 0, 0, 0);
+        return Optional.absent();
     }
 
     List<PlayerVideoTrack> getVideoTracks() {

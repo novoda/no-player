@@ -23,6 +23,7 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
+import com.novoda.utils.Optional;
 
 import java.util.Collections;
 import java.util.List;
@@ -360,9 +361,9 @@ public class ExoPlayerFacadeTest {
                     PLAYER_VIDEO_TRACK.width(), PLAYER_VIDEO_TRACK.height(), PLAYER_VIDEO_TRACK.fps(), Collections.<byte[]>emptyList(), 0
             ));
 
-            PlayerVideoTrack videoTrack = facade.getSelectedVideoTrack();
+            Optional<PlayerVideoTrack> videoTrack = facade.getSelectedVideoTrack();
 
-            assertThat(videoTrack).isEqualTo(PLAYER_VIDEO_TRACK);
+            assertThat(videoTrack).isEqualTo(Optional.of(PLAYER_VIDEO_TRACK));
         }
 
         @Test

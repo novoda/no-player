@@ -20,6 +20,7 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
+import com.novoda.utils.Optional;
 
 import java.util.List;
 
@@ -142,7 +143,7 @@ class ExoPlayerFacade {
         return exoPlayerVideoTrackSelector.selectVideoTrack(playerVideoTrack, rendererTypeRequester);
     }
 
-    PlayerVideoTrack getSelectedVideoTrack() {
+    Optional<PlayerVideoTrack> getSelectedVideoTrack() {
         assertVideoLoaded();
         return exoPlayerVideoTrackSelector.getSelectedVideoTrack(exoPlayer, rendererTypeRequester, contentType);
     }
