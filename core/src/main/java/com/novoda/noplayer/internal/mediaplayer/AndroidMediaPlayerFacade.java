@@ -243,7 +243,7 @@ class AndroidMediaPlayerFacade {
 
     boolean selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException {
         assertIsInPlaybackState();
-        NoPlayerLog.w("Tried to show subtitle track but has not been implemented for MediaPlayer.");
+        NoPlayerLog.w("Tried to select subtitle track but has not been implemented for MediaPlayer.");
         return false;
     }
 
@@ -269,5 +269,11 @@ class AndroidMediaPlayerFacade {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to get video tracks but has not been implemented for MediaPlayer.");
         return Collections.emptyList();
+    }
+
+    boolean selectVideoTrack(PlayerVideoTrack videoTrack) {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to select a video track but has not been implemented for MediaPlayer.");
+        return false;
     }
 }
