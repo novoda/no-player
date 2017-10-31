@@ -17,6 +17,7 @@ import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.utils.NoPlayerLog;
 
 import java.util.ArrayList;
@@ -39,9 +40,11 @@ public class MainActivity extends Activity {
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
         PlayerView playerView = (PlayerView) findViewById(R.id.player_view);
+        View videoSelectionButton = findViewById(R.id.button_video_selection);
         View audioSelectionButton = findViewById(R.id.button_audio_selection);
         View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
 
+        videoSelectionButton.setOnClickListener(showVideoSelectionDialog);
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
 
@@ -69,6 +72,41 @@ public class MainActivity extends Activity {
         Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
         player.loadVideo(uri, ContentType.DASH);
     }
+
+    private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (player.getVideoTracks().isEmpty()) {
+                Toast.makeText(MainActivity.this, "no additional video tracks available!", Toast.LENGTH_LONG).show();
+            } else {
+                showVideoSelectionDialog();
+            }
+        }
+
+        private void showVideoSelectionDialog() {
+            final List<PlayerVideoTrack> videoTracks = player.getVideoTracks();
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, R.layout.list_item);
+            adapter.addAll(mapVideoTrackToLabel(videoTracks));
+            AlertDialog videoTrackSelectionDialog = new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("Select Video track")
+                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int position) {
+                            PlayerVideoTrack videoTrack = videoTracks.get(position);
+                            player.selectVideoTrack(videoTrack);
+                        }
+                    }).create();
+            videoTrackSelectionDialog.show();
+        }
+
+        private List<String> mapVideoTrackToLabel(List<PlayerVideoTrack> videoTracks) {
+            List<String> labels = new ArrayList<>();
+            for (PlayerVideoTrack videoTrack : videoTracks) {
+                labels.add("Quality " + videoTrack.height());
+            }
+            return labels;
+        }
+    };
 
     private final View.OnClickListener showAudioSelectionDialog = new View.OnClickListener() {
 

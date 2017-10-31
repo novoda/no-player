@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
-import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -21,6 +20,7 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
+import com.novoda.utils.Optional;
 
 import java.util.List;
 
@@ -138,17 +138,14 @@ class ExoPlayerFacade {
         return audioTrackSelector.getAudioTracks(rendererTypeRequester);
     }
 
-    PlayerVideoTrack getSelectedVideoTrack() {
+    boolean selectVideoTrack(PlayerVideoTrack playerVideoTrack) {
         assertVideoLoaded();
-        Format format = exoPlayer.getVideoFormat();
-        return new PlayerVideoTrack(
-                format.id,
-                contentType,
-                format.width,
-                format.height,
-                (int) format.frameRate,
-                format.bitrate
-        );
+        return exoPlayerVideoTrackSelector.selectVideoTrack(playerVideoTrack, rendererTypeRequester);
+    }
+
+    Optional<PlayerVideoTrack> getSelectedVideoTrack() {
+        assertVideoLoaded();
+        return exoPlayerVideoTrackSelector.getSelectedVideoTrack(exoPlayer, rendererTypeRequester, contentType);
     }
 
     List<PlayerVideoTrack> getVideoTracks() {

@@ -63,7 +63,7 @@ public class NoPlayerExoPlayerCreator {
             ExoPlayerTrackSelector exoPlayerTrackSelector = ExoPlayerTrackSelector.newInstance(trackSelector);
             FixedTrackSelection.Factory trackSelectionFactory = new FixedTrackSelection.Factory();
             ExoPlayerAudioTrackSelector exoPlayerAudioTrackSelector = new ExoPlayerAudioTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
-            ExoPlayerVideoTrackSelector exoPlayerVideoTrackSelector = new ExoPlayerVideoTrackSelector(exoPlayerTrackSelector);
+            ExoPlayerVideoTrackSelector exoPlayerVideoTrackSelector = new ExoPlayerVideoTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
             ExoPlayerSubtitleTrackSelector exoPlayerSubtitleTrackSelector = new ExoPlayerSubtitleTrackSelector(
                     exoPlayerTrackSelector,
                     trackSelectionFactory

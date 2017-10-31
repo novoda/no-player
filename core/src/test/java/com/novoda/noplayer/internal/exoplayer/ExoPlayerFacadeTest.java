@@ -3,7 +3,6 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
-import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
@@ -23,6 +22,7 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
+import com.novoda.utils.Optional;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +41,7 @@ import utils.ExceptionMatcher;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -49,6 +50,9 @@ import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
 public class ExoPlayerFacadeTest {
+
+    private static final boolean SELECTED = true;
+    private static final PlayerVideoTrack PLAYER_VIDEO_TRACK = PlayerVideoTrackFixture.aPlayerVideoTrack().build();
 
     private static final long TWO_MINUTES_IN_MILLIS = 120000;
     private static final long TEN_MINUTES_IN_MILLIS = 600000;
@@ -354,15 +358,21 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void whenGettingSelectedVideoTrack_thenDelegatesToExoPlayer() {
-            given(exoPlayer.getVideoFormat()).willReturn(Format.createVideoContainerFormat(
-                    PLAYER_VIDEO_TRACK.id(), "ignored", "ignored", "ignored", PLAYER_VIDEO_TRACK.bitrate(),
-                    PLAYER_VIDEO_TRACK.width(), PLAYER_VIDEO_TRACK.height(), PLAYER_VIDEO_TRACK.fps(), Collections.<byte[]>emptyList(), 0
-            ));
+        public void whenGettingSelectedVideoTrack_thenDelegatesTrackSelector() {
+            given(videoTrackSelector.getSelectedVideoTrack(eq(exoPlayer), any(RendererTypeRequester.class), any(ContentType.class))).willReturn(Optional.of(PLAYER_VIDEO_TRACK));
 
-            PlayerVideoTrack videoTrack = facade.getSelectedVideoTrack();
+            Optional<PlayerVideoTrack> selectedVideoTrack = facade.getSelectedVideoTrack();
 
-            assertThat(videoTrack).isEqualTo(PLAYER_VIDEO_TRACK);
+            assertThat(selectedVideoTrack).isEqualTo(Optional.of(PLAYER_VIDEO_TRACK));
+        }
+
+        @Test
+        public void whenSelectingVideoTrack_thenDelegatesToTrackSelector() {
+            given(videoTrackSelector.selectVideoTrack(eq(PLAYER_VIDEO_TRACK), any(RendererTypeRequester.class))).willReturn(SELECTED);
+
+            boolean selectedVideoTrack = facade.selectVideoTrack(PLAYER_VIDEO_TRACK);
+
+            assertThat(selectedVideoTrack).isTrue();
         }
 
         @Test

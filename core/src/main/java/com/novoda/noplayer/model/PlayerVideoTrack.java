@@ -4,20 +4,32 @@ import com.novoda.noplayer.ContentType;
 
 public class PlayerVideoTrack {
 
-    private String id;
+    private final int groupIndex;
+    private final int formatIndex;
+    private final String id;
     private final ContentType contentType;
     private final int width;
     private final int height;
     private final int fps;
     private final int bitrate;
 
-    public PlayerVideoTrack(String id, ContentType contentType, int width, int height, int fps, int bitrate) {
+    public PlayerVideoTrack(int groupIndex, int formatIndex, String id, ContentType contentType, int width, int height, int fps, int bitrate) {
+        this.groupIndex = groupIndex;
+        this.formatIndex = formatIndex;
         this.id = id;
         this.contentType = contentType;
         this.width = width;
         this.height = height;
         this.fps = fps;
         this.bitrate = bitrate;
+    }
+
+    public int groupIndex() {
+        return groupIndex;
+    }
+
+    public int formatIndex() {
+        return formatIndex;
     }
 
     public String id() {
@@ -55,6 +67,12 @@ public class PlayerVideoTrack {
 
         PlayerVideoTrack that = (PlayerVideoTrack) o;
 
+        if (groupIndex != that.groupIndex) {
+            return false;
+        }
+        if (formatIndex != that.formatIndex) {
+            return false;
+        }
         if (width != that.width) {
             return false;
         }
@@ -75,7 +93,9 @@ public class PlayerVideoTrack {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = groupIndex;
+        result = 31 * result + formatIndex;
+        result = 31 * result + (id != null ? id.hashCode() : 0);
         result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
         result = 31 * result + width;
         result = 31 * result + height;
@@ -87,7 +107,9 @@ public class PlayerVideoTrack {
     @Override
     public String toString() {
         return "PlayerVideoTrack{" +
-                "id='" + id + '\'' +
+                "groupIndex=" + groupIndex +
+                ", formatIndex=" + formatIndex +
+                ", id='" + id + '\'' +
                 ", contentType=" + contentType +
                 ", width=" + width +
                 ", height=" + height +

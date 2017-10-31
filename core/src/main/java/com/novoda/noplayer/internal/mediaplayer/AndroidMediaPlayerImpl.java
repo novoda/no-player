@@ -23,6 +23,7 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.noplayer.model.VideoPosition;
+import com.novoda.utils.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -209,7 +210,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         requestSurface(new SurfaceHolderRequester.Callback() {
             @Override
             public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                mediaPlayer.prepareVideo(uri, surfaceHolder, contentType);
+                mediaPlayer.prepareVideo(uri, surfaceHolder);
             }
         });
     }
@@ -311,7 +312,12 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
-    public PlayerVideoTrack getSelectedVideoTrack() throws IllegalStateException {
+    public boolean selectVideoTrack(PlayerVideoTrack videoTrack) throws IllegalStateException {
+        return mediaPlayer.selectVideoTrack(videoTrack);
+    }
+
+    @Override
+    public Optional<PlayerVideoTrack> getSelectedVideoTrack() throws IllegalStateException {
         return mediaPlayer.getSelectedVideoTrack();
     }
 
