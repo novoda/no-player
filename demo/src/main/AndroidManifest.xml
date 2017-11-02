@@ -13,6 +13,10 @@
       </intent-filter>
     </activity>
 
+    <activity
+      android:name="com.novoda.demo.VideoPlayerActivity"
+      android:theme="@android:style/Theme.Black" />
+
   </application>
 
 </manifest>
