@@ -25,6 +25,35 @@ class DialogCreator {
         this.noPlayer = noPlayer;
     }
 
+    void showVideoAssetSelectionDialog(final VideoSelectionAction videoSelectionAction) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
+        final Videos videos = Videos.getInstance();
+        adapter.addAll(mapVideoToLabel(videos));
+        AlertDialog videoTrackSelectionDialog = new AlertDialog.Builder(context)
+                .setTitle("Select Video")
+                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int position) {
+                        Video video = videos.get(position);
+                        videoSelectionAction.perform(video);
+                    }
+                }).create();
+        videoTrackSelectionDialog.show();
+    }
+
+    private List<String> mapVideoToLabel(Videos videos) {
+        List<String> labels = new ArrayList<>();
+        for (Video video : videos) {
+            labels.add(video.humanReadableRepresentation());
+        }
+        return labels;
+    }
+
+    public interface VideoSelectionAction {
+
+        void perform(Video video);
+    }
+
     void showVideoTrackSelectionDialog() {
         final List<PlayerVideoTrack> videoTracks = noPlayer.getVideoTracks();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
