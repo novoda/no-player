@@ -1,7 +1,6 @@
 package com.novoda.demo;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -10,15 +9,17 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.drm.DrmType;
 import com.novoda.utils.NoPlayerLog;
 
 public class MainActivity extends Activity {
 
-    private static final String URI_VIDEO_MP4 = "http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-85.mp4";
-    private static final String URI_VIDEO_MPD = "https://storage.googleapis.com/content-samples/multi-audio/manifest.mpd";
-
-    private static final String URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD = "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd";
     private static final String EXAMPLE_MODULAR_LICENSE_SERVER_PROXY = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
+    private static final DataPostingModularDrm DRM_HANDLER = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
+
+    private static final Video STANDARD_MP4 = Video.from("http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-85.mp4", ContentType.HLS);
+    private static final Video STANDARD_MPD = Video.from("https://storage.googleapis.com/content-samples/multi-audio/manifest.mpd", ContentType.DASH);
+    private static final Video WIDEVINE_MODULAR_MPD = Video.from("https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd", ContentType.DASH, DrmType.WIDEVINE_MODULAR_STREAM, DRM_HANDLER);
 
     private NoPlayer player;
     private DemoPresenter demoPresenter;
@@ -39,10 +40,8 @@ public class MainActivity extends Activity {
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
 
-        DataPostingModularDrm drmHandler = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
-
         player = new PlayerBuilder()
-                .withWidevineModularStreamingDrm(drmHandler)
+                .withDrm(WIDEVINE_MODULAR_MPD.drmType(), WIDEVINE_MODULAR_MPD.drmHandler())
                 .withDowngradedSecureDecoder()
                 .build(this);
 
@@ -53,9 +52,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        // TODO: Add switch in UI to avoid redeploy.
-        Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
-        demoPresenter.startPresenting(uri, ContentType.DASH);
+        demoPresenter.startPresenting(WIDEVINE_MODULAR_MPD.videoUri(), WIDEVINE_MODULAR_MPD.contentType());
     }
 
     private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {
