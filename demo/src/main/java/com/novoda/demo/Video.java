@@ -8,26 +8,32 @@ import com.novoda.noplayer.drm.DrmType;
 
 public class Video {
 
+    private final String humanReadableRepresentation;
     private final Uri videoUri;
     private final ContentType contentType;
     private final DrmType drmType;
     private final DrmHandler drmHandler;
 
-    public static Video from(String rawVideoUri, ContentType contentType) {
+    public static Video from(String humanReadableRepresentation, String rawVideoUri, ContentType contentType) {
         Uri videoUri = Uri.parse(rawVideoUri);
-        return new Video(videoUri, contentType, DrmType.NONE, DrmHandler.NO_DRM);
+        return new Video(humanReadableRepresentation, videoUri, contentType, DrmType.NONE, DrmHandler.NO_DRM);
     }
 
-    public static Video from(String rawVideoUri, ContentType contentType, DrmType drmType, DrmHandler drmHandler) {
+    public static Video from(String humanReadableRepresentation, String rawVideoUri, ContentType contentType, DrmType drmType, DrmHandler drmHandler) {
         Uri videoUri = Uri.parse(rawVideoUri);
-        return new Video(videoUri, contentType, drmType, drmHandler);
+        return new Video(humanReadableRepresentation, videoUri, contentType, drmType, drmHandler);
     }
 
-    private Video(Uri videoUri, ContentType contentType, DrmType drmType, DrmHandler drmHandler) {
+    private Video(String humanReadableRepresentation, Uri videoUri, ContentType contentType, DrmType drmType, DrmHandler drmHandler) {
+        this.humanReadableRepresentation = humanReadableRepresentation;
         this.videoUri = videoUri;
         this.contentType = contentType;
         this.drmType = drmType;
         this.drmHandler = drmHandler;
+    }
+
+    public String humanReadableRepresentation() {
+        return humanReadableRepresentation;
     }
 
     public Uri videoUri() {

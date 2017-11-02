@@ -17,9 +17,9 @@ public class MainActivity extends Activity {
     private static final String EXAMPLE_MODULAR_LICENSE_SERVER_PROXY = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
     private static final DataPostingModularDrm DRM_HANDLER = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
 
-    private static final Video STANDARD_MP4 = Video.from("http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-85.mp4", ContentType.HLS);
-    private static final Video STANDARD_MPD = Video.from("https://storage.googleapis.com/content-samples/multi-audio/manifest.mpd", ContentType.DASH);
-    private static final Video WIDEVINE_MODULAR_MPD = Video.from("https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd", ContentType.DASH, DrmType.WIDEVINE_MODULAR_STREAM, DRM_HANDLER);
+    private static final Video STANDARD_MP4 = Video.from("MP4", "http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-85.mp4", ContentType.HLS);
+    private static final Video STANDARD_MPD = Video.from("MPD", "https://storage.googleapis.com/content-samples/multi-audio/manifest.mpd", ContentType.DASH);
+    private static final Video WIDEVINE_MODULAR_MPD = Video.from("widevine", "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd", ContentType.DASH, DrmType.WIDEVINE_MODULAR_STREAM, DRM_HANDLER);
 
     private NoPlayer player;
     private DemoPresenter demoPresenter;
