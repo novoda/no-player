@@ -31,14 +31,14 @@ public class MainActivity extends Activity {
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
         PlayerView playerView = (PlayerView) findViewById(R.id.player_view);
-        View videoSelectionButton = findViewById(R.id.button_video_selection);
-        View audioSelectionButton = findViewById(R.id.button_audio_selection);
-        View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
+        View videoTrackSelection = findViewById(R.id.video_track_selection);
+        View audioTrackSelection = findViewById(R.id.audio_track_selection);
+        View subtitleTrackSelection = findViewById(R.id.subtitle_track_selection);
         final ControllerView controllerView = (ControllerView) findViewById(R.id.controller_view);
 
-        videoSelectionButton.setOnClickListener(showVideoSelectionDialog);
-        audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
-        subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
+        videoTrackSelection.setOnClickListener(showVideoTrackSelectionDialog);
+        audioTrackSelection.setOnClickListener(showAudioTrackSelectionDialog);
+        subtitleTrackSelection.setOnClickListener(showSubtitleTrackSelectionDialog);
 
         player = new PlayerBuilder()
                 .withDrm(WIDEVINE_MODULAR_MPD.drmType(), WIDEVINE_MODULAR_MPD.drmHandler())
@@ -55,30 +55,30 @@ public class MainActivity extends Activity {
         demoPresenter.startPresenting(WIDEVINE_MODULAR_MPD.videoUri(), WIDEVINE_MODULAR_MPD.contentType());
     }
 
-    private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {
+    private final View.OnClickListener showVideoTrackSelectionDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (player.getVideoTracks().isEmpty()) {
                 Toast.makeText(MainActivity.this, "no additional video tracks available!", Toast.LENGTH_LONG).show();
             } else {
-                dialogCreator.showVideoSelectionDialog();
+                dialogCreator.showVideoTrackSelectionDialog();
             }
         }
     };
 
-    private final View.OnClickListener showAudioSelectionDialog = new View.OnClickListener() {
+    private final View.OnClickListener showAudioTrackSelectionDialog = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            dialogCreator.showAudioSelectionDialog();
+            dialogCreator.showAudioTrackSelectionDialog();
         }
     };
 
-    private final View.OnClickListener showSubtitleSelectionDialog = new View.OnClickListener() {
+    private final View.OnClickListener showSubtitleTrackSelectionDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (!player.getSubtitleTracks().isEmpty()) {
-                dialogCreator.showSubtitleSelectionDialog();
+                dialogCreator.showSubtitleTrackSelectionDialog();
             } else {
                 Toast.makeText(MainActivity.this, "no subtitles available!", Toast.LENGTH_LONG).show();
             }

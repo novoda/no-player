@@ -25,7 +25,7 @@ class DialogCreator {
         this.noPlayer = noPlayer;
     }
 
-    void showVideoSelectionDialog() {
+    void showVideoTrackSelectionDialog() {
         final List<PlayerVideoTrack> videoTracks = noPlayer.getVideoTracks();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
         adapter.addAll(mapVideoTrackToLabel(videoTracks));
@@ -49,7 +49,7 @@ class DialogCreator {
         return labels;
     }
 
-    void showAudioSelectionDialog() {
+    void showAudioTrackSelectionDialog() {
         final AudioTracks audioTracks = noPlayer.getAudioTracks();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
         adapter.addAll(mapAudioTrackToLabel(audioTracks));
@@ -80,7 +80,7 @@ class DialogCreator {
         return labels;
     }
 
-    void showSubtitleSelectionDialog() {
+    void showSubtitleTrackSelectionDialog() {
         final List<PlayerSubtitleTrack> subtitleTracks = noPlayer.getSubtitleTracks();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
         adapter.addAll(mapSubtitleTrackToLabel(subtitleTracks));
