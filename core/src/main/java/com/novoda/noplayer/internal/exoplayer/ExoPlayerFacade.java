@@ -158,6 +158,11 @@ class ExoPlayerFacade {
         return exoPlayerVideoTrackSelector.getVideoTracks(rendererTypeRequester, contentType);
     }
 
+    boolean clearVideoTrackSelection() {
+        assertVideoLoaded();
+        return exoPlayerVideoTrackSelector.clearVideoTrack(rendererTypeRequester);
+    }
+
     void setSubtitleRendererOutput(TextRendererOutput textRendererOutput) throws IllegalStateException {
         assertVideoLoaded();
         exoPlayer.setTextOutput(textRendererOutput.output());

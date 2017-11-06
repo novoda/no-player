@@ -280,4 +280,10 @@ class AndroidMediaPlayerFacade {
         NoPlayerLog.w("Tried to select a video track but has not been implemented for MediaPlayer.");
         return false;
     }
+
+    boolean clearVideoTrackSelection() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to clear video track selection but has not been implemented for MediaPlayer.");
+        return false;
+    }
 }

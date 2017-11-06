@@ -279,6 +279,11 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
+    public boolean clearVideoTrackSelection() throws IllegalStateException {
+        return exoPlayer.clearVideoTrackSelection();
+    }
+
+    @Override
     public List<PlayerVideoTrack> getVideoTracks() throws IllegalStateException {
         return exoPlayer.getVideoTracks();
     }

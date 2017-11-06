@@ -104,6 +104,15 @@ public interface NoPlayer extends PlayerState {
     void detach(PlayerView playerView);
 
     /**
+     * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.
+     *
+     * @return a list of available {@link PlayerVideoTrack} of a prepared Player.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @see NoPlayer.PreparedListener
+     */
+    List<PlayerVideoTrack> getVideoTracks() throws IllegalStateException;
+
+    /**
      * Selects a given {@link PlayerVideoTrack}.
      *
      * @param videoTrack the video track to select.
@@ -123,13 +132,12 @@ public interface NoPlayer extends PlayerState {
     Optional<PlayerVideoTrack> getSelectedVideoTrack() throws IllegalStateException;
 
     /**
-     * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.
+     * Clears the {@link PlayerVideoTrack} selection made in {@link NoPlayer#selectVideoTrack(PlayerVideoTrack)}.
      *
-     * @return a list of available {@link PlayerVideoTrack} of a prepared Player.
+     * @return whether the clear was successful.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
-     * @see NoPlayer.PreparedListener
      */
-    List<PlayerVideoTrack> getVideoTracks() throws IllegalStateException;
+    boolean clearVideoTrackSelection() throws IllegalStateException;
 
     /**
      * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player.
@@ -167,7 +175,7 @@ public interface NoPlayer extends PlayerState {
     List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException;
 
     /**
-     * Selects a given {@link PlayerSubtitleTrack} on an attached PlayerView.
+     * Selects and shows a given {@link PlayerSubtitleTrack} on an attached PlayerView.
      *
      * @param subtitleTrack the subtitle track to select.
      * @return whether the selection was successful.
