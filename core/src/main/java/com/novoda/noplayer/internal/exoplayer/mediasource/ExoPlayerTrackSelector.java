@@ -27,8 +27,7 @@ public class ExoPlayerTrackSelector {
         return audioRendererIndex.isAbsent() ? TrackGroupArray.EMPTY : trackInfo().getTrackGroups(audioRendererIndex.get());
     }
 
-    boolean clearSelectionOverrideFor(TrackType trackType,
-                                      RendererTypeRequester rendererTypeRequester) {
+    boolean clearSelectionOverrideFor(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
         Optional<Integer> rendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
         if (rendererIndex.isPresent()) {
             trackSelector.clearSelectionOverrides(rendererIndex.get());
