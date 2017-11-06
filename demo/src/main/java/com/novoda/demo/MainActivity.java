@@ -96,14 +96,11 @@ public class MainActivity extends Activity {
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
-                            switch (position) {
-                                case 0:
-                                    player.clearVideoTrackSelection();
-                                    break;
-                                default:
-                                    PlayerVideoTrack videoTrack = videoTracks.get(position - 1);
-                                    player.selectVideoTrack(videoTrack);
-                                    break;
+                            if (position == 0) {
+                                player.clearVideoTrackSelection();
+                            } else {
+                                PlayerVideoTrack videoTrack = videoTracks.get(position - 1);
+                                player.selectVideoTrack(videoTrack);
                             }
                         }
                     }).create();
@@ -137,14 +134,11 @@ public class MainActivity extends Activity {
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
-                            switch (position) {
-                                case 0:
-                                    player.clearAudioTrackSelection();
-                                    break;
-                                default:
-                                    PlayerAudioTrack audioTrack = audioTracks.get(position - 1);
-                                    player.selectAudioTrack(audioTrack);
-                                    break;
+                            if (position == 0) {
+                                player.clearAudioTrackSelection();
+                            } else {
+                                PlayerAudioTrack audioTrack = audioTracks.get(position - 1);
+                                player.selectAudioTrack(audioTrack);
                             }
                         }
                     }).create();
@@ -186,14 +180,11 @@ public class MainActivity extends Activity {
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
-                            switch (position) {
-                                case 0:
-                                    player.hideSubtitleTrack();
-                                    break;
-                                default:
-                                    PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 1);
-                                    player.showSubtitleTrack(subtitleTrack);
-                                    break;
+                            if (position == 0) {
+                                player.hideSubtitleTrack();
+                            } else {
+                                PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 1);
+                                player.showSubtitleTrack(subtitleTrack);
                             }
                         }
                     }).create();
