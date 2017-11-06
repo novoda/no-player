@@ -128,14 +128,19 @@ class ExoPlayerFacade {
         exoPlayer.setVideoSurfaceHolder(surfaceHolder);
     }
 
+    AudioTracks getAudioTracks() throws IllegalStateException {
+        assertVideoLoaded();
+        return audioTrackSelector.getAudioTracks(rendererTypeRequester);
+    }
+
     boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException {
         assertVideoLoaded();
         return audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester);
     }
 
-    AudioTracks getAudioTracks() throws IllegalStateException {
+    boolean clearAudioTrackSelection() {
         assertVideoLoaded();
-        return audioTrackSelector.getAudioTracks(rendererTypeRequester);
+        return audioTrackSelector.clearAudioTrack(rendererTypeRequester);
     }
 
     boolean selectVideoTrack(PlayerVideoTrack playerVideoTrack) {
@@ -177,7 +182,7 @@ class ExoPlayerFacade {
         return exoPlayer != null;
     }
 
-    boolean clearSubtitleTrack() throws IllegalStateException {
+    boolean clearSubtitleTrackSelection() throws IllegalStateException {
         assertVideoLoaded();
         return subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
     }

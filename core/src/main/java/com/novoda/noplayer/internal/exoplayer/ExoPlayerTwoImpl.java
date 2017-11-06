@@ -240,6 +240,11 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
+    public boolean clearAudioTrackSelection() throws IllegalStateException {
+        return exoPlayer.clearAudioTrackSelection();
+    }
+
+    @Override
     public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException {
         setSubtitleRendererOutput();
         playerView.showSubtitles();
@@ -255,7 +260,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     public boolean hideSubtitleTrack() throws IllegalStateException {
         playerView.hideSubtitles();
         exoPlayer.removeSubtitleRendererOutput();
-        return exoPlayer.clearSubtitleTrack();
+        return exoPlayer.clearSubtitleTrackSelection();
     }
 
     @Override

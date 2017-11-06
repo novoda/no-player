@@ -104,15 +104,6 @@ public interface NoPlayer extends PlayerState {
     void detach(PlayerView playerView);
 
     /**
-     * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player.
-     *
-     * @return {@link AudioTracks} that contains a list of available {@link PlayerAudioTrack}.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
-     * @see NoPlayer.PreparedListener
-     */
-    AudioTracks getAudioTracks() throws IllegalStateException;
-
-    /**
      * Selects a given {@link PlayerVideoTrack}.
      *
      * @param videoTrack the video track to select.
@@ -141,6 +132,15 @@ public interface NoPlayer extends PlayerState {
     List<PlayerVideoTrack> getVideoTracks() throws IllegalStateException;
 
     /**
+     * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player.
+     *
+     * @return {@link AudioTracks} that contains a list of available {@link PlayerAudioTrack}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @see NoPlayer.PreparedListener
+     */
+    AudioTracks getAudioTracks() throws IllegalStateException;
+
+    /**
      * Selects a given {@link PlayerAudioTrack}.
      *
      * @param audioTrack the audio track to select.
@@ -148,6 +148,14 @@ public interface NoPlayer extends PlayerState {
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
     boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException;
+
+    /**
+     * Clears the {@link PlayerAudioTrack} selection made in {@link NoPlayer#selectAudioTrack(PlayerAudioTrack)}.
+     *
+     * @return whether the clear was successful.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     */
+    boolean clearAudioTrackSelection() throws IllegalStateException;
 
     /**
      * Retrieves all of the available {@link PlayerSubtitleTrack} of a prepared Player.

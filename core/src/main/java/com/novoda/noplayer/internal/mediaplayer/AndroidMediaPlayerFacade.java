@@ -220,6 +220,12 @@ class AndroidMediaPlayerFacade {
         return trackSelector.selectAudioTrack(mediaPlayer, playerAudioTrack);
     }
 
+    boolean clearAudioTrackSelection() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to clear audio track selection but has not been implemented for MediaPlayer.");
+        return false;
+    }
+
     void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener) throws IllegalStateException {
         assertIsInPlaybackState();
         mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
