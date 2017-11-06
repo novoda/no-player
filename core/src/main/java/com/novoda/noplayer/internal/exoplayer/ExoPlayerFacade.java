@@ -177,9 +177,9 @@ class ExoPlayerFacade {
         return exoPlayer != null;
     }
 
-    void clearSubtitleTrack() throws IllegalStateException {
+    boolean clearSubtitleTrack() throws IllegalStateException {
         assertVideoLoaded();
-        subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
+        return subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
     }
 
     private void assertVideoLoaded() {

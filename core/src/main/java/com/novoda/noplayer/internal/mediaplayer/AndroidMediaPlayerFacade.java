@@ -233,9 +233,10 @@ class AndroidMediaPlayerFacade {
         return mediaPlayer != null;
     }
 
-    void clearSubtitleTrack() throws IllegalStateException {
+    boolean clearSubtitleTrack() throws IllegalStateException {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to hide subtitle track but has not been implemented for MediaPlayer.");
+        return false;
     }
 
     boolean selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException {

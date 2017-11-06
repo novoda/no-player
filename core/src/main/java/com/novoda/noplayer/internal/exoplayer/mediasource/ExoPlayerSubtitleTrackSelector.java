@@ -5,8 +5,8 @@ import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +60,7 @@ public class ExoPlayerSubtitleTrackSelector {
         return subtitleTracks;
     }
 
-    public void clearSubtitleTrack(RendererTypeRequester rendererTypeRequester) {
-        trackSelector.clearSelectionOverrideFor(TEXT, rendererTypeRequester);
+    public boolean clearSubtitleTrack(RendererTypeRequester rendererTypeRequester) {
+        return trackSelector.clearSelectionOverrideFor(TEXT, rendererTypeRequester);
     }
 }

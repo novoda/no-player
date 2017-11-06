@@ -252,10 +252,10 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public void hideSubtitleTrack() throws IllegalStateException {
-        exoPlayer.clearSubtitleTrack();
+    public boolean hideSubtitleTrack() throws IllegalStateException {
         playerView.hideSubtitles();
         exoPlayer.removeSubtitleRendererOutput();
+        return exoPlayer.clearSubtitleTrack();
     }
 
     @Override

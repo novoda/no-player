@@ -170,9 +170,10 @@ public interface NoPlayer extends PlayerState {
     /**
      * Clear and hide the subtitles on an attached PlayerView.
      *
+     * @return whether the hide was successful.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
-    void hideSubtitleTrack() throws IllegalStateException;
+    boolean hideSubtitleTrack() throws IllegalStateException;
 
     /**
      * Retrieves a holder, which allows you to add and remove listeners to on the Player.
