@@ -85,4 +85,8 @@ public class ExoPlayerVideoTrackSelector {
         }
         return Optional.absent();
     }
+
+    public boolean clearVideoTrack(RendererTypeRequester rendererTypeRequester) {
+        return trackSelector.clearSelectionOverrideFor(VIDEO, rendererTypeRequester);
+    }
 }

@@ -26,6 +26,9 @@ import java.util.Locale;
 
 public class MainActivity extends Activity {
 
+    private static final String VIDEO_TRACK_MESSAGE_FORMAT = "ID: %s Quality: %s";
+    private static final String AUDIO_TRACK_MESSAGE_FORMAT = "ID: %s Type: %s";
+
     private static final String URI_VIDEO_MP4 = "http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-85.mp4";
     private static final String URI_VIDEO_MPD = "https://storage.googleapis.com/content-samples/multi-audio/manifest.mpd";
 
@@ -85,6 +88,7 @@ public class MainActivity extends Activity {
 
         private void showVideoSelectionDialog() {
             final List<PlayerVideoTrack> videoTracks = player.getVideoTracks();
+
             ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, R.layout.list_item);
             adapter.addAll(mapVideoTrackToLabel(videoTracks));
             AlertDialog videoTrackSelectionDialog = new AlertDialog.Builder(MainActivity.this)
@@ -92,8 +96,12 @@ public class MainActivity extends Activity {
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
-                            PlayerVideoTrack videoTrack = videoTracks.get(position);
-                            player.selectVideoTrack(videoTrack);
+                            if (position == 0) {
+                                player.clearVideoTrackSelection();
+                            } else {
+                                PlayerVideoTrack videoTrack = videoTracks.get(position - 1);
+                                player.selectVideoTrack(videoTrack);
+                            }
                         }
                     }).create();
             videoTrackSelectionDialog.show();
@@ -101,8 +109,10 @@ public class MainActivity extends Activity {
 
         private List<String> mapVideoTrackToLabel(List<PlayerVideoTrack> videoTracks) {
             List<String> labels = new ArrayList<>();
+            labels.add("Auto");
             for (PlayerVideoTrack videoTrack : videoTracks) {
-                labels.add("Quality " + videoTrack.height());
+                String message = String.format(VIDEO_TRACK_MESSAGE_FORMAT, videoTrack.id(), videoTrack.height());
+                labels.add(message);
             }
             return labels;
         }
@@ -124,8 +134,12 @@ public class MainActivity extends Activity {
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
-                            PlayerAudioTrack audioTrack = audioTracks.get(position);
-                            player.selectAudioTrack(audioTrack);
+                            if (position == 0) {
+                                player.clearAudioTrackSelection();
+                            } else {
+                                PlayerAudioTrack audioTrack = audioTracks.get(position - 1);
+                                player.selectAudioTrack(audioTrack);
+                            }
                         }
                     }).create();
             audioSelectionDialog.show();
@@ -133,12 +147,12 @@ public class MainActivity extends Activity {
 
         private List<String> mapAudioTrackToLabel(AudioTracks audioTracks) {
             List<String> labels = new ArrayList<>();
+            labels.add("Auto");
             for (PlayerAudioTrack audioTrack : audioTracks) {
                 String label = String.format(
                         Locale.UK,
-                        "Group: %s Format: %s Type: %s",
-                        audioTrack.groupIndex(),
-                        audioTrack.formatIndex(),
+                        AUDIO_TRACK_MESSAGE_FORMAT,
+                        audioTrack.trackId(),
                         audioTrack.audioTrackType()
                 );
                 labels.add(label);
@@ -166,14 +180,11 @@ public class MainActivity extends Activity {
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
-                            switch (position) {
-                                case 0:
-                                    player.hideSubtitleTrack();
-                                    break;
-                                default:
-                                    PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 1);
-                                    player.showSubtitleTrack(subtitleTrack);
-                                    break;
+                            if (position == 0) {
+                                player.hideSubtitleTrack();
+                            } else {
+                                PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 1);
+                                player.showSubtitleTrack(subtitleTrack);
                             }
                         }
                     }).create();

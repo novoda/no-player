@@ -64,4 +64,8 @@ public class ExoPlayerAudioTrackSelector {
 
         return AudioTracks.from(audioTracks);
     }
+
+    public boolean clearAudioTrack(RendererTypeRequester rendererTypeRequester) {
+        return trackSelector.clearSelectionOverrideFor(AUDIO, rendererTypeRequester);
+    }
 }

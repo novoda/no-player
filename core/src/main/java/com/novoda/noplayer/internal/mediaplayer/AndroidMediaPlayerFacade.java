@@ -220,6 +220,12 @@ class AndroidMediaPlayerFacade {
         return trackSelector.selectAudioTrack(mediaPlayer, playerAudioTrack);
     }
 
+    boolean clearAudioTrackSelection() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to clear audio track selection but has not been implemented for MediaPlayer.");
+        return false;
+    }
+
     void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener) throws IllegalStateException {
         assertIsInPlaybackState();
         mediaPlayer.setOnSeekCompleteListener(seekToResettingSeekListener);
@@ -233,9 +239,10 @@ class AndroidMediaPlayerFacade {
         return mediaPlayer != null;
     }
 
-    void clearSubtitleTrack() throws IllegalStateException {
+    boolean clearSubtitleTrack() throws IllegalStateException {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to hide subtitle track but has not been implemented for MediaPlayer.");
+        return false;
     }
 
     boolean selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException {
@@ -271,6 +278,12 @@ class AndroidMediaPlayerFacade {
     boolean selectVideoTrack(PlayerVideoTrack videoTrack) {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to select a video track but has not been implemented for MediaPlayer.");
+        return false;
+    }
+
+    boolean clearVideoTrackSelection() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to clear video track selection but has not been implemented for MediaPlayer.");
         return false;
     }
 }
