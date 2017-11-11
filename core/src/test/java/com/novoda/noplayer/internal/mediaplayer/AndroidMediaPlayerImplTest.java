@@ -18,7 +18,6 @@ import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.utils.NoPlayerLog;
 
 import java.util.Collections;
@@ -252,10 +251,10 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenGettingMediaDuration_thenReturnsMediaPlayerDuration() {
-            given(mediaPlayer.getDuration()).willReturn(ONE_SECOND_IN_MILLIS);
-            VideoDuration videoDuration = player.mediaDuration();
+            given(mediaPlayer.mediaDurationInMillis()).willReturn(ONE_SECOND_IN_MILLIS);
+            long videoDurationInMillis = player.mediaDurationInMillis();
 
-            assertThat(videoDuration).isEqualTo(VideoDuration.fromMillis(ONE_SECOND_IN_MILLIS));
+            assertThat(videoDurationInMillis).isEqualTo(ONE_SECOND_IN_MILLIS);
         }
 
         @Test

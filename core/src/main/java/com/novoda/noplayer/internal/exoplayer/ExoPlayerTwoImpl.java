@@ -22,7 +22,6 @@ import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.utils.Optional;
 
 import java.util.List;
@@ -113,13 +112,13 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public VideoDuration mediaDuration() throws IllegalStateException {
-        return exoPlayer.getMediaDuration();
+    public long mediaDurationInMillis() throws IllegalStateException {
+        return exoPlayer.mediaDurationInMillis();
     }
 
     @Override
     public int bufferPercentage() throws IllegalStateException {
-        return exoPlayer.getBufferPercentage();
+        return exoPlayer.bufferPercentage();
     }
 
     @Override
