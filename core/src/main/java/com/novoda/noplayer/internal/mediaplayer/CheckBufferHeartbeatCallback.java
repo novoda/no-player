@@ -1,14 +1,13 @@
 package com.novoda.noplayer.internal.mediaplayer;
 
 import com.novoda.noplayer.NoPlayer;
-import com.novoda.noplayer.model.VideoPosition;
 
 public class CheckBufferHeartbeatCallback implements NoPlayer.HeartbeatCallback {
 
     private static final int FORCED_BUFFERING_BEATS_THRESHOLD = 4;
 
     private BufferListener bufferListener = BufferListener.NULL_IMPL;
-    private VideoPosition previousPosition = VideoPosition.INVALID;
+    private long previousPositionInMillis = -1;
     private int beatsPlayed;
 
     public void bind(BufferListener bufferListener) {
@@ -22,12 +21,12 @@ public class CheckBufferHeartbeatCallback implements NoPlayer.HeartbeatCallback 
             return;
         }
 
-        VideoPosition currentPosition = player.getPlayheadPosition();
-        if (positionNotUpdating(currentPosition)) {
+        long currentPositionInMillis = player.playheadPositionInMillis();
+        if (positionNotUpdating(currentPositionInMillis)) {
             beatsPlayed = 0;
             startBuffering();
         } else {
-            previousPosition = currentPosition;
+            previousPositionInMillis = currentPositionInMillis;
             beatsPlayed++;
             if (beatsPlayed > FORCED_BUFFERING_BEATS_THRESHOLD) {
                 stopBuffering();
@@ -35,8 +34,8 @@ public class CheckBufferHeartbeatCallback implements NoPlayer.HeartbeatCallback 
         }
     }
 
-    private boolean positionNotUpdating(VideoPosition currentPosition) {
-        return currentPosition.equals(previousPosition);
+    private boolean positionNotUpdating(long currentPositionInMillis) {
+        return currentPositionInMillis == previousPositionInMillis;
     }
 
     private void stopBuffering() {

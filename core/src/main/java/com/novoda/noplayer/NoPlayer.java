@@ -8,7 +8,6 @@ import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.utils.Optional;
 
 import java.util.List;
@@ -25,13 +24,13 @@ public interface NoPlayer extends PlayerState {
     void play() throws IllegalStateException;
 
     /**
-     * Plays content of a prepared Player at a position.
+     * Plays content of a prepared Player at a given position.
      *
-     * @param position to start playing content from.
+     * @param positionInMillis to start playing content from.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      * @see NoPlayer.PreparedListener
      */
-    void play(VideoPosition position) throws IllegalStateException;
+    void play(long positionInMillis) throws IllegalStateException;
 
     /**
      * Pauses content of a prepared Player.
@@ -45,11 +44,11 @@ public interface NoPlayer extends PlayerState {
      * Seeks content of a prepared Player to a given position.
      * Will not cause content to play if not already playing.
      *
-     * @param position to seek content to.
+     * @param positionInMillis to seek content to.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      * @see NoPlayer.PreparedListener
      */
-    void seekTo(VideoPosition position) throws IllegalStateException;
+    void seekTo(long positionInMillis) throws IllegalStateException;
 
     /**
      * Stops playback of content and then requires call to {@link NoPlayer#loadVideo(Uri, ContentType)} to continue playback.

@@ -19,7 +19,6 @@ import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
-import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.utils.NoPlayerLog;
 
 import java.util.Collections;
@@ -161,8 +160,8 @@ public class AndroidMediaPlayerImplTest {
             NoPlayer.VideoSizeChangedListener videoSizeChangedListener = videoSizeChangedListenerCaptor.getValue();
             videoSizeChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
 
-            assertThat(player.getVideoWidth()).isEqualTo(WIDTH);
-            assertThat(player.getVideoHeight()).isEqualTo(HEIGHT);
+            assertThat(player.videoWidth()).isEqualTo(WIDTH);
+            assertThat(player.videoHeight()).isEqualTo(HEIGHT);
         }
 
         @Test
@@ -176,11 +175,11 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenSeeking_thenSeeksToPosition() {
-            VideoPosition videoPosition = VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS);
+            long seekPositionInMillis = TWO_MINUTES_IN_MILLIS;
 
-            player.seekTo(videoPosition);
+            player.seekTo(seekPositionInMillis);
 
-            verify(mediaPlayer).seekTo(videoPosition.inImpreciseMillis());
+            verify(mediaPlayer).seekTo(seekPositionInMillis);
         }
 
         @Test
@@ -236,25 +235,25 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void givenPlayerIsNotSeeking_whenGettingPlayheadPosition_thenReturnsCurrentMediaPlayerPosition() {
             given(mediaPlayer.getCurrentPosition()).willReturn(ONE_SECOND_IN_MILLIS);
-            VideoPosition playheadPosition = player.getPlayheadPosition();
+            long playheadPositionInMillis = player.playheadPositionInMillis();
 
-            assertThat(playheadPosition.inMillis()).isEqualTo(ONE_SECOND_IN_MILLIS);
+            assertThat(playheadPositionInMillis).isEqualTo(ONE_SECOND_IN_MILLIS);
         }
 
         @Test
         public void givenPlayerIsSeeking_whenGettingPlayheadPosition_thenReturnsSeekPosition() {
-            VideoPosition seekPosition = VideoPosition.fromSeconds(TEN_SECONDS);
-            player.seekTo(seekPosition);
+            long seekPositionInMillis = TEN_SECONDS;
+            player.seekTo(seekPositionInMillis);
 
-            VideoPosition videoPosition = player.getPlayheadPosition();
+            long videoPositionInMillis = player.playheadPositionInMillis();
 
-            assertThat(videoPosition).isEqualTo(seekPosition);
+            assertThat(videoPositionInMillis).isEqualTo(seekPositionInMillis);
         }
 
         @Test
         public void whenGettingMediaDuration_thenReturnsMediaPlayerDuration() {
             given(mediaPlayer.getDuration()).willReturn(ONE_SECOND_IN_MILLIS);
-            VideoDuration videoDuration = player.getMediaDuration();
+            VideoDuration videoDuration = player.mediaDuration();
 
             assertThat(videoDuration).isEqualTo(VideoDuration.fromMillis(ONE_SECOND_IN_MILLIS));
         }
@@ -264,7 +263,7 @@ public class AndroidMediaPlayerImplTest {
             int mediaPlayerBufferPercentage = 10;
             given(mediaPlayer.getBufferPercentage()).willReturn(mediaPlayerBufferPercentage);
 
-            int bufferPercentage = player.getBufferPercentage();
+            int bufferPercentage = player.bufferPercentage();
 
             assertThat(bufferPercentage).isEqualTo(mediaPlayerBufferPercentage);
         }
@@ -487,30 +486,27 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenStartsBeatingHeart() {
-            VideoPosition videoPosition = VideoPosition.BEGINNING;
-            given(mediaPlayer.getCurrentPosition()).willReturn(videoPosition.inImpreciseMillis());
+            given(mediaPlayer.getCurrentPosition()).willReturn((int) BEGINNING_POSITION);
 
-            player.play(videoPosition);
+            player.play(BEGINNING_POSITION);
 
             verify(heart).startBeatingHeart();
         }
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenMediaPlayerStarts() {
-            VideoPosition videoPosition = VideoPosition.BEGINNING;
-            given(mediaPlayer.getCurrentPosition()).willReturn(videoPosition.inImpreciseMillis());
+            given(mediaPlayer.getCurrentPosition()).willReturn((int) BEGINNING_POSITION);
 
-            player.play(videoPosition);
+            player.play(BEGINNING_POSITION);
 
             verify(mediaPlayer).start(surfaceHolder);
         }
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenersThatVideoIsPlaying() {
-            VideoPosition videoPosition = VideoPosition.BEGINNING;
-            given(mediaPlayer.getCurrentPosition()).willReturn(videoPosition.inImpreciseMillis());
+            given(mediaPlayer.getCurrentPosition()).willReturn((int) BEGINNING_POSITION);
 
-            player.play(videoPosition);
+            player.play(BEGINNING_POSITION);
 
             verify(stateChangedListener).onVideoPlaying();
         }
@@ -567,32 +563,32 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenNotifiesBufferStateListenersThatBufferStarted() {
-            VideoPosition differentPosition = givenPositionThatDiffersFromPlayheadPosition();
+            long differentPositionInMillis = givenPositionThatDiffersFromPlayheadPosition();
 
-            player.play(differentPosition);
+            player.play(differentPositionInMillis);
 
             verify(bufferStateListener).onBufferStarted();
         }
 
         @Test
         public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenInitialisesPlaybackForSeeking() {
-            VideoPosition differentPosition = givenPositionThatDiffersFromPlayheadPosition();
+            long differentPositionInMillis = givenPositionThatDiffersFromPlayheadPosition();
 
-            player.play(differentPosition);
+            player.play(differentPositionInMillis);
 
             thenInitialisesPlaybackForSeeking();
         }
 
         @Test
         public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenSeeksToVideoPosition() {
-            VideoPosition differentPosition = givenPositionThatDiffersFromPlayheadPosition();
+            long differentPositionInMillis = givenPositionThatDiffersFromPlayheadPosition();
 
-            player.play(differentPosition);
+            player.play(differentPositionInMillis);
             ArgumentCaptor<DelayedActionExecutor.Action> argumentCaptor = ArgumentCaptor.forClass(DelayedActionExecutor.Action.class);
             verify(delayedActionExecutor).performAfterDelay(argumentCaptor.capture(), eq(DELAY_MILLIS));
             argumentCaptor.getValue().perform();
 
-            verify(mediaPlayer).seekTo(differentPosition.inImpreciseMillis());
+            verify(mediaPlayer).seekTo(differentPositionInMillis);
         }
 
         @Test
@@ -604,9 +600,9 @@ public class AndroidMediaPlayerImplTest {
             verify(stateChangedListener).onVideoPlaying();
         }
 
-        private VideoPosition givenPositionThatDiffersFromPlayheadPosition() {
-            given(mediaPlayer.getCurrentPosition()).willReturn(VideoPosition.BEGINNING.inImpreciseMillis());
-            return VideoPosition.fromMillis(1);
+        private long givenPositionThatDiffersFromPlayheadPosition() {
+            given(mediaPlayer.getCurrentPosition()).willReturn(0);
+            return 1;
         }
 
         private void thenInitialisesPlaybackForSeeking() {
@@ -620,6 +616,7 @@ public class AndroidMediaPlayerImplTest {
 
     public static abstract class Base {
 
+        static final long BEGINNING_POSITION = 0;
         static final Uri URI = Mockito.mock(Uri.class);
         static final int TEN_SECONDS = 10;
         static final Timeout ANY_TIMEOUT = Timeout.fromSeconds(TEN_SECONDS);

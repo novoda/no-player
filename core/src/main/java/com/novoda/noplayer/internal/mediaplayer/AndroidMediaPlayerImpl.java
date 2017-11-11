@@ -22,7 +22,6 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
-import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.utils.Optional;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ import java.util.List;
 
 class AndroidMediaPlayerImpl implements NoPlayer {
 
-    private static final VideoPosition NO_SEEK_TO_POSITION = VideoPosition.INVALID;
+    private static final long NO_SEEK_TO_POSITION = -1;
     private static final long INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
 
     private final List<SurfaceHolderRequester.Callback> surfaceHolderRequesterCallbacks = new ArrayList<>();
@@ -47,7 +46,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
 
     private int videoWidth;
     private int videoHeight;
-    private VideoPosition seekToPosition = NO_SEEK_TO_POSITION;
+    private long seekToPositionInMillis = NO_SEEK_TO_POSITION;
 
     private boolean seekingWithIntentToPlay;
     private SurfaceHolderRequester surfaceHolderRequester;
@@ -110,7 +109,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     private final MediaPlayer.OnSeekCompleteListener seekToResettingSeekListener = new MediaPlayer.OnSeekCompleteListener() {
         @Override
         public void onSeekComplete(MediaPlayer mp) {
-            seekToPosition = NO_SEEK_TO_POSITION;
+            seekToPositionInMillis = NO_SEEK_TO_POSITION;
 
             if (seekingWithIntentToPlay || isPlaying()) {
                 seekingWithIntentToPlay = false;
@@ -132,14 +131,14 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
-    public void play(final VideoPosition position) throws IllegalStateException {
-        if (getPlayheadPosition().equals(position)) {
+    public void play(final long positionInMillis) throws IllegalStateException {
+        if (playheadPositionInMillis() == positionInMillis) {
             play();
         } else {
             requestSurface(new SurfaceHolderRequester.Callback() {
                 @Override
                 public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                    initialSeekWorkaround(surfaceHolder, position);
+                    initialSeekWorkaround(surfaceHolder, positionInMillis);
                 }
             });
         }
@@ -149,13 +148,13 @@ class AndroidMediaPlayerImpl implements NoPlayer {
      * Workaround to fix some devices (nexus 7 2013 in particular) from natively crashing the mediaplayer
      * by starting the mediaplayer before seeking it.
      */
-    private void initialSeekWorkaround(SurfaceHolder surfaceHolder, final VideoPosition initialPlayPosition) throws IllegalStateException {
+    private void initialSeekWorkaround(SurfaceHolder surfaceHolder, final long initialPlayPositionInMillis) throws IllegalStateException {
         listenersHolder.getBufferStateListeners().onBufferStarted();
         initialisePlaybackForSeeking(surfaceHolder);
         delayedActionExecutor.performAfterDelay(new DelayedActionExecutor.Action() {
             @Override
             public void perform() {
-                seekWithIntentToPlay(initialPlayPosition);
+                seekWithIntentToPlay(initialPlayPositionInMillis);
             }
         }, INITIAL_PLAY_SEEK_DELAY_IN_MILLIS);
     }
@@ -173,9 +172,9 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         surfaceHolderRequester.requestSurfaceHolder(callback);
     }
 
-    private void seekWithIntentToPlay(VideoPosition position) throws IllegalStateException {
+    private void seekWithIntentToPlay(long positionInMillis) throws IllegalStateException {
         seekingWithIntentToPlay = true;
-        seekTo(position);
+        seekTo(positionInMillis);
     }
 
     @Override
@@ -184,9 +183,9 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
-    public void seekTo(VideoPosition position) throws IllegalStateException {
-        seekToPosition = position;
-        mediaPlayer.seekTo(position.inImpreciseMillis());
+    public void seekTo(long positionInMillis) throws IllegalStateException {
+        seekToPositionInMillis = positionInMillis;
+        mediaPlayer.seekTo(positionInMillis);
     }
 
     @Override
@@ -232,31 +231,31 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
-    public VideoPosition getPlayheadPosition() throws IllegalStateException {
-        return isSeeking() ? seekToPosition : VideoPosition.fromMillis(mediaPlayer.getCurrentPosition());
+    public long playheadPositionInMillis() throws IllegalStateException {
+        return isSeeking() ? seekToPositionInMillis : mediaPlayer.getCurrentPosition();
     }
 
     private boolean isSeeking() {
-        return !seekToPosition.equals(NO_SEEK_TO_POSITION);
+        return seekToPositionInMillis != NO_SEEK_TO_POSITION;
     }
 
     @Override
-    public VideoDuration getMediaDuration() throws IllegalStateException {
+    public VideoDuration mediaDuration() throws IllegalStateException {
         return VideoDuration.fromMillis(mediaPlayer.getDuration());
     }
 
     @Override
-    public int getBufferPercentage() throws IllegalStateException {
+    public int bufferPercentage() throws IllegalStateException {
         return mediaPlayer.getBufferPercentage();
     }
 
     @Override
-    public int getVideoWidth() {
+    public int videoWidth() {
         return videoWidth;
     }
 
     @Override
-    public int getVideoHeight() {
+    public int videoHeight() {
         return videoHeight;
     }
 

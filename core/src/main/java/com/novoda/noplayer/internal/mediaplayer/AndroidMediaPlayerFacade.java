@@ -196,9 +196,9 @@ class AndroidMediaPlayerFacade {
         return mediaPlayer.getCurrentPosition();
     }
 
-    void seekTo(int msec) throws IllegalStateException {
+    void seekTo(long positionInMillis) throws IllegalStateException {
         assertIsInPlaybackState();
-        mediaPlayer.seekTo(msec);
+        mediaPlayer.seekTo((int) positionInMillis);
     }
 
     boolean isPlaying() {
