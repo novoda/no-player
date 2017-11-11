@@ -292,7 +292,92 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public PlayerListenersHolder getListeners() {
-        return listenersHolder;
+    public void addErrorListener(ErrorListener errorListener) {
+        listenersHolder.addErrorListener(errorListener);
+    }
+
+    @Override
+    public void removeErrorListener(ErrorListener errorListener) {
+        listenersHolder.removeErrorListener(errorListener);
+    }
+
+    @Override
+    public void addPreparedListener(PreparedListener preparedListener) {
+        listenersHolder.addPreparedListener(preparedListener);
+    }
+
+    @Override
+    public void removePreparedListener(PreparedListener preparedListener) {
+        listenersHolder.removePreparedListener(preparedListener);
+    }
+
+    @Override
+    public void addBufferStateListener(BufferStateListener bufferStateListener) {
+        listenersHolder.addBufferStateListener(bufferStateListener);
+    }
+
+    @Override
+    public void removeBufferStateListener(BufferStateListener bufferStateListener) {
+        listenersHolder.removeBufferStateListener(bufferStateListener);
+    }
+
+    @Override
+    public void addCompletionListener(CompletionListener completionListener) {
+        listenersHolder.addCompletionListener(completionListener);
+    }
+
+    @Override
+    public void removeCompletionListener(CompletionListener completionListener) {
+        listenersHolder.removeCompletionListener(completionListener);
+    }
+
+    @Override
+    public void addStateChangedListener(StateChangedListener stateChangedListener) {
+        listenersHolder.addStateChangedListener(stateChangedListener);
+    }
+
+    @Override
+    public void removeStateChangedListener(StateChangedListener stateChangedListener) {
+        listenersHolder.removeStateChangedListener(stateChangedListener);
+    }
+
+    @Override
+    public void addInfoListener(InfoListener infoListener) {
+        listenersHolder.addInfoListener(infoListener);
+    }
+
+    @Override
+    public void removeInfoListener(InfoListener infoListener) {
+        listenersHolder.removeInfoListener(infoListener);
+    }
+
+    @Override
+    public void addBitrateChangedListener(BitrateChangedListener bitrateChangedListener) {
+        listenersHolder.addBitrateChangedListener(bitrateChangedListener);
+    }
+
+    @Override
+    public void removeBitrateChangedListener(BitrateChangedListener bitrateChangedListener) {
+        listenersHolder.removeBitrateChangedListener(bitrateChangedListener);
+    }
+
+    @Override
+    public void addHeartbeatCallback(HeartbeatCallback heartbeatCallback) {
+        listenersHolder.addHeartbeatCallback(heartbeatCallback);
+    }
+
+    @Override
+    public void removeHeartbeatCallback(HeartbeatCallback heartbeatCallback) {
+        listenersHolder.removeHeartbeatCallback(heartbeatCallback);
+    }
+
+    @Override
+    public void addVideoSizeChangedListener(VideoSizeChangedListener videoSizeChangedListener) {
+        listenersHolder.addVideoSizeChangedListener(videoSizeChangedListener);
+    }
+
+    @Override
+    public void removeVideoSizeChangedListener(VideoSizeChangedListener videoSizeChangedListener) {
+        listenersHolder.removeVideoSizeChangedListener(videoSizeChangedListener);
     }
 }

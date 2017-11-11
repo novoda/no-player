@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
                 .withDowngradedSecureDecoder()
                 .build(this);
 
-        player.getListeners().addPreparedListener(new NoPlayer.PreparedListener() {
+        player.addPreparedListener(new NoPlayer.PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
                 player.play();
