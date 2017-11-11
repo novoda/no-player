@@ -163,12 +163,12 @@ class ExoPlayerFacade {
 
     void setSubtitleRendererOutput(TextRendererOutput textRendererOutput) throws IllegalStateException {
         assertVideoLoaded();
-        exoPlayer.setTextOutput(textRendererOutput.output());
+        exoPlayer.addTextOutput(textRendererOutput.output());
     }
 
-    void removeSubtitleRendererOutput() throws IllegalStateException {
+    void removeSubtitleRendererOutput(TextRendererOutput textRendererOutput) throws IllegalStateException {
         assertVideoLoaded();
-        exoPlayer.setTextOutput(null);
+        exoPlayer.removeTextOutput(textRendererOutput.output());
     }
 
     boolean selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException {

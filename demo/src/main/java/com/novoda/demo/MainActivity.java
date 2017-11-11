@@ -54,7 +54,6 @@ public class MainActivity extends Activity {
         DataPostingModularDrm drmHandler = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
 
         player = new PlayerBuilder()
-                .withWidevineModularStreamingDrm(drmHandler)
                 .withDowngradedSecureDecoder()
                 .build(this);
 
@@ -72,7 +71,7 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         // TODO: Add switch in UI to avoid redeploy.
-        Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
+        Uri uri = Uri.parse(URI_VIDEO_MPD);
         player.loadVideo(uri, ContentType.DASH);
     }
 
