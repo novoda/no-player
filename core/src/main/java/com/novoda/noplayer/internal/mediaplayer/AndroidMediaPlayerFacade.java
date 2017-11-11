@@ -191,7 +191,7 @@ class AndroidMediaPlayerFacade {
         return mediaPlayer.getDuration();
     }
 
-    int getCurrentPosition() throws IllegalStateException {
+    int currentPositionInMillis() throws IllegalStateException {
         assertIsInPlaybackState();
         return mediaPlayer.getCurrentPosition();
     }

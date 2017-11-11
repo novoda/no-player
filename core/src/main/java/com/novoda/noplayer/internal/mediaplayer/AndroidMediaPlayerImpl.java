@@ -232,7 +232,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
 
     @Override
     public long playheadPositionInMillis() throws IllegalStateException {
-        return isSeeking() ? seekToPositionInMillis : mediaPlayer.getCurrentPosition();
+        return isSeeking() ? seekToPositionInMillis : mediaPlayer.currentPositionInMillis();
     }
 
     private boolean isSeeking() {

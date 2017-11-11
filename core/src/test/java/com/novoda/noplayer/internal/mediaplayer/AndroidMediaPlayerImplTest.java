@@ -234,7 +234,7 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void givenPlayerIsNotSeeking_whenGettingPlayheadPosition_thenReturnsCurrentMediaPlayerPosition() {
-            given(mediaPlayer.getCurrentPosition()).willReturn(ONE_SECOND_IN_MILLIS);
+            given(mediaPlayer.currentPositionInMillis()).willReturn(ONE_SECOND_IN_MILLIS);
             long playheadPositionInMillis = player.playheadPositionInMillis();
 
             assertThat(playheadPositionInMillis).isEqualTo(ONE_SECOND_IN_MILLIS);
@@ -486,7 +486,7 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenStartsBeatingHeart() {
-            given(mediaPlayer.getCurrentPosition()).willReturn((int) BEGINNING_POSITION);
+            given(mediaPlayer.currentPositionInMillis()).willReturn((int) BEGINNING_POSITION);
 
             player.play(BEGINNING_POSITION);
 
@@ -495,7 +495,7 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenMediaPlayerStarts() {
-            given(mediaPlayer.getCurrentPosition()).willReturn((int) BEGINNING_POSITION);
+            given(mediaPlayer.currentPositionInMillis()).willReturn((int) BEGINNING_POSITION);
 
             player.play(BEGINNING_POSITION);
 
@@ -504,7 +504,7 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenersThatVideoIsPlaying() {
-            given(mediaPlayer.getCurrentPosition()).willReturn((int) BEGINNING_POSITION);
+            given(mediaPlayer.currentPositionInMillis()).willReturn((int) BEGINNING_POSITION);
 
             player.play(BEGINNING_POSITION);
 
@@ -601,7 +601,7 @@ public class AndroidMediaPlayerImplTest {
         }
 
         private long givenPositionThatDiffersFromPlayheadPosition() {
-            given(mediaPlayer.getCurrentPosition()).willReturn(0);
+            given(mediaPlayer.currentPositionInMillis()).willReturn(0);
             return 1;
         }
 
