@@ -53,7 +53,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        // TODO: Add switch in UI to avoid redeploy.
         Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
         demoPresenter.startPresenting(uri, ContentType.DASH);
     }
