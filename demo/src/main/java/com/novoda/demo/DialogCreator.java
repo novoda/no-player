@@ -19,6 +19,7 @@ class DialogCreator {
 
     private static final String VIDEO_TRACK_MESSAGE_FORMAT = "ID: %s Quality: %s";
     private static final String AUDIO_TRACK_MESSAGE_FORMAT = "ID: %s Type: %s";
+    private static final int AUTO_TRACK_POSITION = 0;
 
     private final Context context;
     private final NoPlayer noPlayer;
@@ -38,7 +39,7 @@ class DialogCreator {
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
-                        if (position == 0) {
+                        if (position == AUTO_TRACK_POSITION) {
                             noPlayer.clearVideoTrackSelection();
                         } else {
                             PlayerVideoTrack videoTrack = videoTracks.get(position - 1);
@@ -68,7 +69,7 @@ class DialogCreator {
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
-                        if (position == 0) {
+                        if (position == AUTO_TRACK_POSITION) {
                             noPlayer.clearAudioTrackSelection();
                         } else {
                             PlayerAudioTrack audioTrack = audioTracks.get(position - 1);
@@ -103,7 +104,7 @@ class DialogCreator {
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
-                        if (position == 0) {
+                        if (position == AUTO_TRACK_POSITION) {
                             noPlayer.hideSubtitleTrack();
                         } else {
                             PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 1);
