@@ -104,13 +104,13 @@ public interface NoPlayer extends PlayerState {
     void detach(PlayerView playerView);
 
     /**
-     * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player.
+     * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.
      *
-     * @return {@link AudioTracks} that contains a list of available {@link PlayerAudioTrack}.
+     * @return a list of available {@link PlayerVideoTrack} of a prepared Player.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      * @see NoPlayer.PreparedListener
      */
-    AudioTracks getAudioTracks() throws IllegalStateException;
+    List<PlayerVideoTrack> getVideoTracks() throws IllegalStateException;
 
     /**
      * Selects a given {@link PlayerVideoTrack}.
@@ -132,13 +132,21 @@ public interface NoPlayer extends PlayerState {
     Optional<PlayerVideoTrack> getSelectedVideoTrack() throws IllegalStateException;
 
     /**
-     * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.
+     * Clears the {@link PlayerVideoTrack} selection made in {@link NoPlayer#selectVideoTrack(PlayerVideoTrack)}.
      *
-     * @return a list of available {@link PlayerVideoTrack} of a prepared Player.
+     * @return whether the clear was successful.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     */
+    boolean clearVideoTrackSelection() throws IllegalStateException;
+
+    /**
+     * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player.
+     *
+     * @return {@link AudioTracks} that contains a list of available {@link PlayerAudioTrack}.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      * @see NoPlayer.PreparedListener
      */
-    List<PlayerVideoTrack> getVideoTracks() throws IllegalStateException;
+    AudioTracks getAudioTracks() throws IllegalStateException;
 
     /**
      * Selects a given {@link PlayerAudioTrack}.
@@ -150,6 +158,14 @@ public interface NoPlayer extends PlayerState {
     boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException;
 
     /**
+     * Clears the {@link PlayerAudioTrack} selection made in {@link NoPlayer#selectAudioTrack(PlayerAudioTrack)}.
+     *
+     * @return whether the clear was successful.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     */
+    boolean clearAudioTrackSelection() throws IllegalStateException;
+
+    /**
      * Retrieves all of the available {@link PlayerSubtitleTrack} of a prepared Player.
      *
      * @return A list of available {@link PlayerSubtitleTrack}.
@@ -159,7 +175,7 @@ public interface NoPlayer extends PlayerState {
     List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException;
 
     /**
-     * Selects a given {@link PlayerSubtitleTrack} on an attached PlayerView.
+     * Selects and shows a given {@link PlayerSubtitleTrack} on an attached PlayerView.
      *
      * @param subtitleTrack the subtitle track to select.
      * @return whether the selection was successful.
@@ -170,9 +186,10 @@ public interface NoPlayer extends PlayerState {
     /**
      * Clear and hide the subtitles on an attached PlayerView.
      *
+     * @return whether the hide was successful.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
-    void hideSubtitleTrack() throws IllegalStateException;
+    boolean hideSubtitleTrack() throws IllegalStateException;
 
     /**
      * Retrieves a holder, which allows you to add and remove listeners to on the Player.

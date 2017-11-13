@@ -27,10 +27,13 @@ public class ExoPlayerTrackSelector {
         return audioRendererIndex.isAbsent() ? TrackGroupArray.EMPTY : trackInfo().getTrackGroups(audioRendererIndex.get());
     }
 
-    void clearSelectionOverrideFor(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
-        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
-        if (audioRendererIndex.isPresent()) {
-            trackSelector.clearSelectionOverrides(audioRendererIndex.get());
+    boolean clearSelectionOverrideFor(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
+        Optional<Integer> rendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
+        if (rendererIndex.isPresent()) {
+            trackSelector.clearSelectionOverrides(rendererIndex.get());
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -51,9 +54,9 @@ public class ExoPlayerTrackSelector {
                                  RendererTypeRequester rendererTypeRequester,
                                  TrackGroupArray trackGroups,
                                  MappingTrackSelector.SelectionOverride selectionOverride) {
-        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
-        if (audioRendererIndex.isPresent()) {
-            trackSelector.setSelectionOverride(audioRendererIndex.get(), trackGroups, selectionOverride);
+        Optional<Integer> rendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
+        if (rendererIndex.isPresent()) {
+            trackSelector.setSelectionOverride(rendererIndex.get(), trackGroups, selectionOverride);
             return true;
         } else {
             return false;

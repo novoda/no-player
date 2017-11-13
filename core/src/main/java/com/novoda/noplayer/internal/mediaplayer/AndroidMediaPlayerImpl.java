@@ -297,13 +297,18 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
+    public boolean clearAudioTrackSelection() throws IllegalStateException {
+        return mediaPlayer.clearAudioTrackSelection();
+    }
+
+    @Override
     public boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException {
         return mediaPlayer.selectSubtitleTrack(subtitleTrack);
     }
 
     @Override
-    public void hideSubtitleTrack() throws IllegalStateException {
-        mediaPlayer.clearSubtitleTrack();
+    public boolean hideSubtitleTrack() throws IllegalStateException {
+        return mediaPlayer.clearSubtitleTrack();
     }
 
     @Override
@@ -319,6 +324,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     @Override
     public Optional<PlayerVideoTrack> getSelectedVideoTrack() throws IllegalStateException {
         return mediaPlayer.getSelectedVideoTrack();
+    }
+
+    @Override
+    public boolean clearVideoTrackSelection() throws IllegalStateException {
+        return mediaPlayer.clearVideoTrackSelection();
     }
 
     @Override

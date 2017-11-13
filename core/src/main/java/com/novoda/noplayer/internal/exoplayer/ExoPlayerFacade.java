@@ -128,14 +128,19 @@ class ExoPlayerFacade {
         exoPlayer.setVideoSurfaceHolder(surfaceHolder);
     }
 
+    AudioTracks getAudioTracks() throws IllegalStateException {
+        assertVideoLoaded();
+        return audioTrackSelector.getAudioTracks(rendererTypeRequester);
+    }
+
     boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException {
         assertVideoLoaded();
         return audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester);
     }
 
-    AudioTracks getAudioTracks() throws IllegalStateException {
+    boolean clearAudioTrackSelection() {
         assertVideoLoaded();
-        return audioTrackSelector.getAudioTracks(rendererTypeRequester);
+        return audioTrackSelector.clearAudioTrack(rendererTypeRequester);
     }
 
     boolean selectVideoTrack(PlayerVideoTrack playerVideoTrack) {
@@ -151,6 +156,11 @@ class ExoPlayerFacade {
     List<PlayerVideoTrack> getVideoTracks() {
         assertVideoLoaded();
         return exoPlayerVideoTrackSelector.getVideoTracks(rendererTypeRequester, contentType);
+    }
+
+    boolean clearVideoTrackSelection() {
+        assertVideoLoaded();
+        return exoPlayerVideoTrackSelector.clearVideoTrack(rendererTypeRequester);
     }
 
     void setSubtitleRendererOutput(TextRendererOutput textRendererOutput) throws IllegalStateException {
@@ -177,9 +187,9 @@ class ExoPlayerFacade {
         return exoPlayer != null;
     }
 
-    void clearSubtitleTrack() throws IllegalStateException {
+    boolean clearSubtitleTrackSelection() throws IllegalStateException {
         assertVideoLoaded();
-        subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
+        return subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
     }
 
     private void assertVideoLoaded() {

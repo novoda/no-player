@@ -22,7 +22,7 @@ android {
 }
 
 dependencies {
-    compile 'com.google.android.exoplayer:exoplayer:r2.5.2'
+    compile 'com.google.android.exoplayer:exoplayer:r2.5.4'
     compile 'com.novoda:notils-java:3.0.2'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.7.22'

@@ -17,6 +17,9 @@ import java.util.Locale;
 
 class DialogCreator {
 
+    private static final String VIDEO_TRACK_MESSAGE_FORMAT = "ID: %s Quality: %s";
+    private static final String AUDIO_TRACK_MESSAGE_FORMAT = "ID: %s Type: %s";
+
     private final Context context;
     private final NoPlayer noPlayer;
 
@@ -27,6 +30,7 @@ class DialogCreator {
 
     void showVideoSelectionDialog() {
         final List<PlayerVideoTrack> videoTracks = noPlayer.getVideoTracks();
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
         adapter.addAll(mapVideoTrackToLabel(videoTracks));
         AlertDialog videoTrackSelectionDialog = new AlertDialog.Builder(context)
@@ -34,8 +38,12 @@ class DialogCreator {
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
-                        PlayerVideoTrack videoTrack = videoTracks.get(position);
-                        noPlayer.selectVideoTrack(videoTrack);
+                        if (position == 0) {
+                            noPlayer.clearVideoTrackSelection();
+                        } else {
+                            PlayerVideoTrack videoTrack = videoTracks.get(position - 1);
+                            noPlayer.selectVideoTrack(videoTrack);
+                        }
                     }
                 }).create();
         videoTrackSelectionDialog.show();
@@ -43,8 +51,10 @@ class DialogCreator {
 
     private List<String> mapVideoTrackToLabel(List<PlayerVideoTrack> videoTracks) {
         List<String> labels = new ArrayList<>();
+        labels.add("Auto");
         for (PlayerVideoTrack videoTrack : videoTracks) {
-            labels.add("Quality " + videoTrack.height());
+            String message = String.format(VIDEO_TRACK_MESSAGE_FORMAT, videoTrack.id(), videoTrack.height());
+            labels.add(message);
         }
         return labels;
     }
@@ -58,8 +68,12 @@ class DialogCreator {
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
-                        PlayerAudioTrack audioTrack = audioTracks.get(position);
-                        noPlayer.selectAudioTrack(audioTrack);
+                        if (position == 0) {
+                            noPlayer.clearAudioTrackSelection();
+                        } else {
+                            PlayerAudioTrack audioTrack = audioTracks.get(position - 1);
+                            noPlayer.selectAudioTrack(audioTrack);
+                        }
                     }
                 }).create();
         audioSelectionDialog.show();
@@ -67,12 +81,12 @@ class DialogCreator {
 
     private List<String> mapAudioTrackToLabel(AudioTracks audioTracks) {
         List<String> labels = new ArrayList<>();
+        labels.add("Auto");
         for (PlayerAudioTrack audioTrack : audioTracks) {
             String label = String.format(
                     Locale.UK,
-                    "Group: %s Format: %s Type: %s",
-                    audioTrack.groupIndex(),
-                    audioTrack.formatIndex(),
+                    AUDIO_TRACK_MESSAGE_FORMAT,
+                    audioTrack.trackId(),
                     audioTrack.audioTrackType()
             );
             labels.add(label);
@@ -89,14 +103,11 @@ class DialogCreator {
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
-                        switch (position) {
-                            case 0:
-                                noPlayer.hideSubtitleTrack();
-                                break;
-                            default:
-                                PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 1);
-                                noPlayer.showSubtitleTrack(subtitleTrack);
-                                break;
+                        if (position == 0) {
+                            noPlayer.hideSubtitleTrack();
+                        } else {
+                            PlayerSubtitleTrack subtitleTrack = subtitleTracks.get(position - 1);
+                            noPlayer.showSubtitleTrack(subtitleTrack);
                         }
                     }
                 }).create();
