@@ -8,7 +8,6 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.model.VideoDuration;
-import com.novoda.noplayer.model.VideoPosition;
 
 class DemoPresenter {
 
@@ -63,25 +62,25 @@ class DemoPresenter {
     private NoPlayer.HeartbeatCallback updateProgress = new NoPlayer.HeartbeatCallback() {
         @Override
         public void onBeat(NoPlayer player) {
-            VideoPosition position = player.getPlayheadPosition();
-            VideoDuration duration = player.getMediaDuration();
-            int bufferPercentage = player.getBufferPercentage();
+            long positionInMillis = player.playheadPositionInMillis();
+            VideoDuration duration = player.mediaDuration();
+            int bufferPercentage = player.bufferPercentage();
 
-            updateProgress(position, duration, bufferPercentage);
-            updateTiming(position, duration);
+            updateProgress(positionInMillis, duration, bufferPercentage);
+            updateTiming(positionInMillis, duration);
         }
     };
 
-    private void updateProgress(VideoPosition position, VideoDuration duration, int bufferPercentage) {
-        int progressAsIncrements = ProgressCalculator.progressAsIncrements(position, duration);
+    private void updateProgress(long positionInMillis, VideoDuration duration, int bufferPercentage) {
+        int progressAsIncrements = ProgressCalculator.progressAsIncrements(positionInMillis, duration);
         int bufferAsIncrements = ProgressCalculator.bufferAsIncrements(bufferPercentage);
 
         controllerView.updateContentProgress(progressAsIncrements);
         controllerView.updateBufferProgress(bufferAsIncrements);
     }
 
-    private void updateTiming(VideoPosition position, VideoDuration duration) {
-        VideoDuration elapsedDuration = VideoDuration.fromMillis(position.inMillis());
+    private void updateTiming(long positionInMillis, VideoDuration duration) {
+        VideoDuration elapsedDuration = VideoDuration.fromMillis(positionInMillis);
         VideoDuration remainingDuration = VideoDuration.fromMillis(duration.inMillis()).minus(elapsedDuration);
 
         controllerView.updateElapsedTime(TimeFormatter.asHoursMinutesSeconds(elapsedDuration.inImpreciseSeconds()));
@@ -102,7 +101,7 @@ class DemoPresenter {
     private final ControllerView.SeekAction onSeekPerformed = new ControllerView.SeekAction() {
         @Override
         public void perform(int progress, int max) {
-            VideoPosition seekToPosition = ProgressCalculator.seekToPosition(noPlayer.getMediaDuration(), progress, max);
+            long seekToPosition = ProgressCalculator.seekToPosition(noPlayer.mediaDuration(), progress, max);
             noPlayer.seekTo(seekToPosition);
         }
     };

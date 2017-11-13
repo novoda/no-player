@@ -1,7 +1,6 @@
 package com.novoda.demo;
 
 import com.novoda.noplayer.model.VideoDuration;
-import com.novoda.noplayer.model.VideoPosition;
 
 final class ProgressCalculator {
 
@@ -12,8 +11,8 @@ final class ProgressCalculator {
         // Uses static methods.
     }
 
-    static int progressAsIncrements(VideoPosition position, VideoDuration duration) {
-        double percentageOfDuration = position.asPercentageOf(duration);
+    static int progressAsIncrements(long positionInMillis, VideoDuration duration) {
+        double percentageOfDuration = positionInMillis / (float) duration.inMillis();
         return (int) (MAX_PROGRESS_INCREMENTS * percentageOfDuration);
     }
 
@@ -21,7 +20,7 @@ final class ProgressCalculator {
         return (bufferPercentage * MAX_PROGRESS_INCREMENTS) / MAX_PROGRESS_PERCENT;
     }
 
-    static VideoPosition seekToPosition(VideoDuration mediaDuration, int progress, int max) {
+    static long seekToPosition(VideoDuration mediaDuration, int progress, int max) {
         float progressMultiplier = (float) progress / max;
         return mediaDuration.positionAtPercentage(progressMultiplier);
     }
