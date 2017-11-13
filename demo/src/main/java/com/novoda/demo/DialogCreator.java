@@ -34,7 +34,7 @@ class DialogCreator {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
         adapter.addAll(mapVideoTrackToLabel(videoTracks));
-        AlertDialog videoTrackSelectionDialog = new AlertDialog.Builder(context)
+        new AlertDialog.Builder(context)
                 .setTitle("Select Video track")
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
@@ -46,8 +46,9 @@ class DialogCreator {
                             noPlayer.selectVideoTrack(videoTrack);
                         }
                     }
-                }).create();
-        videoTrackSelectionDialog.show();
+                })
+                .create()
+                .show();
     }
 
     private List<String> mapVideoTrackToLabel(List<PlayerVideoTrack> videoTracks) {
@@ -64,7 +65,7 @@ class DialogCreator {
         final AudioTracks audioTracks = noPlayer.getAudioTracks();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
         adapter.addAll(mapAudioTrackToLabel(audioTracks));
-        AlertDialog audioSelectionDialog = new AlertDialog.Builder(context)
+        new AlertDialog.Builder(context)
                 .setTitle("Select audio track")
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
@@ -76,8 +77,9 @@ class DialogCreator {
                             noPlayer.selectAudioTrack(audioTrack);
                         }
                     }
-                }).create();
-        audioSelectionDialog.show();
+                })
+                .create()
+                .show();
     }
 
     private List<String> mapAudioTrackToLabel(AudioTracks audioTracks) {
@@ -99,7 +101,7 @@ class DialogCreator {
         final List<PlayerSubtitleTrack> subtitleTracks = noPlayer.getSubtitleTracks();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
         adapter.addAll(mapSubtitleTrackToLabel(subtitleTracks));
-        AlertDialog subtitlesSelectionDialog = new AlertDialog.Builder(context)
+        new AlertDialog.Builder(context)
                 .setTitle("Select subtitle track")
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
@@ -111,8 +113,9 @@ class DialogCreator {
                             noPlayer.showSubtitleTrack(subtitleTrack);
                         }
                     }
-                }).create();
-        subtitlesSelectionDialog.show();
+                })
+                .create()
+                .show();
     }
 
     private List<String> mapSubtitleTrackToLabel(List<PlayerSubtitleTrack> subtitleTracks) {
