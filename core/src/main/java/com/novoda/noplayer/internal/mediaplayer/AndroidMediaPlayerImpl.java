@@ -130,7 +130,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
-    public void play(final long positionInMillis) throws IllegalStateException {
+    public void playAt(final long positionInMillis) throws IllegalStateException {
         if (playheadPositionInMillis() == positionInMillis) {
             play();
         } else {

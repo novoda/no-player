@@ -487,7 +487,7 @@ public class AndroidMediaPlayerImplTest {
         public void whenStartingPlayAtVideoPosition_thenStartsBeatingHeart() {
             given(mediaPlayer.currentPositionInMillis()).willReturn((int) BEGINNING_POSITION);
 
-            player.play(BEGINNING_POSITION);
+            player.playAt(BEGINNING_POSITION);
 
             verify(heart).startBeatingHeart();
         }
@@ -496,7 +496,7 @@ public class AndroidMediaPlayerImplTest {
         public void whenStartingPlayAtVideoPosition_thenMediaPlayerStarts() {
             given(mediaPlayer.currentPositionInMillis()).willReturn((int) BEGINNING_POSITION);
 
-            player.play(BEGINNING_POSITION);
+            player.playAt(BEGINNING_POSITION);
 
             verify(mediaPlayer).start(surfaceHolder);
         }
@@ -505,7 +505,7 @@ public class AndroidMediaPlayerImplTest {
         public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenersThatVideoIsPlaying() {
             given(mediaPlayer.currentPositionInMillis()).willReturn((int) BEGINNING_POSITION);
 
-            player.play(BEGINNING_POSITION);
+            player.playAt(BEGINNING_POSITION);
 
             verify(stateChangedListener).onVideoPlaying();
         }
@@ -564,7 +564,7 @@ public class AndroidMediaPlayerImplTest {
         public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenNotifiesBufferStateListenersThatBufferStarted() {
             long differentPositionInMillis = givenPositionThatDiffersFromPlayheadPosition();
 
-            player.play(differentPositionInMillis);
+            player.playAt(differentPositionInMillis);
 
             verify(bufferStateListener).onBufferStarted();
         }
@@ -573,7 +573,7 @@ public class AndroidMediaPlayerImplTest {
         public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenInitialisesPlaybackForSeeking() {
             long differentPositionInMillis = givenPositionThatDiffersFromPlayheadPosition();
 
-            player.play(differentPositionInMillis);
+            player.playAt(differentPositionInMillis);
 
             thenInitialisesPlaybackForSeeking();
         }
@@ -582,7 +582,7 @@ public class AndroidMediaPlayerImplTest {
         public void givenPositionThatDiffersFromPlayheadPosition_whenStartingPlayAtVideoPosition_thenSeeksToVideoPosition() {
             long differentPositionInMillis = givenPositionThatDiffersFromPlayheadPosition();
 
-            player.play(differentPositionInMillis);
+            player.playAt(differentPositionInMillis);
             ArgumentCaptor<DelayedActionExecutor.Action> argumentCaptor = ArgumentCaptor.forClass(DelayedActionExecutor.Action.class);
             verify(delayedActionExecutor).performAfterDelay(argumentCaptor.capture(), eq(DELAY_MILLIS));
             argumentCaptor.getValue().perform();
