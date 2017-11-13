@@ -23,8 +23,8 @@ public final class VideoDuration implements Serializable {
         this.durationInMillis = durationInMillis;
     }
 
-    public VideoPosition positionAtPercentage(float percentage) {
-        return VideoPosition.fromMillis((long) (durationInMillis * percentage));
+    public long positionAtPercentage(float percentage) {
+        return (long) (durationInMillis * percentage);
     }
 
     public long inMillis() {

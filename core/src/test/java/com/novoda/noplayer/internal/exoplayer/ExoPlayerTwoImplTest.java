@@ -23,7 +23,6 @@ import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.TextCues;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.model.VideoPosition;
 
 import java.util.Arrays;
 import java.util.List;
@@ -143,8 +142,8 @@ public class ExoPlayerTwoImplTest {
             NoPlayer.VideoSizeChangedListener videoSizeChangedListener = argumentCaptor.getAllValues().get(INDEX_INTERNAL_VIDEO_SIZE_CHANGED_LISTENER);
             videoSizeChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
 
-            int actualWidth = player.getVideoWidth();
-            int actualHeight = player.getVideoHeight();
+            int actualWidth = player.videoWidth();
+            int actualHeight = player.videoHeight();
 
             assertThat(actualWidth).isEqualTo(WIDTH);
             assertThat(actualHeight).isEqualTo(HEIGHT);
@@ -442,17 +441,15 @@ public class ExoPlayerTwoImplTest {
 
         @Test
         public void whenSeeking_thenSeeksToPosition() {
-            VideoPosition videoPosition = VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS);
+            long seekPositionInMillis = TWO_MINUTES_IN_MILLIS;
 
-            player.seekTo(videoPosition);
+            player.seekTo(seekPositionInMillis);
 
-            verify(exoPlayerFacade).seekTo(videoPosition);
+            verify(exoPlayerFacade).seekTo(seekPositionInMillis);
         }
 
         @Test
         public void whenStartingPlayback_andSurfaceHolderIsReady_thenPlaysFacadeWithSurfaceHolder() {
-            // TODO replace answer with captor
-
             player.play();
 
             verify(exoPlayerFacade).play();
@@ -460,16 +457,14 @@ public class ExoPlayerTwoImplTest {
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenSeeksToPosition() {
+            player.playAt(TWO_MINUTES_IN_MILLIS);
 
-            player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
-
-            verify(exoPlayerFacade).seekTo(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
+            verify(exoPlayerFacade).seekTo(TWO_MINUTES_IN_MILLIS);
         }
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenStartsBeatingHeart() {
-
-            player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
+            player.playAt(TWO_MINUTES_IN_MILLIS);
 
             verify(heart).startBeatingHeart();
         }
@@ -484,8 +479,7 @@ public class ExoPlayerTwoImplTest {
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenersThatVideoIsPlaying() {
-
-            player.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
+            player.playAt(TWO_MINUTES_IN_MILLIS);
 
             verify(stateChangedListener).onVideoPlaying();
         }

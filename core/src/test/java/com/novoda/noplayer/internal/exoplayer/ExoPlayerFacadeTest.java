@@ -21,7 +21,6 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
 import com.novoda.noplayer.model.VideoDuration;
-import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.utils.Optional;
 
 import java.util.Collections;
@@ -69,7 +68,7 @@ public class ExoPlayerFacadeTest {
 
     public static class GivenVideoNotLoaded extends Base {
 
-        private static final VideoPosition ANY_POSITION = VideoPosition.fromMillis(1000);
+        private static final long ANY_POSITION = 1000;
         private static final PlayerAudioTrack PLAYER_AUDIO_TRACK = PlayerAudioTrackFixture.aPlayerAudioTrack().build();
         private static final AudioTracks AUDIO_TRACKS = AudioTracks.from(Collections.singletonList(PLAYER_AUDIO_TRACK));
 
@@ -129,7 +128,7 @@ public class ExoPlayerFacadeTest {
         public void whenQueryingPlayheadPosition_thenThrowsIllegalStateException() {
             thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
-            facade.getPlayheadPosition();
+            facade.playheadPositionInMillis();
         }
 
         @Test
@@ -223,11 +222,11 @@ public class ExoPlayerFacadeTest {
 
         @Test
         public void whenSeeking_thenSeeksToPosition() {
-            VideoPosition videoPosition = VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS);
+            long videoPositionInMillis = TWO_MINUTES_IN_MILLIS;
 
-            facade.seekTo(videoPosition);
+            facade.seekTo(videoPositionInMillis);
 
-            verify(exoPlayer).seekTo(videoPosition.inMillis());
+            verify(exoPlayer).seekTo(videoPositionInMillis);
         }
 
         @Test
@@ -240,16 +239,14 @@ public class ExoPlayerFacadeTest {
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenSeeksToPosition() {
+            facade.play(TWO_MINUTES_IN_MILLIS);
 
-            facade.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
-
-            verify(exoPlayer).seekTo(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS).inMillis());
+            verify(exoPlayer).seekTo(TWO_MINUTES_IN_MILLIS);
         }
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenSetsPlayWhenReadyToTrue() {
-
-            facade.play(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
+            facade.play(TWO_MINUTES_IN_MILLIS);
 
             verify(exoPlayer).setPlayWhenReady(PLAY_WHEN_READY);
         }
@@ -267,9 +264,9 @@ public class ExoPlayerFacadeTest {
         public void whenGettingPlayheadPosition_thenReturnsCurrentPosition() {
             given(exoPlayer.getCurrentPosition()).willReturn(TWO_MINUTES_IN_MILLIS);
 
-            VideoPosition playheadPosition = facade.getPlayheadPosition();
+            long playheadPositionInMillis = facade.playheadPositionInMillis();
 
-            assertThat(playheadPosition).isEqualTo(VideoPosition.fromMillis(TWO_MINUTES_IN_MILLIS));
+            assertThat(playheadPositionInMillis).isEqualTo(TWO_MINUTES_IN_MILLIS);
         }
 
         @Test

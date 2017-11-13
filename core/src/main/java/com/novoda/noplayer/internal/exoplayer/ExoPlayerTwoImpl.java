@@ -23,7 +23,6 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 import com.novoda.noplayer.model.VideoDuration;
-import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.utils.Optional;
 
 import java.util.List;
@@ -99,27 +98,27 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public int getVideoWidth() {
+    public int videoWidth() {
         return videoWidth;
     }
 
     @Override
-    public int getVideoHeight() {
+    public int videoHeight() {
         return videoHeight;
     }
 
     @Override
-    public VideoPosition getPlayheadPosition() throws IllegalStateException {
-        return exoPlayer.getPlayheadPosition();
+    public long playheadPositionInMillis() throws IllegalStateException {
+        return exoPlayer.playheadPositionInMillis();
     }
 
     @Override
-    public VideoDuration getMediaDuration() throws IllegalStateException {
+    public VideoDuration mediaDuration() throws IllegalStateException {
         return exoPlayer.getMediaDuration();
     }
 
     @Override
-    public int getBufferPercentage() throws IllegalStateException {
+    public int bufferPercentage() throws IllegalStateException {
         return exoPlayer.getBufferPercentage();
     }
 
@@ -131,8 +130,8 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public void play(VideoPosition position) throws IllegalStateException {
-        seekTo(position);
+    public void playAt(long positionInMillis) throws IllegalStateException {
+        seekTo(positionInMillis);
         play();
     }
 
@@ -147,8 +146,8 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public void seekTo(VideoPosition position) throws IllegalStateException {
-        exoPlayer.seekTo(position);
+    public void seekTo(long positionInMillis) throws IllegalStateException {
+        exoPlayer.seekTo(positionInMillis);
     }
 
     @Override
