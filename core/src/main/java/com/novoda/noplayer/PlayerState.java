@@ -1,19 +1,18 @@
 package com.novoda.noplayer;
 
 import com.novoda.noplayer.model.VideoDuration;
-import com.novoda.noplayer.model.VideoPosition;
 
 public interface PlayerState {
 
     boolean isPlaying();
 
-    int getVideoWidth();
+    int videoWidth();
 
-    int getVideoHeight();
+    int videoHeight();
 
-    VideoPosition getPlayheadPosition();
+    long playheadPositionInMillis();
 
-    VideoDuration getMediaDuration();
+    VideoDuration mediaDuration();
 
-    int getBufferPercentage();
+    int bufferPercentage();
 }

@@ -19,7 +19,6 @@ import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.VideoDuration;
-import com.novoda.noplayer.model.VideoPosition;
 import com.novoda.utils.Optional;
 
 import java.util.List;
@@ -61,9 +60,9 @@ class ExoPlayerFacade {
         return exoPlayer != null && exoPlayer.getPlayWhenReady();
     }
 
-    VideoPosition getPlayheadPosition() throws IllegalStateException {
+    long playheadPositionInMillis() throws IllegalStateException {
         assertVideoLoaded();
-        return VideoPosition.fromMillis(exoPlayer.getCurrentPosition());
+        return exoPlayer.getCurrentPosition();
     }
 
     VideoDuration getMediaDuration() throws IllegalStateException {
@@ -76,8 +75,8 @@ class ExoPlayerFacade {
         return exoPlayer.getBufferedPercentage();
     }
 
-    void play(VideoPosition position) throws IllegalStateException {
-        seekTo(position);
+    void play(long positionInMillis) throws IllegalStateException {
+        seekTo(positionInMillis);
         play();
     }
 
@@ -91,9 +90,9 @@ class ExoPlayerFacade {
         exoPlayer.setPlayWhenReady(false);
     }
 
-    void seekTo(VideoPosition position) throws IllegalStateException {
+    void seekTo(long positionInMillis) throws IllegalStateException {
         assertVideoLoaded();
-        exoPlayer.seekTo(position.inMillis());
+        exoPlayer.seekTo(positionInMillis);
     }
 
     void release() {
