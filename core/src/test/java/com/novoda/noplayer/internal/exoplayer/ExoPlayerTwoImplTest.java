@@ -457,14 +457,14 @@ public class ExoPlayerTwoImplTest {
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenSeeksToPosition() {
-            player.play(TWO_MINUTES_IN_MILLIS);
+            player.playAt(TWO_MINUTES_IN_MILLIS);
 
             verify(exoPlayerFacade).seekTo(TWO_MINUTES_IN_MILLIS);
         }
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenStartsBeatingHeart() {
-            player.play(TWO_MINUTES_IN_MILLIS);
+            player.playAt(TWO_MINUTES_IN_MILLIS);
 
             verify(heart).startBeatingHeart();
         }
@@ -479,7 +479,7 @@ public class ExoPlayerTwoImplTest {
 
         @Test
         public void whenStartingPlayAtVideoPosition_thenNotifiesStateListenersThatVideoIsPlaying() {
-            player.play(TWO_MINUTES_IN_MILLIS);
+            player.playAt(TWO_MINUTES_IN_MILLIS);
 
             verify(stateChangedListener).onVideoPlaying();
         }
