@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
         View videoSelectionButton = findViewById(R.id.button_video_selection);
         View audioSelectionButton = findViewById(R.id.button_audio_selection);
         View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
-        final ControllerView controllerView = (ControllerView) findViewById(R.id.controller_view);
+        ControllerView controllerView = (ControllerView) findViewById(R.id.controller_view);
 
         videoSelectionButton.setOnClickListener(showVideoSelectionDialog);
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
