@@ -25,9 +25,9 @@ class DemoPresenter {
     }
 
     void startPresenting(Uri uri, ContentType contentType) {
-        listeners.addPreparedListener(playOnPrepared());
-        listeners.addStateChangedListener(updatePlayPause());
-        listeners.addHeartbeatCallback(updateProgress());
+        listeners.addPreparedListener(playOnPrepared);
+        listeners.addStateChangedListener(updatePlayPause);
+        listeners.addHeartbeatCallback(updateProgress);
 
         controllerView.setTogglePlayPauseAction(onTogglePlayPause);
         controllerView.setSeekAction(onSeekPerformed);
@@ -36,47 +36,41 @@ class DemoPresenter {
         noPlayer.loadVideo(uri, contentType);
     }
 
-    private NoPlayer.PreparedListener playOnPrepared() {
-        return new NoPlayer.PreparedListener() {
-            @Override
-            public void onPrepared(PlayerState playerState) {
-                noPlayer.play();
-            }
-        };
-    }
+    private final NoPlayer.PreparedListener playOnPrepared = new NoPlayer.PreparedListener() {
+        @Override
+        public void onPrepared(PlayerState playerState) {
+            noPlayer.play();
+        }
+    };
 
-    private NoPlayer.StateChangedListener updatePlayPause() {
-        return new NoPlayer.StateChangedListener() {
-            @Override
-            public void onVideoPlaying() {
-                controllerView.setPlaying();
-            }
+    private final NoPlayer.StateChangedListener updatePlayPause = new NoPlayer.StateChangedListener() {
+        @Override
+        public void onVideoPlaying() {
+            controllerView.setPlaying();
+        }
 
-            @Override
-            public void onVideoPaused() {
-                controllerView.setPaused();
-            }
+        @Override
+        public void onVideoPaused() {
+            controllerView.setPaused();
+        }
 
-            @Override
-            public void onVideoStopped() {
-                // Not required.
-            }
-        };
-    }
+        @Override
+        public void onVideoStopped() {
+            // Not required.
+        }
+    };
 
-    private NoPlayer.HeartbeatCallback updateProgress() {
-        return new NoPlayer.HeartbeatCallback() {
-            @Override
-            public void onBeat(NoPlayer player) {
-                VideoPosition position = player.getPlayheadPosition();
-                VideoDuration duration = player.getMediaDuration();
-                int bufferPercentage = player.getBufferPercentage();
+    private NoPlayer.HeartbeatCallback updateProgress = new NoPlayer.HeartbeatCallback() {
+        @Override
+        public void onBeat(NoPlayer player) {
+            VideoPosition position = player.getPlayheadPosition();
+            VideoDuration duration = player.getMediaDuration();
+            int bufferPercentage = player.getBufferPercentage();
 
-                updateProgress(position, duration, bufferPercentage);
-                updateTiming(position, duration);
-            }
-        };
-    }
+            updateProgress(position, duration, bufferPercentage);
+            updateTiming(position, duration);
+        }
+    };
 
     private void updateProgress(VideoPosition position, VideoDuration duration, int bufferPercentage) {
         int progressAsIncrements = ProgressCalculator.progressAsIncrements(position, duration);
