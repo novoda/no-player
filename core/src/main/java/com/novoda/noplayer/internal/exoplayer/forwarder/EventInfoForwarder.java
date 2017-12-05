@@ -8,6 +8,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.novoda.noplayer.NoPlayer;
 
+import java.util.Collections;
 import java.util.HashMap;
 
 class EventInfoForwarder implements Player.EventListener {
@@ -67,6 +68,15 @@ class EventInfoForwarder implements Player.EventListener {
     }
 
     @Override
+    public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+        HashMap<String, String> callingMethodParameters = new HashMap<>();
+
+        callingMethodParameters.put("shuffleModeEnabled", String.valueOf(shuffleModeEnabled));
+
+        infoListener.onNewInfo("onShuffleModeEnabledChanged", callingMethodParameters);
+    }
+
+    @Override
     public void onPlayerError(ExoPlaybackException error) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
@@ -76,8 +86,10 @@ class EventInfoForwarder implements Player.EventListener {
     }
 
     @Override
-    public void onPositionDiscontinuity() {
+    public void onPositionDiscontinuity(int reason) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
+
+        callingMethodParameters.put("reason", String.valueOf(reason));
 
         infoListener.onNewInfo("onPositionDiscontinuity", callingMethodParameters);
     }
@@ -89,5 +101,10 @@ class EventInfoForwarder implements Player.EventListener {
         callingMethodParameters.put("playbackParameters", String.valueOf(playbackParameters));
 
         infoListener.onNewInfo("onPlaybackParametersChanged", callingMethodParameters);
+    }
+
+    @Override
+    public void onSeekProcessed() {
+        infoListener.onNewInfo("onPositionDiscontinuity", Collections.<String, String>emptyMap());
     }
 }

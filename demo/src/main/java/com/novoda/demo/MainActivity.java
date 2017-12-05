@@ -29,11 +29,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
-        PlayerView playerView = (PlayerView) findViewById(R.id.player_view);
+        PlayerView playerView = findViewById(R.id.player_view);
         View videoSelectionButton = findViewById(R.id.button_video_selection);
         View audioSelectionButton = findViewById(R.id.button_audio_selection);
         View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
-        ControllerView controllerView = (ControllerView) findViewById(R.id.controller_view);
+        ControllerView controllerView = findViewById(R.id.controller_view);
 
         videoSelectionButton.setOnClickListener(showVideoSelectionDialog);
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
