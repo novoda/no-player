@@ -30,7 +30,7 @@ public interface NoPlayer extends PlayerState, Listeners {
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      * @see NoPlayer.PreparedListener
      */
-    void play(long positionInMillis) throws IllegalStateException;
+    void playAt(long positionInMillis) throws IllegalStateException;
 
     /**
      * Pauses content of a prepared Player.

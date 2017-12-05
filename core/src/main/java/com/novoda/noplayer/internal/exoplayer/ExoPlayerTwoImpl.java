@@ -129,7 +129,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public void play(long positionInMillis) throws IllegalStateException {
+    public void playAt(long positionInMillis) throws IllegalStateException {
         seekTo(positionInMillis);
         play();
     }
