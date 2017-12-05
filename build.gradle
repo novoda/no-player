@@ -1,9 +1,9 @@
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
+    gradleVersion = '4.3.1'
 }
 
 allprojects {
-    version = "4.0.0"
+    version = '4.0.0'
 }
 
 buildscript {
@@ -13,7 +13,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.novoda:bintray-release:0.6.1'
+        classpath 'com.novoda:bintray-release:0.8.0'
     }
 }
 
