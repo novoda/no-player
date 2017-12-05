@@ -118,6 +118,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     };
 
     @Override
+    public Listeners getListeners() {
+        return listenersHolder;
+    }
+
+    @Override
     public void play() throws IllegalStateException {
         heart.startBeatingHeart();
         requestSurface(new SurfaceHolderRequester.Callback() {
@@ -337,11 +342,6 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     @Override
     public List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException {
         return mediaPlayer.getSubtitleTracks();
-    }
-
-    @Override
-    public Listeners getListeners() {
-        return listenersHolder;
     }
 
     @Override

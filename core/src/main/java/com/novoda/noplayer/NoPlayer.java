@@ -16,6 +16,13 @@ import java.util.Map;
 public interface NoPlayer extends PlayerState {
 
     /**
+     * Retrieves a holder, which allows you to add and remove listeners on the Player.
+     *
+     * @return {@link Listeners} holder.
+     */
+    Listeners getListeners();
+
+    /**
      * Plays content of a prepared Player.
      *
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
@@ -189,13 +196,6 @@ public interface NoPlayer extends PlayerState {
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
     boolean hideSubtitleTrack() throws IllegalStateException;
-
-    /**
-     * Retrieves a holder, which allows you to add and remove listeners to on the Player.
-     *
-     * @return {@link Listeners} holder.
-     */
-    Listeners getListeners();
 
     interface PlayerError {
 

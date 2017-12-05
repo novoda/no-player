@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerState;
@@ -119,6 +120,11 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public int bufferPercentage() throws IllegalStateException {
         return exoPlayer.bufferPercentage();
+    }
+
+    @Override
+    public Listeners getListeners() {
+        return listenersHolder;
     }
 
     @Override
@@ -289,10 +295,5 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException {
         return exoPlayer.getSubtitleTracks();
-    }
-
-    @Override
-    public PlayerListenersHolder getListeners() {
-        return listenersHolder;
     }
 }
