@@ -2,18 +2,18 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "26.0.2"
+    buildToolsVersion '27.0.1'
 
     defaultConfig {
-        applicationId "com.novoda.demo"
+        applicationId 'com.novoda.demo'
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
     }
 }
 dependencies {
-    compile project(":core")
+    compile project(':core')
     testCompile 'junit:junit:4.12'
-    testCompile "com.google.truth:truth:0.36"
+    testCompile 'com.google.truth:truth:0.36'
 }
