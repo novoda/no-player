@@ -14,4 +14,6 @@ android {
 }
 dependencies {
     compile project(":core")
+    testCompile 'junit:junit:4.12'
+    testCompile "com.google.truth:truth:0.36"
 }

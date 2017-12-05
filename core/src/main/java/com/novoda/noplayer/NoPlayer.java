@@ -13,7 +13,14 @@ import com.novoda.utils.Optional;
 import java.util.List;
 import java.util.Map;
 
-public interface NoPlayer extends PlayerState, Listeners {
+public interface NoPlayer extends PlayerState {
+
+    /**
+     * Retrieves a holder, which allows you to add and remove listeners on the Player.
+     *
+     * @return {@link Listeners} holder.
+     */
+    Listeners getListeners();
 
     /**
      * Plays content of a prepared Player.
@@ -30,7 +37,7 @@ public interface NoPlayer extends PlayerState, Listeners {
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      * @see NoPlayer.PreparedListener
      */
-    void play(long positionInMillis) throws IllegalStateException;
+    void playAt(long positionInMillis) throws IllegalStateException;
 
     /**
      * Pauses content of a prepared Player.
