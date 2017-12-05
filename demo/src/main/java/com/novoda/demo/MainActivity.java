@@ -79,10 +79,10 @@ public class MainActivity extends Activity {
     private final View.OnClickListener showSubtitleSelectionDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!player.getSubtitleTracks().isEmpty()) {
-                dialogCreator.showSubtitleSelectionDialog();
-            } else {
+            if (player.getSubtitleTracks().isEmpty()) {
                 Toast.makeText(MainActivity.this, "no subtitles available!", Toast.LENGTH_LONG).show();
+            } else {
+                dialogCreator.showSubtitleSelectionDialog();
             }
         }
     };

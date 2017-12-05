@@ -45,6 +45,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     private int videoWidth;
     private int videoHeight;
     private SurfaceHolderRequester.Callback onSurfaceReadyCallback;
+    private TextRendererOutput textRendererOutput;
 
     ExoPlayerTwoImpl(ExoPlayerFacade exoPlayer,
                      PlayerListenersHolder listenersHolder,
@@ -232,7 +233,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     public void detach(PlayerView playerView) {
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
-        exoPlayer.removeSubtitleRendererOutput();
+        removeSubtitleRenderer();
         surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);
         surfaceHolderRequester = null;
         this.playerView = null;
@@ -256,15 +257,22 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     private void setSubtitleRendererOutput() throws IllegalStateException {
-        TextRendererOutput textRendererOutput = new TextRendererOutput(playerView);
+        removeSubtitleRenderer();
+        textRendererOutput = new TextRendererOutput(playerView);
         exoPlayer.setSubtitleRendererOutput(textRendererOutput);
     }
 
     @Override
     public boolean hideSubtitleTrack() throws IllegalStateException {
         playerView.hideSubtitles();
-        exoPlayer.removeSubtitleRendererOutput();
+        removeSubtitleRenderer();
         return exoPlayer.clearSubtitleTrackSelection();
+    }
+
+    private void removeSubtitleRenderer() {
+        if (textRendererOutput != null) {
+            exoPlayer.removeSubtitleRendererOutput(textRendererOutput);
+        }
     }
 
     @Override
