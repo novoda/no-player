@@ -262,17 +262,17 @@ class ExoPlayerTwoImpl implements NoPlayer {
         exoPlayer.setSubtitleRendererOutput(textRendererOutput);
     }
 
-    private void removeSubtitleRenderer() {
-        if (textRendererOutput != null) {
-            exoPlayer.removeSubtitleRendererOutput(textRendererOutput);
-        }
-    }
-
     @Override
     public boolean hideSubtitleTrack() throws IllegalStateException {
         playerView.hideSubtitles();
         removeSubtitleRenderer();
         return exoPlayer.clearSubtitleTrackSelection();
+    }
+
+    private void removeSubtitleRenderer() {
+        if (textRendererOutput != null) {
+            exoPlayer.removeSubtitleRendererOutput(textRendererOutput);
+        }
     }
 
     @Override
