@@ -18,7 +18,6 @@ import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
-import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.utils.Optional;
 
 import java.util.List;
@@ -65,12 +64,12 @@ class ExoPlayerFacade {
         return exoPlayer.getCurrentPosition();
     }
 
-    VideoDuration getMediaDuration() throws IllegalStateException {
+    long mediaDurationInMillis() throws IllegalStateException {
         assertVideoLoaded();
-        return VideoDuration.fromMillis(exoPlayer.getDuration());
+        return exoPlayer.getDuration();
     }
 
-    int getBufferPercentage() throws IllegalStateException {
+    int bufferPercentage() throws IllegalStateException {
         assertVideoLoaded();
         return exoPlayer.getBufferedPercentage();
     }

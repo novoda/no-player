@@ -1,7 +1,5 @@
 package com.novoda.noplayer;
 
-import com.novoda.noplayer.model.VideoDuration;
-
 public interface PlayerState {
 
     boolean isPlaying();
@@ -12,7 +10,7 @@ public interface PlayerState {
 
     long playheadPositionInMillis();
 
-    VideoDuration mediaDuration();
+    long mediaDurationInMillis();
 
     int bufferPercentage();
 }
