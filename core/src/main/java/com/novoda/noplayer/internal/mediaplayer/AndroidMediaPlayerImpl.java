@@ -21,7 +21,6 @@ import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.utils.Optional;
 
 import java.util.ArrayList;
@@ -240,8 +239,8 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
-    public VideoDuration mediaDuration() throws IllegalStateException {
-        return VideoDuration.fromMillis(mediaPlayer.getDuration());
+    public long mediaDurationInMillis() throws IllegalStateException {
+        return mediaPlayer.mediaDurationInMillis();
     }
 
     @Override

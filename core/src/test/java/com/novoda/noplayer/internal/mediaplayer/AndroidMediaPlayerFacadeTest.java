@@ -356,7 +356,7 @@ public class AndroidMediaPlayerFacadeTest {
                 .willReturn(IS_IN_PLAYBACK_STATE);
         given(mediaPlayer.getDuration()).willReturn(ANY_DURATION);
 
-        int duration = facade.getDuration();
+        int duration = facade.mediaDurationInMillis();
 
         assertThat(duration).isEqualTo(ANY_DURATION);
     }
@@ -368,7 +368,7 @@ public class AndroidMediaPlayerFacadeTest {
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class)))
                 .willReturn(IS_NOT_IN_PLAYBACK_STATE);
 
-        facade.getDuration();
+        facade.mediaDurationInMillis();
     }
 
     @Test

@@ -186,7 +186,7 @@ class AndroidMediaPlayerFacade {
         }
     }
 
-    int getDuration() throws IllegalStateException {
+    int mediaDurationInMillis() throws IllegalStateException {
         assertIsInPlaybackState();
         return mediaPlayer.getDuration();
     }

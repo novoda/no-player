@@ -20,7 +20,6 @@ import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
-import com.novoda.noplayer.model.VideoDuration;
 import com.novoda.utils.Optional;
 
 import java.util.Collections;
@@ -135,14 +134,14 @@ public class ExoPlayerFacadeTest {
         public void whenQueryingMediaDuration_thenThrowsIllegalStateException() {
             thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
-            facade.getMediaDuration();
+            facade.mediaDurationInMillis();
         }
 
         @Test
         public void whenQueryingBufferPercentage_thenThrowsIllegalStateException() {
             thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
-            facade.getBufferPercentage();
+            facade.bufferPercentage();
         }
 
         @Test
@@ -273,16 +272,16 @@ public class ExoPlayerFacadeTest {
         public void whenGettingMediaDuration_thenReturnsDuration() {
             given(exoPlayer.getDuration()).willReturn(TEN_MINUTES_IN_MILLIS);
 
-            VideoDuration videoDuration = facade.getMediaDuration();
+            long videoDurationInMillis = facade.mediaDurationInMillis();
 
-            assertThat(videoDuration).isEqualTo(VideoDuration.fromMillis(TEN_MINUTES_IN_MILLIS));
+            assertThat(videoDurationInMillis).isEqualTo(TEN_MINUTES_IN_MILLIS);
         }
 
         @Test
         public void whenGettingBufferPercentage_thenReturnsBufferPercentage() {
             given(exoPlayer.getBufferedPercentage()).willReturn(TEN_PERCENT);
 
-            int bufferPercentage = facade.getBufferPercentage();
+            int bufferPercentage = facade.bufferPercentage();
 
             assertThat(bufferPercentage).isEqualTo(TEN_PERCENT);
         }
