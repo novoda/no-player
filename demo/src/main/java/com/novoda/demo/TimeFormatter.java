@@ -9,10 +9,10 @@ final class TimeFormatter {
         // Uses static methods.
     }
 
-    static String asHoursMinutesSeconds(int timeInSeconds) {
-        int hours = (int) TimeUnit.SECONDS.toHours(timeInSeconds);
-        int minutes = (int) TimeUnit.SECONDS.toMinutes(timeInSeconds - TimeUnit.HOURS.toSeconds(hours));
-        int seconds = (int) (timeInSeconds - TimeUnit.HOURS.toSeconds(hours) - TimeUnit.MINUTES.toSeconds(minutes));
+    static String asHoursMinutesSeconds(long timeInMillis) {
+        long hours = TimeUnit.MILLISECONDS.toHours(timeInMillis);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(timeInMillis - TimeUnit.HOURS.toMillis(hours));
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(timeInMillis - TimeUnit.HOURS.toMillis(hours) - TimeUnit.MINUTES.toMillis(minutes));
 
         if (hours > 0) {
             return String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, seconds);

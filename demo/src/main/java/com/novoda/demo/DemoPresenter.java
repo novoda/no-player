@@ -7,7 +7,6 @@ import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.model.VideoDuration;
 
 class DemoPresenter {
 
@@ -63,28 +62,27 @@ class DemoPresenter {
         @Override
         public void onBeat(NoPlayer player) {
             long positionInMillis = player.playheadPositionInMillis();
-            VideoDuration duration = player.mediaDuration();
+            long durationInMillis = player.mediaDurationInMillis();
             int bufferPercentage = player.bufferPercentage();
 
-            updateProgress(positionInMillis, duration, bufferPercentage);
-            updateTiming(positionInMillis, duration);
+            updateProgress(positionInMillis, durationInMillis, bufferPercentage);
+            updateTiming(positionInMillis, durationInMillis);
         }
     };
 
-    private void updateProgress(long positionInMillis, VideoDuration duration, int bufferPercentage) {
-        int progressAsIncrements = ProgressCalculator.progressAsIncrements(positionInMillis, duration);
+    private void updateProgress(long positionInMillis, long durationInMillis, int bufferPercentage) {
+        int progressAsIncrements = ProgressCalculator.progressAsIncrements(positionInMillis, durationInMillis);
         int bufferAsIncrements = ProgressCalculator.bufferAsIncrements(bufferPercentage);
 
         controllerView.updateContentProgress(progressAsIncrements);
         controllerView.updateBufferProgress(bufferAsIncrements);
     }
 
-    private void updateTiming(long positionInMillis, VideoDuration duration) {
-        VideoDuration elapsedDuration = VideoDuration.fromMillis(positionInMillis);
-        VideoDuration remainingDuration = VideoDuration.fromMillis(duration.inMillis()).minus(elapsedDuration);
+    private void updateTiming(long positionInMillis, long durationInMillis) {
+        long remainingDuration = durationInMillis - positionInMillis;
 
-        controllerView.updateElapsedTime(TimeFormatter.asHoursMinutesSeconds(elapsedDuration.inImpreciseSeconds()));
-        controllerView.updateTimeRemaining(TimeFormatter.asHoursMinutesSeconds(remainingDuration.inImpreciseSeconds()));
+        controllerView.updateElapsedTime(TimeFormatter.asHoursMinutesSeconds(positionInMillis));
+        controllerView.updateTimeRemaining(TimeFormatter.asHoursMinutesSeconds(remainingDuration));
     }
 
     private final ControllerView.TogglePlayPauseAction onTogglePlayPause = new ControllerView.TogglePlayPauseAction() {
@@ -101,7 +99,7 @@ class DemoPresenter {
     private final ControllerView.SeekAction onSeekPerformed = new ControllerView.SeekAction() {
         @Override
         public void perform(int progress, int max) {
-            long seekToPosition = ProgressCalculator.seekToPosition(noPlayer.mediaDuration(), progress, max);
+            long seekToPosition = ProgressCalculator.seekToPosition(noPlayer.mediaDurationInMillis(), progress, max);
             noPlayer.seekTo(seekToPosition);
         }
     };
