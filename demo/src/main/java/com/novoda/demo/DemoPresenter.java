@@ -3,6 +3,7 @@ package com.novoda.demo;
 import android.net.Uri;
 
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
@@ -11,18 +12,20 @@ class DemoPresenter {
 
     private final ControllerView controllerView;
     private final NoPlayer noPlayer;
+    private final Listeners listeners;
     private final PlayerView playerView;
 
-    DemoPresenter(ControllerView controllerView, NoPlayer noPlayer, PlayerView playerView) {
+    DemoPresenter(ControllerView controllerView, NoPlayer noPlayer, Listeners listeners, PlayerView playerView) {
         this.controllerView = controllerView;
         this.noPlayer = noPlayer;
+        this.listeners = listeners;
         this.playerView = playerView;
     }
 
     void startPresenting(Uri uri, ContentType contentType) {
-        noPlayer.addPreparedListener(playOnPrepared);
-        noPlayer.addStateChangedListener(updatePlayPause);
-        noPlayer.addHeartbeatCallback(updateProgress);
+        listeners.addPreparedListener(playOnPrepared);
+        listeners.addStateChangedListener(updatePlayPause);
+        listeners.addHeartbeatCallback(updateProgress);
 
         controllerView.setTogglePlayPauseAction(onTogglePlayPause);
         controllerView.setSeekAction(onSeekPerformed);

@@ -13,7 +13,14 @@ import com.novoda.utils.Optional;
 import java.util.List;
 import java.util.Map;
 
-public interface NoPlayer extends PlayerState, Listeners {
+public interface NoPlayer extends PlayerState {
+
+    /**
+     * Retrieves a holder, which allows you to add and remove listeners on the Player.
+     *
+     * @return {@link Listeners} holder.
+     */
+    Listeners getListeners();
 
     /**
      * Plays content of a prepared Player.

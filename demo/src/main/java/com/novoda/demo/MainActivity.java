@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
                 .withDowngradedSecureDecoder()
                 .build(this);
 
-        demoPresenter = new DemoPresenter(controllerView, player, playerView);
+        demoPresenter = new DemoPresenter(controllerView, player, player.getListeners(), playerView);
         dialogCreator = new DialogCreator(this, player);
     }
 
