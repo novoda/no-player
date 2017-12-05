@@ -31,6 +31,11 @@ class OnPrepareForwarder implements Player.EventListener {
         // TODO: should we send?
     }
 
+    @Override
+    public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+        // TODO: should we send?
+    }
+
     private boolean isReady(int playbackState) {
         return playbackState == Player.STATE_READY;
     }
@@ -56,12 +61,17 @@ class OnPrepareForwarder implements Player.EventListener {
     }
 
     @Override
-    public void onPositionDiscontinuity() {
+    public void onPositionDiscontinuity(int reason) {
         // TODO: should we send?
     }
 
     @Override
     public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+        // TODO: should we send?
+    }
+
+    @Override
+    public void onSeekProcessed() {
         // TODO: should we send?
     }
 }

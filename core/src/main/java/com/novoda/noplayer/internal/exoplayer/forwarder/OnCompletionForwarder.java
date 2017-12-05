@@ -29,6 +29,11 @@ class OnCompletionForwarder implements Player.EventListener {
     }
 
     @Override
+    public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+        // TODO: should we send?
+    }
+
+    @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {
         // TODO: should we send?
     }
@@ -49,12 +54,17 @@ class OnCompletionForwarder implements Player.EventListener {
     }
 
     @Override
-    public void onPositionDiscontinuity() {
+    public void onPositionDiscontinuity(int reason) {
         // TODO: should we send?
     }
 
     @Override
     public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+        // TODO: should we send?
+    }
+
+    @Override
+    public void onSeekProcessed() {
         // TODO: should we send?
     }
 }

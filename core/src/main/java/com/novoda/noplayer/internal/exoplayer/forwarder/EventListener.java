@@ -54,6 +54,13 @@ class EventListener implements Player.EventListener {
     }
 
     @Override
+    public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+        for (Player.EventListener listener : listeners) {
+            listener.onShuffleModeEnabledChanged(shuffleModeEnabled);
+        }
+    }
+
+    @Override
     public void onPlayerError(ExoPlaybackException error) {
         for (Player.EventListener listener : listeners) {
             listener.onPlayerError(error);
@@ -61,9 +68,9 @@ class EventListener implements Player.EventListener {
     }
 
     @Override
-    public void onPositionDiscontinuity() {
+    public void onPositionDiscontinuity(int reason) {
         for (Player.EventListener listener : listeners) {
-            listener.onPositionDiscontinuity();
+            listener.onPositionDiscontinuity(reason);
         }
     }
 
@@ -71,6 +78,13 @@ class EventListener implements Player.EventListener {
     public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
         for (Player.EventListener listener : listeners) {
             listener.onPlaybackParametersChanged(playbackParameters);
+        }
+    }
+
+    @Override
+    public void onSeekProcessed() {
+        for (Player.EventListener listener : listeners) {
+            listener.onSeekProcessed();
         }
     }
 }

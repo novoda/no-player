@@ -48,7 +48,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
 
         try {
             SessionId sessionId = SessionId.of(mediaDrm.openSession());
-            FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(drmScheme, sessionId.asBytes());
+            FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(sessionId.asBytes());
 
             mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore.asBytes());
 

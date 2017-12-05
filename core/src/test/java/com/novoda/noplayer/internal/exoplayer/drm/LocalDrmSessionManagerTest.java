@@ -1,7 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer.drm;
 
 import android.media.MediaCryptoException;
-import android.media.NotProvisionedException;
+import android.media.MediaDrmException;
 import android.media.ResourceBusyException;
 import android.os.Build;
 import android.os.Handler;
@@ -11,7 +11,6 @@ import android.support.annotation.RequiresApi;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSession;
-import com.google.android.exoplayer2.drm.ExoMediaCrypto;
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaCryptoFixture;
@@ -54,14 +53,12 @@ public class LocalDrmSessionManagerTest {
     private Handler handler;
     @Mock
     private DefaultDrmSessionManager.EventListener eventListener;
-    @Mock
-    private ExoMediaCrypto exoMediaCrypto;
 
     private LocalDrmSessionManager localDrmSessionManager;
     private FrameworkMediaCrypto frameworkMediaCrypto;
 
     @Before
-    public void setUp() throws ResourceBusyException, NotProvisionedException, MediaCryptoException {
+    public void setUp() throws MediaDrmException, MediaCryptoException {
         frameworkMediaCrypto = FrameworkMediaCryptoFixture.aFrameworkMediaCrypto().build();
         given(mediaDrm.openSession()).willReturn(SESSION_ID.asBytes());
 
@@ -77,7 +74,7 @@ public class LocalDrmSessionManagerTest {
     @Test
     public void givenDrmDataContainsDrmScheme_whenCheckingCanAcquireSession_thenReturnsTrue() {
         DrmInitData.SchemeData recognisedSchemeData = new DrmInitData.SchemeData(
-                DRM_SCHEME, "ANY_TYPE", "ANY_MIME_TYPE", new byte[]{}
+                DRM_SCHEME, "ANY_MIME_TYPE", new byte[]{}
         );
         DrmInitData drmInitData = new DrmInitData(Collections.singletonList(recognisedSchemeData));
 
@@ -89,7 +86,7 @@ public class LocalDrmSessionManagerTest {
     @Test
     public void givenDrmDataDoesNotContainDrmScheme_whenCheckingCanAcquireSession_thenReturnsFalse() {
         DrmInitData.SchemeData unrecognisedSchemeData = new DrmInitData.SchemeData(
-                UUID.randomUUID(), "ANY_TYPE", "ANY_MIME_TYPE", new byte[]{}
+                UUID.randomUUID(), "ANY_MIME_TYPE", new byte[]{}
         );
         DrmInitData drmInitData = new DrmInitData(Collections.singletonList(unrecognisedSchemeData));
 
@@ -100,7 +97,7 @@ public class LocalDrmSessionManagerTest {
 
     @Test
     public void givenValidMediaDrm_whenAcquiringSession_thenRestoresKeys() throws MediaCryptoException {
-        given(mediaDrm.createMediaCrypto(DRM_SCHEME, SESSION_ID.asBytes())).willReturn(frameworkMediaCrypto);
+        given(mediaDrm.createMediaCrypto(SESSION_ID.asBytes())).willReturn(frameworkMediaCrypto);
 
         localDrmSessionManager.acquireSession(IGNORED_LOOPER, IGNORED_DRM_DATA);
 
@@ -109,7 +106,7 @@ public class LocalDrmSessionManagerTest {
 
     @Test
     public void givenValidMediaDrm_whenAcquiringSession_thenReturnsLocalDrmSession() throws MediaCryptoException {
-        given(mediaDrm.createMediaCrypto(DRM_SCHEME, SESSION_ID.asBytes())).willReturn(frameworkMediaCrypto);
+        given(mediaDrm.createMediaCrypto(SESSION_ID.asBytes())).willReturn(frameworkMediaCrypto);
 
         DrmSession<FrameworkMediaCrypto> drmSession = localDrmSessionManager.acquireSession(IGNORED_LOOPER, IGNORED_DRM_DATA);
 
@@ -119,7 +116,7 @@ public class LocalDrmSessionManagerTest {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Test
-    public void givenOpeningSessionError_whenAcquiringSession_thenNotifiesErrorEventListenerOnHandler() throws ResourceBusyException, NotProvisionedException {
+    public void givenOpeningSessionError_whenAcquiringSession_thenNotifiesErrorEventListenerOnHandler() throws MediaDrmException {
         given(mediaDrm.openSession()).willThrow(new ResourceBusyException("resource is busy"));
 
         localDrmSessionManager.acquireSession(IGNORED_LOOPER, IGNORED_DRM_DATA);
@@ -132,7 +129,7 @@ public class LocalDrmSessionManagerTest {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Test
-    public void givenOpeningSessionError_whenAcquiringSession_thenReturnsInvalidDrmSession() throws ResourceBusyException, NotProvisionedException {
+    public void givenOpeningSessionError_whenAcquiringSession_thenReturnsInvalidDrmSession() throws MediaDrmException {
         ResourceBusyException resourceBusyException = new ResourceBusyException("resource is busy");
         given(mediaDrm.openSession()).willThrow(resourceBusyException);
 
