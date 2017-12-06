@@ -10,7 +10,7 @@ class PreparedListeners implements NoPlayer.PreparedListener {
 
     private final Set<NoPlayer.PreparedListener> listeners = new CopyOnWriteArraySet<>();
 
-    private boolean hasPrepared = false;
+    private boolean hasPrepared;
 
     void add(NoPlayer.PreparedListener listener) {
         listeners.add(listener);

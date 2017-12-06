@@ -46,8 +46,8 @@ class TextRendererOutput {
 
     @Override
     public String toString() {
-        return "TextRendererOutput{" +
-                "playerView=" + playerView +
-                '}';
+        return "TextRendererOutput{"
+                + "playerView=" + playerView
+                + '}';
     }
 }

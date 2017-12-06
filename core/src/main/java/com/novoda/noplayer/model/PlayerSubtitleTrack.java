@@ -10,7 +10,13 @@ public class PlayerSubtitleTrack {
     private final int numberOfChannels;
     private final int frequency;
 
-    public PlayerSubtitleTrack(int groupIndex, int formatIndex, String trackId, String language, String mimeType, int numberOfChannels, int frequency) {
+    public PlayerSubtitleTrack(int groupIndex,
+                               int formatIndex,
+                               String trackId,
+                               String language,
+                               String mimeType,
+                               int numberOfChannels,
+                               int frequency) {
         this.groupIndex = groupIndex;
         this.formatIndex = formatIndex;
         this.trackId = trackId;
@@ -94,14 +100,14 @@ public class PlayerSubtitleTrack {
 
     @Override
     public String toString() {
-        return "PlayerSubtitleTrack{" +
-                "groupIndex=" + groupIndex +
-                ", formatIndex=" + formatIndex +
-                ", trackId='" + trackId + '\'' +
-                ", language='" + language + '\'' +
-                ", mimeType='" + mimeType + '\'' +
-                ", numberOfChannels=" + numberOfChannels +
-                ", frequency=" + frequency +
-                '}';
+        return "PlayerSubtitleTrack{"
+                + "groupIndex=" + groupIndex
+                + ", formatIndex=" + formatIndex
+                + ", trackId='" + trackId + '\''
+                + ", language='" + language + '\''
+                + ", mimeType='" + mimeType + '\''
+                + ", numberOfChannels=" + numberOfChannels
+                + ", frequency=" + frequency
+                + '}';
     }
 }

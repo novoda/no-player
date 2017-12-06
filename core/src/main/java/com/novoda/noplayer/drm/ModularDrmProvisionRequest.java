@@ -9,7 +9,7 @@ public class ModularDrmProvisionRequest {
 
     public ModularDrmProvisionRequest(String url, byte[] data) {
         this.url = url;
-        this.data = data;
+        this.data = Arrays.copyOf(data, data.length);
     }
 
     public String url() {
@@ -17,7 +17,7 @@ public class ModularDrmProvisionRequest {
     }
 
     public byte[] data() {
-        return data;
+        return Arrays.copyOf(data, data.length);
     }
 
     @Override
@@ -46,9 +46,9 @@ public class ModularDrmProvisionRequest {
 
     @Override
     public String toString() {
-        return "ModularDrmProvisionRequest{" +
-                "url='" + url + '\'' +
-                ", data=" + Arrays.toString(data) +
-                '}';
+        return "ModularDrmProvisionRequest{"
+                + "url='" + url + '\''
+                + ", data=" + Arrays.toString(data)
+                + '}';
     }
 }

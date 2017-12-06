@@ -26,7 +26,7 @@ public class PlayerBuilder {
     private DrmType drmType = DrmType.NONE;
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
-    private boolean downgradeSecureDecoder = false;
+    private boolean downgradeSecureDecoder;
 
     /**
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine classic DRM.

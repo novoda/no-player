@@ -60,8 +60,8 @@ public class AndroidMediaPlayerAudioTrackSelectorTest {
     }
 
     @Test
-    public void givenNullMediaPlayer_whenGettingAudioTracks_thenThrowsNullPointer() {
-        thrown.expect(ExceptionMatcher.matches("You can only call getAudioTracks() when video is prepared.", NullPointerException.class));
+    public void givenNullMediaPlayer_whenGettingAudioTracks_thenThrowsIllegalState() {
+        thrown.expect(ExceptionMatcher.matches("You can only call getAudioTracks() when video is prepared.", IllegalStateException.class));
 
         trackSelector.getAudioTracks(null);
     }
@@ -76,8 +76,8 @@ public class AndroidMediaPlayerAudioTrackSelectorTest {
     }
 
     @Test
-    public void givenNullMediaPlayer_whenSelectingAudioTrack_thenThrowsNullPointer() {
-        thrown.expect(matches("You can only call selectAudioTrack() when video is prepared.", NullPointerException.class));
+    public void givenNullMediaPlayer_whenSelectingAudioTrack_thenThrowsIllegalState() {
+        thrown.expect(matches("You can only call selectAudioTrack() when video is prepared.", IllegalStateException.class));
 
         trackSelector.selectAudioTrack(null, mock(PlayerAudioTrack.class));
     }

@@ -41,11 +41,16 @@ import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.util.Util;
 import com.novoda.noplayer.model.NoPlayerCue;
 
+// Adopted code, could use some refactoring but it's a complex job
+@SuppressWarnings({"PMD.GodClass", "PMD.CyclomaticComplexity", "PMD.StdCyclomaticComplexity", "PMD.ModifiedCyclomaticComplexity"})
 final class SubtitlePainter {
 
     private static final String TAG = "SubtitlePainter";
 
     private static final float INNER_PADDING_RATIO = 0.125f;
+    private static final float ROUNDING_HALF_PIXEL = 0.5f;
+    private static final float TWO_DP = 2f;
+    private static final double FLOAT_COMPARISON_EPSILON = .0000001;
 
     private final RectF lineBounds = new RectF();
 
@@ -96,7 +101,7 @@ final class SubtitlePainter {
     private int textPaddingX;
     private Rect bitmapRect;
 
-    @SuppressWarnings("ResourceType")
+    @SuppressWarnings("ResourceType")        // We're hacking `spacingMult = styledAttributes.getFloat`
     SubtitlePainter(Context context) {
         int[] viewAttr = {android.R.attr.lineSpacingExtra, android.R.attr.lineSpacingMultiplier};
         TypedArray styledAttributes = context.obtainStyledAttributes(null, viewAttr, 0, 0);
@@ -106,7 +111,7 @@ final class SubtitlePainter {
 
         Resources resources = context.getResources();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        int twoDpInPx = Math.round((2f * displayMetrics.densityDpi) / DisplayMetrics.DENSITY_DEFAULT);
+        int twoDpInPx = Math.round((TWO_DP * displayMetrics.densityDpi) / DisplayMetrics.DENSITY_DEFAULT);
         cornerRadius = twoDpInPx;
         outlineWidth = twoDpInPx;
         shadowRadius = twoDpInPx;
@@ -121,9 +126,17 @@ final class SubtitlePainter {
         paint.setStyle(Style.FILL);
     }
 
-    void draw(NoPlayerCue cue, boolean applyEmbeddedStyles, boolean applyEmbeddedFontSizes,
-              float textSizePx, float bottomPaddingFraction, Canvas canvas,
-              int cueBoxLeft, int cueBoxTop, int cueBoxRight, int cueBoxBottom) {
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // TODO group parameters into classes
+    void draw(NoPlayerCue cue,
+              boolean applyEmbeddedStyles,
+              boolean applyEmbeddedFontSizes,
+              float textSizePx,
+              float bottomPaddingFraction,
+              Canvas canvas,
+              int cueBoxLeft,
+              int cueBoxTop,
+              int cueBoxRight,
+              int cueBoxBottom) {
         boolean isTextCue = cue.bitmap() == null;
         int windowColor = Color.BLACK;
         if (isTextCue) {
@@ -167,7 +180,7 @@ final class SubtitlePainter {
         this.windowColor = windowColor;
         this.edgeType = 0;
         this.edgeColor = Color.WHITE;
-        this.textPaint.setTypeface(null);
+        textPaint.setTypeface(null);
         this.textSizePx = textSizePx;
         this.bottomPaddingFraction = bottomPaddingFraction;
         this.parentLeft = cueBoxLeft;
@@ -183,6 +196,7 @@ final class SubtitlePainter {
         drawLayout(canvas, isTextCue);
     }
 
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})     // TODO group parameters into classes
     private boolean nothingHasChanged(NoPlayerCue cue,
                                       boolean applyEmbeddedStyles,
                                       boolean applyEmbeddedFontSizes,
@@ -193,42 +207,42 @@ final class SubtitlePainter {
                                       int cueBoxRight,
                                       int cueBoxBottom,
                                       int windowColor) {
-        return areCharSequencesEqual(this.cueText, cue.text())
-                && Util.areEqual(this.cueTextAlignment, cue.textAlignment())
-                && this.cueBitmap == cue.bitmap()
-                && this.cueLine == cue.line()
-                && this.cueLineType == cue.lineType()
-                && Util.areEqual(this.cueLineAnchor, cue.lineAnchor())
-                && this.cuePosition == cue.position()
-                && Util.areEqual(this.cuePositionAnchor, cue.positionAnchor())
-                && this.cueSize == cue.size()
-                && this.cueBitmapHeight == cue.bitmapHeight()
+        return areCharSequencesEqual(cueText, cue.text())
+                && Util.areEqual(cueTextAlignment, cue.textAlignment())
+                && cueBitmap == cue.bitmap()
+                && cueLine == cue.line()
+                && cueLineType == cue.lineType()
+                && Util.areEqual(cueLineAnchor, cue.lineAnchor())
+                && cuePosition == cue.position()
+                && Util.areEqual(cuePositionAnchor, cue.positionAnchor())
+                && cueSize == cue.size()
+                && cueBitmapHeight == cue.bitmapHeight()
                 && this.applyEmbeddedStyles == applyEmbeddedStyles
                 && this.applyEmbeddedFontSizes == applyEmbeddedFontSizes
-                && this.foregroundColor == Color.WHITE
-                && this.backgroundColor == Color.BLACK
+                && foregroundColor == Color.WHITE
+                && backgroundColor == Color.BLACK
                 && this.windowColor == windowColor
-                && this.edgeType == 0
-                && this.edgeColor == Color.WHITE
-                && Util.areEqual(this.textPaint.getTypeface(), null)
+                && edgeType == 0
+                && edgeColor == Color.WHITE
+                && Util.areEqual(textPaint.getTypeface(), null)
                 && this.textSizePx == textSizePx
                 && this.bottomPaddingFraction == bottomPaddingFraction
-                && this.parentLeft == cueBoxLeft
-                && this.parentTop == cueBoxTop
-                && this.parentRight == cueBoxRight
-                && this.parentBottom == cueBoxBottom;
+                && parentLeft == cueBoxLeft
+                && parentTop == cueBoxTop
+                && parentRight == cueBoxRight
+                && parentBottom == cueBoxBottom;
     }
 
+    @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })  // TODO break this method up
     private void setupTextLayout() {
         int parentWidth = parentRight - parentLeft;
-        int parentHeight = parentBottom - parentTop;
 
         textPaint.setTextSize(textSizePx);
-        int textPaddingX = (int) (textSizePx * INNER_PADDING_RATIO + 0.5f);
+        int textPaddingX = (int) (textSizePx * INNER_PADDING_RATIO + ROUNDING_HALF_PIXEL);
 
         int availableWidth = parentWidth - textPaddingX * 2;
-        if (cueSize != Cue.DIMEN_UNSET) {
-            availableWidth = (int) (availableWidth * cueSize);
+        if (isCueDimensionSet(cueSize)) {
+            availableWidth *= cueSize;
         }
         if (availableWidth <= 0) {
             Log.w(TAG, "Skipped drawing subtitle cue (insufficient space)");
@@ -258,20 +272,19 @@ final class SubtitlePainter {
         Alignment textAlignment = cueTextAlignment == null ? Alignment.ALIGN_CENTER : cueTextAlignment;
         textLayout = new StaticLayout(cueText, textPaint, availableWidth, textAlignment, spacingMult,
                 spacingAdd, true);
-        int textHeight = textLayout.getHeight();
         int textWidth = 0;
         int lineCount = textLayout.getLineCount();
         for (int i = 0; i < lineCount; i++) {
             textWidth = Math.max((int) Math.ceil(textLayout.getLineWidth(i)), textWidth);
         }
-        if (cueSize != Cue.DIMEN_UNSET && textWidth < availableWidth) {
+        if (isCueDimensionSet(cueSize) && textWidth < availableWidth) {
             textWidth = availableWidth;
         }
         textWidth += textPaddingX * 2;
 
         int textLeft;
         int textRight;
-        if (cuePosition != Cue.DIMEN_UNSET) {
+        if (isCueDimensionSet(cueSize)) {
             int anchorPosition = Math.round(parentWidth * cuePosition) + parentLeft;
             textLeft = cuePositionAnchor == Cue.ANCHOR_TYPE_END ? anchorPosition - textWidth
                     : cuePositionAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorPosition * 2 - textWidth) / 2
@@ -289,8 +302,11 @@ final class SubtitlePainter {
             return;
         }
 
+        int parentHeight = parentBottom - parentTop;
+        int textHeight = textLayout.getHeight();
+
         int textTop;
-        if (cueLine != Cue.DIMEN_UNSET) {
+        if (isCueDimensionSet(cueSize)) {
             int anchorPosition;
             if (cueLineType == Cue.LINE_TYPE_FRACTION) {
                 anchorPosition = Math.round(parentHeight * cueLine) + parentTop;
@@ -323,19 +339,31 @@ final class SubtitlePainter {
         this.textPaddingX = textPaddingX;
     }
 
+    @SuppressWarnings("PMD.NPathComplexity")  // TODO break this method up
     private void setupBitmapLayout() {
         int parentWidth = parentRight - parentLeft;
         int parentHeight = parentBottom - parentTop;
         float anchorX = parentLeft + (parentWidth * cuePosition);
         float anchorY = parentTop + (parentHeight * cueLine);
         int width = Math.round(parentWidth * cueSize);
-        int height = cueBitmapHeight != Cue.DIMEN_UNSET ? Math.round(parentHeight * cueBitmapHeight)
+
+        int height = isCueDimensionSet(cueBitmapHeight)
+                ? Math.round(parentHeight * cueBitmapHeight)
                 : Math.round(width * ((float) cueBitmap.getHeight() / cueBitmap.getWidth()));
-        int x = Math.round(cueLineAnchor == Cue.ANCHOR_TYPE_END ? (anchorX - width)
-                : cueLineAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorX - (width / 2)) : anchorX);
-        int y = Math.round(cuePositionAnchor == Cue.ANCHOR_TYPE_END ? (anchorY - height)
-                : cuePositionAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorY - (height / 2)) : anchorY);
+
+        int x = Math.round(cueLineAnchor == Cue.ANCHOR_TYPE_END
+                ? (anchorX - width)
+                : cueLineAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorX - (width / 2f)) : anchorX);
+
+        int y = Math.round(cuePositionAnchor == Cue.ANCHOR_TYPE_END
+                ? (anchorY - height)
+                : cuePositionAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorY - (height / 2f)) : anchorY);
+
         bitmapRect = new Rect(x, y, x + width, y + height);
+    }
+
+    private boolean isCueDimensionSet(float cueDimension) {
+        return Math.abs(cueDimension - Cue.DIMEN_UNSET) > FLOAT_COMPARISON_EPSILON;
     }
 
     private void drawLayout(Canvas canvas, boolean isTextCue) {
@@ -346,6 +374,7 @@ final class SubtitlePainter {
         }
     }
 
+    @SuppressWarnings("PMD.NPathComplexity")  // TODO break this method up
     private void drawTextLayout(Canvas canvas) {
         StaticLayout layout = textLayout;
         if (layout == null) {
@@ -389,7 +418,7 @@ final class SubtitlePainter {
             boolean raised = edgeType == CaptionStyleCompat.EDGE_TYPE_RAISED;
             int colorUp = raised ? Color.WHITE : edgeColor;
             int colorDown = raised ? edgeColor : Color.WHITE;
-            float offset = shadowRadius / 2f;
+            float offset = shadowRadius / 2;
             textPaint.setColor(foregroundColor);
             textPaint.setStyle(Style.FILL);
             textPaint.setShadowLayer(shadowRadius, -offset, -offset, colorUp);
@@ -414,6 +443,7 @@ final class SubtitlePainter {
      * latter only checks the text of each sequence, and does not check for equality of styling that
      * may be embedded within the {@link CharSequence}s.
      */
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")   // We do, but we first try to shortcut by comparing references
     private static boolean areCharSequencesEqual(CharSequence first, CharSequence second) {
         // Some CharSequence implementations don't perform a cheap referential equality check in their
         // equals methods, so we perform one explicitly here.

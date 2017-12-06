@@ -58,7 +58,7 @@ class DemoPresenter {
         }
     };
 
-    private NoPlayer.HeartbeatCallback updateProgress = new NoPlayer.HeartbeatCallback() {
+    private final NoPlayer.HeartbeatCallback updateProgress = new NoPlayer.HeartbeatCallback() {
         @Override
         public void onBeat(NoPlayer player) {
             long positionInMillis = player.playheadPositionInMillis();

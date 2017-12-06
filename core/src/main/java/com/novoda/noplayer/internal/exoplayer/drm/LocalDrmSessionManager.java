@@ -41,6 +41,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
         return schemeData != null;
     }
 
+    @SuppressWarnings("PMD.AvoidCatchingGenericException") // We are forced to catch Exception as ResourceBusyException is minSdk 19
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public DrmSession<FrameworkMediaCrypto> acquireSession(Looper playbackLooper, DrmInitData drmInitData) {
@@ -53,7 +54,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
             mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore.asBytes());
 
             drmSession = new LocalDrmSession(mediaCrypto, keySetIdToRestore, sessionId);
-        } catch (Exception exception) { // We are forced to catch Exception as ResourceBusyException is api level 19.
+        } catch (Exception exception) {
             drmSession = new InvalidDrmSession(new DrmSession.DrmSessionException(exception));
             notifyErrorListener(drmSession);
         }
