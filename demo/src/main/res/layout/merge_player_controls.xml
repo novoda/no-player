@@ -3,15 +3,18 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  tools:parentTag="LinearLayout">
+  tools:parentTag="android.widget.LinearLayout">
 
   <ImageView
     android:id="@+id/player_controls_play_pause"
-    android:layout_width="48dp"
-    android:layout_height="48dp"
-    android:layout_marginLeft="12dp"
-    android:layout_marginRight="12dp"
-    android:src="@drawable/play" />
+    android:layout_width="@dimen/play_button_size"
+    android:layout_height="@dimen/play_button_size"
+    android:layout_marginLeft="@dimen/player_controls_padding_horizontal"
+    android:layout_marginStart="@dimen/player_controls_padding_horizontal"
+    android:layout_marginRight="@dimen/player_controls_play_button_margin_end"
+    android:layout_marginEnd="@dimen/player_controls_play_button_margin_end"
+    android:src="@drawable/play"
+    android:contentDescription="@string/content_description_play_pause" />
 
   <TextView
     android:id="@+id/player_controls_elapsed_time"
@@ -23,20 +26,21 @@
 
   <SeekBar
     android:id="@+id/player_controls_progress"
-    style="@style/Controls.ScrubBar"
-    android:layout_width="0dp"
+    style="@style/Controls.SeekBar"
+    android:layout_width="@dimen/use_weight"
     android:layout_height="wrap_content"
     android:layout_weight="100"
     android:layout_gravity="center_vertical"
-    android:layout_marginLeft="12dp"
-    android:layout_marginRight="12dp" />
+    android:layout_marginLeft="@dimen/player_controls_seekbar_margin_horizontal"
+    android:layout_marginRight="@dimen/player_controls_seekbar_margin_horizontal" />
 
   <TextView
     android:id="@+id/player_controls_time_remaining"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
-    android:layout_marginRight="12dp"
+    android:layout_marginRight="@dimen/player_controls_padding_horizontal"
+    android:layout_marginEnd="@dimen/player_controls_padding_horizontal"
     android:textColor="@android:color/white"
     tools:text="01:00" />
 

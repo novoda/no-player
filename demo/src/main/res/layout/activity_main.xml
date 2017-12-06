@@ -7,27 +7,31 @@
     android:orientation="vertical">
 
     <LinearLayout
+      style="?android:attr/buttonBarStyle"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="horizontal">
 
       <Button
         android:id="@+id/button_video_selection"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Video" />
+        android:text="@string/video" />
 
       <Button
         android:id="@+id/button_audio_selection"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Audio" />
+        android:text="@string/audio" />
 
       <Button
         android:id="@+id/button_subtitle_selection"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Subtitle" />
+        android:text="@string/subtitle" />
 
     </LinearLayout>
 
@@ -40,7 +44,7 @@
     <com.novoda.demo.AndroidControllerView
       android:id="@+id/controller_view"
       android:layout_width="match_parent"
-      android:layout_height="48dp"
+      android:layout_height="@dimen/controller_view_height"
       android:layout_gravity="bottom" />
 
   </LinearLayout>
