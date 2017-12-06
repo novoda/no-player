@@ -5,8 +5,7 @@
 <module name="Checker">
 
   <module name="SuppressionFilter">
-    <property name="file"
-      value="team-props/static-analysis/checkstyle-suppressions.xml" />
+    <property name="file" value="team-props/static-analysis/checkstyle-suppressions.xml" />
   </module>
 
   <module name="SuppressWarningsFilter" />
@@ -83,7 +82,6 @@
     <module name="RedundantImport" />
     <module name="UnusedImports" />
 
-
     <!-- Checks for Size Violations.                    -->
     <!-- See http://checkstyle.sf.net/config_sizes.html -->
     <module name="LineLength">
@@ -95,7 +93,6 @@
     </module>
     <module name="MethodLength" />
     <module name="ParameterNumber" />
-
 
     <!-- Checks for whitespace                               -->
     <!-- See http://checkstyle.sf.net/config_whitespace.html -->
@@ -115,7 +112,6 @@
     <module name="ModifierOrder" />
     <module name="RedundantModifier" />
 
-
     <!-- Checks for blocks. You know, those {}'s         -->
     <!-- See http://checkstyle.sf.net/config_blocks.html -->
     <module name="AvoidNestedBlocks" />
@@ -125,7 +121,6 @@
     <module name="LeftCurly" />
     <module name="NeedBraces" />
     <module name="RightCurly" />
-
 
     <!-- Checks for common coding problems               -->
     <!-- See http://checkstyle.sf.net/config_coding.html -->
@@ -152,8 +147,11 @@
     <module name="FinalClass" />
     <module name="HideUtilityClassConstructor" />
     <module name="InterfaceIsType" />
-    <module name="VisibilityModifier" />
-
+    <module name="VisibilityModifier">
+      <!-- Ignore fields injected by Dagger as it requires at least package private visibility -->
+      <property name="ignoreAnnotationCanonicalNames"
+        value="javax.inject.Inject" />
+    </module>
 
     <!-- Miscellaneous other checks.                   -->
     <!-- See http://checkstyle.sf.net/config_misc.html -->

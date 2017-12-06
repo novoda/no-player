@@ -10,12 +10,4 @@
     </Or>
   </Match>
 
-  <Match>
-    <Source name="~.*\.kt" />
-  </Match>
-
-  <Match>
-    <Class name="~.*me\.eugeniomarletti\.renderthread.*" />
-  </Match>
-
 </FindBugsFilter>
