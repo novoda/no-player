@@ -8,10 +8,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-class HttpClient {
+final class HttpClient {
 
     private static final String POST = "POST";
     private static final int RESPONSE_BUFFER_SIZE = 16384;
+
+    private HttpClient() {
+        // Not instantiable
+    }
 
     static byte[] post(String url, byte[] data) {
         HttpURLConnection connection = null;

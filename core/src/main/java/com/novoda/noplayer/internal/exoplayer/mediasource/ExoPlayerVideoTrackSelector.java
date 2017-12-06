@@ -66,7 +66,9 @@ public class ExoPlayerVideoTrackSelector {
         return videoTracks;
     }
 
-    public Optional<PlayerVideoTrack> getSelectedVideoTrack(SimpleExoPlayer exoPlayer, RendererTypeRequester rendererTypeRequester, ContentType contentType) {
+    public Optional<PlayerVideoTrack> getSelectedVideoTrack(SimpleExoPlayer exoPlayer,
+                                                            RendererTypeRequester rendererTypeRequester,
+                                                            ContentType contentType) {
         Format selectedVideoFormat = exoPlayer.getVideoFormat();
 
         if (selectedVideoFormat == null) {

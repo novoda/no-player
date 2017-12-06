@@ -50,7 +50,6 @@ public final class SubtitleView extends View {
             return;
         }
 
-        int cueCount = textCues.size();
         int rawTop = getTop();
         int rawBottom = getBottom();
 
@@ -69,6 +68,7 @@ public final class SubtitleView extends View {
             return;
         }
 
+        int cueCount = textCues.size();
         for (int i = 0; i < cueCount; i++) {
             painters.get(i).draw(
                     textCues.get(i),

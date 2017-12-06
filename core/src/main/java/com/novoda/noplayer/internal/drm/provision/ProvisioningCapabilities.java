@@ -1,6 +1,7 @@
 package com.novoda.noplayer.internal.drm.provision;
 
 import android.os.Build;
+import android.support.annotation.VisibleForTesting;
 
 class ProvisioningCapabilities {
 
@@ -10,7 +11,8 @@ class ProvisioningCapabilities {
         return new ProvisioningCapabilities(Build.VERSION.SDK_INT);
     }
 
-    private ProvisioningCapabilities(int deviceOsVersion) {
+    @VisibleForTesting
+    ProvisioningCapabilities(int deviceOsVersion) {
         this.deviceOsVersion = deviceOsVersion;
     }
 

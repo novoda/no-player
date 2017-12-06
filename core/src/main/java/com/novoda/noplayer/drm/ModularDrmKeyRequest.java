@@ -9,7 +9,7 @@ public class ModularDrmKeyRequest {
 
     public ModularDrmKeyRequest(String url, byte[] data) {
         this.url = url;
-        this.data = data;
+        this.data = Arrays.copyOf(data, data.length);
     }
 
     public String url() {
@@ -17,7 +17,7 @@ public class ModularDrmKeyRequest {
     }
 
     public byte[] data() {
-        return data;
+        return Arrays.copyOf(data, data.length);
     }
 
     @Override
@@ -46,9 +46,9 @@ public class ModularDrmKeyRequest {
 
     @Override
     public String toString() {
-        return "ModularDrmKeyRequest{" +
-                "url='" + url + '\'' +
-                ", data=" + Arrays.toString(data) +
-                '}';
+        return "ModularDrmKeyRequest{"
+                + "url='" + url + '\''
+                + ", data=" + Arrays.toString(data)
+                + '}';
     }
 }

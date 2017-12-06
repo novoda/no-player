@@ -12,9 +12,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import static com.novoda.noplayer.internal.drm.provision.ProvisioningCapabilitiesFixtures.aProvisioningCapabilities;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class HttpPostingProvisionExecutorTest {
 
@@ -30,25 +30,25 @@ public class HttpPostingProvisionExecutorTest {
 
     @Mock
     private HttpUrlConnectionPoster httpPoster;
-    @Mock
-    private ProvisioningCapabilities capabilities;
 
     @Before
     public void setUp() {
         provisionUrlCaptor = ArgumentCaptor.forClass(String.class);
-        httpPostingProvisionExecutor = new HttpPostingProvisionExecutor(httpPoster, capabilities);
     }
 
     @Test(expected = UnableToProvisionException.class)
     public void givenNonCapableProvisionCapabilities_whenProvisioning_thenAnUnableToProvisionExceptionIsThrown() throws IOException, UnableToProvisionException {
-        when(capabilities.canProvision()).thenReturn(false);
+        ProvisioningCapabilities capabilities = aProvisioningCapabilities().thatCannotProvision();
+        httpPostingProvisionExecutor = new HttpPostingProvisionExecutor(httpPoster, capabilities);
 
         httpPostingProvisionExecutor.execute(A_PROVISION_REQUEST);
     }
 
     @Test
     public void givenCapableProvisionCapabilities_whenProvisioning_thenTheRequestUrlIsExpected() throws IOException, UnableToProvisionException {
-        when(capabilities.canProvision()).thenReturn(true);
+        ProvisioningCapabilities capabilities = aProvisioningCapabilities().thatCanProvision();
+        httpPostingProvisionExecutor = new HttpPostingProvisionExecutor(httpPoster, capabilities);
+
         String expectedProvisionUrl = PROVISION_URL + "&signedRequest=" + new String(PROVISION_DATA);
 
         httpPostingProvisionExecutor.execute(A_PROVISION_REQUEST);

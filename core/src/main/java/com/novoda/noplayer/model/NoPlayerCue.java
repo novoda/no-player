@@ -18,6 +18,7 @@ public class NoPlayerCue {
     private final boolean windowColorSet;
     private final int windowColor;
 
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})     // TODO group parameters into classes
     public NoPlayerCue(CharSequence text,
                        Alignment textAlignment,
                        Bitmap bitmap,
@@ -94,20 +95,20 @@ public class NoPlayerCue {
 
     @Override
     public String toString() {
-        return "NoPlayerCue{" +
-                "text=" + text +
-                ", textAlignment=" + textAlignment +
-                ", bitmap=" + bitmap +
-                ", line=" + line +
-                ", lineType=" + lineType +
-                ", lineAnchor=" + lineAnchor +
-                ", position=" + position +
-                ", positionAnchor=" + positionAnchor +
-                ", size=" + size +
-                ", bitmapHeight=" + bitmapHeight +
-                ", windowColorSet=" + windowColorSet +
-                ", windowColor=" + windowColor +
-                '}';
+        return "NoPlayerCue{"
+                + "text=" + text
+                + ", textAlignment=" + textAlignment
+                + ", bitmap=" + bitmap
+                + ", line=" + line
+                + ", lineType=" + lineType
+                + ", lineAnchor=" + lineAnchor
+                + ", position=" + position
+                + ", positionAnchor=" + positionAnchor
+                + ", size=" + size
+                + ", bitmapHeight=" + bitmapHeight
+                + ", windowColorSet=" + windowColorSet
+                + ", windowColor=" + windowColor
+                + '}';
     }
 
     @Override

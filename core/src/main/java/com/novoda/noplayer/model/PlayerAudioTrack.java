@@ -13,6 +13,7 @@ public class PlayerAudioTrack {
     private final int frequency;
     private final AudioTrackType audioTrackType;
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // TODO group parameters into classes
     public PlayerAudioTrack(int groupIndex,
                             int formatIndex,
                             String trackId,
@@ -113,15 +114,15 @@ public class PlayerAudioTrack {
 
     @Override
     public String toString() {
-        return "PlayerAudioTrack{" +
-                "groupIndex=" + groupIndex +
-                ", formatIndex=" + formatIndex +
-                ", trackId='" + trackId + '\'' +
-                ", language='" + language + '\'' +
-                ", mimeType='" + mimeType + '\'' +
-                ", numberOfChannels=" + numberOfChannels +
-                ", frequency=" + frequency +
-                ", audioTrackType=" + audioTrackType +
-                '}';
+        return "PlayerAudioTrack{"
+                + "groupIndex=" + groupIndex
+                + ", formatIndex=" + formatIndex
+                + ", trackId='" + trackId + '\''
+                + ", language='" + language + '\''
+                + ", mimeType='" + mimeType + '\''
+                + ", numberOfChannels=" + numberOfChannels
+                + ", frequency=" + frequency
+                + ", audioTrackType=" + audioTrackType
+                + '}';
     }
 }

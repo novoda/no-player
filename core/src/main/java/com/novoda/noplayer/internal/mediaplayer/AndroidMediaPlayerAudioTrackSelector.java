@@ -24,7 +24,7 @@ class AndroidMediaPlayerAudioTrackSelector {
 
     AudioTracks getAudioTracks(MediaPlayer mediaPlayer) {
         if (mediaPlayer == null) {
-            throw new NullPointerException("You can only call getAudioTracks() when video is prepared.");
+            throw new IllegalStateException("You can only call getAudioTracks() when video is prepared.");
         }
 
         List<PlayerAudioTrack> audioTracks = new ArrayList<>();
@@ -52,7 +52,7 @@ class AndroidMediaPlayerAudioTrackSelector {
 
     boolean selectAudioTrack(MediaPlayer mediaPlayer, PlayerAudioTrack playerAudioTrack) {
         if (mediaPlayer == null) {
-            throw new NullPointerException("You can only call selectAudioTrack() when video is prepared.");
+            throw new IllegalStateException("You can only call selectAudioTrack() when video is prepared.");
         }
 
         mediaPlayer.selectTrack(playerAudioTrack.groupIndex());

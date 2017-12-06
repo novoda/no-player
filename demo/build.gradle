@@ -11,9 +11,18 @@ android {
         versionCode 1
         versionName '1.0'
     }
+
+    lintOptions {
+        lintConfig teamPropsFile('static-analysis/lint-config.xml')
+        abortOnError true
+        warningsAsErrors true
+    }
 }
 dependencies {
-    compile project(':core')
-    testCompile 'junit:junit:4.12'
-    testCompile 'com.google.truth:truth:0.36'
+    implementation project(':core')
+    implementation 'com.android.support:support-annotations:27.0.2'
+    implementation 'com.novoda:notils-java:3.0.2'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'com.google.truth:truth:0.36'
 }

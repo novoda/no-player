@@ -29,7 +29,9 @@ class ExoPlayerCreator {
     }
 
     @NonNull
-    public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator, DefaultDrmSessionManager.EventListener drmSessionEventListener, MediaCodecSelector mediaCodecSelector) {
+    public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator,
+                                  DefaultDrmSessionManager.EventListener drmSessionEventListener,
+                                  MediaCodecSelector mediaCodecSelector) {
         DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
         RenderersFactory renderersFactory = new SimpleRenderersFactory(
                 context,

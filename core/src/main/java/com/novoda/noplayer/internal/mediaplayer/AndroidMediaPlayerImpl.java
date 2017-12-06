@@ -26,6 +26,7 @@ import com.novoda.utils.Optional;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("PMD.GodClass")   // Not much we can do, wrapping MediaPlayer is a lot of work
 class AndroidMediaPlayerImpl implements NoPlayer {
 
     private static final long NO_SEEK_TO_POSITION = -1;
@@ -51,6 +52,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     private SurfaceHolderRequester surfaceHolderRequester;
     private View containerView;
 
+    @SuppressWarnings("checkstyle:ParameterNumber")     // We cannot really group these any further
     AndroidMediaPlayerImpl(MediaPlayerInformation mediaPlayerInformation,
                            AndroidMediaPlayerFacade mediaPlayer,
                            MediaPlayerForwarder forwarder,

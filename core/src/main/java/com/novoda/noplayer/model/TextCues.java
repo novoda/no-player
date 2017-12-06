@@ -3,7 +3,7 @@ package com.novoda.noplayer.model;
 import java.util.Collections;
 import java.util.List;
 
-public class TextCues {
+public final class TextCues {
 
     private final List<NoPlayerCue> cues;
 
@@ -48,8 +48,6 @@ public class TextCues {
 
     @Override
     public String toString() {
-        return "TextCues{" +
-                "cues=" + cues +
-                '}';
+        return "TextCues{" + "cues=" + cues + '}';
     }
 }

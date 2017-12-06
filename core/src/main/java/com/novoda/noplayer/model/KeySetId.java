@@ -2,20 +2,21 @@ package com.novoda.noplayer.model;
 
 import java.util.Arrays;
 
-public class KeySetId {
+public final class KeySetId {
 
-    private final byte[] keySetId;
+    private final byte[] keySetIdBytes;
 
     public static KeySetId of(byte[] sessionId) {
         return new KeySetId(Arrays.copyOf(sessionId, sessionId.length));
     }
 
-    private KeySetId(byte[] keySetId) {
-        this.keySetId = keySetId;
+    @SuppressWarnings("PMD.ArrayIsStoredDirectly")  // This array can only come from the factory method which does defensive copy
+    private KeySetId(byte[] keySetIdBytes) {
+        this.keySetIdBytes = keySetIdBytes;
     }
 
     public byte[] asBytes() {
-        return keySetId;
+        return Arrays.copyOf(keySetIdBytes, keySetIdBytes.length);
     }
 
     @Override
@@ -29,18 +30,16 @@ public class KeySetId {
 
         KeySetId sessionId1 = (KeySetId) o;
 
-        return Arrays.equals(keySetId, sessionId1.keySetId);
+        return Arrays.equals(keySetIdBytes, sessionId1.keySetIdBytes);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(keySetId);
+        return Arrays.hashCode(keySetIdBytes);
     }
 
     @Override
     public String toString() {
-        return "KeySetId{" +
-                "keySetId=" + Arrays.toString(keySetId) +
-                '}';
+        return "KeySetId{keySetIdBytes=" + Arrays.toString(keySetIdBytes) + '}';
     }
 }

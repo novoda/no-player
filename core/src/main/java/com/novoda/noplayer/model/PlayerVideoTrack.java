@@ -13,6 +13,7 @@ public class PlayerVideoTrack {
     private final int fps;
     private final int bitrate;
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // TODO group parameters into classes
     public PlayerVideoTrack(int groupIndex, int formatIndex, String id, ContentType contentType, int width, int height, int fps, int bitrate) {
         this.groupIndex = groupIndex;
         this.formatIndex = formatIndex;
@@ -106,15 +107,15 @@ public class PlayerVideoTrack {
 
     @Override
     public String toString() {
-        return "PlayerVideoTrack{" +
-                "groupIndex=" + groupIndex +
-                ", formatIndex=" + formatIndex +
-                ", id='" + id + '\'' +
-                ", contentType=" + contentType +
-                ", width=" + width +
-                ", height=" + height +
-                ", fps=" + fps +
-                ", bitrate=" + bitrate +
-                '}';
+        return "PlayerVideoTrack{"
+                + "groupIndex=" + groupIndex
+                + ", formatIndex=" + formatIndex
+                + ", id='" + id + '\''
+                + ", contentType=" + contentType
+                + ", width=" + width
+                + ", height=" + height
+                + ", fps=" + fps
+                + ", bitrate=" + bitrate
+                + '}';
     }
 }
