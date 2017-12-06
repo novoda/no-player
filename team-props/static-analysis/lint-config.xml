@@ -19,4 +19,9 @@
     <ignore path="*generated/res/google-services/*" />
   </issue>
 
+  <!-- This issue flags the adaptive icons' background drawables too, which must be square and fully opaque -->
+  <issue id="IconLauncherShape" severity="error">
+    <ignore path="*res/mipmap*/ic_launcher_background.png" />
+  </issue>
+
 </lint>
