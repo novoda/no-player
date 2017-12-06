@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class AudioTracks implements Iterable<PlayerAudioTrack> {
+public final class AudioTracks implements Iterable<PlayerAudioTrack> {
 
     private final List<PlayerAudioTrack> audioTracks;
 
@@ -50,8 +50,8 @@ public class AudioTracks implements Iterable<PlayerAudioTrack> {
 
     @Override
     public String toString() {
-        return "AudioTracks{" +
-                "audioTracks=" + audioTracks +
-                '}';
+        return "AudioTracks{"
+                + "audioTracks=" + audioTracks
+                + '}';
     }
 }

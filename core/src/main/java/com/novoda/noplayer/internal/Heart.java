@@ -4,6 +4,7 @@ import android.os.Handler;
 
 import com.novoda.noplayer.NoPlayer;
 
+@SuppressWarnings("checkstyle:FinalClass")  // We cannot make it final as we need to mock it in tests
 public class Heart {
 
     private static final long HEART_BEAT_FREQUENCY_IN_MILLIS = 500;

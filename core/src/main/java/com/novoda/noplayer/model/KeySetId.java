@@ -2,7 +2,7 @@ package com.novoda.noplayer.model;
 
 import java.util.Arrays;
 
-public class KeySetId {
+public final class KeySetId {
 
     private final byte[] keySetId;
 
@@ -39,8 +39,6 @@ public class KeySetId {
 
     @Override
     public String toString() {
-        return "KeySetId{" +
-                "keySetId=" + Arrays.toString(keySetId) +
-                '}';
+        return "KeySetId{" + "keySetId=" + Arrays.toString(keySetId) + '}';
     }
 }

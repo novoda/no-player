@@ -54,14 +54,14 @@ class SimpleRenderersFactory implements RenderersFactory {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({EXTENSION_RENDERER_MODE_OFF, EXTENSION_RENDERER_MODE_ON,
             EXTENSION_RENDERER_MODE_PREFER})
-    public @interface ExtensionRendererMode {
+    @interface ExtensionRendererMode {
 
     }
 
     /**
      * Do not allow use of extension renderers.
      */
-    public static final int EXTENSION_RENDERER_MODE_OFF = 0;
+    static final int EXTENSION_RENDERER_MODE_OFF = 0;
 
     /**
      * Allow use of extension renderers. Extension renderers are indexed after core renderers of the
@@ -69,24 +69,25 @@ class SimpleRenderersFactory implements RenderersFactory {
      * prefer to use a core renderer to an extension renderer in the case that both are able to play
      * a given track.
      */
-    public static final int EXTENSION_RENDERER_MODE_ON = 1;
+    static final int EXTENSION_RENDERER_MODE_ON = 1;
     /**
      * Allow use of extension renderers. Extension renderers are indexed before core renderers of the
      * same type. A {@link TrackSelector} that prefers the first suitable renderer will therefore
      * prefer to use an extension renderer to a core renderer in the case that both are able to play
      * a given track.
      */
-    public static final int EXTENSION_RENDERER_MODE_PREFER = 2;
+    static final int EXTENSION_RENDERER_MODE_PREFER = 2;
     private static final String TAG = "DefaultRenderersFactory";
 
-    protected static final int MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY = 50;
+    private static final int MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY = 50;
 
     private final Context context;
 
     private final DrmSessionManager<FrameworkMediaCrypto> drmSessionManager;
-    private final
+
     @ExtensionRendererMode
-    int extensionRendererMode;
+    private final int extensionRendererMode;
+
     private final long allowedVideoJoiningTimeMs;
     private final MediaCodecSelector mediaCodecSelector;
 
@@ -101,11 +102,11 @@ class SimpleRenderersFactory implements RenderersFactory {
      *                                  to seamlessly join an ongoing playback.
      * @param mediaCodecSelector        Used for selecting the codec for the video renderer.
      */
-    public SimpleRenderersFactory(Context context,
-                                  DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
-                                  @ExtensionRendererMode int extensionRendererMode,
-                                  long allowedVideoJoiningTimeMs,
-                                  MediaCodecSelector mediaCodecSelector) {
+    SimpleRenderersFactory(Context context,
+                           DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
+                           @ExtensionRendererMode int extensionRendererMode,
+                           long allowedVideoJoiningTimeMs,
+                           MediaCodecSelector mediaCodecSelector) {
         this.context = context;
         this.drmSessionManager = drmSessionManager;
         this.extensionRendererMode = extensionRendererMode;
@@ -124,11 +125,11 @@ class SimpleRenderersFactory implements RenderersFactory {
                 eventHandler, videoRendererEventListener, extensionRendererMode, renderersList);
         buildAudioRenderers(context, drmSessionManager, buildAudioProcessors(),
                 eventHandler, audioRendererEventListener, extensionRendererMode, renderersList);
-        buildTextRenderers(context, textRendererOutput, eventHandler.getLooper(),
-                extensionRendererMode, renderersList);
-        buildMetadataRenderers(context, metadataRendererOutput, eventHandler.getLooper(),
-                extensionRendererMode, renderersList);
-        buildMiscellaneousRenderers(context, eventHandler, extensionRendererMode, renderersList);
+        buildTextRenderers(textRendererOutput, eventHandler.getLooper(),
+                renderersList);
+        buildMetadataRenderers(metadataRendererOutput, eventHandler.getLooper(),
+                renderersList);
+        buildMiscellaneousRenderers();
         return renderersList.toArray(new Renderer[renderersList.size()]);
     }
 
@@ -168,7 +169,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                     VideoRendererEventListener.class, int.class);
             Renderer renderer = (Renderer) constructor.newInstance(true, allowedVideoJoiningTimeMs,
                     eventHandler, eventListener, MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY);
-            out.add(extensionRendererIndex++, renderer);
+            out.add(extensionRendererIndex, renderer);
             Log.i(TAG, "Loaded LibvpxVideoRenderer.");
         } catch (ClassNotFoundException e) {
             // Expected if the app was built without the extension.
@@ -243,7 +244,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                     AudioRendererEventListener.class, AudioProcessor[].class);
             Renderer renderer = (Renderer) constructor.newInstance(eventHandler, eventListener,
                     audioProcessors);
-            out.add(extensionRendererIndex++, renderer);
+            out.add(extensionRendererIndex, renderer);
             Log.i(TAG, "Loaded FfmpegAudioRenderer.");
         } catch (ClassNotFoundException e) {
             // Expected if the app was built without the extension.
@@ -255,52 +256,38 @@ class SimpleRenderersFactory implements RenderersFactory {
     /**
      * Builds text renderers for use by the player.
      *
-     * @param context               The {@link Context} associated with the player.
-     * @param output                An output for the renderers.
-     * @param outputLooper          The looper associated with the thread on which the output should be
-     *                              called.
-     * @param extensionRendererMode The extension renderer mode.
-     * @param out                   An array to which the built renderers should be appended.
+     * @param output       An output for the renderers.
+     * @param outputLooper The looper associated with the thread on which the output should be
+     *                     called.
+     * @param out          An array to which the built renderers should be appended.
      */
-    protected void buildTextRenderers(Context context, TextOutput output,
-                                      Looper outputLooper, @ExtensionRendererMode int extensionRendererMode,
-                                      ArrayList<Renderer> out) {
+    private void buildTextRenderers(TextOutput output, Looper outputLooper, ArrayList<Renderer> out) {
         out.add(new TextRenderer(output, outputLooper));
     }
 
     /**
      * Builds metadata renderers for use by the player.
      *
-     * @param context               The {@link Context} associated with the player.
-     * @param output                An output for the renderers.
-     * @param outputLooper          The looper associated with the thread on which the output should be
-     *                              called.
-     * @param extensionRendererMode The extension renderer mode.
-     * @param out                   An array to which the built renderers should be appended.
+     * @param output       An output for the renderers.
+     * @param outputLooper The looper associated with the thread on which the output should be
+     *                     called.
+     * @param out          An array to which the built renderers should be appended.
      */
-    protected void buildMetadataRenderers(Context context, MetadataOutput output,
-                                          Looper outputLooper, @ExtensionRendererMode int extensionRendererMode,
-                                          ArrayList<Renderer> out) {
+    private void buildMetadataRenderers(MetadataOutput output, Looper outputLooper, ArrayList<Renderer> out) {
         out.add(new MetadataRenderer(output, outputLooper));
     }
 
     /**
      * Builds any miscellaneous renderers used by the player.
-     *
-     * @param context               The {@link Context} associated with the player.
-     * @param eventHandler          A handler to use when invoking event listeners and outputs.
-     * @param extensionRendererMode The extension renderer mode.
-     * @param out                   An array to which the built renderers should be appended.
      */
-    protected void buildMiscellaneousRenderers(Context context, Handler eventHandler,
-                                               @ExtensionRendererMode int extensionRendererMode, ArrayList<Renderer> out) {
+    private void buildMiscellaneousRenderers() {
         // Do nothing.
     }
 
     /**
      * Builds an array of {@link AudioProcessor}s that will process PCM audio before output.
      */
-    protected AudioProcessor[] buildAudioProcessors() {
+    private AudioProcessor[] buildAudioProcessors() {
         return new AudioProcessor[0];
     }
 }

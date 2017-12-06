@@ -58,7 +58,9 @@ public class NoPlayerExoPlayerCreator {
             TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
             DefaultTrackSelector trackSelector = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
 
-            MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder ? SecurityDowngradingCodecSelector.newInstance() : MediaCodecSelector.DEFAULT;
+            MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
+                    ? SecurityDowngradingCodecSelector.newInstance()
+                    : MediaCodecSelector.DEFAULT;
 
             ExoPlayerTrackSelector exoPlayerTrackSelector = ExoPlayerTrackSelector.newInstance(trackSelector);
             FixedTrackSelection.Factory trackSelectionFactory = new FixedTrackSelection.Factory();

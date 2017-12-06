@@ -46,9 +46,9 @@ public class ModularDrmKeyRequest {
 
     @Override
     public String toString() {
-        return "ModularDrmKeyRequest{" +
-                "url='" + url + '\'' +
-                ", data=" + Arrays.toString(data) +
-                '}';
+        return "ModularDrmKeyRequest{"
+                + "url='" + url + '\''
+                + ", data=" + Arrays.toString(data)
+                + '}';
     }
 }

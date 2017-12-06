@@ -82,7 +82,8 @@ class AndroidMediaPlayerFacade {
         audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 
-    private MediaPlayer createAndBindMediaPlayer(SurfaceHolder surfaceHolder, Uri videoUri) throws IOException, IllegalStateException, IllegalArgumentException {
+    private MediaPlayer createAndBindMediaPlayer(SurfaceHolder surfaceHolder,
+                                                 Uri videoUri) throws IOException, IllegalStateException, IllegalArgumentException {
         MediaPlayer mediaPlayer = mediaPlayerCreator.createMediaPlayer();
         mediaPlayer.setOnPreparedListener(internalPreparedListener);
         mediaPlayer.setOnVideoSizeChangedListener(internalSizeChangedListener);

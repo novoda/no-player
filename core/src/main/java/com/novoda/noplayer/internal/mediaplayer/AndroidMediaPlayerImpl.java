@@ -51,6 +51,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     private SurfaceHolderRequester surfaceHolderRequester;
     private View containerView;
 
+    @SuppressWarnings("checkstyle:ParameterNumber")     // We cannot really group these any further
     AndroidMediaPlayerImpl(MediaPlayerInformation mediaPlayerInformation,
                            AndroidMediaPlayerFacade mediaPlayer,
                            MediaPlayerForwarder forwarder,

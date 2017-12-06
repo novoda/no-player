@@ -31,23 +31,67 @@ class BitrateForwarder implements AdaptiveMediaSourceEventListener {
         }
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
-    public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs) {
+    public void onLoadStarted(DataSpec dataSpec,
+                              int dataType,
+                              int trackType,
+                              Format trackFormat,
+                              int trackSelectionReason,
+                              Object trackSelectionData,
+                              long mediaStartTimeMs,
+                              long mediaEndTimeMs,
+                              long elapsedRealtimeMs) {
         // TODO: should we send?
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
-    public void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {
+    public void onLoadCompleted(DataSpec dataSpec,
+                                int dataType,
+                                int trackType,
+                                Format trackFormat,
+                                int trackSelectionReason,
+                                Object trackSelectionData,
+                                long mediaStartTimeMs,
+                                long mediaEndTimeMs,
+                                long elapsedRealtimeMs,
+                                long loadDurationMs,
+                                long bytesLoaded) {
         // TODO: should we send?
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
-    public void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {
+    public void onLoadCanceled(DataSpec dataSpec,
+                               int dataType,
+                               int trackType,
+                               Format trackFormat,
+                               int trackSelectionReason,
+                               Object trackSelectionData,
+                               long mediaStartTimeMs,
+                               long mediaEndTimeMs,
+                               long elapsedRealtimeMs,
+                               long loadDurationMs,
+                               long bytesLoaded) {
         // TODO: should we send?
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
-    public void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded, IOException error, boolean wasCanceled) {
+    public void onLoadError(DataSpec dataSpec,
+                            int dataType,
+                            int trackType,
+                            Format trackFormat,
+                            int trackSelectionReason,
+                            Object trackSelectionData,
+                            long mediaStartTimeMs,
+                            long mediaEndTimeMs,
+                            long elapsedRealtimeMs,
+                            long loadDurationMs,
+                            long bytesLoaded,
+                            IOException error,
+                            boolean wasCanceled) {
         // TODO: should we send?
     }
 

@@ -16,9 +16,17 @@ class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
         this.infoListener = infoListener;
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
-    public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                              Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs) {
+    public void onLoadStarted(DataSpec dataSpec,
+                              int dataType,
+                              int trackType,
+                              Format trackFormat,
+                              int trackSelectionReason,
+                              Object trackSelectionData,
+                              long mediaStartTimeMs,
+                              long mediaEndTimeMs,
+                              long elapsedRealtimeMs) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
         callingMethodParameters.put("dataSpec", String.valueOf(dataSpec));
@@ -34,10 +42,19 @@ class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
         infoListener.onNewInfo("onLoadStarted", callingMethodParameters);
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
-    public void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                                Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
-                                long loadDurationMs, long bytesLoaded) {
+    public void onLoadCompleted(DataSpec dataSpec,
+                                int dataType,
+                                int trackType,
+                                Format trackFormat,
+                                int trackSelectionReason,
+                                Object trackSelectionData,
+                                long mediaStartTimeMs,
+                                long mediaEndTimeMs,
+                                long elapsedRealtimeMs,
+                                long loadDurationMs,
+                                long bytesLoaded) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
         callingMethodParameters.put("dataSpec", String.valueOf(dataSpec));
@@ -55,10 +72,19 @@ class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
         infoListener.onNewInfo("onLoadCompleted", callingMethodParameters);
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
-    public void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                               Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs,
-                               long loadDurationMs, long bytesLoaded) {
+    public void onLoadCanceled(DataSpec dataSpec,
+                               int dataType,
+                               int trackType,
+                               Format trackFormat,
+                               int trackSelectionReason,
+                               Object trackSelectionData,
+                               long mediaStartTimeMs,
+                               long mediaEndTimeMs,
+                               long elapsedRealtimeMs,
+                               long loadDurationMs,
+                               long bytesLoaded) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
         callingMethodParameters.put("dataSpec", String.valueOf(dataSpec));
@@ -76,10 +102,21 @@ class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
         infoListener.onNewInfo("onLoadCanceled", callingMethodParameters);
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
-    public void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat, int trackSelectionReason,
-                            Object trackSelectionData, long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs,
-                            long bytesLoaded, IOException error, boolean wasCanceled) {
+    public void onLoadError(DataSpec dataSpec,
+                            int dataType,
+                            int trackType,
+                            Format trackFormat,
+                            int trackSelectionReason,
+                            Object trackSelectionData,
+                            long mediaStartTimeMs,
+                            long mediaEndTimeMs,
+                            long elapsedRealtimeMs,
+                            long loadDurationMs,
+                            long bytesLoaded,
+                            IOException error,
+                            boolean wasCanceled) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
         callingMethodParameters.put("dataSpec", String.valueOf(dataSpec));
@@ -111,7 +148,10 @@ class MediaSourceInfoForwarder implements AdaptiveMediaSourceEventListener {
     }
 
     @Override
-    public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData,
+    public void onDownstreamFormatChanged(int trackType,
+                                          Format trackFormat,
+                                          int trackSelectionReason,
+                                          Object trackSelectionData,
                                           long mediaTimeMs) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 

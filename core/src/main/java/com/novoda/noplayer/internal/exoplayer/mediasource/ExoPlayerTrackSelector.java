@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.utils.Optional;
 
+@SuppressWarnings("checkstyle:FinalClass")  // We cannot make it final as we need to mock it in tests
 public class ExoPlayerTrackSelector {
 
     private final DefaultTrackSelector trackSelector;

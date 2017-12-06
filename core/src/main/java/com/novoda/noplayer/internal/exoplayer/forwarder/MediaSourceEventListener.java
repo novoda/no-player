@@ -16,6 +16,7 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
         listeners.add(listener);
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
     public void onLoadStarted(DataSpec dataSpec,
                               int dataType,
@@ -41,6 +42,7 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
         }
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
     public void onLoadCompleted(DataSpec dataSpec,
                                 int dataType,
@@ -70,6 +72,7 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
         }
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
     public void onLoadCanceled(DataSpec dataSpec,
                                int dataType,
@@ -99,6 +102,7 @@ class MediaSourceEventListener implements AdaptiveMediaSourceEventListener {
         }
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
     @Override
     public void onLoadError(DataSpec dataSpec,
                             int dataType,

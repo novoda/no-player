@@ -46,6 +46,7 @@ final class SubtitlePainter {
     private static final String TAG = "SubtitlePainter";
 
     private static final float INNER_PADDING_RATIO = 0.125f;
+    private static final float ROUNDING_HALF_PIXEL = 0.5f;
 
     private final RectF lineBounds = new RectF();
 
@@ -97,6 +98,7 @@ final class SubtitlePainter {
     private Rect bitmapRect;
 
     @SuppressWarnings("ResourceType")
+        // We're hacking `spacingMult = styledAttributes.getFloat`
     SubtitlePainter(Context context) {
         int[] viewAttr = {android.R.attr.lineSpacingExtra, android.R.attr.lineSpacingMultiplier};
         TypedArray styledAttributes = context.obtainStyledAttributes(null, viewAttr, 0, 0);
@@ -106,7 +108,7 @@ final class SubtitlePainter {
 
         Resources resources = context.getResources();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        int twoDpInPx = Math.round((2f * displayMetrics.densityDpi) / DisplayMetrics.DENSITY_DEFAULT);
+        int twoDpInPx = Math.round((2 * displayMetrics.densityDpi) / DisplayMetrics.DENSITY_DEFAULT);
         cornerRadius = twoDpInPx;
         outlineWidth = twoDpInPx;
         shadowRadius = twoDpInPx;
@@ -121,9 +123,17 @@ final class SubtitlePainter {
         paint.setStyle(Style.FILL);
     }
 
-    void draw(NoPlayerCue cue, boolean applyEmbeddedStyles, boolean applyEmbeddedFontSizes,
-              float textSizePx, float bottomPaddingFraction, Canvas canvas,
-              int cueBoxLeft, int cueBoxTop, int cueBoxRight, int cueBoxBottom) {
+    @SuppressWarnings("checkstyle:ParameterNumber")        // TODO group parameters into classes
+    void draw(NoPlayerCue cue,
+              boolean applyEmbeddedStyles,
+              boolean applyEmbeddedFontSizes,
+              float textSizePx,
+              float bottomPaddingFraction,
+              Canvas canvas,
+              int cueBoxLeft,
+              int cueBoxTop,
+              int cueBoxRight,
+              int cueBoxBottom) {
         boolean isTextCue = cue.bitmap() == null;
         int windowColor = Color.BLACK;
         if (isTextCue) {
@@ -167,7 +177,7 @@ final class SubtitlePainter {
         this.windowColor = windowColor;
         this.edgeType = 0;
         this.edgeColor = Color.WHITE;
-        this.textPaint.setTypeface(null);
+        textPaint.setTypeface(null);
         this.textSizePx = textSizePx;
         this.bottomPaddingFraction = bottomPaddingFraction;
         this.parentLeft = cueBoxLeft;
@@ -183,6 +193,7 @@ final class SubtitlePainter {
         drawLayout(canvas, isTextCue);
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // TODO group parameters into classes
     private boolean nothingHasChanged(NoPlayerCue cue,
                                       boolean applyEmbeddedStyles,
                                       boolean applyEmbeddedFontSizes,
@@ -193,30 +204,30 @@ final class SubtitlePainter {
                                       int cueBoxRight,
                                       int cueBoxBottom,
                                       int windowColor) {
-        return areCharSequencesEqual(this.cueText, cue.text())
-                && Util.areEqual(this.cueTextAlignment, cue.textAlignment())
-                && this.cueBitmap == cue.bitmap()
-                && this.cueLine == cue.line()
-                && this.cueLineType == cue.lineType()
-                && Util.areEqual(this.cueLineAnchor, cue.lineAnchor())
-                && this.cuePosition == cue.position()
-                && Util.areEqual(this.cuePositionAnchor, cue.positionAnchor())
-                && this.cueSize == cue.size()
-                && this.cueBitmapHeight == cue.bitmapHeight()
+        return areCharSequencesEqual(cueText, cue.text())
+                && Util.areEqual(cueTextAlignment, cue.textAlignment())
+                && cueBitmap == cue.bitmap()
+                && cueLine == cue.line()
+                && cueLineType == cue.lineType()
+                && Util.areEqual(cueLineAnchor, cue.lineAnchor())
+                && cuePosition == cue.position()
+                && Util.areEqual(cuePositionAnchor, cue.positionAnchor())
+                && cueSize == cue.size()
+                && cueBitmapHeight == cue.bitmapHeight()
                 && this.applyEmbeddedStyles == applyEmbeddedStyles
                 && this.applyEmbeddedFontSizes == applyEmbeddedFontSizes
-                && this.foregroundColor == Color.WHITE
-                && this.backgroundColor == Color.BLACK
+                && foregroundColor == Color.WHITE
+                && backgroundColor == Color.BLACK
                 && this.windowColor == windowColor
-                && this.edgeType == 0
-                && this.edgeColor == Color.WHITE
-                && Util.areEqual(this.textPaint.getTypeface(), null)
+                && edgeType == 0
+                && edgeColor == Color.WHITE
+                && Util.areEqual(textPaint.getTypeface(), null)
                 && this.textSizePx == textSizePx
                 && this.bottomPaddingFraction == bottomPaddingFraction
-                && this.parentLeft == cueBoxLeft
-                && this.parentTop == cueBoxTop
-                && this.parentRight == cueBoxRight
-                && this.parentBottom == cueBoxBottom;
+                && parentLeft == cueBoxLeft
+                && parentTop == cueBoxTop
+                && parentRight == cueBoxRight
+                && parentBottom == cueBoxBottom;
     }
 
     private void setupTextLayout() {
@@ -224,11 +235,11 @@ final class SubtitlePainter {
         int parentHeight = parentBottom - parentTop;
 
         textPaint.setTextSize(textSizePx);
-        int textPaddingX = (int) (textSizePx * INNER_PADDING_RATIO + 0.5f);
+        int textPaddingX = (int) (textSizePx * INNER_PADDING_RATIO + ROUNDING_HALF_PIXEL);
 
         int availableWidth = parentWidth - textPaddingX * 2;
         if (cueSize != Cue.DIMEN_UNSET) {
-            availableWidth = (int) (availableWidth * cueSize);
+            availableWidth *= cueSize;
         }
         if (availableWidth <= 0) {
             Log.w(TAG, "Skipped drawing subtitle cue (insufficient space)");
@@ -271,16 +282,16 @@ final class SubtitlePainter {
 
         int textLeft;
         int textRight;
-        if (cuePosition != Cue.DIMEN_UNSET) {
+        if (cuePosition == Cue.DIMEN_UNSET) {
+            textLeft = (parentWidth - textWidth) / 2;
+            textRight = textLeft + textWidth;
+        } else {
             int anchorPosition = Math.round(parentWidth * cuePosition) + parentLeft;
             textLeft = cuePositionAnchor == Cue.ANCHOR_TYPE_END ? anchorPosition - textWidth
                     : cuePositionAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorPosition * 2 - textWidth) / 2
                     : anchorPosition;
             textLeft = Math.max(textLeft, parentLeft);
             textRight = Math.min(textLeft + textWidth, parentRight);
-        } else {
-            textLeft = (parentWidth - textWidth) / 2;
-            textRight = textLeft + textWidth;
         }
 
         textWidth = textRight - textLeft;
@@ -290,7 +301,9 @@ final class SubtitlePainter {
         }
 
         int textTop;
-        if (cueLine != Cue.DIMEN_UNSET) {
+        if (cueLine == Cue.DIMEN_UNSET) {
+            textTop = parentBottom - textHeight - (int) (parentHeight * bottomPaddingFraction);
+        } else {
             int anchorPosition;
             if (cueLineType == Cue.LINE_TYPE_FRACTION) {
                 anchorPosition = Math.round(parentHeight * cueLine) + parentTop;
@@ -311,8 +324,6 @@ final class SubtitlePainter {
             } else if (textTop < parentTop) {
                 textTop = parentTop;
             }
-        } else {
-            textTop = parentBottom - textHeight - (int) (parentHeight * bottomPaddingFraction);
         }
 
         // Update the derived drawing variables.
@@ -389,7 +400,7 @@ final class SubtitlePainter {
             boolean raised = edgeType == CaptionStyleCompat.EDGE_TYPE_RAISED;
             int colorUp = raised ? Color.WHITE : edgeColor;
             int colorDown = raised ? edgeColor : Color.WHITE;
-            float offset = shadowRadius / 2f;
+            float offset = shadowRadius / 2;
             textPaint.setColor(foregroundColor);
             textPaint.setStyle(Style.FILL);
             textPaint.setShadowLayer(shadowRadius, -offset, -offset, colorUp);

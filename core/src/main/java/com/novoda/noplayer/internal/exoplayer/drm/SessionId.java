@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer.drm;
 
 import java.util.Arrays;
 
-class SessionId {
+final class SessionId {
 
     private final byte[] sessionId;
 
@@ -43,8 +43,8 @@ class SessionId {
 
     @Override
     public String toString() {
-        return "SessionId{" +
-                "asBytes=" + Arrays.toString(sessionId) +
-                '}';
+        return "SessionId{"
+                + "asBytes=" + Arrays.toString(sessionId)
+                + '}';
     }
 }
