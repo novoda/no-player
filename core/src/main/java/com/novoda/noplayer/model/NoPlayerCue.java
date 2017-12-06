@@ -18,7 +18,7 @@ public class NoPlayerCue {
     private final boolean windowColorSet;
     private final int windowColor;
 
-    @SuppressWarnings("checkstyle:ParameterNumber")     // TODO group parameters into classes
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})     // TODO group parameters into classes
     public NoPlayerCue(CharSequence text,
                        Alignment textAlignment,
                        Bitmap bitmap,

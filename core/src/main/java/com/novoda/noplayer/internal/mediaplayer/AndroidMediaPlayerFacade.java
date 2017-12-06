@@ -167,7 +167,7 @@ class AndroidMediaPlayerFacade {
             mediaPlayer.reset();
             mediaPlayer.release();
             mediaPlayer = null;
-            currentState = PlaybackState.IDLE;
+            currentState = IDLE;
         }
     }
 

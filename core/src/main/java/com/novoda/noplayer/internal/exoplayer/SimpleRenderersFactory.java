@@ -42,11 +42,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Default {@link RenderersFactory} implementation.
  */
 class SimpleRenderersFactory implements RenderersFactory {
+
+    private static final boolean DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS = false;
+    private static final boolean INIT_ARGS = true;
+    private static final boolean PLAY_CLEAR_SAMPLES_WITHOUT_KEYS = true;
 
     /**
      * Modes for using extension renderers.
@@ -144,37 +149,47 @@ class SimpleRenderersFactory implements RenderersFactory {
      * @param eventHandler              A handler associated with the main thread's looper.
      * @param eventListener             An event listener.
      * @param extensionRendererMode     The extension renderer mode.
-     * @param out                       An array to which the built renderers should be appended.
+     * @param outRenderers              An array to which the built renderers should be appended.
      */
+    @SuppressWarnings({"PMD.AvoidCatchingGenericException"})   // Using reflection and these APIs mean we need to do it
     private void buildVideoRenderers(Context context,
-                                     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, long allowedVideoJoiningTimeMs,
-                                     Handler eventHandler, VideoRendererEventListener eventListener,
-                                     @ExtensionRendererMode int extensionRendererMode, ArrayList<Renderer> out) {
-        out.add(new MediaCodecVideoRenderer(context, mediaCodecSelector,
-                allowedVideoJoiningTimeMs, drmSessionManager, false, eventHandler, eventListener,
+                                     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
+                                     long allowedVideoJoiningTimeMs,
+                                     Handler eventHandler,
+                                     VideoRendererEventListener eventListener,
+                                     @ExtensionRendererMode int extensionRendererMode,
+                                     List<Renderer> outRenderers) {
+        outRenderers.add(new MediaCodecVideoRenderer(context,
+                mediaCodecSelector,
+                allowedVideoJoiningTimeMs,
+                drmSessionManager,
+                DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
+                eventHandler,
+                eventListener,
                 MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY));
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {
             return;
         }
-        int extensionRendererIndex = out.size();
+        int extensionRendererIndex = outRenderers.size();
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_PREFER) {
             extensionRendererIndex--;
         }
 
         try {
-            Class<?> clazz =
-                    Class.forName("com.google.android.exoplayer2.ext.vp9.LibvpxVideoRenderer");
-            Constructor<?> constructor = clazz.getConstructor(boolean.class, long.class, Handler.class,
-                    VideoRendererEventListener.class, int.class);
-            Renderer renderer = (Renderer) constructor.newInstance(true, allowedVideoJoiningTimeMs,
-                    eventHandler, eventListener, MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY);
-            out.add(extensionRendererIndex, renderer);
+            Class<?> clazz = Class.forName("com.google.android.exoplayer2.ext.vp9.LibvpxVideoRenderer");
+            Constructor<?> constructor = clazz.getConstructor(boolean.class, long.class, Handler.class, VideoRendererEventListener.class, int.class);
+            Renderer renderer = (Renderer) constructor.newInstance(INIT_ARGS,
+                    allowedVideoJoiningTimeMs,
+                    eventHandler,
+                    eventListener,
+                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY);
+            outRenderers.add(extensionRendererIndex, renderer);
             Log.i(TAG, "Loaded LibvpxVideoRenderer.");
         } catch (ClassNotFoundException e) {
             // Expected if the app was built without the extension.
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RendererInstantiationException("LibvpxVideoRenderer", e);
         }
     }
 
@@ -189,67 +204,66 @@ class SimpleRenderersFactory implements RenderersFactory {
      * @param eventHandler          A handler to use when invoking event listeners and outputs.
      * @param eventListener         An event listener.
      * @param extensionRendererMode The extension renderer mode.
-     * @param out                   An array to which the built renderers should be appended.
+     * @param outRenderers          An array to which the built renderers should be appended.
      */
+    @SuppressWarnings({"PMD.AvoidCatchingGenericException"})   // Using reflection and these APIs mean we need to do it
     private void buildAudioRenderers(Context context,
                                      DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
-                                     AudioProcessor[] audioProcessors, Handler eventHandler,
-                                     AudioRendererEventListener eventListener, @ExtensionRendererMode int extensionRendererMode,
-                                     ArrayList<Renderer> out) {
-        out.add(new MediaCodecAudioRenderer(mediaCodecSelector, drmSessionManager, true,
-                eventHandler, eventListener, AudioCapabilities.getCapabilities(context), audioProcessors));
+                                     AudioProcessor[] audioProcessors,
+                                     Handler eventHandler,
+                                     AudioRendererEventListener eventListener,
+                                     @ExtensionRendererMode int extensionRendererMode,
+                                     List<Renderer> outRenderers) {
+        outRenderers.add(new MediaCodecAudioRenderer(mediaCodecSelector,
+                drmSessionManager,
+                PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
+                eventHandler,
+                eventListener,
+                AudioCapabilities.getCapabilities(context),
+                audioProcessors));
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {
             return;
         }
-        int extensionRendererIndex = out.size();
+        int extensionRendererIndex = outRenderers.size();
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_PREFER) {
             extensionRendererIndex--;
         }
 
         try {
-            Class<?> clazz =
-                    Class.forName("com.google.android.exoplayer2.ext.opus.LibopusAudioRenderer");
-            Constructor<?> constructor = clazz.getConstructor(Handler.class,
-                    AudioRendererEventListener.class, AudioProcessor[].class);
-            Renderer renderer = (Renderer) constructor.newInstance(eventHandler, eventListener,
-                    audioProcessors);
-            out.add(extensionRendererIndex++, renderer);
+            Class<?> clazz = Class.forName("com.google.android.exoplayer2.ext.opus.LibopusAudioRenderer");
+            Constructor<?> constructor = clazz.getConstructor(Handler.class, AudioRendererEventListener.class, AudioProcessor[].class);
+            Renderer renderer = (Renderer) constructor.newInstance(eventHandler, eventListener, audioProcessors);
+            outRenderers.add(extensionRendererIndex++, renderer);
             Log.i(TAG, "Loaded LibopusAudioRenderer.");
         } catch (ClassNotFoundException e) {
             // Expected if the app was built without the extension.
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RendererInstantiationException("LibopusAudioRenderer", e);
         }
 
         try {
-            Class<?> clazz =
-                    Class.forName("com.google.android.exoplayer2.ext.flac.LibflacAudioRenderer");
-            Constructor<?> constructor = clazz.getConstructor(Handler.class,
-                    AudioRendererEventListener.class, AudioProcessor[].class);
-            Renderer renderer = (Renderer) constructor.newInstance(eventHandler, eventListener,
-                    audioProcessors);
-            out.add(extensionRendererIndex++, renderer);
+            Class<?> clazz = Class.forName("com.google.android.exoplayer2.ext.flac.LibflacAudioRenderer");
+            Constructor<?> constructor = clazz.getConstructor(Handler.class, AudioRendererEventListener.class, AudioProcessor[].class);
+            Renderer renderer = (Renderer) constructor.newInstance(eventHandler, eventListener, audioProcessors);
+            outRenderers.add(extensionRendererIndex++, renderer);
             Log.i(TAG, "Loaded LibflacAudioRenderer.");
         } catch (ClassNotFoundException e) {
             // Expected if the app was built without the extension.
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RendererInstantiationException("LibflacAudioRenderer", e);
         }
 
         try {
-            Class<?> clazz =
-                    Class.forName("com.google.android.exoplayer2.ext.ffmpeg.FfmpegAudioRenderer");
-            Constructor<?> constructor = clazz.getConstructor(Handler.class,
-                    AudioRendererEventListener.class, AudioProcessor[].class);
-            Renderer renderer = (Renderer) constructor.newInstance(eventHandler, eventListener,
-                    audioProcessors);
-            out.add(extensionRendererIndex, renderer);
+            Class<?> clazz = Class.forName("com.google.android.exoplayer2.ext.ffmpeg.FfmpegAudioRenderer");
+            Constructor<?> constructor = clazz.getConstructor(Handler.class, AudioRendererEventListener.class, AudioProcessor[].class);
+            Renderer renderer = (Renderer) constructor.newInstance(eventHandler, eventListener, audioProcessors);
+            outRenderers.add(extensionRendererIndex, renderer);
             Log.i(TAG, "Loaded FfmpegAudioRenderer.");
         } catch (ClassNotFoundException e) {
             // Expected if the app was built without the extension.
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RendererInstantiationException("FfmpegAudioRenderer", e);
         }
     }
 
@@ -259,10 +273,10 @@ class SimpleRenderersFactory implements RenderersFactory {
      * @param output       An output for the renderers.
      * @param outputLooper The looper associated with the thread on which the output should be
      *                     called.
-     * @param out          An array to which the built renderers should be appended.
+     * @param outRenderers An array to which the built renderers should be appended.
      */
-    private void buildTextRenderers(TextOutput output, Looper outputLooper, ArrayList<Renderer> out) {
-        out.add(new TextRenderer(output, outputLooper));
+    private void buildTextRenderers(TextOutput output, Looper outputLooper, List<Renderer> outRenderers) {
+        outRenderers.add(new TextRenderer(output, outputLooper));
     }
 
     /**
@@ -271,10 +285,10 @@ class SimpleRenderersFactory implements RenderersFactory {
      * @param output       An output for the renderers.
      * @param outputLooper The looper associated with the thread on which the output should be
      *                     called.
-     * @param out          An array to which the built renderers should be appended.
+     * @param outRenderers An array to which the built renderers should be appended.
      */
-    private void buildMetadataRenderers(MetadataOutput output, Looper outputLooper, ArrayList<Renderer> out) {
-        out.add(new MetadataRenderer(output, outputLooper));
+    private void buildMetadataRenderers(MetadataOutput output, Looper outputLooper, List<Renderer> outRenderers) {
+        outRenderers.add(new MetadataRenderer(output, outputLooper));
     }
 
     /**
@@ -289,5 +303,12 @@ class SimpleRenderersFactory implements RenderersFactory {
      */
     private AudioProcessor[] buildAudioProcessors() {
         return new AudioProcessor[0];
+    }
+
+    public static class RendererInstantiationException extends RuntimeException {
+
+        RendererInstantiationException(String rendererName, Throwable cause) {
+            super("Unable to instantiate renderer " + rendererName, cause);
+        }
     }
 }

@@ -31,7 +31,7 @@ class BitrateForwarder implements AdaptiveMediaSourceEventListener {
         }
     }
 
-    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
     @Override
     public void onLoadStarted(DataSpec dataSpec,
                               int dataType,
@@ -45,7 +45,7 @@ class BitrateForwarder implements AdaptiveMediaSourceEventListener {
         // TODO: should we send?
     }
 
-    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
     @Override
     public void onLoadCompleted(DataSpec dataSpec,
                                 int dataType,
@@ -61,7 +61,7 @@ class BitrateForwarder implements AdaptiveMediaSourceEventListener {
         // TODO: should we send?
     }
 
-    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
     @Override
     public void onLoadCanceled(DataSpec dataSpec,
                                int dataType,
@@ -77,7 +77,7 @@ class BitrateForwarder implements AdaptiveMediaSourceEventListener {
         // TODO: should we send?
     }
 
-    @SuppressWarnings("checkstyle:ParameterNumber") // This implements an interface method defined by ExoPlayer
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
     @Override
     public void onLoadError(DataSpec dataSpec,
                             int dataType,

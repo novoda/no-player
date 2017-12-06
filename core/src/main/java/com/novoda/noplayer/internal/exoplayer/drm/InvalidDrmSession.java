@@ -37,8 +37,9 @@ class InvalidDrmSession implements FrameworkDrmSession {
         throw new IllegalStateException();
     }
 
-    @Nullable
+    @SuppressWarnings("PMD.MethodReturnsInternalArray") // We return a constant null array
     @Override
+    @Nullable
     public byte[] getOfflineLicenseKeySetId() {
         return ABSENT_OFFLINE_LICENSE_KEY_SET_ID;
     }

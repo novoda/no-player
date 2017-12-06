@@ -7,7 +7,8 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.utils.Optional;
 
-@SuppressWarnings("checkstyle:FinalClass")  // We cannot make it final as we need to mock it in tests
+// We cannot make it final as we need to mock it in tests
+@SuppressWarnings({"checkstyle:FinalClass", "PMD.ClassWithOnlyPrivateConstructorsShouldBeFinal"})
 public class ExoPlayerTrackSelector {
 
     private final DefaultTrackSelector trackSelector;
@@ -42,7 +43,7 @@ public class ExoPlayerTrackSelector {
         MappingTrackSelector.MappedTrackInfo trackInfo = trackSelector.getCurrentMappedTrackInfo();
 
         if (trackInfo == null) {
-            throw new NullPointerException("Track info is not available.");
+            throw new IllegalStateException("Track info is not available.");
         }
         return new ExoPlayerMappedTrackInfo(trackInfo);
     }

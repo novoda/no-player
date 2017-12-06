@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 class StreamingDrmSessionCreator implements DrmSessionCreator {
 
+    @SuppressWarnings("PMD.LooseCoupling")  // Unfortunately the DefaultDrmSessionManager takes a HashMap, not a Map
     private static final HashMap<String, String> NO_OPTIONAL_PARAMETERS = null;
 
     private final MediaDrmCallback mediaDrmCallback;

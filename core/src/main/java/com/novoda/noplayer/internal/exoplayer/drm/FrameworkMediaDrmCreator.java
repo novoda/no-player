@@ -7,6 +7,7 @@ import java.util.UUID;
 
 class FrameworkMediaDrmCreator {
 
+    @SuppressWarnings("PMD.PreserveStackTrace")  // We just unwrap the exception because we don't care about the UnsupportedDrmException itself
     FrameworkMediaDrm create(UUID uuid) {
         try {
             return FrameworkMediaDrm.newInstance(uuid);

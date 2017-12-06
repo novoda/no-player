@@ -41,6 +41,8 @@ import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.util.Util;
 import com.novoda.noplayer.model.NoPlayerCue;
 
+// Adopted code, could use some refactoring but it's a complex job
+@SuppressWarnings({"PMD.GodClass", "PMD.CyclomaticComplexity", "PMD.StdCyclomaticComplexity", "PMD.ModifiedCyclomaticComplexity"})
 final class SubtitlePainter {
 
     private static final String TAG = "SubtitlePainter";
@@ -99,8 +101,7 @@ final class SubtitlePainter {
     private int textPaddingX;
     private Rect bitmapRect;
 
-    @SuppressWarnings("ResourceType")
-        // We're hacking `spacingMult = styledAttributes.getFloat`
+    @SuppressWarnings("ResourceType")        // We're hacking `spacingMult = styledAttributes.getFloat`
     SubtitlePainter(Context context) {
         int[] viewAttr = {android.R.attr.lineSpacingExtra, android.R.attr.lineSpacingMultiplier};
         TypedArray styledAttributes = context.obtainStyledAttributes(null, viewAttr, 0, 0);
@@ -125,8 +126,7 @@ final class SubtitlePainter {
         paint.setStyle(Style.FILL);
     }
 
-    @SuppressWarnings("checkstyle:ParameterNumber")
-        // TODO group parameters into classes
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // TODO group parameters into classes
     void draw(NoPlayerCue cue,
               boolean applyEmbeddedStyles,
               boolean applyEmbeddedFontSizes,
@@ -196,7 +196,7 @@ final class SubtitlePainter {
         drawLayout(canvas, isTextCue);
     }
 
-    @SuppressWarnings("checkstyle:ParameterNumber") // TODO group parameters into classes
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})     // TODO group parameters into classes
     private boolean nothingHasChanged(NoPlayerCue cue,
                                       boolean applyEmbeddedStyles,
                                       boolean applyEmbeddedFontSizes,
@@ -233,9 +233,9 @@ final class SubtitlePainter {
                 && parentBottom == cueBoxBottom;
     }
 
+    @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })  // TODO break this method up
     private void setupTextLayout() {
         int parentWidth = parentRight - parentLeft;
-        int parentHeight = parentBottom - parentTop;
 
         textPaint.setTextSize(textSizePx);
         int textPaddingX = (int) (textSizePx * INNER_PADDING_RATIO + ROUNDING_HALF_PIXEL);
@@ -272,7 +272,6 @@ final class SubtitlePainter {
         Alignment textAlignment = cueTextAlignment == null ? Alignment.ALIGN_CENTER : cueTextAlignment;
         textLayout = new StaticLayout(cueText, textPaint, availableWidth, textAlignment, spacingMult,
                 spacingAdd, true);
-        int textHeight = textLayout.getHeight();
         int textWidth = 0;
         int lineCount = textLayout.getLineCount();
         for (int i = 0; i < lineCount; i++) {
@@ -302,6 +301,9 @@ final class SubtitlePainter {
             Log.w(TAG, "Skipped drawing subtitle cue (invalid horizontal positioning)");
             return;
         }
+
+        int parentHeight = parentBottom - parentTop;
+        int textHeight = textLayout.getHeight();
 
         int textTop;
         if (isCueDimensionSet(cueSize)) {
@@ -337,6 +339,7 @@ final class SubtitlePainter {
         this.textPaddingX = textPaddingX;
     }
 
+    @SuppressWarnings("PMD.NPathComplexity")  // TODO break this method up
     private void setupBitmapLayout() {
         int parentWidth = parentRight - parentLeft;
         int parentHeight = parentBottom - parentTop;
@@ -371,6 +374,7 @@ final class SubtitlePainter {
         }
     }
 
+    @SuppressWarnings("PMD.NPathComplexity")  // TODO break this method up
     private void drawTextLayout(Canvas canvas) {
         StaticLayout layout = textLayout;
         if (layout == null) {
@@ -439,6 +443,7 @@ final class SubtitlePainter {
      * latter only checks the text of each sequence, and does not check for equality of styling that
      * may be embedded within the {@link CharSequence}s.
      */
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")   // We do, but we first try to shortcut by comparing references
     private static boolean areCharSequencesEqual(CharSequence first, CharSequence second) {
         // Some CharSequence implementations don't perform a cheap referential equality check in their
         // equals methods, so we perform one explicitly here.
