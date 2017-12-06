@@ -1,17 +1,18 @@
-# no-player [![](https://ci.novoda.com/buildStatus/icon?job=no-player)](https://ci.novoda.com/job/no-player/lastBuild/console) [![Download](https://api.bintray.com/packages/novoda/maven/no-player/images/download.svg) ](https://bintray.com/novoda/maven/no-player/_latestVersion) [![](https://raw.githubusercontent.com/novoda/novoda/master/assets/btn_apache_lisence.png)](LICENSE.txt)
+![noplayer](art/noplayer-header.png)
 
-A simplified `Player` wrapper for [MediaPlayer](https://developer.android.com/reference/android/media/MediaPlayer.html) and [ExoPlayer](https://google.github.io/ExoPlayer/)
+[![CI status](https://ci.novoda.com/buildStatus/icon?job=no-player)](https://ci.novoda.com/job/no-player/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda/maven/no-player/images/download.svg)](https://bintray.com/novoda/maven/no-player/_latestVersion) [![Apache 2.0 Licence](https://img.shields.io/github/license/novoda/no-player.svg)](https://github.com/novoda/no-player/blob/master/LICENSE)
+
+A simplified Android `Player` wrapper for [MediaPlayer](https://developer.android.com/reference/android/media/MediaPlayer.html) and [ExoPlayer](https://google.github.io/ExoPlayer/).
 
 ## Description
 
-Some of the benefits are -
+Some of the benefits are:
 
-- Unified playback interface and event listeners.
-- `MediaPlayer` buffering.
-- `ExoPlayer` local, streaming and provisioning widevine modular DRM.
-- Aspect ratio maintaining.
-- Player selection based on `ContentType` and DRM.
-
+- Unified playback interface and event listeners for ExoPlayer and MediaPlayer
+- `MediaPlayer` buffering
+- `ExoPlayer` local, streaming and provisioning WideVine Modular DRM
+- Maintains video Aspect Ratio by default
+- Player selection based on `ContentType` and DRM
 
 ## Adding to your project
 
@@ -26,57 +27,53 @@ dependencies {
     compile 'com.novoda:no-player:<latest-version>'
 }
 ```
+### Sample usage
+
+ 1. Create a `Player`:
+
+    ```java
+    Player player = new PlayerBuilder()
+      .withPriority(PlayerType.EXO_PLAYER)
+      .withWidevineModularStreamingDrm(drmHandler)
+      .build(this);
+    ```
+
+ 2. Create the `PlayerView`:
+  
+    ```xml
+    <com.novoda.noplayer.NoPlayerView
+      android:id="@+id/player_view"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center" />
+    ```
+
+ 3. Attach to a `PlayerView`:
+
+    ```java
+    PlayerView playerView = findViewById(R.id.player_view);
+    player.attach(playerView);
+    ```
 
 
-## Simple usage
-Creating a `Player`
+ 4. Play some content:
 
-```java
-Player player = new PlayerBuilder()
-        .withPriority(PlayerType.EXO_PLAYER)
-        .withWidevineModularStreamingDrm(drmHandler)
-        .build(this);
-```
-
-Creating the `PlayerView`
-
-```xml
-R.layout.player_activity
-
-  <com.novoda.noplayer.NoPlayerView
-    android:id="@+id/player_view"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center" />
-```
-
-Attaching to a `PlayerView`
-
-```java
-PlayerView playerView = findViewById(R.id.player_view);
-player.attach(playerView);
-```
-
-
-Playing Content
-
-```java
-player.addPreparedListener(new Player.PreparedListener() {
-    @Override
-    public void onPrepared(PlayerState playerState) {
+    ```java
+    player.addPreparedListener(new Player.PreparedListener() {
+      @Override
+      public void onPrepared(PlayerState playerState) {
         player.play();
-    }
-});
+      }
+    });
+    
+    Uri uri = Uri.parse(mpdUrl);
+    player.loadVideo(uri, ContentType.DASH);
+    ```
 
-Uri uri = Uri.parse("http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-manifest.mpd");
-player.loadVideo(uri, ContentType.DASH);
-```
+## Contributing
 
-## Links
+We always welcome people to contribute new features or bug fixes, [here is how](https://github.com/novoda/novoda/blob/master/CONTRIBUTING.md).
 
-Here are a list of useful links:
+If you have a problem, check the [Issues Page](https://github.com/novoda/no-player/issues) first to see if we are already working on it.
 
- * We always welcome people to contribute new features or bug fixes, [here is how](https://github.com/novoda/novoda/blob/master/CONTRIBUTING.md).
- * If you have a problem check the [Issues Page](https://github.com/novoda/no-player/issues) first to see if we are working on it.
- * Looking for community help, browse the already asked [Stack Overflow Questions](http://stackoverflow.com/questions/tagged/support-no-player) or use the tag: `support-no-player` when posting a new question. 
-
+Looking for community help? Browse the already asked [Stack Overflow Questions](http://stackoverflow.com/questions/tagged/support-no-player) or use the tag `support-no-player` when posting a new question.
