@@ -15,7 +15,7 @@ public final class KeySetId {
     }
 
     public byte[] asBytes() {
-        return keySetId;
+        return Arrays.copyOf(keySetId, keySetId.length);
     }
 
     @Override

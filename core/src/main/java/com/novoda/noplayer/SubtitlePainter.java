@@ -47,6 +47,8 @@ final class SubtitlePainter {
 
     private static final float INNER_PADDING_RATIO = 0.125f;
     private static final float ROUNDING_HALF_PIXEL = 0.5f;
+    private static final float TWO_DP = 2f;
+    private static final double FLOAT_COMPARISON_EPSILON = .0000001;
 
     private final RectF lineBounds = new RectF();
 
@@ -108,7 +110,7 @@ final class SubtitlePainter {
 
         Resources resources = context.getResources();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        int twoDpInPx = Math.round((2 * displayMetrics.densityDpi) / DisplayMetrics.DENSITY_DEFAULT);
+        int twoDpInPx = Math.round((TWO_DP * displayMetrics.densityDpi) / DisplayMetrics.DENSITY_DEFAULT);
         cornerRadius = twoDpInPx;
         outlineWidth = twoDpInPx;
         shadowRadius = twoDpInPx;
@@ -123,7 +125,8 @@ final class SubtitlePainter {
         paint.setStyle(Style.FILL);
     }
 
-    @SuppressWarnings("checkstyle:ParameterNumber")        // TODO group parameters into classes
+    @SuppressWarnings("checkstyle:ParameterNumber")
+        // TODO group parameters into classes
     void draw(NoPlayerCue cue,
               boolean applyEmbeddedStyles,
               boolean applyEmbeddedFontSizes,
@@ -238,7 +241,7 @@ final class SubtitlePainter {
         int textPaddingX = (int) (textSizePx * INNER_PADDING_RATIO + ROUNDING_HALF_PIXEL);
 
         int availableWidth = parentWidth - textPaddingX * 2;
-        if (cueSize != Cue.DIMEN_UNSET) {
+        if (isCueDimensionSet(cueSize)) {
             availableWidth *= cueSize;
         }
         if (availableWidth <= 0) {
@@ -275,23 +278,23 @@ final class SubtitlePainter {
         for (int i = 0; i < lineCount; i++) {
             textWidth = Math.max((int) Math.ceil(textLayout.getLineWidth(i)), textWidth);
         }
-        if (cueSize != Cue.DIMEN_UNSET && textWidth < availableWidth) {
+        if (isCueDimensionSet(cueSize) && textWidth < availableWidth) {
             textWidth = availableWidth;
         }
         textWidth += textPaddingX * 2;
 
         int textLeft;
         int textRight;
-        if (cuePosition == Cue.DIMEN_UNSET) {
-            textLeft = (parentWidth - textWidth) / 2;
-            textRight = textLeft + textWidth;
-        } else {
+        if (isCueDimensionSet(cueSize)) {
             int anchorPosition = Math.round(parentWidth * cuePosition) + parentLeft;
             textLeft = cuePositionAnchor == Cue.ANCHOR_TYPE_END ? anchorPosition - textWidth
                     : cuePositionAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorPosition * 2 - textWidth) / 2
                     : anchorPosition;
             textLeft = Math.max(textLeft, parentLeft);
             textRight = Math.min(textLeft + textWidth, parentRight);
+        } else {
+            textLeft = (parentWidth - textWidth) / 2;
+            textRight = textLeft + textWidth;
         }
 
         textWidth = textRight - textLeft;
@@ -301,9 +304,7 @@ final class SubtitlePainter {
         }
 
         int textTop;
-        if (cueLine == Cue.DIMEN_UNSET) {
-            textTop = parentBottom - textHeight - (int) (parentHeight * bottomPaddingFraction);
-        } else {
+        if (isCueDimensionSet(cueSize)) {
             int anchorPosition;
             if (cueLineType == Cue.LINE_TYPE_FRACTION) {
                 anchorPosition = Math.round(parentHeight * cueLine) + parentTop;
@@ -324,6 +325,8 @@ final class SubtitlePainter {
             } else if (textTop < parentTop) {
                 textTop = parentTop;
             }
+        } else {
+            textTop = parentBottom - textHeight - (int) (parentHeight * bottomPaddingFraction);
         }
 
         // Update the derived drawing variables.
@@ -340,13 +343,24 @@ final class SubtitlePainter {
         float anchorX = parentLeft + (parentWidth * cuePosition);
         float anchorY = parentTop + (parentHeight * cueLine);
         int width = Math.round(parentWidth * cueSize);
-        int height = cueBitmapHeight != Cue.DIMEN_UNSET ? Math.round(parentHeight * cueBitmapHeight)
+
+        int height = isCueDimensionSet(cueBitmapHeight)
+                ? Math.round(parentHeight * cueBitmapHeight)
                 : Math.round(width * ((float) cueBitmap.getHeight() / cueBitmap.getWidth()));
-        int x = Math.round(cueLineAnchor == Cue.ANCHOR_TYPE_END ? (anchorX - width)
-                : cueLineAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorX - (width / 2)) : anchorX);
-        int y = Math.round(cuePositionAnchor == Cue.ANCHOR_TYPE_END ? (anchorY - height)
-                : cuePositionAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorY - (height / 2)) : anchorY);
+
+        int x = Math.round(cueLineAnchor == Cue.ANCHOR_TYPE_END
+                ? (anchorX - width)
+                : cueLineAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorX - (width / 2f)) : anchorX);
+
+        int y = Math.round(cuePositionAnchor == Cue.ANCHOR_TYPE_END
+                ? (anchorY - height)
+                : cuePositionAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorY - (height / 2f)) : anchorY);
+
         bitmapRect = new Rect(x, y, x + width, y + height);
+    }
+
+    private boolean isCueDimensionSet(float cueDimension) {
+        return Math.abs(cueDimension - Cue.DIMEN_UNSET) > FLOAT_COMPARISON_EPSILON;
     }
 
     private void drawLayout(Canvas canvas, boolean isTextCue) {

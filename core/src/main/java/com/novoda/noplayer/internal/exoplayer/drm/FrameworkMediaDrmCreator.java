@@ -15,7 +15,7 @@ class FrameworkMediaDrmCreator {
         }
     }
 
-    private class FrameworkMediaDrmException extends RuntimeException {
+    private static class FrameworkMediaDrmException extends RuntimeException {
 
         FrameworkMediaDrmException(String message, Throwable cause) {
             super(message, cause);
