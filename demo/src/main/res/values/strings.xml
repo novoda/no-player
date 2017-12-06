@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
   <string name="video">Video</string>
   <string name="audio">Audio</string>
   <string name="subtitle">Subtitle</string>
+
+  <string name="content_description_play_pause">Play/pause</string>
+
 </resources>

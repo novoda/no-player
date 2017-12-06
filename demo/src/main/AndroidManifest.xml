@@ -5,11 +5,12 @@
 
   <application
     android:allowBackup="false"
+    android:supportsRtl="true"
     tools:ignore="GoogleAppIndexingWarning">
 
     <activity
       android:name="com.novoda.demo.MainActivity"
-      android:theme="@android:style/Theme.Black">
+      android:theme="@android:style/Theme.Black.NoTitleBar">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />

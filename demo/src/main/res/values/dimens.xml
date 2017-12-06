@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+  <dimen name="play_button_size">48dp</dimen>
   <dimen name="controller_view_height">48dp</dimen>
+
+  <dimen name="player_controls_padding_horizontal">12dp</dimen>
+  <dimen name="player_controls_play_button_margin_end">@dimen/player_controls_padding_horizontal</dimen>
+  <dimen name="player_controls_seekbar_margin_horizontal">@dimen/player_controls_padding_horizontal</dimen>
+
+  <dimen name="seekbar_height">2dp</dimen>
+  <dimen name="seekbar_thumb_offset">6dp</dimen>
+
+  <dimen name="use_weight">0dp</dimen>
+  <dimen name="lits_item_text">20sp</dimen>
+  <dimen name="list_item_padding">8dp</dimen>
+
 </resources>
