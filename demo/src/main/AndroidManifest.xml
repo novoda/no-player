@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
   package="com.novoda.demo">
 
-  <application>
+  <application
+    android:allowBackup="false"
+    tools:ignore="GoogleAppIndexingWarning">
 
     <activity
       android:name="com.novoda.demo.MainActivity"
