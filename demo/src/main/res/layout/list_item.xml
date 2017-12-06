@@ -6,6 +6,6 @@
   android:layout_height="wrap_content"
   android:background="@color/white"
   android:textColor="@color/black"
-  android:textSize="@dimen/lits_item_text"
+  android:textSize="@dimen/list_item_text"
   android:padding="@dimen/list_item_padding"
   tools:text="Lorem Ipsum Dolor Sit Amet" />
