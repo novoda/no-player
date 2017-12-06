@@ -13,7 +13,7 @@
 
     <activity
       android:name="com.novoda.demo.MainActivity"
-      android:theme="@android:style/Theme.Black.NoTitleBar">
+      android:theme="@style/Theme.NoPlayer">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
