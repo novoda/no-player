@@ -12,12 +12,9 @@ android {
     }
 
     lintOptions {
-        lintConfig file("$rootProject.projectDir/team-props/lint-rules/config.xml")
-        abortOnError false
-    }
-
-    aaptOptions {
-        cruncherEnabled = false
+        lintConfig teamPropsFile('static-analysis/lint-config.xml')
+        abortOnError true
+        warningsAsErrors true
     }
 }
 

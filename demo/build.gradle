@@ -11,6 +11,12 @@ android {
         versionCode 1
         versionName '1.0'
     }
+
+    lintOptions {
+        lintConfig teamPropsFile('static-analysis/lint-config.xml')
+        abortOnError true
+        warningsAsErrors true
+    }
 }
 dependencies {
     compile project(':core')

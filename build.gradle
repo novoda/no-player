@@ -6,6 +6,17 @@ allprojects {
     version = '4.0.0'
 }
 
+def teamPropsFile(propsFile) {
+    def teamPropsDir = file('team-props')
+    return new File(teamPropsDir, propsFile)
+}
+
+ext {
+    checkstyleVersion = '8.5'
+    findbugsVersion = '3.0.1'
+    pmdVersion = '5.8.1'
+}
+
 buildscript {
     repositories {
         jcenter()
@@ -14,6 +25,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'com.novoda:bintray-release:0.8.0'
+        classpath 'com.novoda:gradle-static-analysis-plugin:0.4.1'
     }
 }
 
@@ -22,4 +34,8 @@ subprojects {
         jcenter()
         google()
     }
+
+    apply from: teamPropsFile('static-analysis.gradle')
 }
+
+apply from: teamPropsFile('android-code-quality.gradle')
