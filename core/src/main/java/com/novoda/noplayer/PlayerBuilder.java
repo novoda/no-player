@@ -12,7 +12,7 @@ import com.novoda.noplayer.internal.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
-import com.novoda.utils.AndroidDeviceVersion;
+import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 
 import java.util.ArrayList;
 import java.util.Arrays;

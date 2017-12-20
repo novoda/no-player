@@ -10,7 +10,7 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.utils.NoPlayerLog;
+import com.novoda.noplayer.internal.utils.NoPlayerLog;
 
 public class MainActivity extends Activity {
 

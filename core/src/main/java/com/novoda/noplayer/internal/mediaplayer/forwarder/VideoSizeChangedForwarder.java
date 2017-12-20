@@ -3,7 +3,7 @@ package com.novoda.noplayer.internal.mediaplayer.forwarder;
 import android.media.MediaPlayer;
 
 import com.novoda.noplayer.NoPlayer;
-import com.novoda.utils.NoPlayerLog;
+import com.novoda.noplayer.internal.utils.NoPlayerLog;
 
 class VideoSizeChangedForwarder implements MediaPlayer.OnVideoSizeChangedListener {
 

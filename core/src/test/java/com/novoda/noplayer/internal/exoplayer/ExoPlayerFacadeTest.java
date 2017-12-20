@@ -20,7 +20,7 @@ import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
-import com.novoda.utils.Optional;
+import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.Collections;
 import java.util.List;

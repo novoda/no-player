@@ -10,7 +10,7 @@ import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutorCreator;
-import com.novoda.utils.AndroidDeviceVersion;
+import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 
 public class DrmSessionCreatorFactory {
 
