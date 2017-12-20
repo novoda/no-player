@@ -27,7 +27,7 @@ public enum PlayerType {
 
     static class UnknownPlayerTypeException extends RuntimeException {
 
-        public UnknownPlayerTypeException(String rawPlayerType) {
+        UnknownPlayerTypeException(String rawPlayerType) {
             super("Can't create PlayerType from : " + rawPlayerType);
         }
     }
