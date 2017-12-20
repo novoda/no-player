@@ -20,7 +20,6 @@ android {
 
 dependencies {
     implementation 'com.google.android.exoplayer:exoplayer:2.6.0'
-    implementation 'com.novoda:notils-java:3.0.2'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.12.0'
