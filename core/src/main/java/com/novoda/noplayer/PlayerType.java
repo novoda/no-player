@@ -1,7 +1,6 @@
 package com.novoda.noplayer;
 
 import com.novoda.noplayer.drm.DrmType;
-import com.novoda.notils.exception.DeveloperError;
 
 public enum PlayerType {
     MEDIA_PLAYER(new AndroidMediaPlayerCapabilities()),
@@ -23,7 +22,14 @@ public enum PlayerType {
                 return playerType;
             }
         }
-        throw new DeveloperError("Can't create PlayerType from : " + rawPlayerType);
+        throw new UnknownPlayerTypeException(rawPlayerType);
+    }
+
+    static class UnknownPlayerTypeException extends RuntimeException {
+
+        UnknownPlayerTypeException(String rawPlayerType) {
+            super("Can't create PlayerType from : " + rawPlayerType);
+        }
     }
 
 }
