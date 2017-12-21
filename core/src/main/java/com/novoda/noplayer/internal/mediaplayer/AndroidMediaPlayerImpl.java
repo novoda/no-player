@@ -120,6 +120,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     };
 
     @Override
+    public void setRepeating(boolean repeating) {
+        mediaPlayer.setRepeating(repeating);
+    }
+
+    @Override
     public Listeners getListeners() {
         return listenersHolder;
     }
