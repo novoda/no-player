@@ -12,7 +12,7 @@ import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
-import com.novoda.utils.NoPlayerLog;
+import com.novoda.noplayer.internal.utils.NoPlayerLog;
 
 import java.io.IOException;
 import java.util.Collections;

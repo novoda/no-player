@@ -9,7 +9,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.model.PlayerVideoTrack;
-import com.novoda.utils.Optional;
+import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.Arrays;
 import java.util.List;

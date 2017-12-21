@@ -1,4 +1,4 @@
-package com.novoda.utils;
+package com.novoda.noplayer.internal.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

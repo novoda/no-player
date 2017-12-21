@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer.mediasource;
 
 import com.google.android.exoplayer2.C;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
-import com.novoda.utils.Optional;
+import com.novoda.noplayer.internal.utils.Optional;
 
 import org.junit.Before;
 import org.junit.Rule;

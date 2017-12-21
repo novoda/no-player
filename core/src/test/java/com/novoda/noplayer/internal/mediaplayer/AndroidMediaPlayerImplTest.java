@@ -18,7 +18,7 @@ import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.utils.NoPlayerLog;
+import com.novoda.noplayer.internal.utils.NoPlayerLog;
 
 import java.util.Collections;
 

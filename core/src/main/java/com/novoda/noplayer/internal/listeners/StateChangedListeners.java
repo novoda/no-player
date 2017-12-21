@@ -1,7 +1,7 @@
 package com.novoda.noplayer.internal.listeners;
 
 import com.novoda.noplayer.NoPlayer;
-import com.novoda.utils.NoPlayerLog;
+import com.novoda.noplayer.internal.utils.NoPlayerLog;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;

@@ -8,7 +8,7 @@ import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutorCreator;
-import com.novoda.utils.AndroidDeviceVersion;
+import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 
 import org.junit.Before;
 import org.junit.Rule;
