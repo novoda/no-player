@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
@@ -379,6 +380,21 @@ public class ExoPlayerFacadeTest {
 
             assertThat(videoTracks).isEqualTo(VIDEO_TRACKS);
         }
+
+        @Test
+        public void whenSetRepeatingTrue_thenSetsRepeatModeAll() {
+            facade.setRepeating(true);
+
+            verify(exoPlayer).setRepeatMode(Player.REPEAT_MODE_ALL);
+        }
+
+        @Test
+        public void whenSetRepeatingFalse_thenSetsRepeatModeOff() {
+            facade.setRepeating(false);
+
+            verify(exoPlayer).setRepeatMode(Player.REPEAT_MODE_OFF);
+        }
+
     }
 
     public abstract static class Base {
