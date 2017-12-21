@@ -125,7 +125,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
     @Override
     public void setRepeating(boolean repeating) {
-        // TODO
+        exoPlayer.setRepeating(repeating);
     }
 
     @Override

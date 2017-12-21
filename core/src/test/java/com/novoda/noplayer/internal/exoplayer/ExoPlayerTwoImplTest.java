@@ -542,6 +542,7 @@ public class ExoPlayerTwoImplTest {
 
             verify(playerView).hideSubtitles();
         }
+
     }
 
     public abstract static class Base {
