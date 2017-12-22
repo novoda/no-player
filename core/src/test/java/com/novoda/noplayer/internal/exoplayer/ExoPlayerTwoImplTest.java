@@ -23,9 +23,6 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.TextCues;
 import com.novoda.noplayer.model.Timeout;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,6 +35,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static android.provider.CalendarContract.CalendarCache.URI;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -542,6 +542,14 @@ public class ExoPlayerTwoImplTest {
 
             verify(playerView).hideSubtitles();
         }
+
+        @Test
+        public void whenSetRepeating_thenSetRepeating() {
+            player.setRepeating(false);
+
+            verify(exoPlayerFacade).setRepeating(false);
+        }
+
     }
 
     public abstract static class Base {

@@ -2,13 +2,13 @@ package com.novoda.noplayer;
 
 import android.net.Uri;
 
+import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.Bitrate;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.List;
 import java.util.Map;
@@ -196,6 +196,14 @@ public interface NoPlayer extends PlayerState {
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
     boolean hideSubtitleTrack() throws IllegalStateException;
+
+    /**
+     * Set the Player to repeat the content.
+     *
+     * @param repeating true to set repeating, false to disable.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     */
+    void setRepeating(boolean repeating) throws IllegalStateException;
 
     interface PlayerError {
 

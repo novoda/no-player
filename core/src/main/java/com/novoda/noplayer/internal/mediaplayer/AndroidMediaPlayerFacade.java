@@ -9,12 +9,12 @@ import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.internal.utils.NoPlayerLog;
+import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
-import com.novoda.noplayer.internal.utils.NoPlayerLog;
-import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -286,5 +286,10 @@ class AndroidMediaPlayerFacade {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to clear video track selection but has not been implemented for MediaPlayer.");
         return false;
+    }
+
+    void setRepeating(boolean repeating) {
+        assertIsInPlaybackState();
+        mediaPlayer.setLooping(repeating);
     }
 }
