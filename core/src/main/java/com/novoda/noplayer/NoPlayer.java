@@ -200,7 +200,7 @@ public interface NoPlayer extends PlayerState {
     /**
      * Set the Player to repeat the content
      *
-     * @param repeating true to set repeating, false disable
+     * @param repeating true to set repeating, false to disable.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
     void setRepeating(boolean repeating) throws IllegalStateException;
