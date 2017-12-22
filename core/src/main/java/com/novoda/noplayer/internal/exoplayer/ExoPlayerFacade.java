@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
