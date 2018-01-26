@@ -29,7 +29,7 @@ public class AndroidControllerView extends LinearLayout implements ControllerVie
 
     @Override
     public final void setOrientation(int orientation) {
-        throw new RuntimeException("This layout only supports horizontal orientation");
+        throw new IllegalAccessError("This layout only supports horizontal orientation");
     }
 
     @Override
