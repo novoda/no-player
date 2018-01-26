@@ -3,8 +3,10 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -103,6 +105,27 @@ public class ExoPlayerFacadeTest {
             facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
+        }
+
+        @Test
+        public void givenLollipopDevice_whenLoadingVideo_thenSetsMovieAudioAttributesOnExoPlayer() {
+            given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(true);
+
+            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+
+            AudioAttributes expectedMovieAudioAttributes = new AudioAttributes.Builder()
+                    .setContentType(C.CONTENT_TYPE_MOVIE)
+                    .build();
+            verify(exoPlayer).setAudioAttributes(expectedMovieAudioAttributes);
+        }
+
+        @Test
+        public void givenNonLollipopDevice_whenLoadingVideo_thenDoesNotSetAudioAttributesOnExoPlayer() {
+            given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(false);
+
+            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(exoPlayer, never()).setAudioAttributes(any(AudioAttributes.class));
         }
 
         @Test
