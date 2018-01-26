@@ -11,8 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.novoda.notils.exception.DeveloperError;
-
 public class AndroidControllerView extends LinearLayout implements ControllerView {
 
     private ImageView playPauseButton;
@@ -31,7 +29,7 @@ public class AndroidControllerView extends LinearLayout implements ControllerVie
 
     @Override
     public final void setOrientation(int orientation) {
-        throw new DeveloperError("This layout only supports horizontal orientation");
+        throw new IllegalAccessError("This layout only supports horizontal orientation");
     }
 
     @Override
