@@ -1,7 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-import android.os.Build;
 import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
