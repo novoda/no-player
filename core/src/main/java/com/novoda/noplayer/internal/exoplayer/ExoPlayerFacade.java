@@ -6,6 +6,7 @@ import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.ContentType;
@@ -15,6 +16,7 @@ import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSel
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
+import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
@@ -28,6 +30,7 @@ class ExoPlayerFacade {
     private static final boolean RESET_POSITION = true;
     private static final boolean DO_NOT_RESET_STATE = false;
 
+    private final AndroidDeviceVersion androidDeviceVersion;
     private final MediaSourceFactory mediaSourceFactory;
     private final ExoPlayerAudioTrackSelector audioTrackSelector;
     private final ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
@@ -42,12 +45,14 @@ class ExoPlayerFacade {
     @Nullable
     private ContentType contentType;
 
-    ExoPlayerFacade(MediaSourceFactory mediaSourceFactory,
+    ExoPlayerFacade(AndroidDeviceVersion androidDeviceVersion,
+                    MediaSourceFactory mediaSourceFactory,
                     ExoPlayerAudioTrackSelector audioTrackSelector,
                     ExoPlayerSubtitleTrackSelector subtitleTrackSelector,
                     ExoPlayerVideoTrackSelector exoPlayerVideoTrackSelector,
                     ExoPlayerCreator exoPlayerCreator,
                     RendererTypeRequesterCreator rendererTypeRequesterCreator) {
+        this.androidDeviceVersion = androidDeviceVersion;
         this.mediaSourceFactory = mediaSourceFactory;
         this.audioTrackSelector = audioTrackSelector;
         this.subtitleTrackSelector = subtitleTrackSelector;
@@ -113,6 +118,9 @@ class ExoPlayerFacade {
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
+
+        setMovieAudioAttributes(exoPlayer);
+
         MediaSource mediaSource = mediaSourceFactory.create(
                 contentType,
                 uri,
@@ -121,6 +129,15 @@ class ExoPlayerFacade {
         );
         attachToSurface(surfaceHolder);
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
+    }
+
+    private void setMovieAudioAttributes(SimpleExoPlayer exoPlayer) {
+        if (androidDeviceVersion.isLollipopTwentyOneOrAbove()) {
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MOVIE)
+                    .build();
+            exoPlayer.setAudioAttributes(audioAttributes);
+        }
     }
 
     private void attachToSurface(SurfaceHolder surfaceHolder) {
@@ -190,7 +207,6 @@ class ExoPlayerFacade {
         assertVideoLoaded();
         return subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
     }
-
 
     void setRepeating(boolean repeating) {
         assertVideoLoaded();

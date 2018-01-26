@@ -21,6 +21,7 @@ import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerTrackSelector
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
+import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 import com.novoda.noplayer.model.LoadTimeout;
 
 public class NoPlayerExoPlayerCreator {
@@ -73,7 +74,9 @@ public class NoPlayerExoPlayerCreator {
 
             ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context, trackSelector);
             RendererTypeRequesterCreator rendererTypeRequesterCreator = new RendererTypeRequesterCreator();
+            AndroidDeviceVersion androidDeviceVersion = AndroidDeviceVersion.newInstance();
             ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(
+                    androidDeviceVersion,
                     mediaSourceFactory,
                     exoPlayerAudioTrackSelector,
                     exoPlayerSubtitleTrackSelector,

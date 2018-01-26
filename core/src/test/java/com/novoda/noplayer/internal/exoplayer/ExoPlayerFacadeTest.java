@@ -3,8 +3,10 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -15,13 +17,14 @@ import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSel
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
+import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
+import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
-import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,10 +45,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(Enclosed.class)
 public class ExoPlayerFacadeTest {
@@ -105,6 +105,27 @@ public class ExoPlayerFacadeTest {
             facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
+        }
+
+        @Test
+        public void givenLollipopDevice_whenLoadingVideo_thenSetsMovieAudioAttributesOnExoPlayer() {
+            given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(true);
+
+            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+
+            AudioAttributes expectedMovieAudioAttributes = new AudioAttributes.Builder()
+                    .setContentType(C.CONTENT_TYPE_MOVIE)
+                    .build();
+            verify(exoPlayer).setAudioAttributes(expectedMovieAudioAttributes);
+        }
+
+        @Test
+        public void givenNonLollipopDevice_whenLoadingVideo_thenDoesNotSetAudioAttributesOnExoPlayer() {
+            given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(false);
+
+            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(exoPlayer, never()).setAudioAttributes(any(AudioAttributes.class));
         }
 
         @Test
@@ -403,6 +424,8 @@ public class ExoPlayerFacadeTest {
         public MockitoRule mockitoRule = MockitoJUnit.rule();
 
         @Mock
+        AndroidDeviceVersion androidDeviceVersion;
+        @Mock
         SimpleExoPlayer exoPlayer;
         @Mock
         MediaSourceFactory mediaSourceFactory;
@@ -438,12 +461,14 @@ public class ExoPlayerFacadeTest {
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector)).willReturn(exoPlayer);
             when(rendererTypeRequesterCreator.createfrom(exoPlayer)).thenReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
+                    androidDeviceVersion,
                     mediaSourceFactory,
                     audioTrackSelector,
                     subtitleTrackSelector,
                     videoTrackSelector,
                     exoPlayerCreator,
-                    rendererTypeRequesterCreator);
+                    rendererTypeRequesterCreator
+            );
         }
 
         MediaSource givenMediaSource() {
