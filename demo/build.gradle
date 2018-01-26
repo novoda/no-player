@@ -21,7 +21,6 @@ android {
 dependencies {
     implementation project(':core')
     implementation 'com.android.support:appcompat-v7:27.0.2'
-    implementation 'com.novoda:notils-java:3.0.2'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'com.google.truth:truth:0.36'
