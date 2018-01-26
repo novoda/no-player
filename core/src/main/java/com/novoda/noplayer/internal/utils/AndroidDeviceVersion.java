@@ -18,6 +18,10 @@ public class AndroidDeviceVersion {
         return sdkInt >= Build.VERSION_CODES.JELLY_BEAN_MR2;
     }
 
+    public boolean isLollipopTwentyOneOrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
     public int sdkInt() {
         return sdkInt;
     }
