@@ -27,7 +27,7 @@ public class ExoPlayerErrorMapperTest {
 
     public static class GivenSourceException {
         @Test
-        public void InvalidResponseCodeException_mapsTo_InvalidResponseCode() {
+        public void thenOnvalidResponseCodeException_mapsTo_InvalidResponseCode() {
             InvalidResponseCodeException cause = new InvalidResponseCodeException(404, Collections.<String, List<String>>emptyMap(), new DataSpec(Uri.EMPTY));
             ExoPlaybackException sourceException = ExoPlaybackException.createForSource(cause);
 
@@ -37,7 +37,7 @@ public class ExoPlayerErrorMapperTest {
         }
 
         @Test
-        public void ParserException_mapsTo_MalformedContent() {
+        public void thenOarserException_mapsTo_MalformedContent() {
             ParserException cause = new ParserException();
             ExoPlaybackException sourceException = ExoPlaybackException.createForSource(cause);
 
@@ -47,7 +47,7 @@ public class ExoPlayerErrorMapperTest {
         }
 
         @Test
-        public void otherIOException_mapsTo_ConnectivityError() {
+        public void thenOtherIOException_mapsTo_ConnectivityError() {
             IOException cause = new IOException();
             ExoPlaybackException sourceException = ExoPlaybackException.createForSource(cause);
 
@@ -59,7 +59,7 @@ public class ExoPlayerErrorMapperTest {
 
     public static class GivenRendererException {
         @Test
-        public void DrmSessionExceptionWrappingCryptoException_mapsTo_FailedDrmDecryption() {
+        public void thenDrmSessionExceptionWrappingCryptoException_mapsTo_FailedDrmDecryption() {
             MediaCodec.CryptoException cause = new MediaCodec.CryptoException(-1, null);
             DrmSession.DrmSessionException drmSessionException = new DrmSession.DrmSessionException(cause);
             ExoPlaybackException rendererException = ExoPlaybackException.createForRenderer(drmSessionException, 0);
@@ -70,7 +70,7 @@ public class ExoPlayerErrorMapperTest {
         }
 
         @Test
-        public void DrmSessionExceptionWrappingDrmRequestException_mapsTo_FailedDrmRequest() {
+        public void thenDrmSessionExceptionWrappingDrmRequestException_mapsTo_FailedDrmRequest() {
             StreamingModularDrm.DrmRequestException cause = StreamingModularDrm.DrmRequestException.from(new Exception());
             DrmSession.DrmSessionException drmSessionException = new DrmSession.DrmSessionException(cause);
             ExoPlaybackException rendererException = ExoPlaybackException.createForRenderer(drmSessionException, 0);
@@ -81,7 +81,7 @@ public class ExoPlayerErrorMapperTest {
         }
 
         @Test
-        public void DrmSessionExceptionWrappingOtherException_mapsTo_UnknownDrmError() {
+        public void thenDrmSessionExceptionWrappingOtherException_mapsTo_UnknownDrmError() {
             DrmSession.DrmSessionException drmSessionException = new DrmSession.DrmSessionException(new Exception());
             ExoPlaybackException rendererException = ExoPlaybackException.createForRenderer(drmSessionException, 0);
 
@@ -91,7 +91,7 @@ public class ExoPlayerErrorMapperTest {
         }
 
         @Test
-        public void CryptoException_mapsTo_FailedDrmDecryption() {
+        public void thenCryptoException_mapsTo_FailedDrmDecryption() {
             MediaCodec.CryptoException cause = new MediaCodec.CryptoException(-1, null);
             ExoPlaybackException rendererException = ExoPlaybackException.createForRenderer(cause, 0);
 
@@ -101,7 +101,7 @@ public class ExoPlayerErrorMapperTest {
         }
 
         @Test
-        public void DrmRequestException_mapsTo_FailedDrmRequest() {
+        public void thenDrmRequestException_mapsTo_FailedDrmRequest() {
             StreamingModularDrm.DrmRequestException cause = StreamingModularDrm.DrmRequestException.from(new Exception());
             ExoPlaybackException rendererException = ExoPlaybackException.createForRenderer(cause, 0);
 
@@ -111,7 +111,7 @@ public class ExoPlayerErrorMapperTest {
         }
 
         @Test
-        public void OtherException_mapsTo_UnknownRendererError() {
+        public void thenOtherException_mapsTo_UnknownRendererError() {
             ExoPlaybackException rendererException = ExoPlaybackException.createForRenderer(new Exception(), 0);
 
             NoPlayer.PlayerError playerError = ExoPlayerErrorMapper.errorFor(rendererException);
