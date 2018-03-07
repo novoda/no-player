@@ -54,8 +54,6 @@ public class ExoPlayerForwarder {
 
     public void bind(NoPlayer.ErrorListener errorListener) {
         exoPlayerEventListener.add(new PlayerOnErrorForwarder(errorListener));
-        extractorMediaSourceListener.add(new MediaSourceOnErrorForwarder(errorListener));
-        drmSessionEventListener.add(new DrmSessionErrorForwarder(errorListener));
     }
 
     public void bind(NoPlayer.BufferStateListener bufferStateListener) {
@@ -75,5 +73,6 @@ public class ExoPlayerForwarder {
         mediaSourceEventListener.add(new MediaSourceInfoForwarder(infoListeners));
         videoRendererEventListener.add(new VideoRendererInfoForwarder(infoListeners));
         extractorMediaSourceListener.add(new ExtractorInfoForwarder(infoListeners));
+        drmSessionEventListener.add(new DrmSessionInfoForwarder(infoListeners));
     }
 }
