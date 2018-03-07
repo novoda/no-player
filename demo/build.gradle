@@ -23,5 +23,5 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.0'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'com.google.truth:truth:0.36'
+    testImplementation 'com.google.truth:truth:0.39'
 }
