@@ -1,10 +1,13 @@
 package com.novoda.noplayer;
 
 import android.graphics.SurfaceTexture;
+import android.util.Log;
 import android.view.TextureView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 class PlayerViewSurfaceTextureProvider implements TextureView.SurfaceTextureListener, SurfaceTextureRequester {
 
@@ -36,9 +39,29 @@ class PlayerViewSurfaceTextureProvider implements TextureView.SurfaceTextureList
         return true;
     }
 
+    private static final int NUMBER_OF_FRAMES_TO_CAPTURE = 100;
+    private static final double ONE_SECOND_IN_MILLIS = TimeUnit.SECONDS.toMillis(1);
+    private final LinkedList<Long> frameTimes = new LinkedList<Long>() {{
+        add(System.currentTimeMillis());
+    }};
+
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        // Do nothing.
+        Log.e("TAG", "FPS: " + calculateFramesPerSecond());
+    }
+
+    private double calculateFramesPerSecond() {
+        long currrentTimeInMillis = System.currentTimeMillis();
+        Long startTimeInMillis = frameTimes.getFirst();
+        double numberOfSecondsElapsed = (currrentTimeInMillis - startTimeInMillis) / ONE_SECOND_IN_MILLIS;
+
+        frameTimes.addLast(currrentTimeInMillis);
+        int size = frameTimes.size();
+        if (size > NUMBER_OF_FRAMES_TO_CAPTURE) {
+            frameTimes.removeFirst();
+        }
+
+        return frameTimes.size() / numberOfSecondsElapsed;
     }
 
     private void setSurfaceHolderNotReady() {
