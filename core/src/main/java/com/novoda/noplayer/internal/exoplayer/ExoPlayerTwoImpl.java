@@ -1,8 +1,8 @@
 package com.novoda.noplayer.internal.exoplayer;
 
+import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
@@ -12,18 +12,18 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.SurfaceHolderRequester;
+import com.novoda.noplayer.SurfaceTextureRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
+import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.List;
 
@@ -40,11 +40,11 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Nullable
     private PlayerView playerView;
     @Nullable
-    private SurfaceHolderRequester surfaceHolderRequester;
+    private SurfaceTextureRequester surfaceTextureRequester;
 
     private int videoWidth;
     private int videoHeight;
-    private SurfaceHolderRequester.Callback onSurfaceReadyCallback;
+    private SurfaceTextureRequester.Callback onSurfaceTextureReadyCallback;
     private TextRendererOutput textRendererOutput;
 
     ExoPlayerTwoImpl(ExoPlayerFacade exoPlayer,
@@ -192,17 +192,17 @@ class ExoPlayerTwoImpl implements NoPlayer {
         if (exoPlayer.hasPlayedContent()) {
             stop();
         }
-        surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);
-        onSurfaceReadyCallback = new SurfaceHolderRequester.Callback() {
+        surfaceTextureRequester.removeCallback(onSurfaceTextureReadyCallback);
+        onSurfaceTextureReadyCallback = new SurfaceTextureRequester.Callback() {
             @Override
-            public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                exoPlayer.loadVideo(surfaceHolder, drmSessionCreator, uri, contentType, forwarder, mediaCodecSelector);
+            public void onSurfaceTextureReady(SurfaceTexture surfaceTexture) {
+                exoPlayer.loadVideo(surfaceTexture, drmSessionCreator, uri, contentType, forwarder, mediaCodecSelector);
             }
         };
 
         assertPlayerViewIsAttached();
         createSurfaceByShowingVideoContainer();
-        surfaceHolderRequester.requestSurfaceHolder(onSurfaceReadyCallback);
+        surfaceTextureRequester.requestSurfaceTexture(onSurfaceTextureReadyCallback);
     }
 
     private void assertPlayerViewIsAttached() {
@@ -229,7 +229,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public void attach(PlayerView playerView) {
         this.playerView = playerView;
-        surfaceHolderRequester = playerView.getSurfaceHolderRequester();
+        surfaceTextureRequester = playerView.getSurfaceTextureRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
     }
@@ -239,8 +239,8 @@ class ExoPlayerTwoImpl implements NoPlayer {
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         removeSubtitleRenderer();
-        surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);
-        surfaceHolderRequester = null;
+        surfaceTextureRequester.removeCallback(onSurfaceTextureReadyCallback);
+        surfaceTextureRequester = null;
         this.playerView = null;
     }
 

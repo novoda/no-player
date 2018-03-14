@@ -686,7 +686,7 @@ public class AndroidMediaPlayerImplTest {
         public void setUp() {
             NoPlayerLog.setLoggingEnabled(false);
             SurfaceHolderRequester surfaceHolderRequester = mock(SurfaceHolderRequester.class);
-            given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
+            given(playerView.getSurfaceTextureRequester()).willReturn(surfaceHolderRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);

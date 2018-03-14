@@ -2,7 +2,7 @@ package com.novoda.noplayer;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -11,11 +11,11 @@ import com.novoda.noplayer.model.TextCues;
 
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
-    private final PlayerViewSurfaceHolder surfaceHolderProvider;
+    private final PlayerViewSurfaceTextureProvider surfaceHolderProvider;
     private final AspectRatioChangeCalculator aspectRatioChangeCalculator;
 
     private AspectRatioFrameLayout videoFrame;
-    private SurfaceView surfaceView;
+    private TextureView textureView;
     private SubtitleView subtitleView;
     private View shutterView;
 
@@ -25,7 +25,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        surfaceHolderProvider = new PlayerViewSurfaceHolder();
+        surfaceHolderProvider = new PlayerViewSurfaceTextureProvider();
         aspectRatioChangeCalculator = new AspectRatioChangeCalculator(this);
     }
 
@@ -35,8 +35,8 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         View.inflate(getContext(), R.layout.noplayer_view, this);
         videoFrame = findViewById(R.id.video_frame);
         shutterView = findViewById(R.id.shutter);
-        surfaceView = findViewById(R.id.surface_view);
-        surfaceView.getHolder().addCallback(surfaceHolderProvider);
+        textureView = findViewById(R.id.texture_view);
+        textureView.setSurfaceTextureListener(surfaceHolderProvider);
         subtitleView = findViewById(R.id.subtitles_layout);
     }
 
@@ -47,11 +47,11 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     @Override
     public View getContainerView() {
-        return surfaceView;
+        return textureView;
     }
 
     @Override
-    public SurfaceHolderRequester getSurfaceHolderRequester() {
+    public SurfaceTextureRequester getSurfaceTextureRequester() {
         return surfaceHolderProvider;
     }
 
