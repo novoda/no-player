@@ -1,8 +1,8 @@
 package com.novoda.noplayer.internal.mediaplayer;
 
-import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.view.Surface;
 import android.view.View;
 
 import com.novoda.noplayer.ContentType;
@@ -11,7 +11,7 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.SurfaceTextureRequester;
+import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
@@ -33,7 +33,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     private static final long NO_SEEK_TO_POSITION = -1;
     private static final long INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
 
-    private final List<SurfaceTextureRequester.Callback> surfaceTextureRequesterCallbacks = new ArrayList<>();
+    private final List<SurfaceRequester.Callback> surfaceTextureRequesterCallbacks = new ArrayList<>();
 
     private final MediaPlayerInformation mediaPlayerInformation;
     private final AndroidMediaPlayerFacade mediaPlayer;
@@ -50,7 +50,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     private long seekToPositionInMillis = NO_SEEK_TO_POSITION;
 
     private boolean seekingWithIntentToPlay;
-    private SurfaceTextureRequester surfaceTextureRequester;
+    private SurfaceRequester surfaceRequester;
     private View containerView;
 
     // We cannot really group these any further
@@ -134,11 +134,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     @Override
     public void play() throws IllegalStateException {
         heart.startBeatingHeart();
-        requestSurface(new SurfaceTextureRequester.Callback() {
+        requestSurface(new SurfaceRequester.Callback() {
 
             @Override
-            public void onSurfaceTextureReady(SurfaceTexture surfaceTexture) {
-                mediaPlayer.start(surfaceTexture);
+            public void onSurfaceReady(Surface surface) {
+                mediaPlayer.start(surface);
                 listenersHolder.getStateChangedListeners().onVideoPlaying();
             }
         });
@@ -149,10 +149,10 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         if (playheadPositionInMillis() == positionInMillis) {
             play();
         } else {
-            requestSurface(new SurfaceTextureRequester.Callback() {
+            requestSurface(new SurfaceRequester.Callback() {
                 @Override
-                public void onSurfaceTextureReady(SurfaceTexture surfaceTexture) {
-                    initialSeekWorkaround(surfaceTexture, positionInMillis);
+                public void onSurfaceReady(Surface surface) {
+                    initialSeekWorkaround(surface, positionInMillis);
                 }
             });
         }
@@ -162,9 +162,9 @@ class AndroidMediaPlayerImpl implements NoPlayer {
      * Workaround to fix some devices (nexus 7 2013 in particular) from natively crashing the mediaplayer
      * by starting the mediaplayer before seeking it.
      */
-    private void initialSeekWorkaround(SurfaceTexture surfaceTexture, final long initialPlayPositionInMillis) throws IllegalStateException {
+    private void initialSeekWorkaround(Surface surface, final long initialPlayPositionInMillis) throws IllegalStateException {
         listenersHolder.getBufferStateListeners().onBufferStarted();
-        initialisePlaybackForSeeking(surfaceTexture);
+        initialisePlaybackForSeeking(surface);
         delayedActionExecutor.performAfterDelay(new DelayedActionExecutor.Action() {
             @Override
             public void perform() {
@@ -173,17 +173,17 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         }, INITIAL_PLAY_SEEK_DELAY_IN_MILLIS);
     }
 
-    private void initialisePlaybackForSeeking(SurfaceTexture surfaceTexture) {
-        mediaPlayer.start(surfaceTexture);
+    private void initialisePlaybackForSeeking(Surface surface) {
+        mediaPlayer.start(surface);
         mediaPlayer.pause();
     }
 
-    private void requestSurface(SurfaceTextureRequester.Callback callback) {
-        if (surfaceTextureRequester == null) {
+    private void requestSurface(SurfaceRequester.Callback callback) {
+        if (surfaceRequester == null) {
             throw new IllegalStateException("Must attach a PlayerView before interacting with Player");
         }
         surfaceTextureRequesterCallbacks.add(callback);
-        surfaceTextureRequester.requestSurfaceTexture(callback);
+        surfaceRequester.requestSurfaceTexture(callback);
     }
 
     private void seekWithIntentToPlay(long positionInMillis) throws IllegalStateException {
@@ -220,10 +220,10 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         assertPlayerViewIsAttached();
         createSurfaceByShowingVideoContainer();
         listenersHolder.getBufferStateListeners().onBufferStarted();
-        requestSurface(new SurfaceTextureRequester.Callback() {
+        requestSurface(new SurfaceRequester.Callback() {
             @Override
-            public void onSurfaceTextureReady(SurfaceTexture surfaceTexture) {
-                mediaPlayer.prepareVideo(uri, surfaceTexture);
+            public void onSurfaceReady(Surface surface) {
+                mediaPlayer.prepareVideo(uri, surface);
             }
         });
     }
@@ -284,7 +284,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         buggyVideoDriverPreventer.preventVideoDriverBug(this, containerView);
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
-        surfaceTextureRequester = playerView.getSurfaceTextureRequester();
+        surfaceRequester = playerView.getSurfaceTextureRequester();
     }
 
     @Override
@@ -293,13 +293,13 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         buggyVideoDriverPreventer.clear(playerView.getContainerView());
-        surfaceTextureRequester = null;
+        surfaceRequester = null;
         containerView = null;
     }
 
     private void clearSurfaceHolderCallbacks() {
-        for (SurfaceTextureRequester.Callback callback : surfaceTextureRequesterCallbacks) {
-            surfaceTextureRequester.removeCallback(callback);
+        for (SurfaceRequester.Callback callback : surfaceTextureRequesterCallbacks) {
+            surfaceRequester.removeCallback(callback);
         }
         surfaceTextureRequesterCallbacks.clear();
     }

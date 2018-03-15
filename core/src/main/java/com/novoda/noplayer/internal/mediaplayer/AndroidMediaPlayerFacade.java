@@ -1,7 +1,6 @@
 package com.novoda.noplayer.internal.mediaplayer;
 
 import android.content.Context;
-import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -67,12 +66,12 @@ class AndroidMediaPlayerFacade {
         this.mediaPlayerCreator = mediaPlayerCreator;
     }
 
-    void prepareVideo(Uri videoUri, SurfaceTexture surfaceTexture) {
+    void prepareVideo(Uri videoUri, Surface surface) {
         requestAudioFocus();
         release();
         try {
             currentState = PlaybackState.PREPARING;
-            mediaPlayer = createAndBindMediaPlayer(surfaceTexture, videoUri);
+            mediaPlayer = createAndBindMediaPlayer(surface, videoUri);
             mediaPlayer.prepareAsync();
         } catch (IOException | IllegalArgumentException | IllegalStateException ex) {
             reportCreationError(ex, videoUri);
@@ -83,7 +82,7 @@ class AndroidMediaPlayerFacade {
         audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 
-    private MediaPlayer createAndBindMediaPlayer(SurfaceTexture surfaceTexture,
+    private MediaPlayer createAndBindMediaPlayer(Surface surface,
                                                  Uri videoUri) throws IOException, IllegalStateException, IllegalArgumentException {
         MediaPlayer mediaPlayer = mediaPlayerCreator.createMediaPlayer();
         mediaPlayer.setOnPreparedListener(internalPreparedListener);
@@ -92,7 +91,6 @@ class AndroidMediaPlayerFacade {
         mediaPlayer.setOnErrorListener(internalErrorListener);
         mediaPlayer.setOnBufferingUpdateListener(internalBufferingUpdateListener);
         mediaPlayer.setDataSource(context, videoUri, NO_HEADERS);
-        Surface surface = new Surface(surfaceTexture);
         mediaPlayer.setSurface(surface);
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer.setScreenOnWhilePlaying(true);
@@ -173,9 +171,8 @@ class AndroidMediaPlayerFacade {
         }
     }
 
-    void start(SurfaceTexture surfaceTexture) throws IllegalStateException {
+    void start(Surface surface) throws IllegalStateException {
         assertIsInPlaybackState();
-        Surface surface = new Surface(surfaceTexture);
         mediaPlayer.setSurface(surface);
         currentState = PLAYING;
         mediaPlayer.start();

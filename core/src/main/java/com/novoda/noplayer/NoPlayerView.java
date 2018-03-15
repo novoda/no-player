@@ -12,7 +12,7 @@ import com.novoda.noplayer.model.TextCues;
 
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
-    private final PlayerViewSurfaceTextureProvider surfaceHolderProvider;
+    private final PlayerViewSurfaceProvider surfaceHolderProvider;
     private final AspectRatioChangeCalculator aspectRatioChangeCalculator;
 
     private AspectRatioFrameLayout videoFrame;
@@ -27,7 +27,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        surfaceHolderProvider = new PlayerViewSurfaceTextureProvider();
+        surfaceHolderProvider = new PlayerViewSurfaceProvider();
         surfaceHolderProvider.addFpsCallback(fpsUpdatedListener);
         aspectRatioChangeCalculator = new AspectRatioChangeCalculator(this);
     }
@@ -55,7 +55,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     }
 
     @Override
-    public SurfaceTextureRequester getSurfaceTextureRequester() {
+    public SurfaceRequester getSurfaceTextureRequester() {
         return surfaceHolderProvider;
     }
 
@@ -108,7 +108,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         }
     };
 
-    private final PlayerViewSurfaceTextureProvider.FPSCallback fpsUpdatedListener = new PlayerViewSurfaceTextureProvider.FPSCallback() {
+    private final PlayerViewSurfaceProvider.FPSCallback fpsUpdatedListener = new PlayerViewSurfaceProvider.FPSCallback() {
         @Override
         public void onFpsUpdated(double fps) {
             String message = String.format("~ fps: %s", fps);

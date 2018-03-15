@@ -9,7 +9,7 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.SurfaceTextureRequester;
+import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
@@ -685,19 +685,19 @@ public class AndroidMediaPlayerImplTest {
         @Before
         public void setUp() {
             NoPlayerLog.setLoggingEnabled(false);
-            SurfaceTextureRequester surfaceTextureRequester = mock(SurfaceTextureRequester.class);
-            given(playerView.getSurfaceTextureRequester()).willReturn(surfaceTextureRequester);
+            SurfaceRequester surfaceRequester = mock(SurfaceRequester.class);
+            given(playerView.getSurfaceTextureRequester()).willReturn(surfaceRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);
             doAnswer(new Answer<Void>() {
                 @Override
                 public Void answer(InvocationOnMock invocation) throws Throwable {
-                    SurfaceTextureRequester.Callback callback = invocation.getArgument(0);
-                    callback.onSurfaceTextureReady(surfaceTexture);
+                    SurfaceRequester.Callback callback = invocation.getArgument(0);
+                    callback.onSurfaceReady(surfaceTexture);
                     return null;
                 }
-            }).when(surfaceTextureRequester).requestSurfaceTexture(any(SurfaceTextureRequester.Callback.class));
+            }).when(surfaceRequester).requestSurfaceTexture(any(SurfaceRequester.Callback.class));
 
             given(listenersHolder.getPreparedListeners()).willReturn(preparedListener);
             given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListener);

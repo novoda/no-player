@@ -1,6 +1,5 @@
 package com.novoda.noplayer.internal.exoplayer;
 
-import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.Surface;
@@ -108,7 +107,7 @@ class ExoPlayerFacade {
         }
     }
 
-    void loadVideo(SurfaceTexture surfaceTexture,
+    void loadVideo(Surface surface,
                    DrmSessionCreator drmSessionCreator,
                    Uri uri,
                    ContentType contentType,
@@ -128,7 +127,7 @@ class ExoPlayerFacade {
                 forwarder.extractorMediaSourceListener(),
                 forwarder.mediaSourceEventListener()
         );
-        attachToSurface(surfaceTexture);
+        attachToSurface(surface);
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
     }
 
@@ -141,8 +140,7 @@ class ExoPlayerFacade {
         }
     }
 
-    private void attachToSurface(SurfaceTexture surfaceTexture) {
-        Surface surface = new Surface(surfaceTexture);
+    private void attachToSurface(Surface surface) {
         exoPlayer.setVideoSurface(surface);
     }
 

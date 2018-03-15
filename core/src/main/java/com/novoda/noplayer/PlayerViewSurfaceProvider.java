@@ -1,37 +1,39 @@
 package com.novoda.noplayer;
 
 import android.graphics.SurfaceTexture;
+import android.view.Surface;
 import android.view.TextureView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class PlayerViewSurfaceTextureProvider implements TextureView.SurfaceTextureListener, SurfaceTextureRequester {
+class PlayerViewSurfaceProvider implements TextureView.SurfaceTextureListener, SurfaceRequester {
 
     private final List<Callback> callbacks = new ArrayList<>();
     private final List<FPSCallback> fpsCallbacks = new ArrayList<>();
-    private SurfaceTexture surfaceTexture;
+    private Surface surface;
 
     @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        this.surfaceTexture = surface;
+    public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
+        Surface surface = new Surface(surfaceTexture);
+        this.surface = surface;
         notifyListeners(surface);
         callbacks.clear();
     }
 
-    private void notifyListeners(SurfaceTexture surfaceTexture) {
+    private void notifyListeners(Surface surface) {
         for (Callback callback : callbacks) {
-            callback.onSurfaceTextureReady(surfaceTexture);
+            callback.onSurfaceReady(surface);
         }
     }
 
     @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
         // Do nothing.
     }
 
     @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
         setSurfaceHolderNotReady();
         callbacks.clear();
         return true;
@@ -48,20 +50,21 @@ class PlayerViewSurfaceTextureProvider implements TextureView.SurfaceTextureList
     }
 
     private void setSurfaceHolderNotReady() {
-        surfaceTexture = null;
+        surface.release();
+        surface = null;
     }
 
     @Override
     public void requestSurfaceTexture(Callback callback) {
         if (isSurfaceHolderReady()) {
-            callback.onSurfaceTextureReady(surfaceTexture);
+            callback.onSurfaceReady(surface);
         } else {
             callbacks.add(callback);
         }
     }
 
     private boolean isSurfaceHolderReady() {
-        return surfaceTexture != null;
+        return surface != null;
     }
 
     @Override

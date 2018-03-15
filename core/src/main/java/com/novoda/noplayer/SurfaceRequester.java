@@ -1,8 +1,8 @@
 package com.novoda.noplayer;
 
-import android.graphics.SurfaceTexture;
+import android.view.Surface;
 
-public interface SurfaceTextureRequester {
+public interface SurfaceRequester {
 
     void requestSurfaceTexture(Callback callback);
 
@@ -10,7 +10,7 @@ public interface SurfaceTextureRequester {
 
     interface Callback {
 
-        void onSurfaceTextureReady(SurfaceTexture surfaceTexture);
+        void onSurfaceReady(Surface surface);
 
     }
 

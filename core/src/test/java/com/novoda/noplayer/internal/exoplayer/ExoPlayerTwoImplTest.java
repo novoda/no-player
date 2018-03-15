@@ -1,7 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
-import android.graphics.SurfaceTexture;
 import android.net.Uri;
+import android.view.Surface;
 import android.view.View;
 
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
@@ -13,7 +13,7 @@ import com.novoda.noplayer.NoPlayer.StateChangedListener;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerType;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.SurfaceTextureRequester;
+import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
@@ -220,7 +220,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, ANY_CONTENT_TYPE);
 
-            verify(exoPlayerFacade).loadVideo(surfaceTexture, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(surface, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -229,7 +229,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(surfaceTexture, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(surface, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -568,9 +568,9 @@ public class ExoPlayerTwoImplTest {
         @Mock
         PlayerView playerView;
         @Mock
-        SurfaceTextureRequester surfaceTextureRequester;
+        SurfaceRequester surfaceRequester;
         @Mock
-        SurfaceTexture surfaceTexture;
+        Surface surface;
         @Mock
         StateChangedListener stateChangeListener;
         @Mock
@@ -604,18 +604,18 @@ public class ExoPlayerTwoImplTest {
 
         @Before
         public void setUp() {
-            given(playerView.getSurfaceTextureRequester()).willReturn(surfaceTextureRequester);
+            given(playerView.getSurfaceTextureRequester()).willReturn(surfaceRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);
             doAnswer(new Answer<Void>() {
                 @Override
                 public Void answer(InvocationOnMock invocation) throws Throwable {
-                    SurfaceTextureRequester.Callback callback = invocation.getArgument(0);
-                    callback.onSurfaceTextureReady(surfaceTexture);
+                    SurfaceRequester.Callback callback = invocation.getArgument(0);
+                    callback.onSurfaceReady(surface);
                     return null;
                 }
-            }).when(surfaceTextureRequester).requestSurfaceTexture(any(SurfaceTextureRequester.Callback.class));
+            }).when(surfaceRequester).requestSurfaceTexture(any(SurfaceRequester.Callback.class));
 
             given(listenersHolder.getErrorListeners()).willReturn(errorListener);
             given(listenersHolder.getPreparedListeners()).willReturn(preparedListener);
