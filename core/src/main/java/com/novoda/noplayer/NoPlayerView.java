@@ -2,7 +2,7 @@ package com.novoda.noplayer;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.TextureView;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -16,7 +16,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     private final AspectRatioChangeCalculator aspectRatioChangeCalculator;
 
     private AspectRatioFrameLayout videoFrame;
-    private TextureView textureView;
+    private SurfaceView textureView;
     private SubtitleView subtitleView;
     private View shutterView;
     private TextView fpsView;
@@ -39,7 +39,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         videoFrame = findViewById(R.id.video_frame);
         shutterView = findViewById(R.id.shutter);
         textureView = findViewById(R.id.texture_view);
-        textureView.setSurfaceTextureListener(surfaceHolderProvider);
+        textureView.getHolder().addCallback(surfaceHolderProvider);
         subtitleView = findViewById(R.id.subtitles_layout);
         fpsView = findViewById(R.id.fps);
     }

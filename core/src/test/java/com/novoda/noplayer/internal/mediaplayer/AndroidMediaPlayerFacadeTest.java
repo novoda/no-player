@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.Surface;
 
-import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
