@@ -284,7 +284,7 @@ final class SubtitlePainter {
 
         int textLeft;
         int textRight;
-        if (isCueDimensionSet(cueSize)) {
+        if (isCueDimensionSet(cuePosition)) {
             int anchorPosition = Math.round(parentWidth * cuePosition) + parentLeft;
             textLeft = cuePositionAnchor == Cue.ANCHOR_TYPE_END ? anchorPosition - textWidth
                     : cuePositionAnchor == Cue.ANCHOR_TYPE_MIDDLE ? (anchorPosition * 2 - textWidth) / 2
@@ -306,7 +306,7 @@ final class SubtitlePainter {
         int textHeight = textLayout.getHeight();
 
         int textTop;
-        if (isCueDimensionSet(cueSize)) {
+        if (isCueDimensionSet(cueLine)) {
             int anchorPosition;
             if (cueLineType == Cue.LINE_TYPE_FRACTION) {
                 anchorPosition = Math.round(parentHeight * cueLine) + parentTop;
