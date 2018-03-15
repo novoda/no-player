@@ -1,7 +1,8 @@
 package com.novoda.noplayer.internal.exoplayer;
 
+import android.graphics.SurfaceTexture;
 import android.net.Uri;
-import android.view.SurfaceHolder;
+import android.view.Surface;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
@@ -45,7 +46,10 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
 public class ExoPlayerFacadeTest {
@@ -86,7 +90,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenAddsPlayerEventListener() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceTexture, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).addListener(exoPlayerForwarder.exoPlayerEventListener());
         }
@@ -94,7 +98,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenSetsVideoDebugListener() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceTexture, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).setVideoDebugListener(exoPlayerForwarder.videoRendererEventListener());
         }
@@ -102,16 +106,16 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenSetsSurfaceHolderOnExoPlayer() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceTexture, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
+            verify(exoPlayer).setVideoSurface(any(Surface.class));
         }
 
         @Test
         public void givenLollipopDevice_whenLoadingVideo_thenSetsMovieAudioAttributesOnExoPlayer() {
             given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(true);
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceTexture, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
 
             AudioAttributes expectedMovieAudioAttributes = new AudioAttributes.Builder()
                     .setContentType(C.CONTENT_TYPE_MOVIE)
@@ -123,7 +127,7 @@ public class ExoPlayerFacadeTest {
         public void givenNonLollipopDevice_whenLoadingVideo_thenDoesNotSetAudioAttributesOnExoPlayer() {
             given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(false);
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceTexture, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer, never()).setAudioAttributes(any(AudioAttributes.class));
         }
@@ -132,7 +136,7 @@ public class ExoPlayerFacadeTest {
         public void givenMediaSource_whenLoadingVideo_thenPreparesInternalExoPlayer() {
             MediaSource mediaSource = givenMediaSource();
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceTexture, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
         }
@@ -223,7 +227,7 @@ public class ExoPlayerFacadeTest {
 
         private void givenPlayerIsLoaded() {
             givenMediaSource();
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceTexture, drmSessionCreator, uri, ANY_CONTENT_TYPE, exoPlayerForwarder, mediaCodecSelector);
         }
 
         @Test
@@ -450,7 +454,7 @@ public class ExoPlayerFacadeTest {
         @Mock
         MediaCodecSelector mediaCodecSelector;
         @Mock
-        SurfaceHolder surfaceHolder;
+        SurfaceTexture surfaceTexture;
 
         ExoPlayerFacade facade;
 

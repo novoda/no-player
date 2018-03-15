@@ -1,17 +1,15 @@
 package com.novoda.noplayer;
 
 import android.graphics.SurfaceTexture;
-import android.util.Log;
 import android.view.TextureView;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 class PlayerViewSurfaceTextureProvider implements TextureView.SurfaceTextureListener, SurfaceTextureRequester {
 
     private final List<Callback> callbacks = new ArrayList<>();
+    private final List<FPSCallback> fpsCallbacks = new ArrayList<>();
     private SurfaceTexture surfaceTexture;
 
     @Override
@@ -39,29 +37,14 @@ class PlayerViewSurfaceTextureProvider implements TextureView.SurfaceTextureList
         return true;
     }
 
-    private static final int NUMBER_OF_FRAMES_TO_CAPTURE = 100;
-    private static final double ONE_SECOND_IN_MILLIS = TimeUnit.SECONDS.toMillis(1);
-    private final LinkedList<Long> frameTimes = new LinkedList<Long>() {{
-        add(System.currentTimeMillis());
-    }};
+    private final FramesPerSecondCalculator framesPerSecondCalculator = new FramesPerSecondCalculator();
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        Log.e("TAG", "FPS: " + calculateFramesPerSecond());
-    }
-
-    private double calculateFramesPerSecond() {
-        long currrentTimeInMillis = System.currentTimeMillis();
-        Long startTimeInMillis = frameTimes.getFirst();
-        double numberOfSecondsElapsed = (currrentTimeInMillis - startTimeInMillis) / ONE_SECOND_IN_MILLIS;
-
-        frameTimes.addLast(currrentTimeInMillis);
-        int size = frameTimes.size();
-        if (size > NUMBER_OF_FRAMES_TO_CAPTURE) {
-            frameTimes.removeFirst();
+        double fps = framesPerSecondCalculator.calculate();
+        for (FPSCallback callback : fpsCallbacks) {
+            callback.onFpsUpdated(fps);
         }
-
-        return frameTimes.size() / numberOfSecondsElapsed;
     }
 
     private void setSurfaceHolderNotReady() {
@@ -84,6 +67,18 @@ class PlayerViewSurfaceTextureProvider implements TextureView.SurfaceTextureList
     @Override
     public void removeCallback(Callback callback) {
         callbacks.remove(callback);
+    }
+
+    public void addFpsCallback(FPSCallback fpsCallback) {
+        fpsCallbacks.add(fpsCallback);
+    }
+
+    public void removeFpsCallback(FPSCallback fpsCallback) {
+        fpsCallbacks.remove(fpsCallback);
+    }
+
+    interface FPSCallback {
+        void onFpsUpdated(double fps);
     }
 
 }

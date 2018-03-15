@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.novoda.noplayer.model.TextCues;
@@ -18,6 +19,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     private TextureView textureView;
     private SubtitleView subtitleView;
     private View shutterView;
+    private TextView fpsView;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -26,6 +28,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         surfaceHolderProvider = new PlayerViewSurfaceTextureProvider();
+        surfaceHolderProvider.addFpsCallback(fpsUpdatedListener);
         aspectRatioChangeCalculator = new AspectRatioChangeCalculator(this);
     }
 
@@ -38,6 +41,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         textureView = findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(surfaceHolderProvider);
         subtitleView = findViewById(R.id.subtitles_layout);
+        fpsView = findViewById(R.id.fps);
     }
 
     @Override
@@ -101,6 +105,14 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         @Override
         public void onVideoStopped() {
             shutterView.setVisibility(VISIBLE);
+        }
+    };
+
+    private final PlayerViewSurfaceTextureProvider.FPSCallback fpsUpdatedListener = new PlayerViewSurfaceTextureProvider.FPSCallback() {
+        @Override
+        public void onFpsUpdated(double fps) {
+            String message = String.format("~ fps: %s", fps);
+            fpsView.setText(message);
         }
     };
 }
