@@ -2,13 +2,15 @@ package com.novoda.noplayer;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.novoda.noplayer.model.TextCues;
+
+import java.util.Locale;
 
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
@@ -18,6 +20,8 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     private AspectRatioFrameLayout videoFrame;
     private SurfaceView surfaceView;
     private SubtitleView subtitleView;
+    private TextView framesPerSecondView;
+    private TextView framesDroppedView;
     private View shutterView;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
@@ -39,6 +43,8 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         surfaceView = findViewById(R.id.surface_view);
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
         subtitleView = findViewById(R.id.subtitles_layout);
+        framesPerSecondView = findViewById(R.id.frames_per_second);
+        framesDroppedView = findViewById(R.id.frames_dropped);
     }
 
     @Override
@@ -94,7 +100,8 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
         @Override
         public void onFramesDropped(int numberOfFramesDropped) {
-            Log.e("TAG", "Frames dropped: " + numberOfFramesDropped);
+            String message = String.format(Locale.ENGLISH, "Frames dropped: %d", numberOfFramesDropped);
+            framesDroppedView.setText(message);
         }
     };
 
@@ -117,8 +124,9 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     private final NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListener = new NoPlayer.FramesPerSecondChangedListener() {
         @Override
-        public void onFramesPerSecondChanged(double framesPerSecond) {
-            Log.e("TAG", "fps: " + framesPerSecond);
+        public void onFramesPerSecondChanged(int framesPerSecond) {
+            String message = String.format(Locale.ENGLISH, "Frames per second: %d", framesPerSecond);
+            framesPerSecondView.setText(message);
         }
     };
 }

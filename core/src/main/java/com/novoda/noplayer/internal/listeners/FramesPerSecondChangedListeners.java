@@ -22,7 +22,7 @@ class FramesPerSecondChangedListeners implements NoPlayer.FramesPerSecondChanged
     }
 
     @Override
-    public void onFramesPerSecondChanged(double framesPerSecond) {
+    public void onFramesPerSecondChanged(int framesPerSecond) {
         for (NoPlayer.FramesPerSecondChangedListener listener : listeners) {
             listener.onFramesPerSecondChanged(framesPerSecond);
         }

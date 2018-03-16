@@ -257,7 +257,7 @@ public interface NoPlayer extends PlayerState {
 
     interface FramesPerSecondChangedListener {
 
-        void onFramesPerSecondChanged(double framesPerSecond);
+        void onFramesPerSecondChanged(int framesPerSecond);
     }
 
     /**
