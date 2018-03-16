@@ -25,6 +25,7 @@ class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRen
     private boolean hasDroppedOutputBuffer;
     private boolean shouldSkip;
 
+    @SuppressWarnings({"checkstyle:parameternumber", "PMD.ExcessiveParameterList"})
     FramesPerSecondReportingMediaCodecVideoRenderer(Context context,
                                                     MediaCodecSelector mediaCodecSelector,
                                                     long allowedJoiningTimeMs,
@@ -51,10 +52,27 @@ class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRen
         this.framesPerSecondChangedListeners = framesPerSecondChangedListeners;
     }
 
+    @SuppressWarnings({"checkstyle:parameternumber", "PMD.ExcessiveParameterList"})
     @Override
-    protected boolean processOutputBuffer(long positionUs, long elapsedRealtimeUs, MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean shouldSkip) throws ExoPlaybackException {
+    protected boolean processOutputBuffer(long positionUs,
+                                          long elapsedRealtimeUs,
+                                          MediaCodec codec,
+                                          ByteBuffer buffer,
+                                          int bufferIndex,
+                                          int bufferFlags,
+                                          long bufferPresentationTimeUs,
+                                          boolean shouldSkip) throws ExoPlaybackException {
         this.shouldSkip = shouldSkip;
-        return super.processOutputBuffer(positionUs, elapsedRealtimeUs, codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs, shouldSkip);
+        return super.processOutputBuffer(
+                positionUs,
+                elapsedRealtimeUs,
+                codec,
+                buffer,
+                bufferIndex,
+                bufferFlags,
+                bufferPresentationTimeUs,
+                shouldSkip
+        );
     }
 
     @Override
