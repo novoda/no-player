@@ -10,7 +10,7 @@ class FramesPerSecondCalculator {
     private static final double ONE_SECOND_IN_MICRO_SECONDS = TimeUnit.SECONDS.toMicros(1);
     private final Deque<Long> frameTimes = new LinkedList<>();
 
-    double calculate(long currentTimeInMicroSeconds) {
+    int calculate(long currentTimeInMicroSeconds) {
         frameTimes.addLast(currentTimeInMicroSeconds);
         int size = frameTimes.size();
         if (size > NUMBER_OF_FRAMES_TO_CAPTURE) {
@@ -19,7 +19,8 @@ class FramesPerSecondCalculator {
 
         Long startTimeInMicroSeconds = frameTimes.getFirst();
         double numberOfSecondsElapsed = (currentTimeInMicroSeconds - startTimeInMicroSeconds) / ONE_SECOND_IN_MICRO_SECONDS;
-        return frameTimes.size() / numberOfSecondsElapsed;
+
+        return (int) (frameTimes.size() / numberOfSecondsElapsed);
     }
 
     FramesPerSecondCalculator reset() {
