@@ -114,13 +114,13 @@ class ExoPlayerFacade {
                    ContentType contentType,
                    ExoPlayerForwarder forwarder,
                    MediaCodecSelector mediaCodecSelector,
-                   NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListeners) {
+                   NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListener) {
         this.contentType = contentType;
         exoPlayer = exoPlayerCreator.create(
                 drmSessionCreator,
                 forwarder.drmSessionEventListener(),
                 mediaCodecSelector,
-                framesPerSecondChangedListeners
+                framesPerSecondChangedListener
         );
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());

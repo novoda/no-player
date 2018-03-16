@@ -1,6 +1,8 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -33,17 +35,17 @@ class ExoPlayerCreator {
     public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator,
                                   DefaultDrmSessionManager.EventListener drmSessionEventListener,
                                   MediaCodecSelector mediaCodecSelector,
-                                  NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListeners) {
+                                  NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListener) {
         DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
-        FramesPerSecondCalculator framesPerSecondCalculator = new FramesPerSecondCalculator();
+        Handler handler = new Handler(Looper.getMainLooper());
+        FramesPerSecondCalculator framesPerSecondCalculator = new FramesPerSecondCalculator(handler, framesPerSecondChangedListener);
         RenderersFactory renderersFactory = new SimpleRenderersFactory(
                 context,
                 drmSessionManager,
                 EXTENSION_RENDERER_MODE_OFF,
                 DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS,
                 mediaCodecSelector,
-                framesPerSecondCalculator,
-                framesPerSecondChangedListeners
+                framesPerSecondCalculator
         );
 
         DefaultLoadControl loadControl = new DefaultLoadControl();

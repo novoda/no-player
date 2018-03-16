@@ -11,16 +11,12 @@ import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
-import com.novoda.noplayer.NoPlayer;
 
 import java.nio.ByteBuffer;
 
 class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRenderer {
 
     private final FramesPerSecondCalculator framesPerSecondCalculator;
-    private final NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListeners;
-    @Nullable
-    private final Handler eventHandler;
 
     private boolean hasDroppedOutputBuffer;
     private boolean shouldSkip;
@@ -33,8 +29,7 @@ class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRen
                                                     @Nullable Handler eventHandler,
                                                     @Nullable VideoRendererEventListener eventListener,
                                                     int maxDroppedFramesToNotify,
-                                                    FramesPerSecondCalculator framesPerSecondCalculator,
-                                                    NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListeners) {
+                                                    FramesPerSecondCalculator framesPerSecondCalculator) {
         super(
                 context,
                 mediaCodecSelector,
@@ -46,9 +41,7 @@ class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRen
                 maxDroppedFramesToNotify
         );
 
-        this.eventHandler = eventHandler;
         this.framesPerSecondCalculator = framesPerSecondCalculator;
-        this.framesPerSecondChangedListeners = framesPerSecondChangedListeners;
     }
 
     @Override
@@ -64,15 +57,7 @@ class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRen
             return;
         }
 
-        if (eventHandler != null) {
-            eventHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    double fps = framesPerSecondCalculator.calculate(presentationTimeUs);
-                    framesPerSecondChangedListeners.onFramesPerSecondChanged(fps);
-                }
-            });
-        }
+        framesPerSecondCalculator.calculateAndPost(presentationTimeUs);
     }
 
     @Override
