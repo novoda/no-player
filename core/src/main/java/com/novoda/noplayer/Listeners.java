@@ -130,4 +130,19 @@ public interface Listeners {
      * @param videoSizeChangedListener to remove.
      */
     void removeVideoSizeChangedListener(NoPlayer.VideoSizeChangedListener videoSizeChangedListener);
+
+    /**
+     * Add a {@link NoPlayer.FramesPerSecondChangedListener} to be notified whenever the frames per second changes.
+     *
+     * @param framesPerSecondChangedListener to notify.
+     */
+    void addFramesPerSecondChangedListener(NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListener);
+
+    /**
+     * Remove a given {@link NoPlayer.FramesPerSecondChangedListener}.
+     *
+     * @param framesPerSecondChangedListener to remove.
+     */
+    void removeFramesPerSecondChangedListener(NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListener);
+
 }

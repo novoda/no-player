@@ -253,6 +253,11 @@ public interface NoPlayer extends PlayerState {
         void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
     }
 
+    interface FramesPerSecondChangedListener {
+
+        void onFramesPerSecondChanged(double framesPerSecond);
+    }
+
     /**
      * A listener for debugging information.
      */

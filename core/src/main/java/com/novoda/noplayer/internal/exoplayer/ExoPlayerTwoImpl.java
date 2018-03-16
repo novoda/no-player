@@ -17,13 +17,13 @@ import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
+import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.List;
 

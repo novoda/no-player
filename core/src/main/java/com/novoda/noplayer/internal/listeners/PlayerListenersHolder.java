@@ -14,6 +14,7 @@ public class PlayerListenersHolder implements Listeners {
     private final InfoListeners infoListeners;
     private final VideoSizeChangedListeners videoSizeChangedListeners;
     private final BitrateChangedListeners bitrateChangedListeners;
+    private final FramesPerSecondChangedListeners framesPerSecondChangedListeners;
 
     private final HeartbeatCallbacks heartbeatCallbacks;
 
@@ -27,6 +28,7 @@ public class PlayerListenersHolder implements Listeners {
         videoSizeChangedListeners = new VideoSizeChangedListeners();
         bitrateChangedListeners = new BitrateChangedListeners();
         heartbeatCallbacks = new HeartbeatCallbacks();
+        framesPerSecondChangedListeners = new FramesPerSecondChangedListeners();
     }
 
     @Override
@@ -119,6 +121,16 @@ public class PlayerListenersHolder implements Listeners {
         videoSizeChangedListeners.remove(videoSizeChangedListener);
     }
 
+    @Override
+    public void addFramesPerSecondChangedListener(NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListener) {
+        framesPerSecondChangedListeners.add(framesPerSecondChangedListener);
+    }
+
+    @Override
+    public void removeFramesPerSecondChangedListener(NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListener) {
+        framesPerSecondChangedListeners.remove(framesPerSecondChangedListener);
+    }
+
     public NoPlayer.ErrorListener getErrorListeners() {
         return errorListeners;
     }
@@ -155,6 +167,10 @@ public class PlayerListenersHolder implements Listeners {
         return bitrateChangedListeners;
     }
 
+    public NoPlayer.FramesPerSecondChangedListener getFramesPerSecondChangedListeners() {
+        return framesPerSecondChangedListeners;
+    }
+
     public void resetState() {
         preparedListeners.resetPreparedState();
         completionListeners.resetCompletedState();
@@ -170,5 +186,6 @@ public class PlayerListenersHolder implements Listeners {
         videoSizeChangedListeners.clear();
         bitrateChangedListeners.clear();
         heartbeatCallbacks.clear();
+        framesPerSecondChangedListeners.clear();
     }
 }
