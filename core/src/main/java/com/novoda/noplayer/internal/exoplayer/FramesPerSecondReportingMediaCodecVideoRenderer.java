@@ -60,12 +60,8 @@ class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRen
     @Override
     protected void onProcessedOutputBuffer(final long presentationTimeUs) {
         super.onProcessedOutputBuffer(presentationTimeUs);
-        if (shouldSkip) {
+        if (hasDroppedOutputBuffer || shouldSkip) {
             return;
-        }
-
-        if (hasDroppedOutputBuffer) {
-            framesPerSecondCalculator.reset();
         }
 
         final int fps = framesPerSecondCalculator.calculate(presentationTimeUs);

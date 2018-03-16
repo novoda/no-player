@@ -93,6 +93,8 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     }
 
     private final NoPlayer.VideoStateChangedListener videoStateChangedListener = new NoPlayer.VideoStateChangedListener() {
+        private int totalFramesDropped;
+
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
             aspectRatioChangeCalculator.onVideoSizeChanged(width, height, pixelWidthHeightRatio);
@@ -100,7 +102,8 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
         @Override
         public void onFramesDropped(int numberOfFramesDropped) {
-            String message = String.format(Locale.ENGLISH, "Frames dropped: %d", numberOfFramesDropped);
+            totalFramesDropped += numberOfFramesDropped;
+            String message = String.format(Locale.ENGLISH, "Total Frames dropped: %d", totalFramesDropped);
             framesDroppedView.setText(message);
         }
     };
