@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.novoda.noplayer.model.TextCues;
@@ -16,10 +15,9 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     private final AspectRatioChangeCalculator aspectRatioChangeCalculator;
 
     private AspectRatioFrameLayout videoFrame;
-    private SurfaceView textureView;
+    private SurfaceView surfaceView;
     private SubtitleView subtitleView;
     private View shutterView;
-    private TextView fpsView;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -28,7 +26,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         surfaceHolderProvider = new PlayerViewSurfaceProvider();
-        surfaceHolderProvider.addFpsCallback(fpsUpdatedListener);
         aspectRatioChangeCalculator = new AspectRatioChangeCalculator(this);
     }
 
@@ -38,10 +35,9 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         View.inflate(getContext(), R.layout.noplayer_view, this);
         videoFrame = findViewById(R.id.video_frame);
         shutterView = findViewById(R.id.shutter);
-        textureView = findViewById(R.id.texture_view);
-        textureView.getHolder().addCallback(surfaceHolderProvider);
+        surfaceView = findViewById(R.id.texture_view);
+        surfaceView.getHolder().addCallback(surfaceHolderProvider);
         subtitleView = findViewById(R.id.subtitles_layout);
-        fpsView = findViewById(R.id.fps);
     }
 
     @Override
@@ -51,7 +47,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     @Override
     public View getContainerView() {
-        return textureView;
+        return surfaceView;
     }
 
     @Override
@@ -108,11 +104,4 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         }
     };
 
-    private final PlayerViewSurfaceProvider.FPSCallback fpsUpdatedListener = new PlayerViewSurfaceProvider.FPSCallback() {
-        @Override
-        public void onFpsUpdated(double fps) {
-            String message = String.format("~ fps: %s", fps);
-            fpsView.setText(message);
-        }
-    };
 }
