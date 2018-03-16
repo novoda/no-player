@@ -37,8 +37,8 @@ public class MediaPlayerForwarder {
         this.completionListener.add(new CompletionStateChangedForwarder(stateChangedListener));
     }
 
-    public void bind(NoPlayer.VideoSizeChangedListener videoSizeChangedListener) {
-        this.videoSizeChangedListener.add(new VideoSizeChangedForwarder(videoSizeChangedListener));
+    public void bind(NoPlayer.VideoStateChangedListener videoStateChangedListener) {
+        this.videoSizeChangedListener.add(new VideoSizeChangedForwarder(videoStateChangedListener));
     }
 
     public void bind(NoPlayer.InfoListener infoListener) {

@@ -10,7 +10,7 @@ public interface PlayerView {
 
     SurfaceHolderRequester getSurfaceHolderRequester();
 
-    NoPlayer.VideoSizeChangedListener getVideoSizeChangedListener();
+    NoPlayer.VideoStateChangedListener getVideoStateChangedListener();
 
     NoPlayer.StateChangedListener getStateChangedListener();
 

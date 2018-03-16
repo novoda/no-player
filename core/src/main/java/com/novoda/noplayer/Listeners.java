@@ -118,18 +118,18 @@ public interface Listeners {
     void removeHeartbeatCallback(NoPlayer.HeartbeatCallback heartbeatCallback);
 
     /**
-     * Add a {@link NoPlayer.VideoSizeChangedListener} to be notified whenever the video size changes.
+     * Add a {@link NoPlayer.VideoStateChangedListener} to be notified whenever the video size changes.
      *
-     * @param videoSizeChangedListener to notify.
+     * @param videoStateChangedListener to notify.
      */
-    void addVideoSizeChangedListener(NoPlayer.VideoSizeChangedListener videoSizeChangedListener);
+    void addVideoSizeChangedListener(NoPlayer.VideoStateChangedListener videoStateChangedListener);
 
     /**
-     * Remove a given {@link NoPlayer.VideoSizeChangedListener}.
+     * Remove a given {@link NoPlayer.VideoStateChangedListener}.
      *
-     * @param videoSizeChangedListener to remove.
+     * @param videoStateChangedListener to remove.
      */
-    void removeVideoSizeChangedListener(NoPlayer.VideoSizeChangedListener videoSizeChangedListener);
+    void removeVideoSizeChangedListener(NoPlayer.VideoStateChangedListener videoStateChangedListener);
 
     /**
      * Add a {@link NoPlayer.FramesPerSecondChangedListener} to be notified whenever the frames per second changes.

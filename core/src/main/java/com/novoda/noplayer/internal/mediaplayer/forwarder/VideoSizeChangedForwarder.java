@@ -7,19 +7,19 @@ import com.novoda.noplayer.internal.utils.NoPlayerLog;
 
 class VideoSizeChangedForwarder implements MediaPlayer.OnVideoSizeChangedListener {
 
-    private final NoPlayer.VideoSizeChangedListener videoSizeChangedListener;
+    private final NoPlayer.VideoStateChangedListener videoStateChangedListener;
 
     private int previousWidth;
     private int previousHeight;
 
-    VideoSizeChangedForwarder(NoPlayer.VideoSizeChangedListener videoSizeChangedListener) {
-        this.videoSizeChangedListener = videoSizeChangedListener;
+    VideoSizeChangedForwarder(NoPlayer.VideoStateChangedListener videoStateChangedListener) {
+        this.videoStateChangedListener = videoStateChangedListener;
     }
 
     @Override
     public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
         if (bothDimensionsHaveChanged(width, height)) {
-            videoSizeChangedListener.onVideoSizeChanged(width, height, 0, 1);
+            videoStateChangedListener.onVideoSizeChanged(width, height, 0, 1);
         } else {
             NoPlayerLog.w("Video size changed but we have swallowed the event due to only 1 dimension changing");
         }

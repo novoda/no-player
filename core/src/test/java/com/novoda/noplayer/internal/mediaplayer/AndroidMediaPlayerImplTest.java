@@ -70,7 +70,7 @@ public class AndroidMediaPlayerImplTest {
             verify(forwarder).bind(preparedListener, player);
             verify(forwarder).bind(bufferStateListener, errorListener);
             verify(forwarder).bind(completionListener, stateChangedListener);
-            verify(forwarder).bind(videoSizeChangedListener);
+            verify(forwarder).bind(videoStateChangedListener);
             verify(forwarder).bind(infoListener);
         }
 
@@ -153,11 +153,11 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void givenInitialised_whenCallingOnVideoSizeChanged_thenVideoWidthAndHeightMatches() {
             player.initialise();
-            ArgumentCaptor<NoPlayer.VideoSizeChangedListener> videoSizeChangedListenerCaptor = ArgumentCaptor.forClass(NoPlayer.VideoSizeChangedListener.class);
+            ArgumentCaptor<NoPlayer.VideoStateChangedListener> videoSizeChangedListenerCaptor = ArgumentCaptor.forClass(NoPlayer.VideoStateChangedListener.class);
             verify(listenersHolder).addVideoSizeChangedListener(videoSizeChangedListenerCaptor.capture());
 
-            NoPlayer.VideoSizeChangedListener videoSizeChangedListener = videoSizeChangedListenerCaptor.getValue();
-            videoSizeChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
+            NoPlayer.VideoStateChangedListener videoStateChangedListener = videoSizeChangedListenerCaptor.getValue();
+            videoStateChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
 
             assertThat(player.videoWidth()).isEqualTo(WIDTH);
             assertThat(player.videoHeight()).isEqualTo(HEIGHT);
@@ -277,11 +277,11 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void whenAttachingPlayerView_thenAddsVideoSizeChangedListener() {
             PlayerView playerView = mock(PlayerView.class);
-            NoPlayer.VideoSizeChangedListener videoSizeChangedListener = mock(NoPlayer.VideoSizeChangedListener.class);
-            given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
+            NoPlayer.VideoStateChangedListener videoStateChangedListener = mock(NoPlayer.VideoStateChangedListener.class);
+            given(playerView.getVideoStateChangedListener()).willReturn(videoStateChangedListener);
             player.attach(playerView);
 
-            verify(listenersHolder).addVideoSizeChangedListener(videoSizeChangedListener);
+            verify(listenersHolder).addVideoSizeChangedListener(videoStateChangedListener);
         }
 
         @Test
@@ -304,11 +304,11 @@ public class AndroidMediaPlayerImplTest {
         @Test
         public void whenDetachingPlayerView_thenRemovesVideoSizeChangedListener() {
             PlayerView playerView = mock(PlayerView.class);
-            NoPlayer.VideoSizeChangedListener videoSizeChangedListener = mock(NoPlayer.VideoSizeChangedListener.class);
-            given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
+            NoPlayer.VideoStateChangedListener videoStateChangedListener = mock(NoPlayer.VideoStateChangedListener.class);
+            given(playerView.getVideoStateChangedListener()).willReturn(videoStateChangedListener);
             player.detach(playerView);
 
-            verify(listenersHolder).removeVideoSizeChangedListener(videoSizeChangedListener);
+            verify(listenersHolder).removeVideoSizeChangedListener(videoStateChangedListener);
         }
 
         @Test
@@ -656,7 +656,7 @@ public class AndroidMediaPlayerImplTest {
         @Mock
         NoPlayer.CompletionListener completionListener;
         @Mock
-        NoPlayer.VideoSizeChangedListener videoSizeChangedListener;
+        NoPlayer.VideoStateChangedListener videoStateChangedListener;
         @Mock
         NoPlayer.InfoListener infoListener;
         @Mock
@@ -688,7 +688,7 @@ public class AndroidMediaPlayerImplTest {
             SurfaceHolderRequester surfaceHolderRequester = mock(SurfaceHolderRequester.class);
             given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
-            given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
+            given(playerView.getVideoStateChangedListener()).willReturn(videoStateChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);
             doAnswer(new Answer<Void>() {
                 @Override
@@ -703,7 +703,7 @@ public class AndroidMediaPlayerImplTest {
             given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListener);
             given(listenersHolder.getErrorListeners()).willReturn(errorListener);
             given(listenersHolder.getCompletionListeners()).willReturn(completionListener);
-            given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListener);
+            given(listenersHolder.getVideoStateChangedListeners()).willReturn(videoStateChangedListener);
             given(listenersHolder.getInfoListeners()).willReturn(infoListener);
             given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListener);
 

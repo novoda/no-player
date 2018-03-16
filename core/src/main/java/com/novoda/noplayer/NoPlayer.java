@@ -248,9 +248,11 @@ public interface NoPlayer extends PlayerState {
         void onBitrateChanged(Bitrate audioBitrate, Bitrate videoBitrate);
     }
 
-    interface VideoSizeChangedListener {
+    interface VideoStateChangedListener {
 
         void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
+
+        void onFramesDropped(int numberOfFramesDropped);
     }
 
     interface FramesPerSecondChangedListener {

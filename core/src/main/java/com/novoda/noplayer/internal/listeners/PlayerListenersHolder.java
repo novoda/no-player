@@ -12,7 +12,7 @@ public class PlayerListenersHolder implements Listeners {
     private final CompletionListeners completionListeners;
     private final StateChangedListeners stateChangedListeners;
     private final InfoListeners infoListeners;
-    private final VideoSizeChangedListeners videoSizeChangedListeners;
+    private final VideoStateChangedListeners videoStateChangedListeners;
     private final BitrateChangedListeners bitrateChangedListeners;
     private final FramesPerSecondChangedListeners framesPerSecondChangedListeners;
 
@@ -25,7 +25,7 @@ public class PlayerListenersHolder implements Listeners {
         completionListeners = new CompletionListeners();
         stateChangedListeners = new StateChangedListeners();
         infoListeners = new InfoListeners();
-        videoSizeChangedListeners = new VideoSizeChangedListeners();
+        videoStateChangedListeners = new VideoStateChangedListeners();
         bitrateChangedListeners = new BitrateChangedListeners();
         heartbeatCallbacks = new HeartbeatCallbacks();
         framesPerSecondChangedListeners = new FramesPerSecondChangedListeners();
@@ -112,13 +112,13 @@ public class PlayerListenersHolder implements Listeners {
     }
 
     @Override
-    public void addVideoSizeChangedListener(NoPlayer.VideoSizeChangedListener videoSizeChangedListener) {
-        videoSizeChangedListeners.add(videoSizeChangedListener);
+    public void addVideoSizeChangedListener(NoPlayer.VideoStateChangedListener videoStateChangedListener) {
+        videoStateChangedListeners.add(videoStateChangedListener);
     }
 
     @Override
-    public void removeVideoSizeChangedListener(NoPlayer.VideoSizeChangedListener videoSizeChangedListener) {
-        videoSizeChangedListeners.remove(videoSizeChangedListener);
+    public void removeVideoSizeChangedListener(NoPlayer.VideoStateChangedListener videoStateChangedListener) {
+        videoStateChangedListeners.remove(videoStateChangedListener);
     }
 
     @Override
@@ -159,8 +159,8 @@ public class PlayerListenersHolder implements Listeners {
         return heartbeatCallbacks;
     }
 
-    public NoPlayer.VideoSizeChangedListener getVideoSizeChangedListeners() {
-        return videoSizeChangedListeners;
+    public NoPlayer.VideoStateChangedListener getVideoStateChangedListeners() {
+        return videoStateChangedListeners;
     }
 
     public NoPlayer.BitrateChangedListener getBitrateChangedListeners() {
@@ -183,7 +183,7 @@ public class PlayerListenersHolder implements Listeners {
         completionListeners.clear();
         stateChangedListeners.clear();
         infoListeners.clear();
-        videoSizeChangedListeners.clear();
+        videoStateChangedListeners.clear();
         bitrateChangedListeners.clear();
         heartbeatCallbacks.clear();
         framesPerSecondChangedListeners.clear();

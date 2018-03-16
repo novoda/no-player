@@ -7,17 +7,17 @@ import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.novoda.noplayer.NoPlayer;
 
-class VideoSizeChangedForwarder implements VideoRendererEventListener {
+class VideoStateChangedForwarder implements VideoRendererEventListener {
 
-    private final NoPlayer.VideoSizeChangedListener videoSizeChangedListener;
+    private final NoPlayer.VideoStateChangedListener videoStateChangedListener;
 
-    VideoSizeChangedForwarder(NoPlayer.VideoSizeChangedListener videoSizeChangedListener) {
-        this.videoSizeChangedListener = videoSizeChangedListener;
+    VideoStateChangedForwarder(NoPlayer.VideoStateChangedListener videoStateChangedListener) {
+        this.videoStateChangedListener = videoStateChangedListener;
     }
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-        videoSizeChangedListener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
+        videoStateChangedListener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
     }
 
     @Override
@@ -37,7 +37,7 @@ class VideoSizeChangedForwarder implements VideoRendererEventListener {
 
     @Override
     public void onDroppedFrames(int count, long elapsedMs) {
-        // TODO: should we send?
+        videoStateChangedListener.onFramesDropped(count);
     }
 
     @Override

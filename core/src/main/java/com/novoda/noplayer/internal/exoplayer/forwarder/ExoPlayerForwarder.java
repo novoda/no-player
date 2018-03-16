@@ -60,8 +60,8 @@ public class ExoPlayerForwarder {
         exoPlayerEventListener.add(new BufferStateForwarder(bufferStateListener));
     }
 
-    public void bind(NoPlayer.VideoSizeChangedListener videoSizeChangedListener) {
-        videoRendererEventListener.add(new VideoSizeChangedForwarder(videoSizeChangedListener));
+    public void bind(NoPlayer.VideoStateChangedListener videoStateChangedListener) {
+        videoRendererEventListener.add(new VideoStateChangedForwarder(videoStateChangedListener));
     }
 
     public void bind(NoPlayer.BitrateChangedListener bitrateChangedListener) {

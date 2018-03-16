@@ -57,8 +57,8 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     }
 
     @Override
-    public NoPlayer.VideoSizeChangedListener getVideoSizeChangedListener() {
-        return videoSizeChangedListener;
+    public NoPlayer.VideoStateChangedListener getVideoStateChangedListener() {
+        return videoStateChangedListener;
     }
 
     @Override
@@ -86,10 +86,15 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         subtitleView.setCues(textCues);
     }
 
-    private final NoPlayer.VideoSizeChangedListener videoSizeChangedListener = new NoPlayer.VideoSizeChangedListener() {
+    private final NoPlayer.VideoStateChangedListener videoStateChangedListener = new NoPlayer.VideoStateChangedListener() {
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
             aspectRatioChangeCalculator.onVideoSizeChanged(width, height, pixelWidthHeightRatio);
+        }
+
+        @Override
+        public void onFramesDropped(int numberOfFramesDropped) {
+            Log.e("TAG", "Frames dropped: " + numberOfFramesDropped);
         }
     };
 
@@ -113,7 +118,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     private final NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListener = new NoPlayer.FramesPerSecondChangedListener() {
         @Override
         public void onFramesPerSecondChanged(double framesPerSecond) {
-            Log.e("RYAN", "fps: " + framesPerSecond);
+            Log.e("TAG", "fps: " + framesPerSecond);
         }
     };
 }

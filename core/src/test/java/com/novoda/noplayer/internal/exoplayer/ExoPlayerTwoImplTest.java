@@ -86,7 +86,7 @@ public class ExoPlayerTwoImplTest {
             verify(forwarder).bind(completionListener, stateChangedListener);
             verify(forwarder).bind(errorListener);
             verify(forwarder).bind(bufferStateListener);
-            verify(forwarder).bind(videoSizeChangedListener);
+            verify(forwarder).bind(videoStateChangedListener);
             verify(forwarder).bind(bitrateChangedListener);
             verify(forwarder).bind(infoListener);
         }
@@ -135,11 +135,11 @@ public class ExoPlayerTwoImplTest {
             player.initialise();
             player.attach(playerView);
 
-            ArgumentCaptor<NoPlayer.VideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(NoPlayer.VideoSizeChangedListener.class);
+            ArgumentCaptor<NoPlayer.VideoStateChangedListener> argumentCaptor = ArgumentCaptor.forClass(NoPlayer.VideoStateChangedListener.class);
             verify(listenersHolder, times(2)).addVideoSizeChangedListener(argumentCaptor.capture());
 
-            NoPlayer.VideoSizeChangedListener videoSizeChangedListener = argumentCaptor.getAllValues().get(INDEX_INTERNAL_VIDEO_SIZE_CHANGED_LISTENER);
-            videoSizeChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
+            NoPlayer.VideoStateChangedListener videoStateChangedListener = argumentCaptor.getAllValues().get(INDEX_INTERNAL_VIDEO_SIZE_CHANGED_LISTENER);
+            videoStateChangedListener.onVideoSizeChanged(WIDTH, HEIGHT, ANY_ROTATION_DEGREES, ANY_PIXEL_WIDTH_HEIGHT);
 
             int actualWidth = player.videoWidth();
             int actualHeight = player.videoHeight();
@@ -154,10 +154,10 @@ public class ExoPlayerTwoImplTest {
 
             player.attach(playerView);
 
-            ArgumentCaptor<NoPlayer.VideoSizeChangedListener> argumentCaptor = ArgumentCaptor.forClass(NoPlayer.VideoSizeChangedListener.class);
+            ArgumentCaptor<NoPlayer.VideoStateChangedListener> argumentCaptor = ArgumentCaptor.forClass(NoPlayer.VideoStateChangedListener.class);
             verify(listenersHolder, times(2)).addVideoSizeChangedListener(argumentCaptor.capture());
-            NoPlayer.VideoSizeChangedListener videoSizeChangedListener = argumentCaptor.getAllValues().get(1);
-            assertThat(videoSizeChangedListener).isSameAs(playerView.getVideoSizeChangedListener());
+            NoPlayer.VideoStateChangedListener videoStateChangedListener = argumentCaptor.getAllValues().get(1);
+            assertThat(videoStateChangedListener).isSameAs(playerView.getVideoStateChangedListener());
         }
 
         @Test
@@ -262,7 +262,7 @@ public class ExoPlayerTwoImplTest {
 
             player.attach(playerView);
 
-            verify(listenersHolder).addVideoSizeChangedListener(videoSizeChangedListener);
+            verify(listenersHolder).addVideoSizeChangedListener(videoStateChangedListener);
         }
 
         @Test
@@ -279,7 +279,7 @@ public class ExoPlayerTwoImplTest {
 
             player.detach(playerView);
 
-            verify(listenersHolder).removeVideoSizeChangedListener(videoSizeChangedListener);
+            verify(listenersHolder).removeVideoSizeChangedListener(videoStateChangedListener);
         }
 
         @Test
@@ -377,7 +377,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, ANY_CONTENT_TYPE);
 
-            verify(listenersHolder).addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+            verify(listenersHolder).addVideoSizeChangedListener(playerView.getVideoStateChangedListener());
         }
 
         @Test
@@ -574,7 +574,7 @@ public class ExoPlayerTwoImplTest {
         @Mock
         StateChangedListener stateChangeListener;
         @Mock
-        NoPlayer.VideoSizeChangedListener videoSizeChangedListener;
+        NoPlayer.VideoStateChangedListener videoStateChangedListener;
         @Mock
         PlayerListenersHolder listenersHolder;
         @Mock
@@ -606,7 +606,7 @@ public class ExoPlayerTwoImplTest {
         public void setUp() {
             given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
-            given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
+            given(playerView.getVideoStateChangedListener()).willReturn(videoStateChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);
             doAnswer(new Answer<Void>() {
                 @Override
@@ -623,7 +623,7 @@ public class ExoPlayerTwoImplTest {
             given(listenersHolder.getCompletionListeners()).willReturn(completionListener);
             given(listenersHolder.getStateChangedListeners()).willReturn(stateChangedListener);
             given(listenersHolder.getInfoListeners()).willReturn(infoListener);
-            given(listenersHolder.getVideoSizeChangedListeners()).willReturn(videoSizeChangedListener);
+            given(listenersHolder.getVideoStateChangedListeners()).willReturn(videoStateChangedListener);
             given(listenersHolder.getBitrateChangedListeners()).willReturn(bitrateChangedListener);
 
             player = new ExoPlayerTwoImpl(

@@ -15,18 +15,19 @@ import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("PMD.GodClass")   // Not much we can do, wrapping MediaPlayer is a lot of work
+@SuppressWarnings("PMD.GodClass")
+        // Not much we can do, wrapping MediaPlayer is a lot of work
 class AndroidMediaPlayerImpl implements NoPlayer {
 
     private static final long NO_SEEK_TO_POSITION = -1;
@@ -52,7 +53,8 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     private SurfaceHolderRequester surfaceHolderRequester;
     private View containerView;
 
-    @SuppressWarnings("checkstyle:ParameterNumber")     // We cannot really group these any further
+    @SuppressWarnings("checkstyle:ParameterNumber")
+        // We cannot really group these any further
     AndroidMediaPlayerImpl(MediaPlayerInformation mediaPlayerInformation,
                            AndroidMediaPlayerFacade mediaPlayer,
                            MediaPlayerForwarder forwarder,
@@ -77,7 +79,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
         forwarder.bind(listenersHolder.getBufferStateListeners(), listenersHolder.getErrorListeners());
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
-        forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
+        forwarder.bind(listenersHolder.getVideoStateChangedListeners());
         forwarder.bind(listenersHolder.getInfoListeners());
 
         bufferHeartbeatCallback.bind(forwarder.onHeartbeatListener());
@@ -98,11 +100,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
                 reset();
             }
         });
-        listenersHolder.addVideoSizeChangedListener(new VideoSizeChangedListener() {
+        listenersHolder.addVideoSizeChangedListener(new VideoStateChangedListener() {
             @Override
             public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
                 videoWidth = width;
                 videoHeight = height;
+            }
+
+            @Override
+            public void onFramesDropped(int numberOfFramesDropped) {
+                // Do nothing.
             }
         });
     }
@@ -279,7 +286,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     public void attach(PlayerView playerView) {
         containerView = playerView.getContainerView();
         buggyVideoDriverPreventer.preventVideoDriverBug(this, containerView);
-        listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        listenersHolder.addVideoSizeChangedListener(playerView.getVideoStateChangedListener());
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
     }
@@ -288,7 +295,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     public void detach(PlayerView playerView) {
         clearSurfaceHolderCallbacks();
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
-        listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        listenersHolder.removeVideoSizeChangedListener(playerView.getVideoStateChangedListener());
         buggyVideoDriverPreventer.clear(playerView.getContainerView());
         surfaceHolderRequester = null;
         containerView = null;

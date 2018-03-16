@@ -69,7 +69,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
         forwarder.bind(listenersHolder.getErrorListeners());
         forwarder.bind(listenersHolder.getBufferStateListeners());
-        forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
+        forwarder.bind(listenersHolder.getVideoStateChangedListeners());
         forwarder.bind(listenersHolder.getBitrateChangedListeners());
         forwarder.bind(listenersHolder.getInfoListeners());
         listenersHolder.addPreparedListener(new PreparedListener() {
@@ -84,11 +84,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
                 reset();
             }
         });
-        listenersHolder.addVideoSizeChangedListener(new VideoSizeChangedListener() {
+        listenersHolder.addVideoSizeChangedListener(new VideoStateChangedListener() {
             @Override
             public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
                 videoWidth = width;
                 videoHeight = height;
+            }
+
+            @Override
+            public void onFramesDropped(int numberOfFramesDropped) {
+                // Do nothing.
             }
         });
     }
@@ -239,14 +244,14 @@ class ExoPlayerTwoImpl implements NoPlayer {
         this.playerView = playerView;
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
-        listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        listenersHolder.addVideoSizeChangedListener(playerView.getVideoStateChangedListener());
         listenersHolder.addFramesPerSecondChangedListener(playerView.getFramesPerSecondChangedListener());
     }
 
     @Override
     public void detach(PlayerView playerView) {
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
-        listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        listenersHolder.removeVideoSizeChangedListener(playerView.getVideoStateChangedListener());
         listenersHolder.removeFramesPerSecondChangedListener(playerView.getFramesPerSecondChangedListener());
         removeSubtitleRenderer();
         surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);

@@ -1,15 +1,12 @@
 package com.novoda.demo;
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
-
-import java.util.Map;
 
 class DemoPresenter {
 
@@ -29,7 +26,6 @@ class DemoPresenter {
         listeners.addPreparedListener(playOnPrepared);
         listeners.addStateChangedListener(updatePlayPause);
         listeners.addHeartbeatCallback(updateProgress);
-        listeners.addInfoListener(infoListener);
 
         controllerView.setTogglePlayPauseAction(onTogglePlayPause);
         controllerView.setSeekAction(onSeekPerformed);
@@ -71,15 +67,6 @@ class DemoPresenter {
 
             updateProgress(positionInMillis, durationInMillis, bufferPercentage);
             updateTiming(positionInMillis, durationInMillis);
-        }
-    };
-
-    private final NoPlayer.InfoListener infoListener = new NoPlayer.InfoListener() {
-        @Override
-        public void onNewInfo(String callingMethod, Map<String, String> callingMethodParams) {
-            if (callingMethod.equals("onDroppedFrames")) {
-                Log.e("TAG", callingMethodParams.toString());
-            }
         }
     };
 
