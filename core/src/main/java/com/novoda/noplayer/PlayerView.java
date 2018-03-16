@@ -14,6 +14,8 @@ public interface PlayerView {
 
     NoPlayer.StateChangedListener getStateChangedListener();
 
+    NoPlayer.FramesPerSecondChangedListener getFramesPerSecondChangedListener();
+
     void showSubtitles();
 
     void hideSubtitles();

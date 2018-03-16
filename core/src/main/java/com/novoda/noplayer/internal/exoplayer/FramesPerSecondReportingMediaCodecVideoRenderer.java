@@ -4,7 +4,6 @@ import android.content.Context;
 import android.media.MediaCodec;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -12,12 +11,14 @@ import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.novoda.noplayer.NoPlayer;
 
 import java.nio.ByteBuffer;
 
 class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRenderer {
 
     private final FramesPerSecondCalculator framesPerSecondCalculator;
+    private final NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListeners;
     @Nullable
     private final Handler eventHandler;
 
@@ -32,7 +33,8 @@ class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRen
                                                     @Nullable Handler eventHandler,
                                                     @Nullable VideoRendererEventListener eventListener,
                                                     int maxDroppedFramesToNotify,
-                                                    FramesPerSecondCalculator framesPerSecondCalculator) {
+                                                    FramesPerSecondCalculator framesPerSecondCalculator,
+                                                    NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListeners) {
         super(
                 context,
                 mediaCodecSelector,
@@ -46,6 +48,7 @@ class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRen
 
         this.eventHandler = eventHandler;
         this.framesPerSecondCalculator = framesPerSecondCalculator;
+        this.framesPerSecondChangedListeners = framesPerSecondChangedListeners;
     }
 
     @Override
@@ -66,7 +69,7 @@ class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRen
                 @Override
                 public void run() {
                     double fps = framesPerSecondCalculator.calculate(presentationTimeUs);
-                    Log.e("TAG", "fps: " + fps);
+                    framesPerSecondChangedListeners.onFramesPerSecondChanged(fps);
                 }
             });
         }

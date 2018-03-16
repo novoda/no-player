@@ -2,6 +2,7 @@ package com.novoda.noplayer;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -33,11 +34,11 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
-        videoFrame = (AspectRatioFrameLayout) findViewById(R.id.video_frame);
+        videoFrame = findViewById(R.id.video_frame);
         shutterView = findViewById(R.id.shutter);
-        surfaceView = (SurfaceView) findViewById(R.id.surface_view);
+        surfaceView = findViewById(R.id.surface_view);
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
-        subtitleView = (SubtitleView) findViewById(R.id.subtitles_layout);
+        subtitleView = findViewById(R.id.subtitles_layout);
     }
 
     @Override
@@ -63,6 +64,11 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     @Override
     public NoPlayer.StateChangedListener getStateChangedListener() {
         return stateChangedListener;
+    }
+
+    @Override
+    public NoPlayer.FramesPerSecondChangedListener getFramesPerSecondChangedListener() {
+        return framesPerSecondChangedListener;
     }
 
     @Override
@@ -101,6 +107,13 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         @Override
         public void onVideoStopped() {
             shutterView.setVisibility(VISIBLE);
+        }
+    };
+
+    private final NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListener = new NoPlayer.FramesPerSecondChangedListener() {
+        @Override
+        public void onFramesPerSecondChanged(double framesPerSecond) {
+            Log.e("RYAN", "fps: " + framesPerSecond);
         }
     };
 }

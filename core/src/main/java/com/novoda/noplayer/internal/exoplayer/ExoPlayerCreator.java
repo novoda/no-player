@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 
 import static com.novoda.noplayer.internal.exoplayer.SimpleRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
@@ -31,7 +32,8 @@ class ExoPlayerCreator {
     @NonNull
     public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator,
                                   DefaultDrmSessionManager.EventListener drmSessionEventListener,
-                                  MediaCodecSelector mediaCodecSelector) {
+                                  MediaCodecSelector mediaCodecSelector,
+                                  NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListeners) {
         DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
         FramesPerSecondCalculator framesPerSecondCalculator = new FramesPerSecondCalculator();
         RenderersFactory renderersFactory = new SimpleRenderersFactory(
@@ -40,7 +42,8 @@ class ExoPlayerCreator {
                 EXTENSION_RENDERER_MODE_OFF,
                 DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS,
                 mediaCodecSelector,
-                framesPerSecondCalculator
+                framesPerSecondCalculator,
+                framesPerSecondChangedListeners
         );
 
         DefaultLoadControl loadControl = new DefaultLoadControl();

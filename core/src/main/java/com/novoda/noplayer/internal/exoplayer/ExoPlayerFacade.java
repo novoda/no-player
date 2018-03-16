@@ -10,6 +10,7 @@ import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
@@ -112,12 +113,14 @@ class ExoPlayerFacade {
                    Uri uri,
                    ContentType contentType,
                    ExoPlayerForwarder forwarder,
-                   MediaCodecSelector mediaCodecSelector) {
+                   MediaCodecSelector mediaCodecSelector,
+                   NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListeners) {
         this.contentType = contentType;
         exoPlayer = exoPlayerCreator.create(
                 drmSessionCreator,
                 forwarder.drmSessionEventListener(),
-                mediaCodecSelector
+                mediaCodecSelector,
+                framesPerSecondChangedListeners
         );
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());

@@ -220,7 +220,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, ANY_CONTENT_TYPE);
 
-            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector, listenersHolder.getFramesPerSecondChangedListeners());
         }
 
         @Test
@@ -229,7 +229,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector, listenersHolder.getFramesPerSecondChangedListeners());
         }
 
         @Test

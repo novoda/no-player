@@ -196,7 +196,15 @@ class ExoPlayerTwoImpl implements NoPlayer {
         onSurfaceReadyCallback = new SurfaceHolderRequester.Callback() {
             @Override
             public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                exoPlayer.loadVideo(surfaceHolder, drmSessionCreator, uri, contentType, forwarder, mediaCodecSelector);
+                exoPlayer.loadVideo(
+                        surfaceHolder,
+                        drmSessionCreator,
+                        uri,
+                        contentType,
+                        forwarder,
+                        mediaCodecSelector,
+                        listenersHolder.getFramesPerSecondChangedListeners()
+                );
             }
         };
 
@@ -232,12 +240,14 @@ class ExoPlayerTwoImpl implements NoPlayer {
         surfaceHolderRequester = playerView.getSurfaceHolderRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        listenersHolder.addFramesPerSecondChangedListener(playerView.getFramesPerSecondChangedListener());
     }
 
     @Override
     public void detach(PlayerView playerView) {
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
+        listenersHolder.removeFramesPerSecondChangedListener(playerView.getFramesPerSecondChangedListener());
         removeSubtitleRenderer();
         surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);
         surfaceHolderRequester = null;

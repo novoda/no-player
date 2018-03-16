@@ -36,6 +36,7 @@ import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.novoda.noplayer.NoPlayer;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -95,31 +96,35 @@ class SimpleRenderersFactory implements RenderersFactory {
     private final long allowedVideoJoiningTimeMs;
     private final MediaCodecSelector mediaCodecSelector;
     private final FramesPerSecondCalculator framesPerSecondCalculator;
+    private final NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListeners;
 
     /**
-     * @param context                   A {@link Context}.
-     * @param drmSessionManager         An optional {@link DrmSessionManager}. May be null if DRM protected
-     *                                  playbacks are not required..
-     * @param extensionRendererMode     The extension renderer mode, which determines if and how
-     *                                  available extension renderers are used. Note that extensions must be included in the
-     *                                  application build for them to be considered available.
-     * @param allowedVideoJoiningTimeMs The maximum duration for which video renderers can attempt
-     *                                  to seamlessly join an ongoing playback.
-     * @param mediaCodecSelector        Used for selecting the codec for the video renderer.
-     * @param framesPerSecondCalculator Used to calculate the frames per second based on the output buffer timing.
+     * @param context                         A {@link Context}.
+     * @param drmSessionManager               An optional {@link DrmSessionManager}. May be null if DRM protected
+     *                                        playbacks are not required..
+     * @param extensionRendererMode           The extension renderer mode, which determines if and how
+     *                                        available extension renderers are used. Note that extensions must be included in the
+     *                                        application build for them to be considered available.
+     * @param allowedVideoJoiningTimeMs       The maximum duration for which video renderers can attempt
+     *                                        to seamlessly join an ongoing playback.
+     * @param mediaCodecSelector              Used for selecting the codec for the video renderer.
+     * @param framesPerSecondCalculator       Used to calculate the frames per second based on the output buffer timing.
+     * @param framesPerSecondChangedListeners
      */
     SimpleRenderersFactory(Context context,
                            DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,
                            MediaCodecSelector mediaCodecSelector,
-                           FramesPerSecondCalculator framesPerSecondCalculator) {
+                           FramesPerSecondCalculator framesPerSecondCalculator,
+                           NoPlayer.FramesPerSecondChangedListener framesPerSecondChangedListeners) {
         this.context = context;
         this.drmSessionManager = drmSessionManager;
         this.extensionRendererMode = extensionRendererMode;
         this.allowedVideoJoiningTimeMs = allowedVideoJoiningTimeMs;
         this.mediaCodecSelector = mediaCodecSelector;
         this.framesPerSecondCalculator = framesPerSecondCalculator;
+        this.framesPerSecondChangedListeners = framesPerSecondChangedListeners;
     }
 
     @Override
@@ -175,7 +180,8 @@ class SimpleRenderersFactory implements RenderersFactory {
                 eventHandler,
                 eventListener,
                 MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY,
-                framesPerSecondCalculator
+                framesPerSecondCalculator,
+                framesPerSecondChangedListeners
         ));
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {
