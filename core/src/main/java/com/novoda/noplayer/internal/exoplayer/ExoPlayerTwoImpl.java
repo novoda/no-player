@@ -93,7 +93,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
             @Override
             public void onFramesDropped(int numberOfFramesDropped) {
-                // do nothing.
+                // Do nothing.
             }
         });
     }
