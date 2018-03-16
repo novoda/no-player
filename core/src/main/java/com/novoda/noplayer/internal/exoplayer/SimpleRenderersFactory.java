@@ -94,6 +94,7 @@ class SimpleRenderersFactory implements RenderersFactory {
 
     private final long allowedVideoJoiningTimeMs;
     private final MediaCodecSelector mediaCodecSelector;
+    private final FramesPerSecondCalculator framesPerSecondCalculator;
 
     /**
      * @param context                   A {@link Context}.
@@ -105,17 +106,20 @@ class SimpleRenderersFactory implements RenderersFactory {
      * @param allowedVideoJoiningTimeMs The maximum duration for which video renderers can attempt
      *                                  to seamlessly join an ongoing playback.
      * @param mediaCodecSelector        Used for selecting the codec for the video renderer.
+     * @param framesPerSecondCalculator Used to calculate the frames per second based on the output buffer timing.
      */
     SimpleRenderersFactory(Context context,
                            DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,
-                           MediaCodecSelector mediaCodecSelector) {
+                           MediaCodecSelector mediaCodecSelector,
+                           FramesPerSecondCalculator framesPerSecondCalculator) {
         this.context = context;
         this.drmSessionManager = drmSessionManager;
         this.extensionRendererMode = extensionRendererMode;
         this.allowedVideoJoiningTimeMs = allowedVideoJoiningTimeMs;
         this.mediaCodecSelector = mediaCodecSelector;
+        this.framesPerSecondCalculator = framesPerSecondCalculator;
     }
 
     @Override
@@ -170,7 +174,8 @@ class SimpleRenderersFactory implements RenderersFactory {
                 DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
                 eventHandler,
                 eventListener,
-                MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
+                MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY,
+                framesPerSecondCalculator
         ));
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {

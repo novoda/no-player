@@ -82,7 +82,8 @@ public class NoPlayerExoPlayerCreator {
                     exoPlayerSubtitleTrackSelector,
                     exoPlayerVideoTrackSelector,
                     exoPlayerCreator,
-                    rendererTypeRequesterCreator);
+                    rendererTypeRequesterCreator
+            );
 
             PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
             ExoPlayerForwarder exoPlayerForwarder = new ExoPlayerForwarder();

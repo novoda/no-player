@@ -17,7 +17,9 @@ import java.nio.ByteBuffer;
 
 class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRenderer {
 
-    private FramesPerSecondCalculator framesPerSecondCalculator;
+    private final FramesPerSecondCalculator framesPerSecondCalculator;
+    @Nullable
+    private final Handler eventHandler;
 
     private boolean hasDroppedOutputBuffer;
     private boolean shouldSkip;
@@ -29,18 +31,21 @@ class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRen
                                                     boolean playClearSamplesWithoutKeys,
                                                     @Nullable Handler eventHandler,
                                                     @Nullable VideoRendererEventListener eventListener,
-                                                    int maxDroppedFramesToNotify) {
-        super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, maxDroppedFramesToNotify);
-    }
+                                                    int maxDroppedFramesToNotify,
+                                                    FramesPerSecondCalculator framesPerSecondCalculator) {
+        super(
+                context,
+                mediaCodecSelector,
+                allowedJoiningTimeMs,
+                drmSessionManager,
+                playClearSamplesWithoutKeys,
+                eventHandler,
+                eventListener,
+                maxDroppedFramesToNotify
+        );
 
-    @Override
-    public void render(long positionUs, long elapsedRealtimeUs) throws ExoPlaybackException {
-        if (framesPerSecondCalculator == null) {
-            framesPerSecondCalculator = new FramesPerSecondCalculator();
-            Log.e("TAG", "startRendering");
-        }
-
-        super.render(positionUs, elapsedRealtimeUs);
+        this.eventHandler = eventHandler;
+        this.framesPerSecondCalculator = framesPerSecondCalculator;
     }
 
     @Override
@@ -50,14 +55,21 @@ class FramesPerSecondReportingMediaCodecVideoRenderer extends MediaCodecVideoRen
     }
 
     @Override
-    protected void onProcessedOutputBuffer(long presentationTimeUs) {
+    protected void onProcessedOutputBuffer(final long presentationTimeUs) {
         super.onProcessedOutputBuffer(presentationTimeUs);
         if (hasDroppedOutputBuffer || shouldSkip) {
             return;
         }
 
-        double fps = framesPerSecondCalculator.calculate(presentationTimeUs);
-        Log.e("TAG", "fps: " + fps);
+        if (eventHandler != null) {
+            eventHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    double fps = framesPerSecondCalculator.calculate(presentationTimeUs);
+                    Log.e("TAG", "fps: " + fps);
+                }
+            });
+        }
     }
 
     @Override

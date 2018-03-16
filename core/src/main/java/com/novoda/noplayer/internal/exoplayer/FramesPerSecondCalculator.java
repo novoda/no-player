@@ -22,4 +22,9 @@ class FramesPerSecondCalculator {
         return frameTimes.size() / numberOfSecondsElapsed;
     }
 
+    FramesPerSecondCalculator reset() {
+        frameTimes.clear();
+        return this;
+    }
+
 }

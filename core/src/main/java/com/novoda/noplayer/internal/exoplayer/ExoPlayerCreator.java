@@ -33,12 +33,14 @@ class ExoPlayerCreator {
                                   DefaultDrmSessionManager.EventListener drmSessionEventListener,
                                   MediaCodecSelector mediaCodecSelector) {
         DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
+        FramesPerSecondCalculator framesPerSecondCalculator = new FramesPerSecondCalculator();
         RenderersFactory renderersFactory = new SimpleRenderersFactory(
                 context,
                 drmSessionManager,
                 EXTENSION_RENDERER_MODE_OFF,
                 DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS,
-                mediaCodecSelector
+                mediaCodecSelector,
+                framesPerSecondCalculator
         );
 
         DefaultLoadControl loadControl = new DefaultLoadControl();
