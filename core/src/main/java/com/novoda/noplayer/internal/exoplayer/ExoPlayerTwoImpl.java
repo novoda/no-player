@@ -2,6 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
 
@@ -46,6 +47,8 @@ class ExoPlayerTwoImpl implements NoPlayer {
     private int videoHeight;
     private SurfaceHolderRequester.Callback onSurfaceReadyCallback;
     private TextRendererOutput textRendererOutput;
+
+    private int totalFramesDropped;
 
     ExoPlayerTwoImpl(ExoPlayerFacade exoPlayer,
                      PlayerListenersHolder listenersHolder,
@@ -93,7 +96,25 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
             @Override
             public void onFramesDropped(int numberOfFramesDropped) {
-                // Do nothing.
+                totalFramesDropped += numberOfFramesDropped;
+                Log.e("TAG", "totalDropped: " + totalFramesDropped);
+
+                if (totalFramesDropped > 400) {
+                    Optional<PlayerVideoTrack> selectedVideoTrack = getSelectedVideoTrack();
+                    Log.e("TAG", "present: " + selectedVideoTrack.isPresent());
+                    if (selectedVideoTrack.isPresent()) {
+                        List<PlayerVideoTrack> videoTracks = getVideoTracks();
+                        for (PlayerVideoTrack videoTrack : videoTracks) {
+                            if (videoTrack.height() < selectedVideoTrack.get().height()) {
+                                selectVideoTrack(videoTrack);
+                                Log.e("TAG", "selecting lower rendition.");
+                                totalFramesDropped = 0;
+                                return;
+                            }
+                        }
+                    }
+
+                }
             }
         });
     }
