@@ -35,7 +35,6 @@ import com.google.android.exoplayer2.metadata.MetadataRenderer;
 import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.lang.annotation.Retention;
@@ -127,13 +126,17 @@ class SimpleRenderersFactory implements RenderersFactory {
                                       MetadataOutput metadataRendererOutput) {
         ArrayList<Renderer> renderersList = new ArrayList<>();
         buildVideoRenderers(context, drmSessionManager, allowedVideoJoiningTimeMs,
-                eventHandler, videoRendererEventListener, extensionRendererMode, renderersList);
+                            eventHandler, videoRendererEventListener, extensionRendererMode, renderersList
+        );
         buildAudioRenderers(context, drmSessionManager, buildAudioProcessors(),
-                eventHandler, audioRendererEventListener, extensionRendererMode, renderersList);
+                            eventHandler, audioRendererEventListener, extensionRendererMode, renderersList
+        );
         buildTextRenderers(textRendererOutput, eventHandler.getLooper(),
-                renderersList);
+                           renderersList
+        );
         buildMetadataRenderers(metadataRendererOutput, eventHandler.getLooper(),
-                renderersList);
+                               renderersList
+        );
         buildMiscellaneousRenderers();
         return renderersList.toArray(new Renderer[renderersList.size()]);
     }
@@ -159,14 +162,16 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      VideoRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
-        outRenderers.add(new MediaCodecVideoRenderer(context,
+        outRenderers.add(new FramesPerSecondReportingMediaCodecVideoRenderer(
+                context,
                 mediaCodecSelector,
                 allowedVideoJoiningTimeMs,
                 drmSessionManager,
                 DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
                 eventHandler,
                 eventListener,
-                MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY));
+                MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
+        ));
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {
             return;
@@ -179,11 +184,13 @@ class SimpleRenderersFactory implements RenderersFactory {
         try {
             Class<?> clazz = Class.forName("com.google.android.exoplayer2.ext.vp9.LibvpxVideoRenderer");
             Constructor<?> constructor = clazz.getConstructor(boolean.class, long.class, Handler.class, VideoRendererEventListener.class, int.class);
-            Renderer renderer = (Renderer) constructor.newInstance(INIT_ARGS,
+            Renderer renderer = (Renderer) constructor.newInstance(
+                    INIT_ARGS,
                     allowedVideoJoiningTimeMs,
                     eventHandler,
                     eventListener,
-                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY);
+                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
+            );
             outRenderers.add(extensionRendererIndex, renderer);
             Log.i(TAG, "Loaded LibvpxVideoRenderer.");
         } catch (ClassNotFoundException e) {
@@ -214,13 +221,15 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      AudioRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
-        outRenderers.add(new MediaCodecAudioRenderer(mediaCodecSelector,
+        outRenderers.add(new MediaCodecAudioRenderer(
+                mediaCodecSelector,
                 drmSessionManager,
                 PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
                 eventHandler,
                 eventListener,
                 AudioCapabilities.getCapabilities(context),
-                audioProcessors));
+                audioProcessors
+        ));
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {
             return;
