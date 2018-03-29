@@ -8,6 +8,7 @@
 
   <exclude-pattern>.*\.R\$.*</exclude-pattern>
   <exclude-pattern>.*Test.*</exclude-pattern>
+  <exclude-pattern>.*/noplayer/external/exoplayer/.*</exclude-pattern>
 
   <rule ref="rulesets/java/strictexception.xml">
     <!-- Ignored because of the Callable pattern -->
