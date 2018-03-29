@@ -19,9 +19,9 @@ class EventListener implements Player.EventListener {
     }
 
     @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest) {
+    public void onTimelineChanged(Timeline timeline, Object manifest, @Player.TimelineChangeReason int reason) {
         for (Player.EventListener listener : listeners) {
-            listener.onTimelineChanged(timeline, manifest);
+            listener.onTimelineChanged(timeline, manifest, reason);
         }
     }
 
