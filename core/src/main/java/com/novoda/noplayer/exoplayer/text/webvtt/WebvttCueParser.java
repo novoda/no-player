@@ -38,6 +38,7 @@ import com.google.android.exoplayer2.text.webvtt.WebvttCssStyle;
 import com.google.android.exoplayer2.text.webvtt.WebvttCue;
 import com.google.android.exoplayer2.text.webvtt.WebvttParserUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+import com.novoda.noplayer.exoplayer.util.ColorParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -393,6 +394,8 @@ public final class WebvttCueParser {
                 text.setSpan(new UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 break;
             case TAG_CLASS:
+                applySupportedClasses(text, startTag.classes, start, end);
+                break;
             case TAG_LANG:
             case TAG_VOICE:
             case "": // Case of the "whole cue" virtual tag.
@@ -405,6 +408,16 @@ public final class WebvttCueParser {
         int styleMatchesCount = scratchStyleMatches.size();
         for (int i = 0; i < styleMatchesCount; i++) {
             applyStyleToText(text, scratchStyleMatches.get(i).style, start, end);
+        }
+    }
+
+    private static void applySupportedClasses(SpannableStringBuilder text, String[] classes,
+                                              int start, int end) {
+        for (String className : classes) {
+            if (ColorParser.isNamedColor(className)) {
+                int color = ColorParser.parseCssColor(className);
+                text.setSpan(new ForegroundColorSpan(color), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
         }
     }
 
