@@ -13,7 +13,7 @@ import com.google.android.exoplayer2.text.ttml.TtmlDecoder;
 import com.google.android.exoplayer2.text.tx3g.Tx3gDecoder;
 import com.google.android.exoplayer2.text.webvtt.Mp4WebvttDecoder;
 import com.google.android.exoplayer2.util.MimeTypes;
-import com.novoda.noplayer.exoplayer.text.webvtt.WebvttDecoder;
+import com.novoda.noplayer.external.exoplayer.text.webvtt.WebvttDecoder;
 
 // This is a factory and we need to consider all the supported formats when creating a decoder
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.StdCyclomaticComplexity"})

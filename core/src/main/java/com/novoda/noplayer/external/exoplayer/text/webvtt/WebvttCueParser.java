@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.novoda.noplayer.exoplayer.text.webvtt;
+package com.novoda.noplayer.external.exoplayer.text.webvtt;
 
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
@@ -38,7 +38,7 @@ import com.google.android.exoplayer2.text.webvtt.WebvttCssStyle;
 import com.google.android.exoplayer2.text.webvtt.WebvttCue;
 import com.google.android.exoplayer2.text.webvtt.WebvttParserUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
-import com.novoda.noplayer.exoplayer.util.ColorParser;
+import com.novoda.noplayer.external.exoplayer.util.ColorParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
