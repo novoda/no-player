@@ -8,7 +8,7 @@
       <Class name="~.*Test\$.*" />
       <Class name="~.*\.Manifest\$.*" />
       <Class name="~.*\.Manifest\$.*" />
-      <Package name="~com\.novoda\.noplayer\.exoplayer\..*" />
+      <Package name="~com\.novoda\.noplayer\.external\.exoplayer\..*" />
     </Or>
   </Match>
 

@@ -6,6 +6,6 @@
 
 <suppressions>
 
-  <suppress checks=".*" files="com[\\/]novoda[\\/]noplayer[\\/]exoplayer[\\/]" />
+  <suppress checks=".*" files="com[\\/]novoda[\\/]noplayer[\\/]external[\\/]exoplayer[\\/]" />
 
 </suppressions>
