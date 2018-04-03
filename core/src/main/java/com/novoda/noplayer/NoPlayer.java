@@ -206,8 +206,16 @@ public interface NoPlayer extends PlayerState {
      */
     void setRepeating(boolean repeating) throws IllegalStateException;
 
+    /**
+     * Set the audio volume, with 0 being silence and 1 being unity gain.
+     *
+     * @param volume The audio volume.
+     */
     void setVolume(@FloatRange(from = 0.0f, to = 1.0f) float volume);
 
+    /**
+     * Return the audio volume, with 0 being silence and 1 being unity gain.
+     */
     @FloatRange(from = 0.0f, to = 1.0f)
     float getVolume();
 
