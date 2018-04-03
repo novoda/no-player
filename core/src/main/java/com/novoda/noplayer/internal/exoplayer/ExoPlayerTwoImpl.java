@@ -27,6 +27,7 @@ import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.List;
 
+@SuppressWarnings("PMD.GodClass") // Not much we can do, wrapping ExoPlayer is a lot of work
 class ExoPlayerTwoImpl implements NoPlayer {
 
     private final ExoPlayerFacade exoPlayer;
