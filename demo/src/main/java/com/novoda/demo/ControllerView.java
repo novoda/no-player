@@ -18,6 +18,12 @@ interface ControllerView {
 
     void setSeekAction(SeekAction seekAction);
 
+    void setVolumeOn();
+
+    void setVolumeOff();
+
+    void setToggleVolumeOnOffAction(ToggleVolumeOnOffAction toggleVolumeOnOffAction);
+
     interface TogglePlayPauseAction {
 
         void perform();
@@ -26,5 +32,10 @@ interface ControllerView {
     interface SeekAction {
 
         void perform(int progress, int max);
+    }
+
+    interface ToggleVolumeOnOffAction {
+
+        void perform();
     }
 }

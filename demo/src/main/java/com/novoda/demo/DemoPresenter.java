@@ -14,6 +14,7 @@ class DemoPresenter {
     private final NoPlayer noPlayer;
     private final Listeners listeners;
     private final PlayerView playerView;
+    private boolean isSoundOn = true;
 
     DemoPresenter(ControllerView controllerView, NoPlayer noPlayer, Listeners listeners, PlayerView playerView) {
         this.controllerView = controllerView;
@@ -29,6 +30,18 @@ class DemoPresenter {
 
         controllerView.setTogglePlayPauseAction(onTogglePlayPause);
         controllerView.setSeekAction(onSeekPerformed);
+        controllerView.setToggleVolumeOnOffAction(new ControllerView.ToggleVolumeOnOffAction() {
+            @Override
+            public void perform() {
+                isSoundOn = !isSoundOn;
+                noPlayer.setVolume(isSoundOn ? 1f : 0f);
+                if (isSoundOn) {
+                    controllerView.setVolumeOn();
+                } else {
+                    controllerView.setVolumeOff();
+                }
+            }
+        });
 
         noPlayer.attach(playerView);
         noPlayer.loadVideo(uri, contentType);
