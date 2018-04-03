@@ -210,11 +210,14 @@ public interface NoPlayer extends PlayerState {
      * Set the audio volume, with 0 being silence and 1 being unity gain.
      *
      * @param volume The audio volume.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
     void setVolume(@FloatRange(from = 0.0f, to = 1.0f) float volume);
 
     /**
      * Return the audio volume, with 0 being silence and 1 being unity gain.
+     *
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
     @FloatRange(from = 0.0f, to = 1.0f)
     float getVolume();
