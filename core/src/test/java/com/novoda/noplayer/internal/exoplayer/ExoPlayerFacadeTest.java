@@ -214,6 +214,7 @@ public class ExoPlayerFacadeTest {
         private static final AudioTracks AUDIO_TRACKS = AudioTracks.from(Collections.singletonList(PLAYER_AUDIO_TRACK));
         private static final PlayerVideoTrack PLAYER_VIDEO_TRACK = PlayerVideoTrackFixture.aPlayerVideoTrack().build();
         private static final List<PlayerVideoTrack> VIDEO_TRACKS = Collections.singletonList(PLAYER_VIDEO_TRACK);
+        private static final float ANY_VOLUME = 0.5f;
 
         @Override
         public void setUp() {
@@ -414,6 +415,13 @@ public class ExoPlayerFacadeTest {
             facade.setRepeating(false);
 
             verify(exoPlayer).setRepeatMode(Player.REPEAT_MODE_OFF);
+        }
+
+        @Test
+        public void whenSetVolume_thenSetsPlayerVolume() {
+            facade.setVolume(ANY_VOLUME);
+
+            verify(exoPlayer).setVolume(ANY_VOLUME);
         }
 
     }
