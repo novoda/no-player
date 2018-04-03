@@ -29,6 +29,7 @@ class DemoPresenter {
 
         controllerView.setTogglePlayPauseAction(onTogglePlayPause);
         controllerView.setSeekAction(onSeekPerformed);
+        controllerView.setToggleVolumeOnOffAction(onToggleVolume);
 
         noPlayer.attach(playerView);
         noPlayer.loadVideo(uri, contentType);
@@ -101,6 +102,20 @@ class DemoPresenter {
         public void perform(int progress, int max) {
             long seekToPosition = ProgressCalculator.seekToPosition(noPlayer.mediaDurationInMillis(), progress, max);
             noPlayer.seekTo(seekToPosition);
+        }
+    };
+
+    private final ControllerView.ToggleVolumeOnOffAction onToggleVolume = new ControllerView.ToggleVolumeOnOffAction() {
+        @Override
+        public void perform() {
+            boolean isSoundOn = Float.compare(noPlayer.getVolume(), 0f) > 0;
+            if (isSoundOn) {
+                noPlayer.setVolume(0f);
+                controllerView.setVolumeOff();
+            } else {
+                noPlayer.setVolume(1f);
+                controllerView.setVolumeOn();
+            }
         }
     };
 

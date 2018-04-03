@@ -39,6 +39,7 @@ class AndroidMediaPlayerFacade {
     private PlaybackState currentState = IDLE;
 
     private int currentBufferPercentage;
+    private float volume = 1.0f;
 
     @Nullable
     private MediaPlayer mediaPlayer;
@@ -96,6 +97,7 @@ class AndroidMediaPlayerFacade {
         mediaPlayer.setScreenOnWhilePlaying(true);
 
         currentBufferPercentage = 0;
+        volume = 1.0f;
 
         return mediaPlayer;
     }
@@ -291,5 +293,16 @@ class AndroidMediaPlayerFacade {
     void setRepeating(boolean repeating) {
         assertIsInPlaybackState();
         mediaPlayer.setLooping(repeating);
+    }
+
+    void setVolume(float volume) {
+        assertIsInPlaybackState();
+        this.volume = volume;
+        mediaPlayer.setVolume(volume, volume);
+    }
+
+    float getVolume() {
+        assertIsInPlaybackState();
+        return volume;
     }
 }

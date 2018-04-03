@@ -27,6 +27,7 @@ import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.List;
 
+@SuppressWarnings("PMD.GodClass") // Not much we can do, wrapping ExoPlayer is a lot of work
 class ExoPlayerTwoImpl implements NoPlayer {
 
     private final ExoPlayerFacade exoPlayer;
@@ -126,6 +127,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public void setRepeating(boolean repeating) {
         exoPlayer.setRepeating(repeating);
+    }
+
+    @Override
+    public void setVolume(float volume) {
+        exoPlayer.setVolume(volume);
+    }
+
+    @Override
+    public float getVolume() {
+        return exoPlayer.getVolume();
     }
 
     @Override
