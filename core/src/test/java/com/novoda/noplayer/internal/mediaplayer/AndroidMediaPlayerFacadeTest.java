@@ -175,7 +175,7 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
-    public void whenPreparing_thenPreparesMediaPlayerAsyncronously() {
+    public void whenPreparing_thenPreparesMediaPlayerAsynchronously() {
         givenMediaPlayerIsPrepared();
 
         verify(mediaPlayer).prepareAsync();
