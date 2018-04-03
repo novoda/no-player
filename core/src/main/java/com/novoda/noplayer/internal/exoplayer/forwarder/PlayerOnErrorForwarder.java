@@ -28,7 +28,7 @@ class PlayerOnErrorForwarder implements Player.EventListener {
     }
 
     @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest) {
+    public void onTimelineChanged(Timeline timeline, Object manifest, @Player.TimelineChangeReason int reason) {
         // TODO: should we send?
     }
 
