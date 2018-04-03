@@ -208,6 +208,9 @@ public interface NoPlayer extends PlayerState {
 
     void setVolume(@FloatRange(from = 0.0f, to = 1.0f) float volume);
 
+    @FloatRange(from = 0.0f, to = 1.0f)
+    float getVolume();
+
     interface PlayerError {
 
         PlayerErrorType type();

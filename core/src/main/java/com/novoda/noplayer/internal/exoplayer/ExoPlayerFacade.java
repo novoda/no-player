@@ -218,6 +218,11 @@ class ExoPlayerFacade {
         exoPlayer.setVolume(volume);
     }
 
+    float getVolume() {
+        assertVideoLoaded();
+        return exoPlayer.getVolume();
+    }
+
     private void assertVideoLoaded() {
         if (exoPlayer == null) {
             throw new IllegalStateException("Video must be loaded before trying to interact with the player");

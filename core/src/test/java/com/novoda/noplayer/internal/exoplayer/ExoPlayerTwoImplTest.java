@@ -553,10 +553,19 @@ public class ExoPlayerTwoImplTest {
         }
 
         @Test
-        public void whenSetVolume_thenSetVolume() {
+        public void whenSetVolume_thenSetVolumeOnExoPlayer() {
             player.setVolume(ANY_VOLUME);
 
             verify(exoPlayerFacade).setVolume(ANY_VOLUME);
+        }
+
+        @Test
+        public void whenGetVolume_thenReturnVolumeFromExoPlayer() {
+            given(exoPlayerFacade.getVolume()).willReturn(ANY_VOLUME);
+
+            float currentVolume = player.getVolume();
+
+            assertThat(currentVolume).isEqualTo(ANY_VOLUME);
         }
     }
 

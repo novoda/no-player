@@ -608,10 +608,19 @@ public class AndroidMediaPlayerImplTest {
         }
 
         @Test
-        public void whenSetVolume_thenSetVolume() {
+        public void whenSetVolume_thenSetVolumeOnMediaPlayer() {
             player.setVolume(ANY_VOLUME);
 
             verify(mediaPlayer).setVolume(ANY_VOLUME);
+        }
+
+        @Test
+        public void whenGetVolume_thenReturnMediaPlayerVolume() {
+            given(mediaPlayer.getVolume()).willReturn(ANY_VOLUME);
+
+            float currentVolume = player.getVolume();
+
+            assertThat(currentVolume).isEqualTo(ANY_VOLUME);
         }
 
         private long givenPositionThatDiffersFromPlayheadPosition() {

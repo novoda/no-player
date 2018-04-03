@@ -424,6 +424,15 @@ public class ExoPlayerFacadeTest {
             verify(exoPlayer).setVolume(ANY_VOLUME);
         }
 
+        @Test
+        public void whenGetVolume_thenGetsPlayerVolume() {
+            given(exoPlayer.getVolume()).willReturn(ANY_VOLUME);
+
+            float currentVolume = facade.getVolume();
+
+            assertThat(currentVolume).isEqualTo(ANY_VOLUME);
+        }
+
     }
 
     public abstract static class Base {

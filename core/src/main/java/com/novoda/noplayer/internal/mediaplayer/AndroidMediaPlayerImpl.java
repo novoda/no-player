@@ -130,6 +130,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
+    public float getVolume() {
+        return mediaPlayer.getVolume();
+    }
+
+    @Override
     public Listeners getListeners() {
         return listenersHolder;
     }

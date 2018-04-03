@@ -42,6 +42,7 @@ class AndroidMediaPlayerFacade {
 
     @Nullable
     private MediaPlayer mediaPlayer;
+    private float volume = 1.0f;
 
     static AndroidMediaPlayerFacade newInstance(Context context, MediaPlayerForwarder forwarder) {
         TrackInfosFactory trackInfosFactory = new TrackInfosFactory();
@@ -295,6 +296,11 @@ class AndroidMediaPlayerFacade {
 
     void setVolume(float volume) {
         assertIsInPlaybackState();
+        this.volume = volume;
         mediaPlayer.setVolume(volume, volume);
+    }
+
+    float getVolume() {
+        return volume;
     }
 }

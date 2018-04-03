@@ -570,6 +570,24 @@ public class AndroidMediaPlayerFacadeTest {
         verify(mediaPlayer).setVolume(ANY_VOLUME, ANY_VOLUME);
     }
 
+    @Test
+    public void givenNoVolumeWasSet_whenGettingVolume_theReturnsOne() {
+
+        float currentVolume = facade.getVolume();
+
+        assertThat(currentVolume).isEqualTo(1f);
+    }
+
+    @Test
+    public void givenVolumeWasSet_whenGettingVolume_theReturnsSetVolume() {
+        givenMediaPlayerIsPrepared();
+        facade.setVolume(ANY_VOLUME);
+
+        float currentVolume = facade.getVolume();
+
+        assertThat(currentVolume).isEqualTo(ANY_VOLUME);
+    }
+
     private void givenMediaPlayerIsPrepared() {
         facade.prepareVideo(ANY_URI, surfaceHolder);
         ArgumentCaptor<MediaPlayer.OnPreparedListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnPreparedListener.class);
