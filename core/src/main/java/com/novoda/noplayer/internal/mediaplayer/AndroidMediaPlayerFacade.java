@@ -39,10 +39,10 @@ class AndroidMediaPlayerFacade {
     private PlaybackState currentState = IDLE;
 
     private int currentBufferPercentage;
+    private float volume = 1.0f;
 
     @Nullable
     private MediaPlayer mediaPlayer;
-    private float volume = 1.0f;
 
     static AndroidMediaPlayerFacade newInstance(Context context, MediaPlayerForwarder forwarder) {
         TrackInfosFactory trackInfosFactory = new TrackInfosFactory();
@@ -97,6 +97,7 @@ class AndroidMediaPlayerFacade {
         mediaPlayer.setScreenOnWhilePlaying(true);
 
         currentBufferPercentage = 0;
+        volume = 1.0f;
 
         return mediaPlayer;
     }
