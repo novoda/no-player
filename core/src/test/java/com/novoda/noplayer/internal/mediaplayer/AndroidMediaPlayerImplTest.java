@@ -599,6 +599,13 @@ public class AndroidMediaPlayerImplTest {
             verify(stateChangedListener).onVideoPlaying();
         }
 
+        @Test
+        public void whenSetRepeating_thenSetRepeating() {
+            player.setRepeating(false);
+
+            verify(mediaPlayer).setRepeating(false);
+        }
+
         private long givenPositionThatDiffersFromPlayheadPosition() {
             given(mediaPlayer.currentPositionInMillis()).willReturn(0);
             return 1;
