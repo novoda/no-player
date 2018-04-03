@@ -292,4 +292,9 @@ class AndroidMediaPlayerFacade {
         assertIsInPlaybackState();
         mediaPlayer.setLooping(repeating);
     }
+
+    void setVolume(float volume) {
+        assertIsInPlaybackState();
+        mediaPlayer.setVolume(volume, volume);
+    }
 }

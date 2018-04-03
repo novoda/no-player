@@ -52,6 +52,7 @@ public class AndroidMediaPlayerFacadeTest {
     private static final int ANY_ERROR_EXTRA = 404;
     private static final int TEN_PERCENT = 10;
     private static final int TEN_SECONDS_IN_MILLIS = 10000;
+    private static final float ANY_VOLUME = 0.5f;
 
     private static final boolean SCREEN_ON = true;
     private static final boolean IS_IN_PLAYBACK_STATE = true;
@@ -558,6 +559,15 @@ public class AndroidMediaPlayerFacadeTest {
                 .willReturn(IS_PLAYING);
 
         facade.getSelectedVideoTrack();
+    }
+
+    @Test
+    public void whenSettingVolume_thenSetsLeftAndRightVolumeScalars() {
+        givenMediaPlayerIsPrepared();
+
+        facade.setVolume(ANY_VOLUME);
+
+        verify(mediaPlayer).setVolume(ANY_VOLUME, ANY_VOLUME);
     }
 
     private void givenMediaPlayerIsPrepared() {
