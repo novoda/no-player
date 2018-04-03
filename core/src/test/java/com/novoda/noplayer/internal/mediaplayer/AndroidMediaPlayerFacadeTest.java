@@ -572,7 +572,8 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void givenNoVolumeWasSet_whenGettingVolume_theReturnsOne() {
-
+        givenMediaPlayerIsPrepared();
+        
         float currentVolume = facade.getVolume();
 
         assertThat(currentVolume).isEqualTo(1f);

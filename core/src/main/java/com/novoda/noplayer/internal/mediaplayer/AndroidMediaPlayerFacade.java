@@ -301,6 +301,7 @@ class AndroidMediaPlayerFacade {
     }
 
     float getVolume() {
+        assertIsInPlaybackState();
         return volume;
     }
 }
