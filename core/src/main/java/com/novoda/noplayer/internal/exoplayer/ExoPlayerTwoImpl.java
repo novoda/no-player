@@ -129,6 +129,11 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
+    public void setVolume(float volume) {
+        exoPlayer.setVolume(volume);
+    }
+
+    @Override
     public Listeners getListeners() {
         return listenersHolder;
     }

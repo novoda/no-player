@@ -357,6 +357,8 @@ public class ExoPlayerTwoImplTest {
 
     public static class GivenAttachedAndVideoIsLoaded extends Base {
 
+        private static final float ANY_VOLUME = 0.4f;
+
         @Override
         public void setUp() {
             super.setUp();
@@ -550,6 +552,12 @@ public class ExoPlayerTwoImplTest {
             verify(exoPlayerFacade).setRepeating(false);
         }
 
+        @Test
+        public void whenSetVolume_thenSetVolume() {
+            player.setVolume(ANY_VOLUME);
+
+            verify(exoPlayerFacade).setVolume(ANY_VOLUME);
+        }
     }
 
     public abstract static class Base {

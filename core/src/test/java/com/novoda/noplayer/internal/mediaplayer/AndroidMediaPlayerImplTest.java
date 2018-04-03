@@ -413,6 +413,7 @@ public class AndroidMediaPlayerImplTest {
 
         private static final long DELAY_MILLIS = 500;
         private static final boolean IS_NOT_PLAYING = false;
+        private static final float ANY_VOLUME = 0.4f;
 
         @Override
         public void setUp() {
@@ -604,6 +605,13 @@ public class AndroidMediaPlayerImplTest {
             player.setRepeating(false);
 
             verify(mediaPlayer).setRepeating(false);
+        }
+
+        @Test
+        public void whenSetVolume_thenSetVolume() {
+            player.setVolume(ANY_VOLUME);
+
+            verify(mediaPlayer).setVolume(ANY_VOLUME);
         }
 
         private long givenPositionThatDiffersFromPlayheadPosition() {
