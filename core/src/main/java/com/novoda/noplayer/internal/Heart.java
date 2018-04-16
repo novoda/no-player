@@ -78,7 +78,9 @@ public class Heart {
 
         @Override
         public void run() {
-            callback.onBeat(player);
+            if (player.isPlaying()) {
+                callback.onBeat(player);
+            }
         }
     }
 }
