@@ -8,11 +8,11 @@ import android.view.SurfaceHolder;
 
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
-import com.novoda.noplayer.internal.utils.NoPlayerLog;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -562,6 +562,13 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
+    public void givenMediaPlayerIsNotInPlaybackState_whenSettingVolume_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
+        facade.setVolume(ANY_VOLUME);
+    }
+
+    @Test
     public void whenSettingVolume_thenSetsLeftAndRightVolumeScalars() {
         givenMediaPlayerIsPrepared();
 
@@ -571,9 +578,16 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
+    public void givenMediaPlayerIsNotInPlaybackState_whenGettingVolume_thenThrowsIllegalStateException() {
+        thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
+
+        facade.getVolume();
+    }
+
+    @Test
     public void givenNoVolumeWasSet_whenGettingVolume_theReturnsOne() {
         givenMediaPlayerIsPrepared();
-        
+
         float currentVolume = facade.getVolume();
 
         assertThat(currentVolume).isEqualTo(1f);
