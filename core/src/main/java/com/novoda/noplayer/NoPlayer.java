@@ -1,8 +1,8 @@
 package com.novoda.noplayer;
 
 import android.net.Uri;
-
 import android.support.annotation.FloatRange;
+
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.Bitrate;
@@ -212,7 +212,7 @@ public interface NoPlayer extends PlayerState {
      * @param volume The audio volume.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
-    void setVolume(@FloatRange(from = 0.0f, to = 1.0f) float volume);
+    void setVolume(@FloatRange(from = 0.0f, to = 1.0f) float volume) throws IllegalStateException;
 
     /**
      * Return the audio volume, with 0 being silence and 1 being unity gain.
@@ -220,7 +220,7 @@ public interface NoPlayer extends PlayerState {
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
      */
     @FloatRange(from = 0.0f, to = 1.0f)
-    float getVolume();
+    float getVolume() throws IllegalStateException;
 
     interface PlayerError {
 

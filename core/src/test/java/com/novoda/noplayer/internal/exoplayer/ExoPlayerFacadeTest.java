@@ -45,13 +45,15 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
 public class ExoPlayerFacadeTest {
 
     private static final boolean SELECTED = true;
-    private static final PlayerVideoTrack PLAYER_VIDEO_TRACK = PlayerVideoTrackFixture.aPlayerVideoTrack().build();
 
     private static final long TWO_MINUTES_IN_MILLIS = 120000;
     private static final long TEN_MINUTES_IN_MILLIS = 600000;
@@ -206,6 +208,20 @@ public class ExoPlayerFacadeTest {
 
             facade.selectSubtitleTrack(subtitleTrack);
         }
+
+        @Test
+        public void whenSetVolume_thenThrowsIllegalStateException() {
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
+
+            facade.setVolume(ANY_VOLUME);
+        }
+
+        @Test
+        public void whenGetVolume_thenThrowsIllegalStateException() {
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
+
+            facade.getVolume();
+        }
     }
 
     public static class GivenVideoIsLoaded extends Base {
@@ -214,7 +230,6 @@ public class ExoPlayerFacadeTest {
         private static final AudioTracks AUDIO_TRACKS = AudioTracks.from(Collections.singletonList(PLAYER_AUDIO_TRACK));
         private static final PlayerVideoTrack PLAYER_VIDEO_TRACK = PlayerVideoTrackFixture.aPlayerVideoTrack().build();
         private static final List<PlayerVideoTrack> VIDEO_TRACKS = Collections.singletonList(PLAYER_VIDEO_TRACK);
-        private static final float ANY_VOLUME = 0.5f;
 
         @Override
         public void setUp() {
@@ -436,6 +451,8 @@ public class ExoPlayerFacadeTest {
     }
 
     public abstract static class Base {
+
+        static final float ANY_VOLUME = 0.5f;
 
         @Rule
         public MockitoRule mockitoRule = MockitoJUnit.rule();
