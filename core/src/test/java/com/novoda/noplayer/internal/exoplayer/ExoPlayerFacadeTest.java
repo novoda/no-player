@@ -217,7 +217,7 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void whenGetVolume_thenthenThrowsIllegalStateException() {
+        public void whenGetVolume_thenThrowsIllegalStateException() {
             thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
             facade.getVolume();
