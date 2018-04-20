@@ -12,9 +12,6 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
-import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
-import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
-import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 import com.novoda.noplayer.internal.utils.Optional;
@@ -32,14 +29,14 @@ class ExoPlayerFacade {
 
     private final AndroidDeviceVersion androidDeviceVersion;
     private final MediaSourceFactory mediaSourceFactory;
-    private final ExoPlayerAudioTrackSelector audioTrackSelector;
-    private final ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
-    private final ExoPlayerVideoTrackSelector exoPlayerVideoTrackSelector;
+    private final CompositeTrackSelectorCreator trackSelectorCreator;
     private final ExoPlayerCreator exoPlayerCreator;
     private final RendererTypeRequesterCreator rendererTypeRequesterCreator;
 
     @Nullable
     private SimpleExoPlayer exoPlayer;
+    @Nullable
+    private CompositeTrackSelector trackSelector;
     @Nullable
     private RendererTypeRequester rendererTypeRequester;
     @Nullable
@@ -47,16 +44,12 @@ class ExoPlayerFacade {
 
     ExoPlayerFacade(AndroidDeviceVersion androidDeviceVersion,
                     MediaSourceFactory mediaSourceFactory,
-                    ExoPlayerAudioTrackSelector audioTrackSelector,
-                    ExoPlayerSubtitleTrackSelector subtitleTrackSelector,
-                    ExoPlayerVideoTrackSelector exoPlayerVideoTrackSelector,
+                    CompositeTrackSelectorCreator trackSelectorCreator,
                     ExoPlayerCreator exoPlayerCreator,
                     RendererTypeRequesterCreator rendererTypeRequesterCreator) {
         this.androidDeviceVersion = androidDeviceVersion;
         this.mediaSourceFactory = mediaSourceFactory;
-        this.audioTrackSelector = audioTrackSelector;
-        this.subtitleTrackSelector = subtitleTrackSelector;
-        this.exoPlayerVideoTrackSelector = exoPlayerVideoTrackSelector;
+        this.trackSelectorCreator = trackSelectorCreator;
         this.exoPlayerCreator = exoPlayerCreator;
         this.rendererTypeRequesterCreator = rendererTypeRequesterCreator;
     }
@@ -114,7 +107,8 @@ class ExoPlayerFacade {
                    ExoPlayerForwarder forwarder,
                    MediaCodecSelector mediaCodecSelector) {
         this.contentType = contentType;
-        exoPlayer = exoPlayerCreator.create(drmSessionCreator, forwarder.drmSessionEventListener(), mediaCodecSelector);
+        trackSelector = trackSelectorCreator.create();
+        exoPlayer = exoPlayerCreator.create(drmSessionCreator, forwarder.drmSessionEventListener(), mediaCodecSelector, trackSelector);
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
@@ -146,37 +140,37 @@ class ExoPlayerFacade {
 
     AudioTracks getAudioTracks() throws IllegalStateException {
         assertVideoLoaded();
-        return audioTrackSelector.getAudioTracks(rendererTypeRequester);
+        return trackSelector.getAudioTracks(rendererTypeRequester);
     }
 
     boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException {
         assertVideoLoaded();
-        return audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester);
+        return trackSelector.selectAudioTrack(audioTrack, rendererTypeRequester);
     }
 
     boolean clearAudioTrackSelection() {
         assertVideoLoaded();
-        return audioTrackSelector.clearAudioTrack(rendererTypeRequester);
+        return trackSelector.clearAudioTrack(rendererTypeRequester);
     }
 
     boolean selectVideoTrack(PlayerVideoTrack playerVideoTrack) {
         assertVideoLoaded();
-        return exoPlayerVideoTrackSelector.selectVideoTrack(playerVideoTrack, rendererTypeRequester);
+        return trackSelector.selectVideoTrack(playerVideoTrack, rendererTypeRequester);
     }
 
     Optional<PlayerVideoTrack> getSelectedVideoTrack() {
         assertVideoLoaded();
-        return exoPlayerVideoTrackSelector.getSelectedVideoTrack(exoPlayer, rendererTypeRequester, contentType);
+        return trackSelector.getSelectedVideoTrack(exoPlayer, rendererTypeRequester, contentType);
     }
 
     List<PlayerVideoTrack> getVideoTracks() {
         assertVideoLoaded();
-        return exoPlayerVideoTrackSelector.getVideoTracks(rendererTypeRequester, contentType);
+        return trackSelector.getVideoTracks(rendererTypeRequester, contentType);
     }
 
     boolean clearVideoTrackSelection() {
         assertVideoLoaded();
-        return exoPlayerVideoTrackSelector.clearVideoTrack(rendererTypeRequester);
+        return trackSelector.clearVideoTrack(rendererTypeRequester);
     }
 
     void setSubtitleRendererOutput(TextRendererOutput textRendererOutput) throws IllegalStateException {
@@ -191,12 +185,12 @@ class ExoPlayerFacade {
 
     boolean selectSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException {
         assertVideoLoaded();
-        return subtitleTrackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester);
+        return trackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester);
     }
 
     List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException {
         assertVideoLoaded();
-        return subtitleTrackSelector.getSubtitleTracks(rendererTypeRequester);
+        return trackSelector.getSubtitleTracks(rendererTypeRequester);
     }
 
     boolean hasPlayedContent() {
@@ -205,7 +199,7 @@ class ExoPlayerFacade {
 
     boolean clearSubtitleTrackSelection() throws IllegalStateException {
         assertVideoLoaded();
-        return subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
+        return trackSelector.clearSubtitleTrack(rendererTypeRequester);
     }
 
     void setRepeating(boolean repeating) {

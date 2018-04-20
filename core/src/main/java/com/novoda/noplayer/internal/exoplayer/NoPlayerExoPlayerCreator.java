@@ -4,10 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.NoPlayer;
@@ -15,10 +11,6 @@ import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.SystemClock;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
-import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
-import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
-import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerTrackSelector;
-import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
@@ -56,33 +48,22 @@ public class NoPlayerExoPlayerCreator {
             DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent", bandwidthMeter);
             MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
 
-            TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
-            DefaultTrackSelector trackSelector = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
-
             MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
                     ? SecurityDowngradingCodecSelector.newInstance()
                     : MediaCodecSelector.DEFAULT;
 
-            ExoPlayerTrackSelector exoPlayerTrackSelector = ExoPlayerTrackSelector.newInstance(trackSelector);
-            FixedTrackSelection.Factory trackSelectionFactory = new FixedTrackSelection.Factory();
-            ExoPlayerAudioTrackSelector exoPlayerAudioTrackSelector = new ExoPlayerAudioTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
-            ExoPlayerVideoTrackSelector exoPlayerVideoTrackSelector = new ExoPlayerVideoTrackSelector(exoPlayerTrackSelector, trackSelectionFactory);
-            ExoPlayerSubtitleTrackSelector exoPlayerSubtitleTrackSelector = new ExoPlayerSubtitleTrackSelector(
-                    exoPlayerTrackSelector,
-                    trackSelectionFactory
-            );
+            CompositeTrackSelectorCreator trackSelectorCreator = new CompositeTrackSelectorCreator(bandwidthMeter);
 
-            ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context, trackSelector);
+            ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context);
             RendererTypeRequesterCreator rendererTypeRequesterCreator = new RendererTypeRequesterCreator();
             AndroidDeviceVersion androidDeviceVersion = AndroidDeviceVersion.newInstance();
             ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(
                     androidDeviceVersion,
                     mediaSourceFactory,
-                    exoPlayerAudioTrackSelector,
-                    exoPlayerSubtitleTrackSelector,
-                    exoPlayerVideoTrackSelector,
+                    trackSelectorCreator,
                     exoPlayerCreator,
-                    rendererTypeRequesterCreator);
+                    rendererTypeRequesterCreator
+            );
 
             PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
             ExoPlayerForwarder exoPlayerForwarder = new ExoPlayerForwarder();

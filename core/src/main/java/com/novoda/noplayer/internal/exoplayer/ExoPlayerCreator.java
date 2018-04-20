@@ -12,7 +12,7 @@ import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.text.SubtitleDecoderFactory;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.text.NoPlayerSubtitleDecoderFactory;
 
@@ -23,17 +23,16 @@ class ExoPlayerCreator {
     private static final long DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS = 5000;
 
     private final Context context;
-    private final DefaultTrackSelector trackSelector;
 
-    ExoPlayerCreator(Context context, DefaultTrackSelector trackSelector) {
+    ExoPlayerCreator(Context context) {
         this.context = context;
-        this.trackSelector = trackSelector;
     }
 
     @NonNull
     public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator,
                                   DefaultDrmSessionManager.EventListener drmSessionEventListener,
-                                  MediaCodecSelector mediaCodecSelector) {
+                                  MediaCodecSelector mediaCodecSelector,
+                                  TrackSelector trackSelector) {
         DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
         SubtitleDecoderFactory subtitleDecoderFactory = new NoPlayerSubtitleDecoderFactory();
         RenderersFactory renderersFactory = new SimpleRenderersFactory(
