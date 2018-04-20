@@ -13,13 +13,13 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
 
-class ExoPlayerTrackSelector {
+class CompositeTrackSelector {
 
-    private ExoPlayerAudioTrackSelector audioTrackSelector;
-    private ExoPlayerVideoTrackSelector videoTrackSelector;
-    private ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
+    private final ExoPlayerAudioTrackSelector audioTrackSelector;
+    private final ExoPlayerVideoTrackSelector videoTrackSelector;
+    private final ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
 
-    ExoPlayerTrackSelector(ExoPlayerAudioTrackSelector audioTrackSelector,
+    CompositeTrackSelector(ExoPlayerAudioTrackSelector audioTrackSelector,
                            ExoPlayerVideoTrackSelector videoTrackSelector,
                            ExoPlayerSubtitleTrackSelector subtitleTrackSelector) {
         this.audioTrackSelector = audioTrackSelector;
