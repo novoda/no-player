@@ -30,7 +30,7 @@ class CompositeTrackSelectorCreator {
                 exoPlayerTrackSelector,
                 trackSelectionFactory
         );
-        return new CompositeTrackSelector(audioTrackSelector, videoTrackSelector, subtitleTrackSelector);
+        return new CompositeTrackSelector(trackSelector, audioTrackSelector, videoTrackSelector, subtitleTrackSelector);
     }
 
 }

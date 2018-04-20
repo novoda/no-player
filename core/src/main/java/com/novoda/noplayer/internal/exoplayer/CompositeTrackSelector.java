@@ -1,6 +1,12 @@
 package com.novoda.noplayer.internal.exoplayer;
 
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectorResult;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
@@ -13,15 +19,18 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
 
-class CompositeTrackSelector {
+class CompositeTrackSelector extends TrackSelector {
 
+    private final DefaultTrackSelector defaultTrackSelector;
     private final ExoPlayerAudioTrackSelector audioTrackSelector;
     private final ExoPlayerVideoTrackSelector videoTrackSelector;
     private final ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
 
-    CompositeTrackSelector(ExoPlayerAudioTrackSelector audioTrackSelector,
+    CompositeTrackSelector(DefaultTrackSelector defaultTrackSelector,
+                           ExoPlayerAudioTrackSelector audioTrackSelector,
                            ExoPlayerVideoTrackSelector videoTrackSelector,
                            ExoPlayerSubtitleTrackSelector subtitleTrackSelector) {
+        this.defaultTrackSelector = defaultTrackSelector;
         this.audioTrackSelector = audioTrackSelector;
         this.videoTrackSelector = videoTrackSelector;
         this.subtitleTrackSelector = subtitleTrackSelector;
@@ -67,5 +76,15 @@ class CompositeTrackSelector {
 
     boolean clearSubtitleTrack(RendererTypeRequester rendererTypeRequester) {
         return subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
+    }
+
+    @Override
+    public TrackSelectorResult selectTracks(RendererCapabilities[] rendererCapabilities, TrackGroupArray trackGroups) throws ExoPlaybackException {
+        return defaultTrackSelector.selectTracks(rendererCapabilities, trackGroups);
+    }
+
+    @Override
+    public void onSelectionActivated(Object info) {
+        defaultTrackSelector.onSelectionActivated(info);
     }
 }
