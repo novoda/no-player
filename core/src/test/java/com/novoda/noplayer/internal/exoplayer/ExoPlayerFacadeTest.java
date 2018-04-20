@@ -13,9 +13,6 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
-import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
-import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
-import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 import com.novoda.noplayer.internal.utils.Optional;
@@ -48,7 +45,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
 public class ExoPlayerFacadeTest {
@@ -195,7 +191,7 @@ public class ExoPlayerFacadeTest {
         public void whenGettingAudioTracks_thenThrowsIllegalStateException() {
             thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
-            given(audioTrackSelector.getAudioTracks(any(RendererTypeRequester.class))).willReturn(AUDIO_TRACKS);
+            given(trackSelector.getAudioTracks(any(RendererTypeRequester.class))).willReturn(AUDIO_TRACKS);
 
             facade.getAudioTracks();
         }
@@ -330,13 +326,13 @@ public class ExoPlayerFacadeTest {
 
             facade.selectAudioTrack(audioTrack);
 
-            verify(audioTrackSelector).selectAudioTrack(audioTrack, rendererTypeRequester);
+            verify(trackSelector).selectAudioTrack(audioTrack, rendererTypeRequester);
         }
 
         @Test
         public void givenSelectingAudioTrackSuceeds_whenSelectingAudioTrack_thenReturnsTrue() {
             PlayerAudioTrack audioTrack = mock(PlayerAudioTrack.class);
-            given(audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester)).willReturn(true);
+            given(trackSelector.selectAudioTrack(audioTrack, rendererTypeRequester)).willReturn(true);
 
             boolean success = facade.selectAudioTrack(audioTrack);
 
@@ -346,7 +342,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void givenSelectingAudioTrackFails_whenSelectingAudioTrack_thenReturnsFalse() {
             PlayerAudioTrack audioTrack = mock(PlayerAudioTrack.class);
-            given(audioTrackSelector.selectAudioTrack(audioTrack, rendererTypeRequester)).willReturn(false);
+            given(trackSelector.selectAudioTrack(audioTrack, rendererTypeRequester)).willReturn(false);
 
             boolean success = facade.selectAudioTrack(audioTrack);
 
@@ -359,13 +355,13 @@ public class ExoPlayerFacadeTest {
 
             facade.selectSubtitleTrack(subtitleTrack);
 
-            verify(subtitleTrackSelector).selectTextTrack(subtitleTrack, rendererTypeRequester);
+            verify(trackSelector).selectTextTrack(subtitleTrack, rendererTypeRequester);
         }
 
         @Test
         public void givenSelectingTextTrackSuceeds_whenSelectingSubtitlesTrack_thenReturnsTrue() {
             PlayerSubtitleTrack subtitleTrack = mock(PlayerSubtitleTrack.class);
-            given(subtitleTrackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester)).willReturn(true);
+            given(trackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester)).willReturn(true);
 
             boolean success = facade.selectSubtitleTrack(subtitleTrack);
 
@@ -375,7 +371,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void givenSelectingTextTrackFails_whenSelectingSubtitlesTrack_thenReturnsFalse() {
             PlayerSubtitleTrack subtitleTrack = mock(PlayerSubtitleTrack.class);
-            given(subtitleTrackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester)).willReturn(false);
+            given(trackSelector.selectTextTrack(subtitleTrack, rendererTypeRequester)).willReturn(false);
 
             boolean success = facade.selectSubtitleTrack(subtitleTrack);
 
@@ -384,7 +380,7 @@ public class ExoPlayerFacadeTest {
 
         @Test
         public void whenGettingAudioTracks_thenDelegatesToTrackSelector() {
-            given(audioTrackSelector.getAudioTracks(any(RendererTypeRequester.class))).willReturn(AUDIO_TRACKS);
+            given(trackSelector.getAudioTracks(any(RendererTypeRequester.class))).willReturn(AUDIO_TRACKS);
 
             AudioTracks audioTracks = facade.getAudioTracks();
 
@@ -393,7 +389,7 @@ public class ExoPlayerFacadeTest {
 
         @Test
         public void whenGettingSelectedVideoTrack_thenDelegatesTrackSelector() {
-            given(videoTrackSelector.getSelectedVideoTrack(eq(exoPlayer), any(RendererTypeRequester.class), any(ContentType.class))).willReturn(Optional.of(PLAYER_VIDEO_TRACK));
+            given(trackSelector.getSelectedVideoTrack(eq(exoPlayer), any(RendererTypeRequester.class), any(ContentType.class))).willReturn(Optional.of(PLAYER_VIDEO_TRACK));
 
             Optional<PlayerVideoTrack> selectedVideoTrack = facade.getSelectedVideoTrack();
 
@@ -402,7 +398,7 @@ public class ExoPlayerFacadeTest {
 
         @Test
         public void whenSelectingVideoTrack_thenDelegatesToTrackSelector() {
-            given(videoTrackSelector.selectVideoTrack(eq(PLAYER_VIDEO_TRACK), any(RendererTypeRequester.class))).willReturn(SELECTED);
+            given(trackSelector.selectVideoTrack(eq(PLAYER_VIDEO_TRACK), any(RendererTypeRequester.class))).willReturn(SELECTED);
 
             boolean selectedVideoTrack = facade.selectVideoTrack(PLAYER_VIDEO_TRACK);
 
@@ -411,7 +407,7 @@ public class ExoPlayerFacadeTest {
 
         @Test
         public void whenGettingVideoTracks_thenDelegatesToTrackSelector() {
-            given(videoTrackSelector.getVideoTracks(any(RendererTypeRequester.class), any(ContentType.class))).willReturn(VIDEO_TRACKS);
+            given(trackSelector.getVideoTracks(any(RendererTypeRequester.class), any(ContentType.class))).willReturn(VIDEO_TRACKS);
 
             List<PlayerVideoTrack> videoTracks = facade.getVideoTracks();
 
@@ -466,11 +462,9 @@ public class ExoPlayerFacadeTest {
         @Mock
         ExoPlayerForwarder exoPlayerForwarder;
         @Mock
-        ExoPlayerAudioTrackSelector audioTrackSelector;
+        CompositeTrackSelectorCreator trackSelectorCreator;
         @Mock
-        ExoPlayerSubtitleTrackSelector subtitleTrackSelector;
-        @Mock
-        ExoPlayerVideoTrackSelector videoTrackSelector;
+        CompositeTrackSelector trackSelector;
         @Mock
         Uri uri;
         @Mock
@@ -492,14 +486,13 @@ public class ExoPlayerFacadeTest {
         public void setUp() {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
+            given(trackSelectorCreator.create()).willReturn(trackSelector);
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector, trackSelector)).willReturn(exoPlayer);
-            when(rendererTypeRequesterCreator.createfrom(exoPlayer)).thenReturn(rendererTypeRequester);
+            given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
                     androidDeviceVersion,
                     mediaSourceFactory,
-                    audioTrackSelector,
-                    subtitleTrackSelector,
-                    videoTrackSelector,
+                    trackSelectorCreator,
                     exoPlayerCreator,
                     rendererTypeRequesterCreator
             );
