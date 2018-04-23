@@ -72,22 +72,22 @@ public interface NoPlayer extends PlayerState {
     /**
      * Loads the video content and triggers the {@link NoPlayer.PreparedListener}.
      *
-     * @param uri         link to the content.
-     * @param contentType format of the content.
+     * @param uri     link to the content.
+     * @param options to be passed to the underlying player.
      * @throws IllegalStateException - if called before {@link NoPlayer#attach(PlayerView)}.
      */
-    void loadVideo(Uri uri, ContentType contentType) throws IllegalStateException;
+    void loadVideo(Uri uri, Options options) throws IllegalStateException;
 
     /**
      * Loads the video content and triggers the {@link NoPlayer.PreparedListener}.
      *
      * @param uri                 link to the content.
-     * @param contentType         format of the content.
+     * @param options             to be passed to the underlying player.
      * @param timeout             amount of time to wait before triggering {@link LoadTimeoutCallback}.
      * @param loadTimeoutCallback callback when loading has hit the timeout.
      * @throws IllegalStateException - if called before {@link NoPlayer#attach(PlayerView)}.
      */
-    void loadVideoWithTimeout(Uri uri, ContentType contentType, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback);
+    void loadVideoWithTimeout(Uri uri, Options options, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback);
 
     /**
      * Supplies information about the underlying player.

@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.Options;
+import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
@@ -16,6 +18,7 @@ public class MainActivity extends Activity {
 
     private static final String URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD = "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd";
     private static final String EXAMPLE_MODULAR_LICENSE_SERVER_PROXY = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
+    private static final int HALF_A_SECOND_IN_MILLIS = 500;
 
     private NoPlayer player;
     private DemoPresenter demoPresenter;
@@ -51,7 +54,11 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
-        demoPresenter.startPresenting(uri, ContentType.DASH);
+        Options options = new OptionsBuilder()
+                .withContentType(ContentType.DASH)
+                .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
+                .build();
+        demoPresenter.startPresenting(uri, options);
     }
 
     private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {

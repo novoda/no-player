@@ -6,9 +6,9 @@ import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
-import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
@@ -17,17 +17,18 @@ import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
+import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.List;
 
-@SuppressWarnings("PMD.GodClass") // Not much we can do, wrapping ExoPlayer is a lot of work
+@SuppressWarnings("PMD.GodClass")
+        // Not much we can do, wrapping ExoPlayer is a lot of work
 class ExoPlayerTwoImpl implements NoPlayer {
 
     private final ExoPlayerFacade exoPlayer;
@@ -199,7 +200,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public void loadVideo(final Uri uri, final ContentType contentType) {
+    public void loadVideo(final Uri uri, final Options options) {
         if (exoPlayer.hasPlayedContent()) {
             stop();
         }
@@ -207,7 +208,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
         onSurfaceReadyCallback = new SurfaceHolderRequester.Callback() {
             @Override
             public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                exoPlayer.loadVideo(surfaceHolder, drmSessionCreator, uri, contentType, forwarder, mediaCodecSelector);
+                exoPlayer.loadVideo(surfaceHolder, drmSessionCreator, uri, options, forwarder, mediaCodecSelector);
             }
         };
 
@@ -227,9 +228,9 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public void loadVideoWithTimeout(Uri uri, ContentType contentType, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback) {
+    public void loadVideoWithTimeout(Uri uri, Options options, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback) {
         loadTimeout.start(timeout, loadTimeoutCallback);
-        loadVideo(uri, contentType);
+        loadVideo(uri, options);
     }
 
     @Override
