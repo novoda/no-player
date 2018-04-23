@@ -488,7 +488,7 @@ public class ExoPlayerFacadeTest {
         public void setUp() {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
-            given(trackSelectorCreator.create()).willReturn(trackSelector);
+            given(trackSelectorCreator.create(OPTIONS)).willReturn(trackSelector);
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector, trackSelector)).willReturn(exoPlayer);
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(

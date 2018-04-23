@@ -7,10 +7,10 @@ import android.net.Uri;
  */
 public class OptionsBuilder {
 
-    private static final long DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS = 10000;
+    private static final int DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS = 10000;
 
     private ContentType contentType = ContentType.H264;
-    private long minDurationBeforeQualityIncreaseInMillis = DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS;
+    private int minDurationBeforeQualityIncreaseInMillis = DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS;
 
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} with a given {@link ContentType}.
@@ -31,7 +31,7 @@ public class OptionsBuilder {
      * @param minDurationInMillis before switching to a higher quality video track.
      * @return {@link OptionsBuilder}.
      */
-    public OptionsBuilder withMinDurationBeforeQualityIncreaseInMillis(long minDurationInMillis) {
+    public OptionsBuilder withMinDurationBeforeQualityIncreaseInMillis(int minDurationInMillis) {
         this.minDurationBeforeQualityIncreaseInMillis = minDurationInMillis;
         return this;
     }
