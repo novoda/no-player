@@ -9,7 +9,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.Options;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
@@ -40,7 +40,7 @@ class ExoPlayerFacade {
     @Nullable
     private RendererTypeRequester rendererTypeRequester;
     @Nullable
-    private ContentType contentType;
+    private Options options;
 
     ExoPlayerFacade(AndroidDeviceVersion androidDeviceVersion,
                     MediaSourceFactory mediaSourceFactory,
@@ -103,10 +103,10 @@ class ExoPlayerFacade {
     void loadVideo(SurfaceHolder surfaceHolder,
                    DrmSessionCreator drmSessionCreator,
                    Uri uri,
-                   ContentType contentType,
+                   Options options,
                    ExoPlayerForwarder forwarder,
                    MediaCodecSelector mediaCodecSelector) {
-        this.contentType = contentType;
+        this.options = options;
         trackSelector = trackSelectorCreator.create();
         exoPlayer = exoPlayerCreator.create(drmSessionCreator, forwarder.drmSessionEventListener(), mediaCodecSelector, trackSelector);
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
@@ -116,7 +116,7 @@ class ExoPlayerFacade {
         setMovieAudioAttributes(exoPlayer);
 
         MediaSource mediaSource = mediaSourceFactory.create(
-                contentType,
+                options.contentType(),
                 uri,
                 forwarder.extractorMediaSourceListener(),
                 forwarder.mediaSourceEventListener()
@@ -160,12 +160,12 @@ class ExoPlayerFacade {
 
     Optional<PlayerVideoTrack> getSelectedVideoTrack() {
         assertVideoLoaded();
-        return trackSelector.getSelectedVideoTrack(exoPlayer, rendererTypeRequester, contentType);
+        return trackSelector.getSelectedVideoTrack(exoPlayer, rendererTypeRequester, options.contentType());
     }
 
     List<PlayerVideoTrack> getVideoTracks() {
         assertVideoLoaded();
-        return trackSelector.getVideoTracks(rendererTypeRequester, contentType);
+        return trackSelector.getVideoTracks(rendererTypeRequester, options.contentType());
     }
 
     boolean clearVideoTrackSelection() {

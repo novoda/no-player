@@ -7,18 +7,20 @@ import android.view.View;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.Options;
+import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
+import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.Timeout;
-import com.novoda.noplayer.internal.utils.NoPlayerLog;
 
 import java.util.Collections;
 
@@ -423,42 +425,42 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenLoadingVideo_thenNotifiesBufferStateListenersThatBufferStarted() {
-            player.loadVideo(URI, ContentType.HLS);
+            player.loadVideo(URI, OPTIONS);
 
             verify(bufferStateListener).onBufferStarted();
         }
 
         @Test
         public void whenLoadingVideo_thenPreparesVideo() {
-            player.loadVideo(URI, ContentType.HLS);
+            player.loadVideo(URI, OPTIONS);
 
             verify(mediaPlayer).prepareVideo(URI, surfaceHolder);
         }
 
         @Test
         public void whenLoadingVideoWithTimeout_thenNotifiesBufferStateListenersThatBufferStarted() {
-            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+            player.loadVideoWithTimeout(URI, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
             verify(bufferStateListener).onBufferStarted();
         }
 
         @Test
         public void whenLoadingVideoWithTimeout_thenPreparesVideo() {
-            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+            player.loadVideoWithTimeout(URI, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
             verify(mediaPlayer).prepareVideo(URI, surfaceHolder);
         }
 
         @Test
         public void whenLoadingVideoWithTimeout_thenStartsTimeout() {
-            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+            player.loadVideoWithTimeout(URI, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
             verify(loadTimeout).start(ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
         }
 
         @Test
         public void whenLoadingVideo_thenShowsContainerView() {
-            player.loadVideo(URI, ContentType.HLS);
+            player.loadVideo(URI, OPTIONS);
 
             verify(containerView).setVisibility(View.VISIBLE);
         }
@@ -515,7 +517,7 @@ public class AndroidMediaPlayerImplTest {
         public void givenPlayerHasPlayedVideo_whenLoadingVideo_thenPlayerIsReleased_andNotListeners() {
             given(mediaPlayer.hasPlayedContent()).willReturn(true);
 
-            player.loadVideo(URI, ContentType.HLS);
+            player.loadVideo(URI, OPTIONS);
 
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
@@ -528,7 +530,7 @@ public class AndroidMediaPlayerImplTest {
         public void givenPlayerHasPlayedVideo_whenLoadingVideoWithTimeout_thenPlayerResourcesAreReleased_andNotListeners() {
             given(mediaPlayer.hasPlayedContent()).willReturn(true);
 
-            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+            player.loadVideoWithTimeout(URI, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
@@ -541,7 +543,7 @@ public class AndroidMediaPlayerImplTest {
         public void givenPlayerHasNotPlayedVideo_whenLoadingVideo_thenPlayerResourcesAreNotReleased() {
             given(mediaPlayer.hasPlayedContent()).willReturn(false);
 
-            player.loadVideo(URI, ContentType.HLS);
+            player.loadVideo(URI, OPTIONS);
 
             verify(stateChangedListener, never()).onVideoStopped();
             verify(loadTimeout, never()).cancel();
@@ -553,7 +555,7 @@ public class AndroidMediaPlayerImplTest {
         public void givenPlayerHasNotPlayedVideo_whenLoadingVideoWithTimeout_thenPlayerResourcesAreNotReleased() {
             given(mediaPlayer.hasPlayedContent()).willReturn(false);
 
-            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+            player.loadVideoWithTimeout(URI, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
             verify(stateChangedListener, never()).onVideoStopped();
             verify(loadTimeout, never()).cancel();
@@ -637,8 +639,9 @@ public class AndroidMediaPlayerImplTest {
         }
     }
 
-    public static abstract class Base {
+    public abstract static class Base {
 
+        static final Options OPTIONS = new OptionsBuilder().withContentType(ContentType.H264).build();
         static final long BEGINNING_POSITION = 0;
         static final Uri URI = Mockito.mock(Uri.class);
         static final int TEN_SECONDS = 10;

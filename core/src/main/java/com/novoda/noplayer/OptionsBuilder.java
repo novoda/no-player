@@ -13,7 +13,7 @@ public class OptionsBuilder {
      * Sets {@link OptionsBuilder} to build {@link Options} with a given {@link ContentType}.
      * This content type is passed to the underlying Player.
      *
-     * @param contentType of the video being played.
+     * @param contentType format of the content.
      * @return {@link OptionsBuilder}.
      */
     public OptionsBuilder withContentType(ContentType contentType) {

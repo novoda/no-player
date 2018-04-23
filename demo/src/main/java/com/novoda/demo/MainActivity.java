@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.Options;
+import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
@@ -51,7 +53,8 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
-        demoPresenter.startPresenting(uri, ContentType.DASH);
+        Options options = new OptionsBuilder().withContentType(ContentType.DASH).build();
+        demoPresenter.startPresenting(uri, options);
     }
 
     private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {
