@@ -26,9 +26,9 @@ public class OptionsBuilder {
 
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} so that the {@link NoPlayer}
-     * switches to a higher quality video track after {@param minDurationInMillis}.
+     * switches to a higher quality video track after given time.
      *
-     * @param minDurationInMillis before switching to a higher quality video track.
+     * @param minDurationInMillis time elapsed before switching to a higher quality video track.
      * @return {@link OptionsBuilder}.
      */
     public OptionsBuilder withMinDurationBeforeQualityIncreaseInMillis(int minDurationInMillis) {
