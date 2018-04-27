@@ -23,7 +23,7 @@ class CompositeTrackSelectorCreator {
     CompositeTrackSelector create(Options options) {
         TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(
                 bandwidthMeter,
-                AdaptiveTrackSelection.DEFAULT_MAX_INITIAL_BITRATE,
+                options.maxInitialBitrate(),
                 options.minDurationBeforeQualityIncreaseInMillis(),
                 AdaptiveTrackSelection.DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS,
                 AdaptiveTrackSelection.DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS,
