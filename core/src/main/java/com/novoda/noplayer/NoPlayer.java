@@ -217,6 +217,7 @@ public interface NoPlayer extends PlayerState {
     /**
      * Return the audio volume, with 0 being silence and 1 being unity gain.
      *
+     * @return audio volume.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      */
     @FloatRange(from = 0.0f, to = 1.0f)
