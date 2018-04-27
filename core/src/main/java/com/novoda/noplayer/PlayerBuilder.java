@@ -78,7 +78,8 @@ public class PlayerBuilder {
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will prioritise the underlying player when
      * multiple underlying players share the same features.
      *
-     * @param playerTypes Priority order of {@link PlayerType} with the first being the highest.
+     * @param playerType First {@link PlayerType} with the highest priority.
+     * @param playerTypes Remaining {@link PlayerType} in order of priority.
      * @return {@link PlayerBuilder}
      * @see NoPlayer
      */
@@ -104,7 +105,7 @@ public class PlayerBuilder {
     /**
      * Builds a new {@link NoPlayer} instance.
      *
-     * @param context
+     * @param context The {@link Context} associated with the player.
      * @return a {@link NoPlayer} instance.
      * @throws UnableToCreatePlayerException thrown when the configuration is not supported and there is no way to recover.
      * @see NoPlayer
