@@ -26,7 +26,7 @@ public interface NoPlayer extends PlayerState {
     /**
      * Plays content of a prepared Player.
      *
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      * @see NoPlayer.PreparedListener
      */
     void play() throws IllegalStateException;
@@ -35,7 +35,7 @@ public interface NoPlayer extends PlayerState {
      * Plays content of a prepared Player at a given position.
      *
      * @param positionInMillis to start playing content from.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      * @see NoPlayer.PreparedListener
      */
     void playAt(long positionInMillis) throws IllegalStateException;
@@ -43,7 +43,7 @@ public interface NoPlayer extends PlayerState {
     /**
      * Pauses content of a prepared Player.
      *
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      * @see NoPlayer.PreparedListener
      */
     void pause() throws IllegalStateException;
@@ -53,13 +53,13 @@ public interface NoPlayer extends PlayerState {
      * Will not cause content to play if not already playing.
      *
      * @param positionInMillis to seek content to.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      * @see NoPlayer.PreparedListener
      */
     void seekTo(long positionInMillis) throws IllegalStateException;
 
     /**
-     * Stops playback of content and then requires call to {@link NoPlayer#loadVideo(Uri, ContentType)} to continue playback.
+     * Stops playback of content and then requires call to {@link NoPlayer#loadVideo(Uri, Options)} to continue playback.
      */
     void stop();
 
@@ -114,7 +114,7 @@ public interface NoPlayer extends PlayerState {
      * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.
      *
      * @return a list of available {@link PlayerVideoTrack} of a prepared Player.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      * @see NoPlayer.PreparedListener
      */
     List<PlayerVideoTrack> getVideoTracks() throws IllegalStateException;
@@ -124,7 +124,7 @@ public interface NoPlayer extends PlayerState {
      *
      * @param videoTrack the video track to select.
      * @return whether the selection was successful.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      */
     boolean selectVideoTrack(PlayerVideoTrack videoTrack) throws IllegalStateException;
 
@@ -133,7 +133,7 @@ public interface NoPlayer extends PlayerState {
      * as an {@link Optional} or {@link Optional#absent()} if unavailable.
      *
      * @return {@link PlayerVideoTrack}.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      * @see NoPlayer.PreparedListener
      */
     Optional<PlayerVideoTrack> getSelectedVideoTrack() throws IllegalStateException;
@@ -142,7 +142,7 @@ public interface NoPlayer extends PlayerState {
      * Clears the {@link PlayerVideoTrack} selection made in {@link NoPlayer#selectVideoTrack(PlayerVideoTrack)}.
      *
      * @return whether the clear was successful.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      */
     boolean clearVideoTrackSelection() throws IllegalStateException;
 
@@ -150,7 +150,7 @@ public interface NoPlayer extends PlayerState {
      * Retrieves all of the available {@link PlayerAudioTrack} of a prepared Player.
      *
      * @return {@link AudioTracks} that contains a list of available {@link PlayerAudioTrack}.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      * @see NoPlayer.PreparedListener
      */
     AudioTracks getAudioTracks() throws IllegalStateException;
@@ -160,7 +160,7 @@ public interface NoPlayer extends PlayerState {
      *
      * @param audioTrack the audio track to select.
      * @return whether the selection was successful.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      */
     boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException;
 
@@ -168,7 +168,7 @@ public interface NoPlayer extends PlayerState {
      * Clears the {@link PlayerAudioTrack} selection made in {@link NoPlayer#selectAudioTrack(PlayerAudioTrack)}.
      *
      * @return whether the clear was successful.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      */
     boolean clearAudioTrackSelection() throws IllegalStateException;
 
@@ -176,7 +176,7 @@ public interface NoPlayer extends PlayerState {
      * Retrieves all of the available {@link PlayerSubtitleTrack} of a prepared Player.
      *
      * @return A list of available {@link PlayerSubtitleTrack}.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      * @see NoPlayer.PreparedListener
      */
     List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException;
@@ -186,7 +186,7 @@ public interface NoPlayer extends PlayerState {
      *
      * @param subtitleTrack the subtitle track to select.
      * @return whether the selection was successful.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      */
     boolean showSubtitleTrack(PlayerSubtitleTrack subtitleTrack) throws IllegalStateException;
 
@@ -194,7 +194,7 @@ public interface NoPlayer extends PlayerState {
      * Clear and hide the subtitles on an attached PlayerView.
      *
      * @return whether the hide was successful.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      */
     boolean hideSubtitleTrack() throws IllegalStateException;
 
@@ -202,7 +202,7 @@ public interface NoPlayer extends PlayerState {
      * Set the Player to repeat the content.
      *
      * @param repeating true to set repeating, false to disable.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      */
     void setRepeating(boolean repeating) throws IllegalStateException;
 
@@ -210,14 +210,14 @@ public interface NoPlayer extends PlayerState {
      * Set the audio volume, with 0 being silence and 1 being unity gain.
      *
      * @param volume The audio volume.
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      */
     void setVolume(@FloatRange(from = 0.0f, to = 1.0f) float volume) throws IllegalStateException;
 
     /**
      * Return the audio volume, with 0 being silence and 1 being unity gain.
      *
-     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, ContentType)}.
+     * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      */
     @FloatRange(from = 0.0f, to = 1.0f)
     float getVolume() throws IllegalStateException;
