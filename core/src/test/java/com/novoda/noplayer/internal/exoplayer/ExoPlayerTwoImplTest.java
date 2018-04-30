@@ -10,6 +10,8 @@ import com.google.android.exoplayer2.text.Cue;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.NoPlayer.StateChangedListener;
+import com.novoda.noplayer.Options;
+import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerType;
 import com.novoda.noplayer.PlayerView;
@@ -23,6 +25,9 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.TextCues;
 import com.novoda.noplayer.model.Timeout;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,9 +40,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static android.provider.CalendarContract.CalendarCache.URI;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -63,7 +65,7 @@ public class ExoPlayerTwoImplTest {
     private static final boolean IS_BEATING = true;
     private static final boolean IS_NOT_BEATING = false;
 
-    private static final ContentType ANY_CONTENT_TYPE = ContentType.DASH;
+    private static final Options OPTIONS = new OptionsBuilder().withContentType(ContentType.DASH).build();
     private static final Timeout ANY_TIMEOUT = Timeout.fromSeconds(TEN_SECONDS);
     private static final NoPlayer.LoadTimeoutCallback ANY_LOAD_TIMEOUT_CALLBACK = new NoPlayer.LoadTimeoutCallback() {
         @Override
@@ -218,25 +220,25 @@ public class ExoPlayerTwoImplTest {
         public void whenLoadingVideo_thenDelegatesLoadingToFacade() {
             player.attach(playerView);
 
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
+            player.loadVideo(uri, OPTIONS);
 
-            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
         }
 
         @Test
         public void whenLoadingVideoWithTimeout_thenDelegatesLoadingToFacade() {
             player.attach(playerView);
 
-            player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+            player.loadVideoWithTimeout(uri, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, ANY_CONTENT_TYPE, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
         }
 
         @Test
         public void whenLoadingVideoWithTimeout_thenStartsLoadTimeout() {
             player.attach(playerView);
 
-            player.loadVideoWithTimeout(uri, ANY_CONTENT_TYPE, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+            player.loadVideoWithTimeout(uri, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
             verify(loadTimeout).start(ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
         }
@@ -295,7 +297,7 @@ public class ExoPlayerTwoImplTest {
         public void givenAttachedPlayerView_whenLoadingVideo_thenMakesContainerVisible() {
             player.attach(playerView);
 
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
+            player.loadVideo(uri, OPTIONS);
 
             verify(containerView).setVisibility(View.VISIBLE);
         }
@@ -305,7 +307,7 @@ public class ExoPlayerTwoImplTest {
             given(exoPlayerFacade.hasPlayedContent()).willReturn(true);
             player.attach(playerView);
 
-            player.loadVideo(URI, ContentType.HLS);
+            player.loadVideo(URI, OPTIONS);
 
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
@@ -319,7 +321,7 @@ public class ExoPlayerTwoImplTest {
             given(exoPlayerFacade.hasPlayedContent()).willReturn(true);
             player.attach(playerView);
 
-            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+            player.loadVideoWithTimeout(URI, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
             verify(stateChangedListener).onVideoStopped();
             verify(loadTimeout).cancel();
@@ -333,7 +335,7 @@ public class ExoPlayerTwoImplTest {
             given(exoPlayerFacade.hasPlayedContent()).willReturn(false);
             player.attach(playerView);
 
-            player.loadVideo(URI, ContentType.HLS);
+            player.loadVideo(URI, OPTIONS);
 
             verify(stateChangedListener, never()).onVideoStopped();
             verify(loadTimeout, never()).cancel();
@@ -346,7 +348,7 @@ public class ExoPlayerTwoImplTest {
             given(exoPlayerFacade.hasPlayedContent()).willReturn(false);
             player.attach(playerView);
 
-            player.loadVideoWithTimeout(URI, ContentType.HLS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
+            player.loadVideoWithTimeout(URI, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
             verify(stateChangedListener, never()).onVideoStopped();
             verify(loadTimeout, never()).cancel();
@@ -363,13 +365,13 @@ public class ExoPlayerTwoImplTest {
         public void setUp() {
             super.setUp();
             player.attach(playerView);
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
+            player.loadVideo(uri, OPTIONS);
         }
 
         @Test
         public void whenLoadingVideo_thenAddsStateChangedListenerToListenersHolder() {
 
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
+            player.loadVideo(uri, OPTIONS);
 
             verify(listenersHolder).addStateChangedListener(playerView.getStateChangedListener());
         }
@@ -377,7 +379,7 @@ public class ExoPlayerTwoImplTest {
         @Test
         public void whenLoadingVideo_thenAddsVideoSizeChangedListenerToListenersHolder() {
 
-            player.loadVideo(uri, ANY_CONTENT_TYPE);
+            player.loadVideo(uri, OPTIONS);
 
             verify(listenersHolder).addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         }
@@ -529,7 +531,7 @@ public class ExoPlayerTwoImplTest {
             final List<Cue> cueList = Arrays.asList(new Cue("first cue"), new Cue("secondCue"));
             doAnswer(new Answer() {
                 @Override
-                public Object answer(InvocationOnMock invocation) throws Throwable {
+                public Object answer(InvocationOnMock invocation) {
                     TextRendererOutput output = invocation.getArgument(0);
                     output.output().onCues(cueList);
                     return null;
@@ -627,7 +629,7 @@ public class ExoPlayerTwoImplTest {
             given(playerView.getContainerView()).willReturn(containerView);
             doAnswer(new Answer<Void>() {
                 @Override
-                public Void answer(InvocationOnMock invocation) throws Throwable {
+                public Void answer(InvocationOnMock invocation) {
                     SurfaceHolderRequester.Callback callback = invocation.getArgument(0);
                     callback.onSurfaceHolderReady(surfaceHolder);
                     return null;

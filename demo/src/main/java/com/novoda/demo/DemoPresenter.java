@@ -2,9 +2,9 @@ package com.novoda.demo;
 
 import android.net.Uri;
 
-import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 
@@ -22,7 +22,7 @@ class DemoPresenter {
         this.playerView = playerView;
     }
 
-    void startPresenting(Uri uri, ContentType contentType) {
+    void startPresenting(Uri uri, Options options) {
         listeners.addPreparedListener(playOnPrepared);
         listeners.addStateChangedListener(updatePlayPause);
         listeners.addHeartbeatCallback(updateProgress);
@@ -32,7 +32,7 @@ class DemoPresenter {
         controllerView.setToggleVolumeOnOffAction(onToggleVolume);
 
         noPlayer.attach(playerView);
-        noPlayer.loadVideo(uri, contentType);
+        noPlayer.loadVideo(uri, options);
     }
 
     private final NoPlayer.PreparedListener playOnPrepared = new NoPlayer.PreparedListener() {
