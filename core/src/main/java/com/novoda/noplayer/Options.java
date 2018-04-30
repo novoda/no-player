@@ -4,10 +4,12 @@ public class Options {
 
     private final ContentType contentType;
     private final int minDurationBeforeQualityIncreaseInMillis;
+    private final int maxInitialBitrate;
 
-    Options(ContentType contentType, int minDurationBeforeQualityIncreaseInMillis) {
+    Options(ContentType contentType, int minDurationBeforeQualityIncreaseInMillis, int maxInitialBitrate) {
         this.contentType = contentType;
         this.minDurationBeforeQualityIncreaseInMillis = minDurationBeforeQualityIncreaseInMillis;
+        this.maxInitialBitrate = maxInitialBitrate;
     }
 
     public ContentType contentType() {
@@ -16,5 +18,9 @@ public class Options {
 
     public int minDurationBeforeQualityIncreaseInMillis() {
         return minDurationBeforeQualityIncreaseInMillis;
+    }
+
+    public int maxInitialBitrate() {
+        return maxInitialBitrate;
     }
 }
