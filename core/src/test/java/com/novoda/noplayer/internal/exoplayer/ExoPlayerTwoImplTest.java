@@ -623,7 +623,7 @@ public class ExoPlayerTwoImplTest {
 
         @Before
         public void setUp() {
-            given(playerView.getSurfaceTextureRequester()).willReturn(surfaceRequester);
+            given(playerView.getSurfaceRequester()).willReturn(surfaceRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);

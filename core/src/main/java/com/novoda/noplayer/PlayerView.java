@@ -8,7 +8,7 @@ public interface PlayerView {
 
     View getContainerView();
 
-    SurfaceRequester getSurfaceTextureRequester();
+    SurfaceRequester getSurfaceRequester();
 
     NoPlayer.VideoSizeChangedListener getVideoSizeChangedListener();
 

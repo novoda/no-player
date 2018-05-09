@@ -51,7 +51,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     }
 
     @Override
-    public SurfaceRequester getSurfaceTextureRequester() {
+    public SurfaceRequester getSurfaceRequester() {
         return surfaceHolderProvider;
     }
 

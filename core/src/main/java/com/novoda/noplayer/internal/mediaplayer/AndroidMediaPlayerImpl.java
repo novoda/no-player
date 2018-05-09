@@ -292,7 +292,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         buggyVideoDriverPreventer.preventVideoDriverBug(this, containerView);
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
-        surfaceRequester = playerView.getSurfaceTextureRequester();
+        surfaceRequester = playerView.getSurfaceRequester();
     }
 
     @Override
