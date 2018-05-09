@@ -191,7 +191,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
             throw new IllegalStateException("Must attach a PlayerView before interacting with Player");
         }
         surfaceTextureRequesterCallbacks.add(callback);
-        surfaceRequester.requestSurfaceTexture(callback);
+        surfaceRequester.requestSurface(callback);
     }
 
     private void seekWithIntentToPlay(long positionInMillis) throws IllegalStateException {

@@ -16,7 +16,7 @@ class PlayerViewSurfaceProvider implements SurfaceHolder.Callback, SurfaceReques
     }
 
     @Override
-    public void requestSurfaceTexture(Callback callback) {
+    public void requestSurface(Callback callback) {
         if (isSurfaceHolderReady()) {
             callback.onSurfaceReady(surface);
         } else {

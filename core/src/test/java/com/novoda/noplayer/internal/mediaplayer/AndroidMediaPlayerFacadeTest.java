@@ -115,7 +115,7 @@ public class AndroidMediaPlayerFacadeTest {
                 callback.onSurfaceReady(surface);
                 return null;
             }
-        }).when(surfaceRequester).requestSurfaceTexture(any(SurfaceRequester.Callback.class));
+        }).when(surfaceRequester).requestSurface(any(SurfaceRequester.Callback.class));
 
         given(forwarder.onPreparedListener()).willReturn(preparedListener);
         given(forwarder.onCompletionListener()).willReturn(completionListener);

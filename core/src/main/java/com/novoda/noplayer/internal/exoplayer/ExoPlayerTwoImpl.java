@@ -214,7 +214,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
         assertPlayerViewIsAttached();
         createSurfaceByShowingVideoContainer();
-        surfaceRequester.requestSurfaceTexture(onSurfaceTextureReadyCallback);
+        surfaceRequester.requestSurface(onSurfaceTextureReadyCallback);
     }
 
     private void assertPlayerViewIsAttached() {

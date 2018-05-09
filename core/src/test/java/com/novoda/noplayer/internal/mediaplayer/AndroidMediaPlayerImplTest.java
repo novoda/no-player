@@ -724,7 +724,7 @@ public class AndroidMediaPlayerImplTest {
                     callback.onSurfaceReady(surface);
                     return null;
                 }
-            }).when(surfaceRequester).requestSurfaceTexture(any(SurfaceRequester.Callback.class));
+            }).when(surfaceRequester).requestSurface(any(SurfaceRequester.Callback.class));
 
             given(listenersHolder.getPreparedListeners()).willReturn(preparedListener);
             given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListener);

@@ -634,7 +634,7 @@ public class ExoPlayerTwoImplTest {
                     callback.onSurfaceReady(surface);
                     return null;
                 }
-            }).when(surfaceRequester).requestSurfaceTexture(any(SurfaceRequester.Callback.class));
+            }).when(surfaceRequester).requestSurface(any(SurfaceRequester.Callback.class));
 
             given(listenersHolder.getErrorListeners()).willReturn(errorListener);
             given(listenersHolder.getPreparedListeners()).willReturn(preparedListener);

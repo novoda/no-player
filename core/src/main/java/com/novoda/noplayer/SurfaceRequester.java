@@ -4,7 +4,7 @@ import android.view.Surface;
 
 public interface SurfaceRequester {
 
-    void requestSurfaceTexture(Callback callback);
+    void requestSurface(Callback callback);
 
     void removeCallback(Callback callback);
 
