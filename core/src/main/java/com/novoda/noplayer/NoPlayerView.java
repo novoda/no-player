@@ -11,7 +11,7 @@ import com.novoda.noplayer.model.TextCues;
 
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
-    private final PlayerViewSurfaceHolder surfaceHolderProvider;
+    private final PlayerViewSurfaceProvider surfaceHolderProvider;
     private final AspectRatioChangeCalculator aspectRatioChangeCalculator;
 
     private AspectRatioFrameLayout videoFrame;
@@ -25,7 +25,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        surfaceHolderProvider = new PlayerViewSurfaceHolder();
+        surfaceHolderProvider = new PlayerViewSurfaceProvider();
         aspectRatioChangeCalculator = new AspectRatioChangeCalculator(this);
     }
 
@@ -33,11 +33,11 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
-        videoFrame = (AspectRatioFrameLayout) findViewById(R.id.video_frame);
+        videoFrame = findViewById(R.id.video_frame);
         shutterView = findViewById(R.id.shutter);
-        surfaceView = (SurfaceView) findViewById(R.id.surface_view);
+        surfaceView = findViewById(R.id.surface_view);
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
-        subtitleView = (SubtitleView) findViewById(R.id.subtitles_layout);
+        subtitleView = findViewById(R.id.subtitles_layout);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     }
 
     @Override
-    public SurfaceHolderRequester getSurfaceHolderRequester() {
+    public SurfaceRequester getSurfaceRequester() {
         return surfaceHolderProvider;
     }
 
@@ -103,4 +103,5 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
             shutterView.setVisibility(VISIBLE);
         }
     };
+
 }
