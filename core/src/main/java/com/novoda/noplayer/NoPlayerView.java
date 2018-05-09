@@ -35,7 +35,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         View.inflate(getContext(), R.layout.noplayer_view, this);
         videoFrame = findViewById(R.id.video_frame);
         shutterView = findViewById(R.id.shutter);
-        surfaceView = findViewById(R.id.texture_view);
+        surfaceView = findViewById(R.id.surface_view);
         surfaceView.getHolder().addCallback(surfaceHolderProvider);
         subtitleView = findViewById(R.id.subtitles_layout);
     }
