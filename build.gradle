@@ -11,12 +11,6 @@ def teamPropsFile(propsFile) {
     return new File(teamPropsDir, propsFile)
 }
 
-ext {
-    checkstyleVersion = '8.5'
-    findbugsVersion = '3.0.1'
-    pmdVersion = '5.8.1'
-}
-
 buildscript {
     repositories {
         jcenter()
