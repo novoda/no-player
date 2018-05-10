@@ -31,5 +31,3 @@ subprojects {
 
     apply from: teamPropsFile('static-analysis.gradle')
 }
-
-apply from: teamPropsFile('android-code-quality.gradle')
