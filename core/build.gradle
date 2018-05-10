@@ -1,6 +1,31 @@
 apply plugin: 'com.android.library'
 apply plugin: 'bintray-release'
 apply plugin: 'jacoco'
+apply plugin: 'com.novoda.build-properties'
+
+buildProperties {
+    cli {
+        using(project)
+    }
+    bintray {
+        def bintrayCredentials = {
+            boolean isDryRun = cli['dryRun'].or(true).boolean
+            return isDryRun ?
+                    ['bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
+                    new File("${System.getenv('BINTRAY_PROPERTIES')}")
+        }
+        using(cli).or(bintrayCredentials())
+        description = '''This should contain the following properties:
+                       | - bintrayRepo: name of the repo of the organisation to deploy the artifacts to
+                       | - bintrayUser: name of the account used to deploy the artifacts
+                       | - bintrayKey: API key of the account used to deploy the artifacts
+        '''.stripMargin()
+    }
+    publish {
+        using(['version': version])
+                .or(buildProperties.bintray)
+    }
+}
 
 android {
     compileSdkVersion 27
@@ -28,10 +53,10 @@ dependencies {
 
 publish {
     userOrg = 'novoda'
-    repoName = 'maven'
+    repoName = buildProperties.publish['bintrayRepo'].string
     groupId = 'com.novoda'
     artifactId = 'no-player'
-    version = project.version
+    version = buildProperties.publish['version'].string
 
     uploadName = 'no-player'
     description = 'player to wrap players'
