@@ -14,7 +14,7 @@ buildProperties {
                     ['bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
                     new File("${System.getenv('BINTRAY_PROPERTIES')}")
         }
-        using(cli).or(bintrayCredentials())
+        using(bintrayCredentials()).or(cli)
         description = '''This should contain the following properties:
                        | - bintrayRepo: name of the repo of the organisation to deploy the artifacts to
                        | - bintrayUser: name of the account used to deploy the artifacts
@@ -61,6 +61,8 @@ publish {
     groupId = 'com.novoda'
     artifactId = 'no-player'
     version = buildProperties.publish['version'].string
+    bintrayUser = buildProperties.publish['bintrayUser'].string
+    bintrayKey = buildProperties.publish['bintrayKey'].string
 
     uploadName = 'no-player'
     description = 'player to wrap players'
