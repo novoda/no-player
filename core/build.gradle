@@ -22,7 +22,11 @@ buildProperties {
         '''.stripMargin()
     }
     publish {
-        using(['version': version])
+        def generateVersion = {
+            boolean isSnapshot = cli['bintraySnapshot'].or(false).boolean
+            return isSnapshot ? System.getenv('GIT_COMMIT')?:'SNAPSHOT' : version
+        }
+        using(['version': "${generateVersion()}"])
                 .or(buildProperties.bintray)
     }
 }
