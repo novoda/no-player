@@ -27,7 +27,7 @@ dependencies {
     compile 'com.novoda:no-player:<latest-version>'
 }
 ```
-### Sample usage
+### Simple usage
 
  1. Create a `Player`:
 
@@ -69,6 +69,20 @@ dependencies {
     Uri uri = Uri.parse(mpdUrl);
     player.loadVideo(uri, ContentType.DASH);
     ```
+
+## Snapshots
+
+Snapshot builds from `develop` are automatically deployed to a [repository](https://bintray.com/novoda/snapshots/no-player/_latestVersion) that is not synced with JCenter.
+To consume a snapshot build add an additional maven repo as follows:
+```
+repositories {
+    maven {
+        url 'https://novoda.bintray.com/snapshots'
+    }
+}
+```
+
+You can find the latest snapshot version following this [link](https://bintray.com/novoda/snapshots/no-player/_latestVersion).
 
 ## Contributing
 
