@@ -26,21 +26,6 @@ dependencies {
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
 }
 
-project.afterEvaluate({
-    task jarTest(type: Jar, dependsOn: assembleDebugUnitTest) {
-        from "$project.buildDir/intermediates/classes/test/debug/"
-        classifier = 'test'
-    }
-
-    configurations {
-        testOutput.extendsFrom(testCompile)
-    }
-
-    artifacts {
-        testOutput jarTest
-    }
-})
-
 publish {
     userOrg = 'novoda'
     repoName = 'maven'
