@@ -7,7 +7,7 @@ allprojects {
 }
 
 def teamPropsFile(propsFile) {
-    def teamPropsDir = file('team-props')
+    def teamPropsDir = rootProject.file('team-props')
     return new File(teamPropsDir, propsFile)
 }
 

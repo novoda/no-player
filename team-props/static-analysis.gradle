@@ -2,7 +2,7 @@ def configureStaticAnalysis(Project project) {
     def testSourceSet = project.android.sourceSets.test.java.srcDirs
 
     apply plugin: 'com.novoda.static-analysis'
-    
+
     staticAnalysis {
         penalty {
             maxErrors = 0
@@ -18,7 +18,7 @@ def configureStaticAnalysis(Project project) {
         pmd {
             toolVersion '5.8.1'
             exclude testSourceSet
-            ruleSetFiles = rootProject.files('team-props/static-analysis/pmd-rules.xml')
+            ruleSetFiles = files(teamPropsFile('static-analysis/pmd-rules.xml'))
             ruleSets = []   // Note: this is a workaround to make the <exclude-pattern>s in pmd-rules.xml actually work
         }
 
