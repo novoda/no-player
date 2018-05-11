@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
     private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (player.getVideoTracks().isEmpty()) {
+            if (player == null || !player.isPlaying() || player.getVideoTracks().isEmpty()) {
                 Toast.makeText(MainActivity.this, "no additional video tracks available!", Toast.LENGTH_LONG).show();
             } else {
                 dialogCreator.showVideoSelectionDialog();
@@ -75,17 +75,20 @@ public class MainActivity extends Activity {
     };
 
     private final View.OnClickListener showAudioSelectionDialog = new View.OnClickListener() {
-
         @Override
         public void onClick(View v) {
-            dialogCreator.showAudioSelectionDialog();
+            if (player == null || !player.isPlaying() || player.getAudioTracks().size() == 0) {
+                Toast.makeText(MainActivity.this, "no audio tracks available!", Toast.LENGTH_LONG).show();
+            } else {
+                dialogCreator.showAudioSelectionDialog();
+            }
         }
     };
 
     private final View.OnClickListener showSubtitleSelectionDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (player.getSubtitleTracks().isEmpty()) {
+            if (player == null || !player.isPlaying() || player.getSubtitleTracks().isEmpty()) {
                 Toast.makeText(MainActivity.this, "no subtitles available!", Toast.LENGTH_LONG).show();
             } else {
                 dialogCreator.showSubtitleSelectionDialog();
