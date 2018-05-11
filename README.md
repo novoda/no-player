@@ -72,6 +72,8 @@ dependencies {
 
 ## Snapshots
 
+[![CI status](https://ci.novoda.com/buildStatus/icon?job=no-player-snapshot)](https://ci.novoda.com/job/no-player-snapshot/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda/snapshots/no-player/images/download.svg)](https://bintray.com/novoda/snapshots/no-player/_latestVersion)
+
 Snapshot builds from [`develop`](https://github.com/novoda/no-player/compare/master...develop) are automatically deployed to a [repository](https://bintray.com/novoda/snapshots/no-player/_latestVersion) that is not synced with JCenter.
 To consume a snapshot build add an additional maven repo as follows:
 ```
