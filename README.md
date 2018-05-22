@@ -59,12 +59,7 @@ dependencies {
  4. Play some content:
 
     ```java
-    player.addPreparedListener(new Player.PreparedListener() {
-      @Override
-      public void onPrepared(PlayerState playerState) {
-        player.play();
-      }
-    });
+    player.getListeners().addPreparedListener(playerState -> player.play());
     
     Uri uri = Uri.parse(mpdUrl);
     player.loadVideo(uri, ContentType.DASH);
