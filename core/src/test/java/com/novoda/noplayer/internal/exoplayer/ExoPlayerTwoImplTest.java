@@ -1,7 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
@@ -15,7 +15,7 @@ import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerType;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.SurfaceRequester;
+import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
@@ -222,7 +222,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, OPTIONS);
 
-            verify(exoPlayerFacade).loadVideo(surface, drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -231,7 +231,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(surface, drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -587,9 +587,9 @@ public class ExoPlayerTwoImplTest {
         @Mock
         PlayerView playerView;
         @Mock
-        SurfaceRequester surfaceRequester;
+        SurfaceHolderRequester surfaceHolderRequester;
         @Mock
-        Surface surface;
+        SurfaceHolder surfaceHolder;
         @Mock
         StateChangedListener stateChangeListener;
         @Mock
@@ -623,18 +623,18 @@ public class ExoPlayerTwoImplTest {
 
         @Before
         public void setUp() {
-            given(playerView.getSurfaceRequester()).willReturn(surfaceRequester);
+            given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);
             doAnswer(new Answer<Void>() {
                 @Override
                 public Void answer(InvocationOnMock invocation) {
-                    SurfaceRequester.Callback callback = invocation.getArgument(0);
-                    callback.onSurfaceReady(surface);
+                    SurfaceHolderRequester.Callback callback = invocation.getArgument(0);
+                    callback.onSurfaceHolderReady(surfaceHolder);
                     return null;
                 }
-            }).when(surfaceRequester).requestSurface(any(SurfaceRequester.Callback.class));
+            }).when(surfaceHolderRequester).requestSurfaceHolder(any(SurfaceHolderRequester.Callback.class));
 
             given(listenersHolder.getErrorListeners()).willReturn(errorListener);
             given(listenersHolder.getPreparedListeners()).willReturn(preparedListener);

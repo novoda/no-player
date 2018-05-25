@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.view.Surface;
+import android.view.SurfaceHolder;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -100,7 +100,7 @@ class ExoPlayerFacade {
         }
     }
 
-    void loadVideo(Surface surface,
+    void loadVideo(SurfaceHolder surfaceHolder,
                    DrmSessionCreator drmSessionCreator,
                    Uri uri,
                    Options options,
@@ -121,7 +121,7 @@ class ExoPlayerFacade {
                 forwarder.extractorMediaSourceListener(),
                 forwarder.mediaSourceEventListener()
         );
-        attachToSurface(surface);
+        attachToSurface(surfaceHolder);
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
     }
 
@@ -134,8 +134,8 @@ class ExoPlayerFacade {
         }
     }
 
-    private void attachToSurface(Surface surface) {
-        exoPlayer.setVideoSurface(surface);
+    private void attachToSurface(SurfaceHolder surfaceHolder) {
+        exoPlayer.setVideoSurfaceHolder(surfaceHolder);
     }
 
     AudioTracks getAudioTracks() throws IllegalStateException {
