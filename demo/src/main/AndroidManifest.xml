@@ -10,12 +10,21 @@
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
     tools:ignore="GoogleAppIndexingWarning">
-
     <activity
-      android:name="com.novoda.demo.MainActivity"
+      android:name=".MainActivity"
       android:theme="@style/Theme.NoPlayer">
       <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+      </intent-filter>
+    </activity>
+
+    <activity
+      android:name=".LandingActivity"
+      android:label="@string/title_activity_landing"
+      android:theme="@style/AppTheme.NoActionBar">
+      <intent-filter>
         <action android:name="android.intent.action.MAIN" />
+
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>

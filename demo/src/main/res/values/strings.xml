@@ -2,11 +2,12 @@
 <resources>
 
   <string name="app_name">no-player demo</string>
-  
+
   <string name="video">Video</string>
   <string name="audio">Audio</string>
   <string name="subtitle">Subtitle</string>
 
   <string name="content_description_play_pause">Play/pause</string>
+  <string name="title_activity_landing">LandingActivity</string>
 
 </resources>

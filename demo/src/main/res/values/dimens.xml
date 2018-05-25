@@ -14,5 +14,6 @@
   <dimen name="use_weight">0dp</dimen>
   <dimen name="list_item_text">20sp</dimen>
   <dimen name="list_item_padding">8dp</dimen>
+  <dimen name="fab_margin">16dp</dimen>
 
 </resources>
