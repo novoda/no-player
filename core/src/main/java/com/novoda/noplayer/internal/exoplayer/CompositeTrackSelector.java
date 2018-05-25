@@ -1,12 +1,8 @@
 package com.novoda.noplayer.internal.exoplayer;
 
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectorResult;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
@@ -19,7 +15,7 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
 
-class CompositeTrackSelector extends TrackSelector {
+class CompositeTrackSelector {
 
     private final DefaultTrackSelector defaultTrackSelector;
     private final ExoPlayerAudioTrackSelector audioTrackSelector;
@@ -34,6 +30,10 @@ class CompositeTrackSelector extends TrackSelector {
         this.audioTrackSelector = audioTrackSelector;
         this.videoTrackSelector = videoTrackSelector;
         this.subtitleTrackSelector = subtitleTrackSelector;
+    }
+
+    TrackSelector trackSelector() {
+        return defaultTrackSelector;
     }
 
     boolean selectAudioTrack(PlayerAudioTrack audioTrack, RendererTypeRequester rendererTypeRequester) {
@@ -76,15 +76,5 @@ class CompositeTrackSelector extends TrackSelector {
 
     boolean clearSubtitleTrack(RendererTypeRequester rendererTypeRequester) {
         return subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
-    }
-
-    @Override
-    public TrackSelectorResult selectTracks(RendererCapabilities[] rendererCapabilities, TrackGroupArray trackGroups) throws ExoPlaybackException {
-        return defaultTrackSelector.selectTracks(rendererCapabilities, trackGroups);
-    }
-
-    @Override
-    public void onSelectionActivated(Object info) {
-        defaultTrackSelector.onSelectionActivated(info);
     }
 }
