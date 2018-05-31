@@ -48,7 +48,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     @Override
     public SurfaceContainer getSurfaceContainer() {
-        return new SurfaceContainer(surfaceView);
+        return SurfaceContainer.create(surfaceView);
     }
 
     @Override
