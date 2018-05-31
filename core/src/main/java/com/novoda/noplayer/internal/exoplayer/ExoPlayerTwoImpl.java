@@ -31,7 +31,6 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
     private int videoWidth;
     private int videoHeight;
-    private SurfaceHolderRequester.Callback onSurfaceReadyCallback;
     private TextRendererOutput textRendererOutput;
 
     ExoPlayerTwoImpl(ExoPlayerFacade exoPlayer,

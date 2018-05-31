@@ -35,7 +35,7 @@ public interface PlayerView {
             return surfaceView;
         }
 
-        public SurfaceHolderRequester getSurfaceHolderRequester() {
+        public SurfaceRequester getSurfaceRequester() {
             return playerViewSurfaceHolder;
         }
     }
