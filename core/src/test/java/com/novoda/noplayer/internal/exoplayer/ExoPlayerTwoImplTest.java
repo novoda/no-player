@@ -1,7 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-import android.view.SurfaceHolder;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
@@ -209,7 +208,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, OPTIONS);
 
-            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(playerView.getSurfaceContainer(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -218,7 +217,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(playerView.getSurfaceContainer(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -574,10 +573,6 @@ public class ExoPlayerTwoImplTest {
         @Mock
         PlayerView playerView;
         @Mock
-        SurfaceHolderRequester surfaceHolderRequester;
-        @Mock
-        SurfaceHolder surfaceHolder;
-        @Mock
         StateChangedListener stateChangeListener;
         @Mock
         NoPlayer.VideoSizeChangedListener videoSizeChangedListener;
@@ -612,19 +607,10 @@ public class ExoPlayerTwoImplTest {
 
         @Before
         public void setUp() {
-            given(surfaceContainer.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
             given(playerView.getSurfaceContainer()).willReturn(surfaceContainer);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);
-            doAnswer(new Answer<Void>() {
-                @Override
-                public Void answer(InvocationOnMock invocation) {
-                    SurfaceHolderRequester.Callback callback = invocation.getArgument(0);
-                    callback.onSurfaceHolderReady(surfaceHolder);
-                    return null;
-                }
-            }).when(surfaceHolderRequester).requestSurfaceHolder(any(SurfaceHolderRequester.Callback.class));
 
             given(listenersHolder.getErrorListeners()).willReturn(errorListener);
             given(listenersHolder.getPreparedListeners()).willReturn(preparedListener);

@@ -2,7 +2,6 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.view.SurfaceHolder;
 import android.view.View;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.*;
@@ -29,8 +28,6 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
     @Nullable
     private PlayerView playerView;
-    @Nullable
-    private SurfaceHolderRequester surfaceHolderRequester;
 
     private int videoWidth;
     private int videoHeight;
@@ -192,17 +189,9 @@ class ExoPlayerTwoImpl implements NoPlayer {
         if (exoPlayer.hasPlayedContent()) {
             stop();
         }
-        surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);
-        onSurfaceReadyCallback = new SurfaceHolderRequester.Callback() {
-            @Override
-            public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                exoPlayer.loadVideo(surfaceHolder, drmSessionCreator, uri, options, forwarder, mediaCodecSelector);
-            }
-        };
-
         assertPlayerViewIsAttached();
+        exoPlayer.loadVideo(playerView.getSurfaceContainer(), drmSessionCreator, uri, options, forwarder, mediaCodecSelector);
         createSurfaceByShowingVideoContainer();
-        surfaceHolderRequester.requestSurfaceHolder(onSurfaceReadyCallback);
     }
 
     private void assertPlayerViewIsAttached() {
@@ -229,8 +218,6 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public void attach(PlayerView playerView) {
         this.playerView = playerView;
-        PlayerView.SurfaceContainer surfaceContainer = playerView.getSurfaceContainer();
-        surfaceHolderRequester = surfaceContainer.getSurfaceHolderRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
     }
@@ -240,8 +227,6 @@ class ExoPlayerTwoImpl implements NoPlayer {
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         removeSubtitleRenderer();
-        surfaceHolderRequester.removeCallback(onSurfaceReadyCallback);
-        surfaceHolderRequester = null;
         this.playerView = null;
     }
 

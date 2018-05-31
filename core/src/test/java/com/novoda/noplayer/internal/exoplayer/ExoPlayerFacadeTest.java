@@ -1,8 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-import android.view.SurfaceHolder;
-
+import android.view.SurfaceView;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -13,21 +12,13 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
+import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 import com.novoda.noplayer.internal.utils.Optional;
-import com.novoda.noplayer.model.AudioTracks;
-import com.novoda.noplayer.model.PlayerAudioTrack;
-import com.novoda.noplayer.model.PlayerAudioTrackFixture;
-import com.novoda.noplayer.model.PlayerSubtitleTrack;
-import com.novoda.noplayer.model.PlayerVideoTrack;
-import com.novoda.noplayer.model.PlayerVideoTrackFixture;
-
-import java.util.Collections;
-import java.util.List;
-
+import com.novoda.noplayer.model.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,16 +28,16 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-
 import utils.ExceptionMatcher;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(Enclosed.class)
 public class ExoPlayerFacadeTest {
@@ -86,7 +77,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenAddsPlayerEventListener() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceContainer, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).addListener(exoPlayerForwarder.exoPlayerEventListener());
         }
@@ -94,7 +85,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenSetsVideoDebugListener() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceContainer, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).setVideoDebugListener(exoPlayerForwarder.videoRendererEventListener());
         }
@@ -102,16 +93,16 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenSetsSurfaceHolderOnExoPlayer() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceContainer, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
+            verify(exoPlayer).setVideoSurfaceView(surfaceContainer.getSurfaceView());
         }
 
         @Test
         public void givenLollipopDevice_whenLoadingVideo_thenSetsMovieAudioAttributesOnExoPlayer() {
             given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(true);
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceContainer, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             AudioAttributes expectedMovieAudioAttributes = new AudioAttributes.Builder()
                     .setContentType(C.CONTENT_TYPE_MOVIE)
@@ -123,7 +114,7 @@ public class ExoPlayerFacadeTest {
         public void givenNonLollipopDevice_whenLoadingVideo_thenDoesNotSetAudioAttributesOnExoPlayer() {
             given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(false);
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceContainer, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer, never()).setAudioAttributes(any(AudioAttributes.class));
         }
@@ -132,7 +123,7 @@ public class ExoPlayerFacadeTest {
         public void givenMediaSource_whenLoadingVideo_thenPreparesInternalExoPlayer() {
             MediaSource mediaSource = givenMediaSource();
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceContainer, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
         }
@@ -237,7 +228,7 @@ public class ExoPlayerFacadeTest {
 
         private void givenPlayerIsLoaded() {
             givenMediaSource();
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceContainer, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
         }
 
         @Test
@@ -480,7 +471,9 @@ public class ExoPlayerFacadeTest {
         @Mock
         MediaCodecSelector mediaCodecSelector;
         @Mock
-        SurfaceHolder surfaceHolder;
+        PlayerView.SurfaceContainer surfaceContainer;
+        @Mock
+        SurfaceView surfaceView;
 
         ExoPlayerFacade facade;
 
@@ -498,6 +491,7 @@ public class ExoPlayerFacadeTest {
                     exoPlayerCreator,
                     rendererTypeRequesterCreator
             );
+            given(surfaceContainer.getSurfaceView()).willReturn(surfaceView);
         }
 
         MediaSource givenMediaSource() {
