@@ -4,24 +4,12 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.SurfaceHolder;
 import android.view.View;
-
-import com.novoda.noplayer.Listeners;
-import com.novoda.noplayer.NoPlayer;
-import com.novoda.noplayer.Options;
-import com.novoda.noplayer.PlayerInformation;
-import com.novoda.noplayer.PlayerState;
-import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.SurfaceHolderRequester;
+import com.novoda.noplayer.*;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.Optional;
-import com.novoda.noplayer.model.AudioTracks;
-import com.novoda.noplayer.model.LoadTimeout;
-import com.novoda.noplayer.model.PlayerAudioTrack;
-import com.novoda.noplayer.model.PlayerSubtitleTrack;
-import com.novoda.noplayer.model.PlayerVideoTrack;
-import com.novoda.noplayer.model.Timeout;
+import com.novoda.noplayer.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -293,7 +281,8 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         buggyVideoDriverPreventer.preventVideoDriverBug(this, containerView);
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
-        surfaceHolderRequester = playerView.getSurfaceHolderRequester();
+        PlayerView.SurfaceContainer surfaceContainer = playerView.getSurfaceContainer();
+        surfaceHolderRequester = surfaceContainer.getSurfaceHolderRequester();
     }
 
     @Override

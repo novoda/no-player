@@ -5,13 +5,11 @@ import android.util.AttributeSet;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
-
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.novoda.noplayer.model.TextCues;
 
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
-    private final PlayerViewSurfaceHolder surfaceHolderProvider;
     private final AspectRatioChangeCalculator aspectRatioChangeCalculator;
 
     private AspectRatioFrameLayout videoFrame;
@@ -25,7 +23,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        surfaceHolderProvider = new PlayerViewSurfaceHolder();
         aspectRatioChangeCalculator = new AspectRatioChangeCalculator(this);
     }
 
@@ -36,7 +33,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         videoFrame = findViewById(R.id.video_frame);
         shutterView = findViewById(R.id.shutter);
         surfaceView = findViewById(R.id.surface_view);
-        surfaceView.getHolder().addCallback(surfaceHolderProvider);
         subtitleView = findViewById(R.id.subtitles_layout);
     }
 
@@ -51,8 +47,8 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     }
 
     @Override
-    public SurfaceHolderRequester getSurfaceHolderRequester() {
-        return surfaceHolderProvider;
+    public SurfaceContainer getSurfaceContainer() {
+        return new SurfaceContainer(surfaceView);
     }
 
     @Override
