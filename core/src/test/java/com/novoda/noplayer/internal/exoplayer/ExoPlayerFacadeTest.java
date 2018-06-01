@@ -14,7 +14,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
-import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.SurfaceContainer;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
@@ -484,8 +484,8 @@ public class ExoPlayerFacadeTest {
         SurfaceView surfaceView;
         @Mock
         TextureView textureView;
-        PlayerView.SurfaceContainer surfaceViewContainer;
-        PlayerView.SurfaceContainer textureViewContainer;
+        SurfaceContainer surfaceViewContainer;
+        SurfaceContainer textureViewContainer;
 
         ExoPlayerFacade facade;
 
@@ -504,8 +504,8 @@ public class ExoPlayerFacadeTest {
                     rendererTypeRequesterCreator
             );
             given(surfaceView.getHolder()).willReturn(mock(SurfaceHolder.class));
-            surfaceViewContainer = PlayerView.SurfaceContainer.create(surfaceView);
-            textureViewContainer = PlayerView.SurfaceContainer.create(textureView);
+            surfaceViewContainer = SurfaceContainer.create(surfaceView);
+            textureViewContainer = SurfaceContainer.create(textureView);
         }
 
         MediaSource givenMediaSource() {

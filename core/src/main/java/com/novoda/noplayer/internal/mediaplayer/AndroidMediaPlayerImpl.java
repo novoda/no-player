@@ -10,6 +10,7 @@ import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.SurfaceContainer;
 import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
@@ -292,7 +293,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         buggyVideoDriverPreventer.preventVideoDriverBug(this, containerView);
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
-        PlayerView.SurfaceContainer surfaceContainer = playerView.getSurfaceContainer();
+        SurfaceContainer surfaceContainer = playerView.getSurfaceContainer();
         surfaceRequester = surfaceContainer.getSurfaceRequester();
     }
 

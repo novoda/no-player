@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.Options;
-import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.SurfaceContainer;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
@@ -99,7 +99,7 @@ class ExoPlayerFacade {
         }
     }
 
-    void loadVideo(PlayerView.SurfaceContainer surfaceContainer,
+    void loadVideo(SurfaceContainer surfaceContainer,
                    DrmSessionCreator drmSessionCreator,
                    Uri uri,
                    Options options,
@@ -138,7 +138,7 @@ class ExoPlayerFacade {
         }
     }
 
-    private void attachToSurface(PlayerView.SurfaceContainer surfaceContainer) {
+    private void attachToSurface(SurfaceContainer surfaceContainer) {
         if (surfaceContainer.containsSurfaceView()) {
             exoPlayer.setVideoSurfaceView(surfaceContainer.getSurfaceView());
         } else if (surfaceContainer.containsTextureView()) {

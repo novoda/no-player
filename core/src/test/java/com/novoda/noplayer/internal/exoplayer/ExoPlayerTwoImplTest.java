@@ -601,7 +601,7 @@ public class ExoPlayerTwoImplTest {
         @Mock
         View containerView;
         @Mock
-        PlayerView.SurfaceContainer surfaceContainer;
+        SurfaceContainer surfaceContainer;
 
         ExoPlayerTwoImpl player;
 

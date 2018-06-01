@@ -688,7 +688,7 @@ public class AndroidMediaPlayerImplTest {
         @Mock
         View containerView;
         @Mock
-        PlayerView.SurfaceContainer surfaceContainer;
+        SurfaceContainer surfaceContainer;
 
         AndroidMediaPlayerImpl player;
 
