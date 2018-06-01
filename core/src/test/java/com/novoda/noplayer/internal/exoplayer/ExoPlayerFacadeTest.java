@@ -20,7 +20,12 @@ import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 import com.novoda.noplayer.internal.utils.Optional;
-import com.novoda.noplayer.model.*;
+import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerAudioTrackFixture;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerVideoTrack;
+import com.novoda.noplayer.model.PlayerVideoTrackFixture;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,7 +44,9 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @RunWith(Enclosed.class)
 public class ExoPlayerFacadeTest {

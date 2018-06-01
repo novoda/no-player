@@ -5,8 +5,15 @@ import android.view.View;
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.text.Cue;
-import com.novoda.noplayer.*;
+import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.NoPlayer.StateChangedListener;
+import com.novoda.noplayer.Options;
+import com.novoda.noplayer.OptionsBuilder;
+import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerSurfaceHolder;
+import com.novoda.noplayer.PlayerType;
+import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
@@ -35,7 +42,11 @@ import static android.provider.CalendarContract.CalendarCache.URI;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(Enclosed.class)
 public class ExoPlayerTwoImplTest {
