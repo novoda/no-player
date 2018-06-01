@@ -24,7 +24,7 @@ public class SurfaceContainer {
         return new SurfaceContainer(null, textureView, new PlayerViewSurfaceHolder());
     }
 
-    SurfaceContainer(@Nullable SurfaceView surfaceView, @Nullable TextureView textureView, PlayerViewSurfaceHolder surfaceHolder) {
+    private SurfaceContainer(@Nullable SurfaceView surfaceView, @Nullable TextureView textureView, PlayerViewSurfaceHolder surfaceHolder) {
         this.surfaceView = surfaceView;
         this.textureView = textureView;
         this.surfaceHolder = surfaceHolder;
