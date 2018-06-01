@@ -24,7 +24,7 @@ public class PlayerSurfaceHolder {
         return new PlayerSurfaceHolder(null, textureView, new PlayerViewSurfaceHolder());
     }
 
-    private PlayerSurfaceHolder(@Nullable SurfaceView surfaceView, @Nullable TextureView textureView, PlayerViewSurfaceHolder surfaceHolder) {
+    PlayerSurfaceHolder(@Nullable SurfaceView surfaceView, @Nullable TextureView textureView, PlayerViewSurfaceHolder surfaceHolder) {
         this.surfaceView = surfaceView;
         this.textureView = textureView;
         this.surfaceHolder = surfaceHolder;
