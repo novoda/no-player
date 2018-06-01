@@ -144,7 +144,7 @@ class ExoPlayerFacade {
         } else if (playerSurfaceHolder.containsTextureView()) {
             exoPlayer.setVideoTextureView(playerSurfaceHolder.getTextureView());
         } else {
-            throw new IllegalStateException("Surface container does not contain any of the expected views");
+            throw new IllegalArgumentException("Surface container does not contain any of the expected views");
         }
     }
 
