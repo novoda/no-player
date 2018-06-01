@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.Options;
-import com.novoda.noplayer.SurfaceContainer;
+import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
@@ -99,7 +99,7 @@ class ExoPlayerFacade {
         }
     }
 
-    void loadVideo(SurfaceContainer surfaceContainer,
+    void loadVideo(PlayerSurfaceHolder playerSurfaceHolder,
                    DrmSessionCreator drmSessionCreator,
                    Uri uri,
                    Options options,
@@ -125,7 +125,7 @@ class ExoPlayerFacade {
                 forwarder.extractorMediaSourceListener(),
                 forwarder.mediaSourceEventListener()
         );
-        attachToSurface(surfaceContainer);
+        attachToSurface(playerSurfaceHolder);
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
     }
 
@@ -138,11 +138,11 @@ class ExoPlayerFacade {
         }
     }
 
-    private void attachToSurface(SurfaceContainer surfaceContainer) {
-        if (surfaceContainer.containsSurfaceView()) {
-            exoPlayer.setVideoSurfaceView(surfaceContainer.getSurfaceView());
-        } else if (surfaceContainer.containsTextureView()) {
-            exoPlayer.setVideoTextureView(surfaceContainer.getTextureView());
+    private void attachToSurface(PlayerSurfaceHolder playerSurfaceHolder) {
+        if (playerSurfaceHolder.containsSurfaceView()) {
+            exoPlayer.setVideoSurfaceView(playerSurfaceHolder.getSurfaceView());
+        } else if (playerSurfaceHolder.containsTextureView()) {
+            exoPlayer.setVideoTextureView(playerSurfaceHolder.getTextureView());
         } else {
             throw new IllegalStateException("Surface container does not contain any of the expected views");
         }

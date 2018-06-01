@@ -199,7 +199,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
             stop();
         }
         assertPlayerViewIsAttached();
-        exoPlayer.loadVideo(playerView.getSurfaceContainer(), drmSessionCreator, uri, options, forwarder, mediaCodecSelector);
+        exoPlayer.loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, options, forwarder, mediaCodecSelector);
         createSurfaceByShowingVideoContainer();
     }
 

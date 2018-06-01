@@ -208,7 +208,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, OPTIONS);
 
-            verify(exoPlayerFacade).loadVideo(playerView.getSurfaceContainer(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -217,7 +217,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(playerView.getSurfaceContainer(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -601,13 +601,13 @@ public class ExoPlayerTwoImplTest {
         @Mock
         View containerView;
         @Mock
-        SurfaceContainer surfaceContainer;
+        PlayerSurfaceHolder playerSurfaceHolder;
 
         ExoPlayerTwoImpl player;
 
         @Before
         public void setUp() {
-            given(playerView.getSurfaceContainer()).willReturn(surfaceContainer);
+            given(playerView.getPlayerSurfaceHolder()).willReturn(playerSurfaceHolder);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);

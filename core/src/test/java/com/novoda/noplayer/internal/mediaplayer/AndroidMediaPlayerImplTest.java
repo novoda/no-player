@@ -688,7 +688,7 @@ public class AndroidMediaPlayerImplTest {
         @Mock
         View containerView;
         @Mock
-        SurfaceContainer surfaceContainer;
+        PlayerSurfaceHolder playerSurfaceHolder;
 
         AndroidMediaPlayerImpl player;
 
@@ -696,8 +696,8 @@ public class AndroidMediaPlayerImplTest {
         public void setUp() {
             NoPlayerLog.setLoggingEnabled(false);
             SurfaceRequester surfaceRequester = mock(SurfaceRequester.class);
-            given(playerView.getSurfaceContainer()).willReturn(surfaceContainer);
-            given(surfaceContainer.getSurfaceRequester()).willReturn(surfaceRequester);
+            given(playerView.getPlayerSurfaceHolder()).willReturn(playerSurfaceHolder);
+            given(playerSurfaceHolder.getSurfaceRequester()).willReturn(surfaceRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);

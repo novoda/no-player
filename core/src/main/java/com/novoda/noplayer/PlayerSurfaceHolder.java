@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import android.view.SurfaceView;
 import android.view.TextureView;
 
-public class SurfaceContainer {
+public class PlayerSurfaceHolder {
 
     @Nullable
     private final SurfaceView surfaceView;
@@ -12,19 +12,19 @@ public class SurfaceContainer {
     private final TextureView textureView;
     private final PlayerViewSurfaceHolder surfaceHolder;
 
-    public static SurfaceContainer create(SurfaceView surfaceView) {
+    public static PlayerSurfaceHolder create(SurfaceView surfaceView) {
         PlayerViewSurfaceHolder surfaceHolder = new PlayerViewSurfaceHolder();
         surfaceView.getHolder().addCallback(surfaceHolder);
-        return new SurfaceContainer(surfaceView, null, surfaceHolder);
+        return new PlayerSurfaceHolder(surfaceView, null, surfaceHolder);
     }
 
-    public static SurfaceContainer create(TextureView textureView) {
+    public static PlayerSurfaceHolder create(TextureView textureView) {
         PlayerViewSurfaceHolder surfaceHolder = new PlayerViewSurfaceHolder();
         textureView.setSurfaceTextureListener(surfaceHolder);
-        return new SurfaceContainer(null, textureView, new PlayerViewSurfaceHolder());
+        return new PlayerSurfaceHolder(null, textureView, new PlayerViewSurfaceHolder());
     }
 
-    private SurfaceContainer(@Nullable SurfaceView surfaceView, @Nullable TextureView textureView, PlayerViewSurfaceHolder surfaceHolder) {
+    private PlayerSurfaceHolder(@Nullable SurfaceView surfaceView, @Nullable TextureView textureView, PlayerViewSurfaceHolder surfaceHolder) {
         this.surfaceView = surfaceView;
         this.textureView = textureView;
         this.surfaceHolder = surfaceHolder;
