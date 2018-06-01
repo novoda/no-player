@@ -4,18 +4,29 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.Surface;
 import android.view.View;
-import com.novoda.noplayer.*;
+import com.novoda.noplayer.Listeners;
+import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.Options;
+import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.Optional;
-import com.novoda.noplayer.model.*;
+import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.LoadTimeout;
+import com.novoda.noplayer.model.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerVideoTrack;
+import com.novoda.noplayer.model.Timeout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+// Not much we can do, wrapping MediaPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
-        // Not much we can do, wrapping MediaPlayer is a lot of work
 class AndroidMediaPlayerImpl implements NoPlayer {
 
     private static final long NO_SEEK_TO_POSITION = -1;

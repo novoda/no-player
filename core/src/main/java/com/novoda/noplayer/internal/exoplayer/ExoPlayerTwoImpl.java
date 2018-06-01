@@ -4,18 +4,28 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.View;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
-import com.novoda.noplayer.*;
+import com.novoda.noplayer.Listeners;
+import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.Options;
+import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.utils.Optional;
-import com.novoda.noplayer.model.*;
+import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.LoadTimeout;
+import com.novoda.noplayer.model.PlayerAudioTrack;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerVideoTrack;
+import com.novoda.noplayer.model.Timeout;
 
 import java.util.List;
 
+// Not much we can do, wrapping ExoPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
-        // Not much we can do, wrapping ExoPlayer is a lot of work
 class ExoPlayerTwoImpl implements NoPlayer {
 
     private final ExoPlayerFacade exoPlayer;
