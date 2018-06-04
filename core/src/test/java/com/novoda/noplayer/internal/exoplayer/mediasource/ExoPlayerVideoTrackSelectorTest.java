@@ -4,15 +4,12 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
-import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.internal.utils.Optional;
-
-import java.util.Arrays;
-import java.util.List;
+import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,6 +18,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static com.novoda.noplayer.internal.exoplayer.mediasource.VideoFormatFixture.aVideoFormat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -75,16 +75,16 @@ public class ExoPlayerVideoTrackSelectorTest {
 
     @Before
     public void setUp() {
-        exoPlayerVideoTrackSelector = new ExoPlayerVideoTrackSelector(trackSelector, trackSelectionFactory);
+        exoPlayerVideoTrackSelector = new ExoPlayerVideoTrackSelector(trackSelector);
     }
 
     @Test
     public void givenTrackSelectorContainsTracks_whenSelectingVideoTrack_thenSelectsTrack() {
         givenTrackSelectorContainsTracks();
 
-        ArgumentCaptor<MappingTrackSelector.SelectionOverride> argumentCaptor = whenSelectingVideoTrack(ADDITIONAL_PLAYER_VIDEO_TRACK);
+        ArgumentCaptor<DefaultTrackSelector.SelectionOverride> argumentCaptor = whenSelectingVideoTrack(ADDITIONAL_PLAYER_VIDEO_TRACK);
 
-        MappingTrackSelector.SelectionOverride selectionOverride = argumentCaptor.getValue();
+        DefaultTrackSelector.SelectionOverride selectionOverride = argumentCaptor.getValue();
         assertThat(selectionOverride.factory).isEqualTo(trackSelectionFactory);
         assertThat(selectionOverride.groupIndex).isEqualTo(FIRST_GROUP);
         assertThat(selectionOverride.tracks).contains(SECOND_TRACK);
@@ -126,10 +126,10 @@ public class ExoPlayerVideoTrackSelectorTest {
         given(trackSelector.trackGroups(TrackType.VIDEO, rendererTypeRequester)).willReturn(trackGroups);
     }
 
-    private ArgumentCaptor<MappingTrackSelector.SelectionOverride> whenSelectingVideoTrack(PlayerVideoTrack videoTrack) {
+    private ArgumentCaptor<DefaultTrackSelector.SelectionOverride> whenSelectingVideoTrack(PlayerVideoTrack videoTrack) {
         exoPlayerVideoTrackSelector.selectVideoTrack(videoTrack, rendererTypeRequester);
 
-        ArgumentCaptor<MappingTrackSelector.SelectionOverride> argumentCaptor = ArgumentCaptor.forClass(MappingTrackSelector.SelectionOverride.class);
+        ArgumentCaptor<DefaultTrackSelector.SelectionOverride> argumentCaptor = ArgumentCaptor.forClass(DefaultTrackSelector.SelectionOverride.class);
         verify(trackSelector).setSelectionOverride(eq(TrackType.VIDEO), any(RendererTypeRequester.class), any(TrackGroupArray.class), argumentCaptor.capture());
         return argumentCaptor;
     }

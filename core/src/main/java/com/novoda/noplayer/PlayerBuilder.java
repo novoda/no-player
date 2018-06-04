@@ -4,15 +4,13 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
-import com.novoda.noplayer.internal.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
-import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
-import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +25,7 @@ public class PlayerBuilder {
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
     private boolean downgradeSecureDecoder;
+    private long maxInitialBitrate = DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATE;
 
     /**
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine classic DRM.
@@ -103,6 +102,19 @@ public class PlayerBuilder {
     }
 
     /**
+     * Sets {@link OptionsBuilder} to build {@link Options} with given maximum initial bitrate in order to
+     * control what is the quality with which {@link NoPlayer} starts the playback. Setting a higher value
+     * allows the player to choose a higher quality video track at the beginning.
+     *
+     * @param maxInitialBitrate maximum bitrate that limits the initial track selection.
+     * @return {@link OptionsBuilder}
+     */
+    public PlayerBuilder withMaxInitialBitrate(long maxInitialBitrate) {
+        this.maxInitialBitrate = maxInitialBitrate;
+        return this;
+    }
+
+    /**
      * Builds a new {@link NoPlayer} instance.
      *
      * @param context The {@link Context} associated with the player.
@@ -112,19 +124,12 @@ public class PlayerBuilder {
      */
     public NoPlayer build(Context context) throws UnableToCreatePlayerException {
         Handler handler = new Handler(Looper.getMainLooper());
-        ProvisionExecutorCreator provisionExecutorCreator = new ProvisionExecutorCreator();
-        DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(
-                AndroidDeviceVersion.newInstance(),
-                provisionExecutorCreator,
-                handler
-        );
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
                 context,
                 prioritizedPlayerTypes,
                 NoPlayerExoPlayerCreator.newInstance(handler),
-                NoPlayerMediaPlayerCreator.newInstance(handler),
-                drmSessionCreatorFactory
+                NoPlayerMediaPlayerCreator.newInstance(handler)
         );
-        return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder);
+        return noPlayerCreator.create(drmType, downgradeSecureDecoder, maxInitialBitrate);
     }
 }

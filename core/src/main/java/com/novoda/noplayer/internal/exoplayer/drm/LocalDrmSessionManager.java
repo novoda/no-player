@@ -5,7 +5,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -19,7 +19,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
 
     private final KeySetId keySetIdToRestore;
     private final ExoMediaDrm<FrameworkMediaCrypto> mediaDrm;
-    private final DefaultDrmSessionManager.EventListener eventListener;
+    private final DefaultDrmSessionEventListener eventListener;
     private final UUID drmScheme;
     private final Handler handler;
 
@@ -27,7 +27,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
                            ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
                            UUID drmScheme,
                            Handler handler,
-                           DefaultDrmSessionManager.EventListener eventListener) {
+                           DefaultDrmSessionEventListener eventListener) {
         this.keySetIdToRestore = keySetIdToRestore;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;

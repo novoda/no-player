@@ -9,8 +9,6 @@ import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,6 +16,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Collections;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,7 +57,7 @@ public class ExoPlayerAudioTrackSelectorTest {
 
     @Before
     public void setUp() {
-        exoPlayerAudioTrackSelector = new ExoPlayerAudioTrackSelector(trackSelector, trackSelectionFactory);
+        exoPlayerAudioTrackSelector = new ExoPlayerAudioTrackSelector(trackSelector);
     }
 
     @Test

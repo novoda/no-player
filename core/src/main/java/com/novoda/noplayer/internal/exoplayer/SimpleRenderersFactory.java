@@ -19,6 +19,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.exoplayer2.Renderer;
@@ -90,8 +91,6 @@ class SimpleRenderersFactory implements RenderersFactory {
 
     private final Context context;
 
-    private final DrmSessionManager<FrameworkMediaCrypto> drmSessionManager;
-
     @ExtensionRendererMode
     private final int extensionRendererMode;
 
@@ -101,8 +100,6 @@ class SimpleRenderersFactory implements RenderersFactory {
 
     /**
      * @param context                   A {@link Context}.
-     * @param drmSessionManager         An optional {@link DrmSessionManager}. May be null if DRM protected
-     *                                  playbacks are not required..
      * @param extensionRendererMode     The extension renderer mode, which determines if and how
      *                                  available extension renderers are used. Note that extensions must be included in the
      *                                  application build for them to be considered available.
@@ -112,13 +109,11 @@ class SimpleRenderersFactory implements RenderersFactory {
      * @param subtitleDecoderFactory    A factory from which to obtain {@link SubtitleDecoder} instances.
      */
     SimpleRenderersFactory(Context context,
-                           DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,
                            MediaCodecSelector mediaCodecSelector,
                            SubtitleDecoderFactory subtitleDecoderFactory) {
         this.context = context;
-        this.drmSessionManager = drmSessionManager;
         this.extensionRendererMode = extensionRendererMode;
         this.allowedVideoJoiningTimeMs = allowedVideoJoiningTimeMs;
         this.mediaCodecSelector = mediaCodecSelector;
@@ -130,7 +125,8 @@ class SimpleRenderersFactory implements RenderersFactory {
                                       VideoRendererEventListener videoRendererEventListener,
                                       AudioRendererEventListener audioRendererEventListener,
                                       TextOutput textRendererOutput,
-                                      MetadataOutput metadataRendererOutput) {
+                                      MetadataOutput metadataRendererOutput,
+                                      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
         ArrayList<Renderer> renderersList = new ArrayList<>();
         buildVideoRenderers(context, drmSessionManager, allowedVideoJoiningTimeMs,
                 eventHandler, videoRendererEventListener, extensionRendererMode, renderersList);
@@ -219,13 +215,18 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      AudioRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
-        outRenderers.add(new MediaCodecAudioRenderer(mediaCodecSelector,
+        MediaCodecAudioRenderer mediaCodecAudioRenderer = new MediaCodecAudioRenderer(
+                context,
+                mediaCodecSelector,
                 drmSessionManager,
                 PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
                 eventHandler,
                 eventListener,
                 AudioCapabilities.getCapabilities(context),
-                audioProcessors));
+                audioProcessors
+        );
+
+        outRenderers.add(mediaCodecAudioRenderer);
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {
             return;

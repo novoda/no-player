@@ -14,7 +14,6 @@ import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.Heart;
-import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.utils.Optional;
@@ -35,7 +34,6 @@ class ExoPlayerTwoImpl implements NoPlayer {
     private final PlayerListenersHolder listenersHolder;
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
-    private final DrmSessionCreator drmSessionCreator;
     private final MediaCodecSelector mediaCodecSelector;
     private final LoadTimeout loadTimeout;
 
@@ -54,14 +52,12 @@ class ExoPlayerTwoImpl implements NoPlayer {
                      ExoPlayerForwarder exoPlayerForwarder,
                      LoadTimeout loadTimeoutParam,
                      Heart heart,
-                     DrmSessionCreator drmSessionCreator,
                      MediaCodecSelector mediaCodecSelector) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.heart = heart;
-        this.drmSessionCreator = drmSessionCreator;
         this.mediaCodecSelector = mediaCodecSelector;
     }
 
@@ -208,7 +204,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
         onSurfaceReadyCallback = new SurfaceHolderRequester.Callback() {
             @Override
             public void onSurfaceHolderReady(SurfaceHolder surfaceHolder) {
-                exoPlayer.loadVideo(surfaceHolder, drmSessionCreator, uri, options, forwarder, mediaCodecSelector);
+                exoPlayer.loadVideo(surfaceHolder, uri, options, forwarder, mediaCodecSelector);
             }
         };
 

@@ -3,8 +3,7 @@ package com.novoda.noplayer.internal.exoplayer.mediasource;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
@@ -17,18 +16,15 @@ import static com.novoda.noplayer.internal.exoplayer.mediasource.TrackType.AUDIO
 public class ExoPlayerAudioTrackSelector {
 
     private final ExoPlayerTrackSelector trackSelector;
-    private final TrackSelection.Factory trackSelectionFactory;
 
-    public ExoPlayerAudioTrackSelector(ExoPlayerTrackSelector trackSelector, TrackSelection.Factory trackSelectionFactory) {
+    public ExoPlayerAudioTrackSelector(ExoPlayerTrackSelector trackSelector) {
         this.trackSelector = trackSelector;
-        this.trackSelectionFactory = trackSelectionFactory;
     }
 
     public boolean selectAudioTrack(PlayerAudioTrack audioTrack, RendererTypeRequester rendererTypeRequester) {
         TrackGroupArray trackGroups = trackSelector.trackGroups(AUDIO, rendererTypeRequester);
 
-        MappingTrackSelector.SelectionOverride selectionOverride = new MappingTrackSelector.SelectionOverride(
-                trackSelectionFactory,
+        DefaultTrackSelector.SelectionOverride selectionOverride = new DefaultTrackSelector.SelectionOverride(
                 audioTrack.groupIndex(),
                 audioTrack.formatIndex()
         );

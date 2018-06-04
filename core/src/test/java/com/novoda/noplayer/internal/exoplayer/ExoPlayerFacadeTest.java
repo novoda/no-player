@@ -25,9 +25,6 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,6 +34,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Collections;
+import java.util.List;
 
 import utils.ExceptionMatcher;
 
@@ -86,7 +86,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenAddsPlayerEventListener() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceHolder, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).addListener(exoPlayerForwarder.exoPlayerEventListener());
         }
@@ -94,7 +94,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenSetsVideoDebugListener() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceHolder, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).setVideoDebugListener(exoPlayerForwarder.videoRendererEventListener());
         }
@@ -102,7 +102,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenSetsSurfaceHolderOnExoPlayer() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceHolder, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
         }
@@ -111,7 +111,7 @@ public class ExoPlayerFacadeTest {
         public void givenLollipopDevice_whenLoadingVideo_thenSetsMovieAudioAttributesOnExoPlayer() {
             given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(true);
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceHolder, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             AudioAttributes expectedMovieAudioAttributes = new AudioAttributes.Builder()
                     .setContentType(C.CONTENT_TYPE_MOVIE)
@@ -237,7 +237,7 @@ public class ExoPlayerFacadeTest {
 
         private void givenPlayerIsLoaded() {
             givenMediaSource();
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceHolder, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
         }
 
         @Test
@@ -489,7 +489,7 @@ public class ExoPlayerFacadeTest {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
             given(trackSelectorCreator.create(OPTIONS)).willReturn(trackSelector);
-            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
+            given(exoPlayerCreator.create(mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
                     androidDeviceVersion,
@@ -506,7 +506,6 @@ public class ExoPlayerFacadeTest {
                     mediaSourceFactory.create(
                             OPTIONS.contentType(),
                             uri,
-                            exoPlayerForwarder.extractorMediaSourceListener(),
                             exoPlayerForwarder.mediaSourceEventListener()
                     )
             ).willReturn(mediaSource);

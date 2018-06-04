@@ -45,6 +45,7 @@ public class MainActivity extends Activity {
         player = new PlayerBuilder()
                 .withWidevineModularStreamingDrm(drmHandler)
                 .withDowngradedSecureDecoder()
+                .withMaxInitialBitrate(TWO_MEGABITS)
                 .build(this);
 
         demoPresenter = new DemoPresenter(controllerView, player, player.getListeners(), playerView);
@@ -58,7 +59,6 @@ public class MainActivity extends Activity {
         Options options = new OptionsBuilder()
                 .withContentType(ContentType.DASH)
                 .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
-                .withMaxInitialBitrate(TWO_MEGABITS)
                 .build();
         demoPresenter.startPresenting(uri, options);
     }

@@ -10,7 +10,6 @@ import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.novoda.noplayer.Options;
-import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
@@ -101,29 +100,22 @@ class ExoPlayerFacade {
     }
 
     void loadVideo(SurfaceHolder surfaceHolder,
-                   DrmSessionCreator drmSessionCreator,
                    Uri uri,
                    Options options,
                    ExoPlayerForwarder forwarder,
                    MediaCodecSelector mediaCodecSelector) {
         this.options = options;
         compositeTrackSelector = trackSelectorCreator.create(options);
-        exoPlayer = exoPlayerCreator.create(
-                drmSessionCreator,
-                forwarder.drmSessionEventListener(),
-                mediaCodecSelector,
-                compositeTrackSelector.trackSelector()
-        );
+        exoPlayer = exoPlayerCreator.create(mediaCodecSelector, compositeTrackSelector.trackSelector());
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
-        exoPlayer.setVideoDebugListener(forwarder.videoRendererEventListener());
+        exoPlayer.addAnalyticsListener(forwarder.analyticsListener());
 
         setMovieAudioAttributes(exoPlayer);
 
         MediaSource mediaSource = mediaSourceFactory.create(
                 options.contentType(),
                 uri,
-                forwarder.extractorMediaSourceListener(),
                 forwarder.mediaSourceEventListener()
         );
         attachToSurface(surfaceHolder);

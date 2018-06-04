@@ -4,9 +4,9 @@ import android.net.Uri;
 import android.os.Handler;
 
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -25,36 +25,38 @@ public class MediaSourceFactory {
 
     public MediaSource create(ContentType contentType,
                               Uri uri,
-                              ExtractorMediaSource.EventListener eventListener,
-                              AdaptiveMediaSourceEventListener mediaSourceEventListener) {
+                              MediaSourceEventListener mediaSourceEventListener) {
         switch (contentType) {
             case HLS:
-                return new HlsMediaSource(
-                        uri,
-                        mediaDataSourceFactory,
-                        handler,
-                        mediaSourceEventListener
-                );
+                return createHlsMediaSource(uri, mediaSourceEventListener);
             case H264:
-                DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-                return new ExtractorMediaSource(
-                        uri,
-                        mediaDataSourceFactory,
-                        extractorsFactory,
-                        handler,
-                        eventListener
-                );
+                return createH264MediaSource(uri, mediaSourceEventListener);
             case DASH:
-                DefaultDashChunkSource.Factory chunkSourceFactory = new DefaultDashChunkSource.Factory(mediaDataSourceFactory);
-                return new DashMediaSource(
-                        uri,
-                        mediaDataSourceFactory,
-                        chunkSourceFactory,
-                        handler,
-                        mediaSourceEventListener
-                );
+                return createDashMediaSource(uri);
             default:
                 throw new UnsupportedOperationException("Content type: " + contentType + " is not supported.");
         }
+    }
+
+    private MediaSource createHlsMediaSource(Uri uri, MediaSourceEventListener mediaSourceEventListener) {
+        HlsMediaSource.Factory factory = new HlsMediaSource.Factory(mediaDataSourceFactory);
+        HlsMediaSource hlsMediaSource = factory.createMediaSource(uri);
+        hlsMediaSource.addEventListener(handler, mediaSourceEventListener);
+        return hlsMediaSource;
+    }
+
+    private MediaSource createH264MediaSource(Uri uri, MediaSourceEventListener mediaSourceEventListener) {
+        ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(mediaDataSourceFactory);
+        ExtractorMediaSource extractorMediaSource = factory
+                .setExtractorsFactory(new DefaultExtractorsFactory())
+                .createMediaSource(uri);
+        extractorMediaSource.addEventListener(handler, mediaSourceEventListener);
+        return extractorMediaSource;
+    }
+
+    private MediaSource createDashMediaSource(Uri uri) {
+        DefaultDashChunkSource.Factory chunkSourceFactory = new DefaultDashChunkSource.Factory(mediaDataSourceFactory);
+        DashMediaSource.Factory factory = new DashMediaSource.Factory(chunkSourceFactory, mediaDataSourceFactory);
+        return factory.createMediaSource(uri);
     }
 }

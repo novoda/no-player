@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer.drm;
 
 import android.os.Handler;
 
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
@@ -20,7 +20,7 @@ class DownloadDrmSessionCreator implements DrmSessionCreator {
     }
 
     @Override
-    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionManager.EventListener eventListener) {
+    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener) {
         return new LocalDrmSessionManager(
                 downloadedModularDrm.getKeySetId(),
                 mediaDrmCreator.create(WIDEVINE_MODULAR_UUID),

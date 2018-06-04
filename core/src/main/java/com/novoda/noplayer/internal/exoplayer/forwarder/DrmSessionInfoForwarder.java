@@ -1,12 +1,12 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.novoda.noplayer.NoPlayer;
 
 import java.util.Collections;
 import java.util.HashMap;
 
-class DrmSessionInfoForwarder implements DefaultDrmSessionManager.EventListener {
+class DrmSessionInfoForwarder implements DefaultDrmSessionEventListener {
 
     private final NoPlayer.InfoListener infoListener;
 
@@ -17,7 +17,6 @@ class DrmSessionInfoForwarder implements DefaultDrmSessionManager.EventListener 
     @Override
     public void onDrmKeysLoaded() {
         infoListener.onNewInfo("onDrmKeysLoaded", Collections.<String, String>emptyMap());
-
     }
 
     @Override

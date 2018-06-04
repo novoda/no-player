@@ -9,7 +9,6 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.SystemClock;
-import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
@@ -29,8 +28,8 @@ public class NoPlayerExoPlayerCreator {
         this.internalCreator = internalCreator;
     }
 
-    public NoPlayer createExoPlayer(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
-        ExoPlayerTwoImpl player = internalCreator.create(context, drmSessionCreator, downgradeSecureDecoder);
+    public NoPlayer createExoPlayer(Context context, boolean downgradeSecureDecoder, long maxInitialBitrate) {
+        ExoPlayerTwoImpl player = internalCreator.create(context, downgradeSecureDecoder, maxInitialBitrate);
         player.initialise();
         return player;
     }
@@ -43,8 +42,10 @@ public class NoPlayerExoPlayerCreator {
             this.handler = handler;
         }
 
-        ExoPlayerTwoImpl create(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
-            DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        ExoPlayerTwoImpl create(Context context, boolean downgradeSecureDecoder, long maxInitialBitrate) {
+            DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder()
+                    .setInitialBitrateEstimate(maxInitialBitrate)
+                    .build();
             DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent", bandwidthMeter);
             MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
 
@@ -76,7 +77,6 @@ public class NoPlayerExoPlayerCreator {
                     exoPlayerForwarder,
                     loadTimeout,
                     heart,
-                    drmSessionCreator,
                     mediaCodecSelector
             );
         }

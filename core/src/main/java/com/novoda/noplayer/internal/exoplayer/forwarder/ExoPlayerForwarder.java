@@ -1,8 +1,8 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
-import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.analytics.AnalyticsListener;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
+import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
@@ -10,16 +10,16 @@ import com.novoda.noplayer.PlayerState;
 public class ExoPlayerForwarder {
 
     private final EventListener exoPlayerEventListener;
-    private final MediaSourceEventListener mediaSourceEventListener;
+    private final NoPlayerMediaSourceEventListener mediaSourceEventListener;
+    private final NoPlayerAnalyticsListener analyticsListener;
     private final ExoPlayerVideoRendererEventListener videoRendererEventListener;
-    private final ExoPlayerExtractorMediaSourceListener extractorMediaSourceListener;
     private final ExoPlayerDrmSessionEventListener drmSessionEventListener;
 
     public ExoPlayerForwarder() {
         exoPlayerEventListener = new EventListener();
-        mediaSourceEventListener = new MediaSourceEventListener();
+        mediaSourceEventListener = new NoPlayerMediaSourceEventListener();
         videoRendererEventListener = new ExoPlayerVideoRendererEventListener();
-        extractorMediaSourceListener = new ExoPlayerExtractorMediaSourceListener();
+        analyticsListener = new NoPlayerAnalyticsListener();
         drmSessionEventListener = new ExoPlayerDrmSessionEventListener();
     }
 
@@ -27,7 +27,7 @@ public class ExoPlayerForwarder {
         return exoPlayerEventListener;
     }
 
-    public AdaptiveMediaSourceEventListener mediaSourceEventListener() {
+    public MediaSourceEventListener mediaSourceEventListener() {
         return mediaSourceEventListener;
     }
 
@@ -35,11 +35,7 @@ public class ExoPlayerForwarder {
         return videoRendererEventListener;
     }
 
-    public ExtractorMediaSource.EventListener extractorMediaSourceListener() {
-        return extractorMediaSourceListener;
-    }
-
-    public DefaultDrmSessionManager.EventListener drmSessionEventListener() {
+    public DefaultDrmSessionEventListener drmSessionEventListener() {
         return drmSessionEventListener;
     }
 
@@ -70,9 +66,13 @@ public class ExoPlayerForwarder {
 
     public void bind(NoPlayer.InfoListener infoListeners) {
         exoPlayerEventListener.add(new EventInfoForwarder(infoListeners));
-        mediaSourceEventListener.add(new MediaSourceInfoForwarder(infoListeners));
+        mediaSourceEventListener.add(new MediaSourceEventForwarder(infoListeners));
         videoRendererEventListener.add(new VideoRendererInfoForwarder(infoListeners));
-        extractorMediaSourceListener.add(new ExtractorInfoForwarder(infoListeners));
         drmSessionEventListener.add(new DrmSessionInfoForwarder(infoListeners));
+        analyticsListener.add(new AnalyticsListenerForwarder(infoListeners));
+    }
+
+    public AnalyticsListener analyticsListener() {
+        return analyticsListener;
     }
 }
