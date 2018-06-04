@@ -16,6 +16,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     private SurfaceView surfaceView;
     private SubtitleView subtitleView;
     private View shutterView;
+    private PlayerSurfaceHolder playerSurfaceHolder;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -34,6 +35,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         shutterView = findViewById(R.id.shutter);
         surfaceView = findViewById(R.id.surface_view);
         subtitleView = findViewById(R.id.subtitles_layout);
+        playerSurfaceHolder = PlayerSurfaceHolder.create(surfaceView);
     }
 
     @Override
@@ -48,7 +50,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     @Override
     public PlayerSurfaceHolder getPlayerSurfaceHolder() {
-        return PlayerSurfaceHolder.create(surfaceView);
+        return playerSurfaceHolder;
     }
 
     @Override
