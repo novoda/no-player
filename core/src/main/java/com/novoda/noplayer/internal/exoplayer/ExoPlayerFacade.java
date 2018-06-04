@@ -114,7 +114,7 @@ class ExoPlayerFacade {
         setMovieAudioAttributes(exoPlayer);
 
         MediaSource mediaSource = mediaSourceFactory.create(
-                options.contentType(),
+                options,
                 uri,
                 forwarder.mediaSourceEventListener()
         );

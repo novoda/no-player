@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
@@ -25,7 +24,6 @@ public class PlayerBuilder {
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
     private boolean downgradeSecureDecoder;
-    private long maxInitialBitrate = DefaultBandwidthMeter.DEFAULT_INITIAL_BITRATE_ESTIMATE;
 
     /**
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine classic DRM.
@@ -77,7 +75,7 @@ public class PlayerBuilder {
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will prioritise the underlying player when
      * multiple underlying players share the same features.
      *
-     * @param playerType First {@link PlayerType} with the highest priority.
+     * @param playerType  First {@link PlayerType} with the highest priority.
      * @param playerTypes Remaining {@link PlayerType} in order of priority.
      * @return {@link PlayerBuilder}
      * @see NoPlayer
@@ -102,19 +100,6 @@ public class PlayerBuilder {
     }
 
     /**
-     * Sets {@link OptionsBuilder} to build {@link Options} with given maximum initial bitrate in order to
-     * control what is the quality with which {@link NoPlayer} starts the playback. Setting a higher value
-     * allows the player to choose a higher quality video track at the beginning.
-     *
-     * @param maxInitialBitrate maximum bitrate that limits the initial track selection.
-     * @return {@link OptionsBuilder}
-     */
-    public PlayerBuilder withMaxInitialBitrate(long maxInitialBitrate) {
-        this.maxInitialBitrate = maxInitialBitrate;
-        return this;
-    }
-
-    /**
      * Builds a new {@link NoPlayer} instance.
      *
      * @param context The {@link Context} associated with the player.
@@ -130,6 +115,6 @@ public class PlayerBuilder {
                 NoPlayerExoPlayerCreator.newInstance(handler),
                 NoPlayerMediaPlayerCreator.newInstance(handler)
         );
-        return noPlayerCreator.create(drmType, downgradeSecureDecoder, maxInitialBitrate);
+        return noPlayerCreator.create(drmType, downgradeSecureDecoder);
     }
 }

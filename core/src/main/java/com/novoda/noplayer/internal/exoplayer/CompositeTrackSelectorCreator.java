@@ -13,13 +13,11 @@ import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSel
 
 class CompositeTrackSelectorCreator {
 
-    private final DefaultBandwidthMeter bandwidthMeter;
-
-    CompositeTrackSelectorCreator(DefaultBandwidthMeter bandwidthMeter) {
-        this.bandwidthMeter = bandwidthMeter;
-    }
-
     CompositeTrackSelector create(Options options) {
+        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder()
+                .setInitialBitrateEstimate(options.maxInitialBitrate())
+                .build();
+
         TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(
                 bandwidthMeter,
                 options.minDurationBeforeQualityIncreaseInMillis(),

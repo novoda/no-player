@@ -11,6 +11,9 @@ import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,9 +21,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static com.novoda.noplayer.internal.exoplayer.mediasource.VideoFormatFixture.aVideoFormat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -85,7 +85,6 @@ public class ExoPlayerVideoTrackSelectorTest {
         ArgumentCaptor<DefaultTrackSelector.SelectionOverride> argumentCaptor = whenSelectingVideoTrack(ADDITIONAL_PLAYER_VIDEO_TRACK);
 
         DefaultTrackSelector.SelectionOverride selectionOverride = argumentCaptor.getValue();
-        assertThat(selectionOverride.factory).isEqualTo(trackSelectionFactory);
         assertThat(selectionOverride.groupIndex).isEqualTo(FIRST_GROUP);
         assertThat(selectionOverride.tracks).contains(SECOND_TRACK);
     }

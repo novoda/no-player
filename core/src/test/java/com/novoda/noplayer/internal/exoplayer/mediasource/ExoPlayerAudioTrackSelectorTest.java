@@ -3,11 +3,12 @@ package com.novoda.noplayer.internal.exoplayer.mediasource;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.PlayerAudioTrack;
+
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,8 +17,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-
-import java.util.Collections;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,8 +47,6 @@ public class ExoPlayerAudioTrackSelectorTest {
     @Mock
     private ExoPlayerTrackSelector trackSelector;
     @Mock
-    private TrackSelection.Factory trackSelectionFactory;
-    @Mock
     private RendererTypeRequester rendererTypeRequester;
 
     private ExoPlayerAudioTrackSelector exoPlayerAudioTrackSelector;
@@ -64,10 +61,9 @@ public class ExoPlayerAudioTrackSelectorTest {
     public void givenTrackSelectorContainsTracks_whenSelectingAudioTrack_thenSelectsTrack() {
         TrackGroupArray trackGroups = givenTrackSelectorContainsTracks();
 
-        ArgumentCaptor<MappingTrackSelector.SelectionOverride> argumentCaptor = whenSelectingAudioTrack(trackGroups);
+        ArgumentCaptor<DefaultTrackSelector.SelectionOverride> argumentCaptor = whenSelectingAudioTrack(trackGroups);
 
-        MappingTrackSelector.SelectionOverride selectionOverride = argumentCaptor.getValue();
-        assertThat(selectionOverride.factory).isEqualTo(trackSelectionFactory);
+        DefaultTrackSelector.SelectionOverride selectionOverride = argumentCaptor.getValue();
         assertThat(selectionOverride.groupIndex).isEqualTo(SECOND_GROUP);
         assertThat(selectionOverride.tracks).contains(THIRD_TRACK);
     }
@@ -95,10 +91,10 @@ public class ExoPlayerAudioTrackSelectorTest {
         return trackGroups;
     }
 
-    private ArgumentCaptor<MappingTrackSelector.SelectionOverride> whenSelectingAudioTrack(TrackGroupArray trackGroups) {
+    private ArgumentCaptor<DefaultTrackSelector.SelectionOverride> whenSelectingAudioTrack(TrackGroupArray trackGroups) {
         exoPlayerAudioTrackSelector.selectAudioTrack(AUDIO_TRACK, rendererTypeRequester);
 
-        ArgumentCaptor<MappingTrackSelector.SelectionOverride> argumentCaptor = ArgumentCaptor.forClass(MappingTrackSelector.SelectionOverride.class);
+        ArgumentCaptor<DefaultTrackSelector.SelectionOverride> argumentCaptor = ArgumentCaptor.forClass(DefaultTrackSelector.SelectionOverride.class);
         verify(trackSelector).setSelectionOverride(eq(TrackType.AUDIO), any(RendererTypeRequester.class), eq(trackGroups), argumentCaptor.capture());
         return argumentCaptor;
     }

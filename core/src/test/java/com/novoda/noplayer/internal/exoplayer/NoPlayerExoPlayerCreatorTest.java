@@ -2,8 +2,6 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.content.Context;
 
-import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,21 +24,19 @@ public class NoPlayerExoPlayerCreatorTest {
     @Mock
     private Context context;
     @Mock
-    private DrmSessionCreator drmSessionCreator;
-    @Mock
     private NoPlayerExoPlayerCreator.InternalCreator internalCreator;
 
     private NoPlayerExoPlayerCreator creator;
 
     @Before
     public void setUp() {
-        given(internalCreator.create(context, drmSessionCreator, USE_SECURE_CODEC)).willReturn(player);
+        given(internalCreator.create(context, USE_SECURE_CODEC)).willReturn(player);
         creator = new NoPlayerExoPlayerCreator(internalCreator);
     }
 
     @Test
     public void whenCreatingExoPlayerTwo_thenInitialisesPlayer() {
-        creator.createExoPlayer(context, drmSessionCreator, USE_SECURE_CODEC);
+        creator.createExoPlayer(context, USE_SECURE_CODEC);
 
         verify(player).initialise();
     }

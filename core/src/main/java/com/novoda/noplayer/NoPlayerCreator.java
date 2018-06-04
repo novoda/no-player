@@ -25,21 +25,21 @@ class NoPlayerCreator {
         this.noPlayerMediaPlayerCreator = noPlayerMediaPlayerCreator;
     }
 
-    NoPlayer create(DrmType drmType, boolean downgradeSecureDecoder, long maxInitialBitrate) {
+    NoPlayer create(DrmType drmType, boolean downgradeSecureDecoder) {
         for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
-                return createPlayerForType(player, downgradeSecureDecoder, maxInitialBitrate);
+                return createPlayerForType(player, downgradeSecureDecoder);
             }
         }
         throw UnableToCreatePlayerException.unhandledDrmType(drmType);
     }
 
-    private NoPlayer createPlayerForType(PlayerType playerType, boolean downgradeSecureDecoder, long maxInitialBitrate) {
+    private NoPlayer createPlayerForType(PlayerType playerType, boolean downgradeSecureDecoder) {
         switch (playerType) {
             case MEDIA_PLAYER:
                 return noPlayerMediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
-                return noPlayerExoPlayerCreator.createExoPlayer(context, downgradeSecureDecoder, maxInitialBitrate);
+                return noPlayerExoPlayerCreator.createExoPlayer(context, downgradeSecureDecoder);
             default:
                 throw UnableToCreatePlayerException.unhandledPlayerType(playerType);
         }

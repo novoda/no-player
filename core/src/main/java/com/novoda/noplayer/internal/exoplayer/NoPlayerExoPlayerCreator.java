@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.SystemClock;
@@ -28,8 +26,8 @@ public class NoPlayerExoPlayerCreator {
         this.internalCreator = internalCreator;
     }
 
-    public NoPlayer createExoPlayer(Context context, boolean downgradeSecureDecoder, long maxInitialBitrate) {
-        ExoPlayerTwoImpl player = internalCreator.create(context, downgradeSecureDecoder, maxInitialBitrate);
+    public NoPlayer createExoPlayer(Context context, boolean downgradeSecureDecoder) {
+        ExoPlayerTwoImpl player = internalCreator.create(context, downgradeSecureDecoder);
         player.initialise();
         return player;
     }
@@ -42,18 +40,14 @@ public class NoPlayerExoPlayerCreator {
             this.handler = handler;
         }
 
-        ExoPlayerTwoImpl create(Context context, boolean downgradeSecureDecoder, long maxInitialBitrate) {
-            DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder()
-                    .setInitialBitrateEstimate(maxInitialBitrate)
-                    .build();
-            DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent", bandwidthMeter);
-            MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
+        ExoPlayerTwoImpl create(Context context, boolean downgradeSecureDecoder) {
+            MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(context, handler);
 
             MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
                     ? SecurityDowngradingCodecSelector.newInstance()
                     : MediaCodecSelector.DEFAULT;
 
-            CompositeTrackSelectorCreator trackSelectorCreator = new CompositeTrackSelectorCreator(bandwidthMeter);
+            CompositeTrackSelectorCreator trackSelectorCreator = new CompositeTrackSelectorCreator();
 
             ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context);
             RendererTypeRequesterCreator rendererTypeRequesterCreator = new RendererTypeRequesterCreator();
