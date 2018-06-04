@@ -5,19 +5,18 @@ import android.util.AttributeSet;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
-
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.novoda.noplayer.model.TextCues;
 
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
-    private final PlayerViewSurfaceHolder surfaceHolderProvider;
     private final AspectRatioChangeCalculator aspectRatioChangeCalculator;
 
     private AspectRatioFrameLayout videoFrame;
     private SurfaceView surfaceView;
     private SubtitleView subtitleView;
     private View shutterView;
+    private PlayerSurfaceHolder playerSurfaceHolder;
 
     public NoPlayerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -25,7 +24,6 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        surfaceHolderProvider = new PlayerViewSurfaceHolder();
         aspectRatioChangeCalculator = new AspectRatioChangeCalculator(this);
     }
 
@@ -33,11 +31,11 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.noplayer_view, this);
-        videoFrame = (AspectRatioFrameLayout) findViewById(R.id.video_frame);
+        videoFrame = findViewById(R.id.video_frame);
         shutterView = findViewById(R.id.shutter);
-        surfaceView = (SurfaceView) findViewById(R.id.surface_view);
-        surfaceView.getHolder().addCallback(surfaceHolderProvider);
-        subtitleView = (SubtitleView) findViewById(R.id.subtitles_layout);
+        surfaceView = findViewById(R.id.surface_view);
+        subtitleView = findViewById(R.id.subtitles_layout);
+        playerSurfaceHolder = PlayerSurfaceHolder.create(surfaceView);
     }
 
     @Override
@@ -51,8 +49,8 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     }
 
     @Override
-    public SurfaceHolderRequester getSurfaceHolderRequester() {
-        return surfaceHolderProvider;
+    public PlayerSurfaceHolder getPlayerSurfaceHolder() {
+        return playerSurfaceHolder;
     }
 
     @Override

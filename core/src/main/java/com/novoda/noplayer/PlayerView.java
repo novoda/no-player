@@ -1,14 +1,13 @@
 package com.novoda.noplayer;
 
 import android.view.View;
-
 import com.novoda.noplayer.model.TextCues;
 
 public interface PlayerView {
 
     View getContainerView();
 
-    SurfaceHolderRequester getSurfaceHolderRequester();
+    PlayerSurfaceHolder getPlayerSurfaceHolder();
 
     NoPlayer.VideoSizeChangedListener getVideoSizeChangedListener();
 
@@ -19,4 +18,5 @@ public interface PlayerView {
     void hideSubtitles();
 
     void setSubtitleCue(TextCues textCues);
+
 }
