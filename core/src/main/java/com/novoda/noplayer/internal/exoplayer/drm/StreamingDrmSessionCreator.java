@@ -36,6 +36,7 @@ class StreamingDrmSessionCreator implements DrmSessionCreator {
                 mediaDrmCallback,
                 NO_OPTIONAL_PARAMETERS
         );
+        defaultDrmSessionManager.removeListener(eventListener);
         defaultDrmSessionManager.addListener(handler, eventListener);
 
         return defaultDrmSessionManager;
