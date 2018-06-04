@@ -139,13 +139,7 @@ class ExoPlayerFacade {
     }
 
     private void attachToSurface(PlayerSurfaceHolder playerSurfaceHolder) {
-        if (playerSurfaceHolder.containsSurfaceView()) {
-            exoPlayer.setVideoSurfaceView(playerSurfaceHolder.getSurfaceView());
-        } else if (playerSurfaceHolder.containsTextureView()) {
-            exoPlayer.setVideoTextureView(playerSurfaceHolder.getTextureView());
-        } else {
-            throw new IllegalArgumentException("Surface container does not contain any of the expected views");
-        }
+        playerSurfaceHolder.attach(exoPlayer);
     }
 
     AudioTracks getAudioTracks() throws IllegalStateException {

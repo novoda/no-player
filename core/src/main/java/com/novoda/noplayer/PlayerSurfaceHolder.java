@@ -3,6 +3,7 @@ package com.novoda.noplayer;
 import android.support.annotation.Nullable;
 import android.view.SurfaceView;
 import android.view.TextureView;
+import com.google.android.exoplayer2.Player;
 
 public class PlayerSurfaceHolder {
 
@@ -30,29 +31,25 @@ public class PlayerSurfaceHolder {
         this.surfaceHolder = surfaceHolder;
     }
 
-    public boolean containsSurfaceView() {
+    public SurfaceRequester getSurfaceRequester() {
+        return surfaceHolder;
+    }
+
+    public void attach(Player.VideoComponent videoPlayer) {
+        if (containsSurfaceView()) {
+            videoPlayer.setVideoSurfaceView(surfaceView);
+        } else if (containsTextureView()) {
+            videoPlayer.setVideoTextureView(textureView);
+        } else {
+            throw new IllegalArgumentException("Surface container does not contain any of the expected views");
+        }
+    }
+
+    private boolean containsSurfaceView() {
         return surfaceView != null;
     }
 
-    public SurfaceView getSurfaceView() {
-        if (surfaceView == null) {
-            throw new IllegalStateException("No SurfaceView available");
-        }
-        return surfaceView;
-    }
-
-    public boolean containsTextureView() {
+    private boolean containsTextureView() {
         return textureView != null;
-    }
-
-    public TextureView getTextureView() {
-        if (textureView == null) {
-            throw new IllegalStateException("No TextureView available");
-        }
-        return textureView;
-    }
-
-    public SurfaceRequester getSurfaceRequester() {
-        return surfaceHolder;
     }
 }
