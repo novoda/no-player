@@ -7,9 +7,13 @@ import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.text.SubtitleDecoderFactory;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.text.NoPlayerSubtitleDecoderFactory;
 
 import static com.novoda.noplayer.internal.exoplayer.SimpleRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
@@ -25,8 +29,11 @@ class ExoPlayerCreator {
     }
 
     @NonNull
-    public SimpleExoPlayer create(MediaCodecSelector mediaCodecSelector,
+    public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator,
+                                  DefaultDrmSessionEventListener drmSessionEventListener,
+                                  MediaCodecSelector mediaCodecSelector,
                                   TrackSelector trackSelector) {
+        DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
         SubtitleDecoderFactory subtitleDecoderFactory = new NoPlayerSubtitleDecoderFactory();
         RenderersFactory renderersFactory = new SimpleRenderersFactory(
                 context,
@@ -37,6 +44,6 @@ class ExoPlayerCreator {
         );
 
         DefaultLoadControl loadControl = new DefaultLoadControl();
-        return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+        return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl, drmSessionManager);
     }
 }

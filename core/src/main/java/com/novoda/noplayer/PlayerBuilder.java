@@ -8,8 +8,11 @@ import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.internal.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
+import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -109,12 +112,19 @@ public class PlayerBuilder {
      */
     public NoPlayer build(Context context) throws UnableToCreatePlayerException {
         Handler handler = new Handler(Looper.getMainLooper());
+        ProvisionExecutorCreator provisionExecutorCreator = new ProvisionExecutorCreator();
+        DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(
+                AndroidDeviceVersion.newInstance(),
+                provisionExecutorCreator,
+                handler
+        );
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
                 context,
                 prioritizedPlayerTypes,
                 NoPlayerExoPlayerCreator.newInstance(handler),
-                NoPlayerMediaPlayerCreator.newInstance(handler)
+                NoPlayerMediaPlayerCreator.newInstance(handler),
+                drmSessionCreatorFactory
         );
-        return noPlayerCreator.create(drmType, downgradeSecureDecoder);
+        return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder);
     }
 }
