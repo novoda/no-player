@@ -27,10 +27,8 @@ public class MediaSourceFactory {
 
     public MediaSource create(Options options,
                               Uri uri,
-                              MediaSourceEventListener mediaSourceEventListener) {
-        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder()
-                .setInitialBitrateEstimate(options.maxInitialBitrate())
-                .build();
+                              MediaSourceEventListener mediaSourceEventListener,
+                              DefaultBandwidthMeter bandwidthMeter) {
         DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent", bandwidthMeter);
 
         switch (options.contentType()) {

@@ -2,11 +2,13 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
@@ -106,7 +108,12 @@ class ExoPlayerFacade {
                    ExoPlayerForwarder forwarder,
                    MediaCodecSelector mediaCodecSelector) {
         this.options = options;
-        compositeTrackSelector = trackSelectorCreator.create(options);
+
+        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder()
+                .setInitialBitrateEstimate(options.maxInitialBitrate())
+                .build();
+
+        compositeTrackSelector = trackSelectorCreator.create(options, bandwidthMeter);
         exoPlayer = exoPlayerCreator.create(
                 drmSessionCreator,
                 forwarder.drmSessionEventListener(),
@@ -122,7 +129,8 @@ class ExoPlayerFacade {
         MediaSource mediaSource = mediaSourceFactory.create(
                 options,
                 uri,
-                forwarder.mediaSourceEventListener()
+                forwarder.mediaSourceEventListener(),
+                bandwidthMeter
         );
         attachToSurface(playerSurfaceHolder);
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
