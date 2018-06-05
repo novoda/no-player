@@ -12,6 +12,8 @@ import java.util.HashMap;
 @SuppressWarnings({"PMD.UnusedImports", "checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
 class MediaSourceEventForwarder implements MediaSourceEventListener {
 
+    private static final String NO_MEDIA_PERIOD_ID = null;
+
     private final NoPlayer.InfoListener infoListener;
 
     MediaSourceEventForwarder(NoPlayer.InfoListener infoListener) {
@@ -46,7 +48,7 @@ class MediaSourceEventForwarder implements MediaSourceEventListener {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
         callingMethodParameters.put(Parameters.WINDOW_INDEX, String.valueOf(windowIndex));
-        callingMethodParameters.put(Parameters.MEDIA_PERIOD_ID, mediaPeriodId == null ? "null" : mediaPeriodId.toString());
+        callingMethodParameters.put(Parameters.MEDIA_PERIOD_ID, mediaPeriodId == null ? NO_MEDIA_PERIOD_ID : mediaPeriodId.toString());
         callingMethodParameters.put(Parameters.LOAD_EVENT_INFO, loadEventInfo.toString());
         callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA, mediaLoadData.toString());
 
@@ -61,7 +63,7 @@ class MediaSourceEventForwarder implements MediaSourceEventListener {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
         callingMethodParameters.put(Parameters.WINDOW_INDEX, String.valueOf(windowIndex));
-        callingMethodParameters.put(Parameters.MEDIA_PERIOD_ID, mediaPeriodId == null ? "null" : mediaPeriodId.toString());
+        callingMethodParameters.put(Parameters.MEDIA_PERIOD_ID, mediaPeriodId == null ? NO_MEDIA_PERIOD_ID : mediaPeriodId.toString());
         callingMethodParameters.put(Parameters.LOAD_EVENT_INFO, loadEventInfo.toString());
         callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA, mediaLoadData.toString());
 
@@ -76,7 +78,7 @@ class MediaSourceEventForwarder implements MediaSourceEventListener {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
         callingMethodParameters.put(Parameters.WINDOW_INDEX, String.valueOf(windowIndex));
-        callingMethodParameters.put(Parameters.MEDIA_PERIOD_ID, mediaPeriodId == null ? "null" : mediaPeriodId.toString());
+        callingMethodParameters.put(Parameters.MEDIA_PERIOD_ID, mediaPeriodId == null ? NO_MEDIA_PERIOD_ID : mediaPeriodId.toString());
         callingMethodParameters.put(Parameters.LOAD_EVENT_INFO, loadEventInfo.toString());
         callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA, mediaLoadData.toString());
 
@@ -93,7 +95,7 @@ class MediaSourceEventForwarder implements MediaSourceEventListener {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
         callingMethodParameters.put(Parameters.WINDOW_INDEX, String.valueOf(windowIndex));
-        callingMethodParameters.put(Parameters.MEDIA_PERIOD_ID, mediaPeriodId == null ? "null" : mediaPeriodId.toString());
+        callingMethodParameters.put(Parameters.MEDIA_PERIOD_ID, mediaPeriodId == null ? NO_MEDIA_PERIOD_ID : mediaPeriodId.toString());
         callingMethodParameters.put(Parameters.LOAD_EVENT_INFO, loadEventInfo.toString());
         callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA, mediaLoadData.toString());
 
@@ -130,7 +132,7 @@ class MediaSourceEventForwarder implements MediaSourceEventListener {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
         callingMethodParameters.put(Parameters.WINDOW_INDEX, String.valueOf(windowIndex));
-        callingMethodParameters.put(Parameters.MEDIA_PERIOD_ID, mediaPeriodId == null ? "null" : mediaPeriodId.toString());
+        callingMethodParameters.put(Parameters.MEDIA_PERIOD_ID, mediaPeriodId == null ? NO_MEDIA_PERIOD_ID : mediaPeriodId.toString());
         callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA,  mediaLoadData.toString());
 
         infoListener.onNewInfo(Methods.ON_DOWNSTREAM_FORMAT_CHANGED, callingMethodParameters);
