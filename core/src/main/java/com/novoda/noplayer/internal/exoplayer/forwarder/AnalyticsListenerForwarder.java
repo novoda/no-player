@@ -18,6 +18,9 @@ import com.novoda.noplayer.NoPlayer;
 import java.io.IOException;
 import java.util.HashMap;
 
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ForwarderInformation.Methods;
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ForwarderInformation.Parameters;
+
 class AnalyticsListenerForwarder implements AnalyticsListener {
 
     private final NoPlayer.InfoListener infoListeners;
@@ -30,110 +33,110 @@ class AnalyticsListenerForwarder implements AnalyticsListener {
     public void onPlayerStateChanged(EventTime eventTime, boolean playWhenReady, int playbackState) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("playWhenReady", String.valueOf(playWhenReady));
-        callingMethodParameters.put("playbackState", String.valueOf(playbackState));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.PLAY_WHEN_READY, String.valueOf(playWhenReady));
+        callingMethodParameters.put(Parameters.PLAYBACK_STATE, String.valueOf(playbackState));
 
-        infoListeners.onNewInfo("onPlayerStateChanged", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_PLAYER_STATE_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onTimelineChanged(EventTime eventTime, int reason) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("reason", String.valueOf(reason));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.REASON, String.valueOf(reason));
 
-        infoListeners.onNewInfo("onTimelineChanged", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_TIMELINE_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onPositionDiscontinuity(EventTime eventTime, int reason) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("reason", String.valueOf(reason));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.REASON, String.valueOf(reason));
 
-        infoListeners.onNewInfo("onPositionDiscontinuity", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_POSITION_DISCONTINUITY, callingMethodParameters);
     }
 
     @Override
     public void onSeekStarted(EventTime eventTime) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
 
-        infoListeners.onNewInfo("onSeekStarted", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_SEEK_STARTED, callingMethodParameters);
     }
 
     @Override
     public void onSeekProcessed(EventTime eventTime) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
 
-        infoListeners.onNewInfo("onSeekProcessed", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_SEEK_PROCESSED, callingMethodParameters);
     }
 
     @Override
     public void onPlaybackParametersChanged(EventTime eventTime, PlaybackParameters playbackParameters) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("playbackParameters", playbackParameters.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.PLAYBACK_PARAMETERS, playbackParameters.toString());
 
-        infoListeners.onNewInfo("onPlaybackParametersChanged", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_PLAYBACK_PARAMETERS_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onRepeatModeChanged(EventTime eventTime, int repeatMode) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("repeatMode", String.valueOf(repeatMode));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.REPEAT_MODE, String.valueOf(repeatMode));
 
-        infoListeners.onNewInfo("onRepeatModeChanged", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_REPEAT_MODE_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onShuffleModeChanged(EventTime eventTime, boolean shuffleModeEnabled) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("shuffleModeEnabled", String.valueOf(shuffleModeEnabled));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.SHUFFLE_MODE_ENABLED, String.valueOf(shuffleModeEnabled));
 
-        infoListeners.onNewInfo("onShuffleModeChanged", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_SHUFFLE_MODE_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onLoadingChanged(EventTime eventTime, boolean isLoading) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("isLoading", String.valueOf(isLoading));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.IS_LOADING, String.valueOf(isLoading));
 
-        infoListeners.onNewInfo("onLoadingChanged", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_LOADING_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onPlayerError(EventTime eventTime, ExoPlaybackException error) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("error", error.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.ERROR, error.toString());
 
-        infoListeners.onNewInfo("onPlayerError", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_PLAYER_ERROR, callingMethodParameters);
     }
 
     @Override
     public void onTracksChanged(EventTime eventTime, TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("trackGroups", trackGroups.toString());
-        callingMethodParameters.put("trackSelections", trackSelections.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.TRACK_GROUPS, trackGroups.toString());
+        callingMethodParameters.put(Parameters.TRACK_SELECTIONS, trackSelections.toString());
 
-        infoListeners.onNewInfo("onTracksChanged", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_TRACKS_CHANGED, callingMethodParameters);
     }
 
     @Override
@@ -142,11 +145,11 @@ class AnalyticsListenerForwarder implements AnalyticsListener {
                               MediaSourceEventListener.MediaLoadData mediaLoadData) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("loadEventInfo", loadEventInfo.toString());
-        callingMethodParameters.put("mediaLoadData", mediaLoadData.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.LOAD_EVENT_INFO, loadEventInfo.toString());
+        callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA, mediaLoadData.toString());
 
-        infoListeners.onNewInfo("onLoadStarted", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_LOAD_STARTED, callingMethodParameters);
     }
 
     @Override
@@ -155,11 +158,11 @@ class AnalyticsListenerForwarder implements AnalyticsListener {
                                 MediaSourceEventListener.MediaLoadData mediaLoadData) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("loadEventInfo", loadEventInfo.toString());
-        callingMethodParameters.put("mediaLoadData", mediaLoadData.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.LOAD_EVENT_INFO, loadEventInfo.toString());
+        callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA, mediaLoadData.toString());
 
-        infoListeners.onNewInfo("onLoadCompleted", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_LOAD_COMPLETED, callingMethodParameters);
     }
 
     @Override
@@ -168,11 +171,11 @@ class AnalyticsListenerForwarder implements AnalyticsListener {
                                MediaSourceEventListener.MediaLoadData mediaLoadData) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("loadEventInfo", loadEventInfo.toString());
-        callingMethodParameters.put("mediaLoadData", mediaLoadData.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.LOAD_EVENT_INFO, loadEventInfo.toString());
+        callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA, mediaLoadData.toString());
 
-        infoListeners.onNewInfo("onLoadCanceled", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_LOAD_CANCELED, callingMethodParameters);
     }
 
     @Override
@@ -183,60 +186,60 @@ class AnalyticsListenerForwarder implements AnalyticsListener {
                             boolean wasCanceled) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("loadEventInfo", loadEventInfo.toString());
-        callingMethodParameters.put("mediaLoadData", mediaLoadData.toString());
-        callingMethodParameters.put("error", error.toString());
-        callingMethodParameters.put("wasCanceled", String.valueOf(wasCanceled));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.LOAD_EVENT_INFO, loadEventInfo.toString());
+        callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA, mediaLoadData.toString());
+        callingMethodParameters.put(Parameters.ERROR, error.toString());
+        callingMethodParameters.put(Parameters.WAS_CANCELED, String.valueOf(wasCanceled));
 
-        infoListeners.onNewInfo("onLoadError", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_LOAD_ERROR, callingMethodParameters);
     }
 
     @Override
     public void onDownstreamFormatChanged(EventTime eventTime, MediaSourceEventListener.MediaLoadData mediaLoadData) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("mediaLoadData", mediaLoadData.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA, mediaLoadData.toString());
 
-        infoListeners.onNewInfo("onDownstreamFormatChanged", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_DOWNSTREAM_FORMAT_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onUpstreamDiscarded(EventTime eventTime, MediaSourceEventListener.MediaLoadData mediaLoadData) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("mediaLoadData", mediaLoadData.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA, mediaLoadData.toString());
 
-        infoListeners.onNewInfo("onUpstreamDiscarded", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_UPSTREAM_DISCARDED, callingMethodParameters);
     }
 
     @Override
     public void onMediaPeriodCreated(EventTime eventTime) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
 
-        infoListeners.onNewInfo("onMediaPeriodCreated", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_MEDIA_PERIOD_CREATED, callingMethodParameters);
     }
 
     @Override
     public void onMediaPeriodReleased(EventTime eventTime) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
 
-        infoListeners.onNewInfo("onMediaPeriodReleased", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_MEDIA_PERIOD_RELEASED, callingMethodParameters);
     }
 
     @Override
     public void onReadingStarted(EventTime eventTime) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
 
-        infoListeners.onNewInfo("onReadingStarted", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_READING_STARTED, callingMethodParameters);
     }
 
     @Override
@@ -246,54 +249,54 @@ class AnalyticsListenerForwarder implements AnalyticsListener {
                                     long bitrateEstimate) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("totalLoadTimeMs", String.valueOf(totalLoadTimeMs));
-        callingMethodParameters.put("totalBytesLoaded", String.valueOf(totalBytesLoaded));
-        callingMethodParameters.put("bitrateEstimate", String.valueOf(bitrateEstimate));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.TOTAL_LOAD_TIME_MS, String.valueOf(totalLoadTimeMs));
+        callingMethodParameters.put(Parameters.TOTAL_BYTES_LOADED, String.valueOf(totalBytesLoaded));
+        callingMethodParameters.put(Parameters.BITRATE_ESTIMATE, String.valueOf(bitrateEstimate));
 
-        infoListeners.onNewInfo("onBandwidthEstimate", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_BANDWIDTH_ESTIMATE, callingMethodParameters);
     }
 
     @Override
     public void onViewportSizeChange(EventTime eventTime, int width, int height) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("width", String.valueOf(width));
-        callingMethodParameters.put("height", String.valueOf(height));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.WIDTH, String.valueOf(width));
+        callingMethodParameters.put(Parameters.HEIGHT, String.valueOf(height));
 
-        infoListeners.onNewInfo("onViewportSizeChange", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_VIEWPORT_SIZE_CHANGE, callingMethodParameters);
     }
 
     @Override
     public void onNetworkTypeChanged(EventTime eventTime, @Nullable NetworkInfo networkInfo) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("networkInfo", networkInfo == null ? "null" : networkInfo.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.NETWORK_INFO, networkInfo == null ? Parameters.NO_NETWORK_INFO : networkInfo.toString());
 
-        infoListeners.onNewInfo("onNetworkTypeChanged", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_NETWORK_TYPE_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onMetadata(EventTime eventTime, Metadata metadata) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("metadata", metadata.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.METADATA, metadata.toString());
 
-        infoListeners.onNewInfo("onMetadata", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_METADATA, callingMethodParameters);
     }
 
     @Override
     public void onDecoderEnabled(EventTime eventTime, int trackType, DecoderCounters decoderCounters) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("trackType", String.valueOf(trackType));
-        callingMethodParameters.put("decoderCounters", decoderCounters.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.TRACK_TYPE, String.valueOf(trackType));
+        callingMethodParameters.put(Parameters.DECODER_COUNTERS, decoderCounters.toString());
 
-        infoListeners.onNewInfo("onDecoderEnabled", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_DECODER_ENABLED, callingMethodParameters);
     }
 
     @Override
@@ -303,67 +306,67 @@ class AnalyticsListenerForwarder implements AnalyticsListener {
                                      long initializationDurationMs) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("trackType", String.valueOf(trackType));
-        callingMethodParameters.put("decoderName", decoderName);
-        callingMethodParameters.put("initializationDurationMs", String.valueOf(initializationDurationMs));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.TRACK_TYPE, String.valueOf(trackType));
+        callingMethodParameters.put(Parameters.DECODER_NAME, decoderName);
+        callingMethodParameters.put(Parameters.INITIALIZATION_DURATION_MS, String.valueOf(initializationDurationMs));
 
-        infoListeners.onNewInfo("onDecoderInitialized", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_DECODER_INITIALIZED, callingMethodParameters);
     }
 
     @Override
     public void onDecoderInputFormatChanged(EventTime eventTime, int trackType, Format format) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("trackType", String.valueOf(trackType));
-        callingMethodParameters.put("format", format.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.TRACK_TYPE, String.valueOf(trackType));
+        callingMethodParameters.put(Parameters.FORMAT, format.toString());
 
-        infoListeners.onNewInfo("onDecoderInputFormatChanged", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_DECODER_INPUT_FORMAT_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onDecoderDisabled(EventTime eventTime, int trackType, DecoderCounters decoderCounters) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("trackType", String.valueOf(trackType));
-        callingMethodParameters.put("decoderCounters", decoderCounters.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.TRACK_TYPE, String.valueOf(trackType));
+        callingMethodParameters.put(Parameters.DECODER_COUNTERS, decoderCounters.toString());
 
-        infoListeners.onNewInfo("onDecoderDisabled", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_DECODER_DISABLED, callingMethodParameters);
     }
 
     @Override
     public void onAudioSessionId(EventTime eventTime, int audioSessionId) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("audioSessionId", String.valueOf(audioSessionId));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.AUDIO_SESSION_ID, String.valueOf(audioSessionId));
 
-        infoListeners.onNewInfo("onAudioSessionId", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_AUDIO_SESSION_ID, callingMethodParameters);
     }
 
     @Override
     public void onAudioUnderrun(EventTime eventTime, int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("bufferSize", String.valueOf(bufferSize));
-        callingMethodParameters.put("bufferSizeMs", String.valueOf(bufferSizeMs));
-        callingMethodParameters.put("elapsedSinceLastFeedMs", String.valueOf(elapsedSinceLastFeedMs));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.BUFFER_SIZE, String.valueOf(bufferSize));
+        callingMethodParameters.put(Parameters.BUFFER_SIZE_MS, String.valueOf(bufferSizeMs));
+        callingMethodParameters.put(Parameters.ELAPSED_SINCE_LAST_FEED_MS, String.valueOf(elapsedSinceLastFeedMs));
 
-        infoListeners.onNewInfo("onAudioUnderrun", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_AUDIO_UNDERRUN, callingMethodParameters);
     }
 
     @Override
     public void onDroppedVideoFrames(EventTime eventTime, int droppedFrames, long elapsedMs) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("droppedFrames", String.valueOf(droppedFrames));
-        callingMethodParameters.put("elapsedMs", String.valueOf(elapsedMs));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.DROPPED_FRAMES, String.valueOf(droppedFrames));
+        callingMethodParameters.put(Parameters.ELAPSED_MS, String.valueOf(elapsedMs));
 
-        infoListeners.onNewInfo("onDroppedVideoFrames", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_DROPPED_VIDEO_FRAMES, callingMethodParameters);
     }
 
     @Override
@@ -374,59 +377,59 @@ class AnalyticsListenerForwarder implements AnalyticsListener {
                                    float pixelWidthHeightRatio) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("width", String.valueOf(width));
-        callingMethodParameters.put("height", String.valueOf(height));
-        callingMethodParameters.put("unappliedRotationDegrees", String.valueOf(unappliedRotationDegrees));
-        callingMethodParameters.put("pixelWidthHeightRatio", String.valueOf(pixelWidthHeightRatio));
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.WIDTH, String.valueOf(width));
+        callingMethodParameters.put(Parameters.HEIGHT, String.valueOf(height));
+        callingMethodParameters.put(Parameters.UNAPPLIED_ROTATION_DEGREES, String.valueOf(unappliedRotationDegrees));
+        callingMethodParameters.put(Parameters.PIXEL_WIDTH_HEIGHT_RATIO, String.valueOf(pixelWidthHeightRatio));
 
-        infoListeners.onNewInfo("onVideoSizeChanged", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_VIDEO_SIZE_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onRenderedFirstFrame(EventTime eventTime, Surface surface) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("surface", surface.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.SURFACE, surface.toString());
 
-        infoListeners.onNewInfo("onRenderedFirstFrame", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_RENDERED_FIRST_FRAME, callingMethodParameters);
     }
 
     @Override
     public void onDrmKeysLoaded(EventTime eventTime) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
 
-        infoListeners.onNewInfo("onDrmKeysLoaded", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_DRM_KEYS_LOADED, callingMethodParameters);
     }
 
     @Override
     public void onDrmSessionManagerError(EventTime eventTime, Exception error) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
-        callingMethodParameters.put("error", error.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
+        callingMethodParameters.put(Parameters.ERROR, error.toString());
 
-        infoListeners.onNewInfo("onDrmSessionManagerError", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_DRM_SESSION_MANAGER_ERROR, callingMethodParameters);
     }
 
     @Override
     public void onDrmKeysRestored(EventTime eventTime) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
 
-        infoListeners.onNewInfo("onDrmKeysRestored", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_DRM_KEYS_RESTORED, callingMethodParameters);
     }
 
     @Override
     public void onDrmKeysRemoved(EventTime eventTime) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("eventTime", eventTime.toString());
+        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
 
-        infoListeners.onNewInfo("onDrmKeysRemoved", callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_DRM_KEYS_REMOVED, callingMethodParameters);
     }
 }

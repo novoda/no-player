@@ -9,6 +9,9 @@ import com.novoda.noplayer.NoPlayer;
 import java.io.IOException;
 import java.util.HashMap;
 
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ForwarderInformation.Methods;
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ForwarderInformation.Parameters;
+
 @SuppressWarnings({"PMD.UnusedImports", "checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
 class MediaSourceEventForwarder implements MediaSourceEventListener {
 
@@ -136,33 +139,5 @@ class MediaSourceEventForwarder implements MediaSourceEventListener {
         callingMethodParameters.put(Parameters.MEDIA_LOAD_DATA,  mediaLoadData.toString());
 
         infoListener.onNewInfo(Methods.ON_DOWNSTREAM_FORMAT_CHANGED, callingMethodParameters);
-    }
-
-    static final class Parameters {
-
-        private Parameters() {
-            // Not instantiable
-        }
-
-        static final String WINDOW_INDEX = "windowIndex";
-        static final String MEDIA_PERIOD_ID = "mediaPeriodId";
-        static final String LOAD_EVENT_INFO = "loadEventInfo";
-        static final String MEDIA_LOAD_DATA = "mediaLoadData";
-    }
-
-    static final class Methods {
-
-        private Methods() {
-            // Not instantiable
-        }
-
-        static final String ON_READING_STARTED = "onReadingStarted";
-        static final String ON_MEDIA_PERIOD_RELEASED = "onMediaPeriodReleased";
-        static final String ON_MEDIA_PERIOD_CREATED = "onMediaPeriosCreated";
-        static final String ON_LOAD_STARTED = "onLoadStarted";
-        static final String ON_LOAD_COMPLETED = "onLoadCompleted";
-        static final String ON_LOAD_CANCELED = "onLoadCanceled";
-        static final String ON_UPSTREAM_DISCARDED = "onUpstreamDiscarded";
-        static final String ON_DOWNSTREAM_FORMAT_CHANGED = "onDownstreamFormatChanged";
     }
 }
