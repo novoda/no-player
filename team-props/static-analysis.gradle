@@ -1,36 +1,39 @@
-apply plugin: 'com.novoda.static-analysis'
+def configureStaticAnalysis(Project project) {
+    def testSourceSet = project.android.sourceSets.test.java.srcDirs
 
-staticAnalysis {
-    penalty {
-        maxErrors = 0
-        maxWarnings = 0
-    }
+    apply plugin: 'com.novoda.static-analysis'
 
-    checkstyle {
-        toolVersion checkstyleVersion
-        exclude project.fileTree('src/test/java')
-        exclude project.fileTree('src/testDebug/java')
-        configFile teamPropsFile('static-analysis/checkstyle-modules.xml')
-        includeVariants { variant -> excludeTestAndRelease(variant) }
-    }
+    staticAnalysis {
+        penalty {
+            maxErrors = 0
+            maxWarnings = 0
+        }
 
-    pmd {
-        toolVersion pmdVersion
-        exclude project.fileTree('src/test/java')
-        exclude project.fileTree('src/testDebug/java')
+        checkstyle {
+            toolVersion '8.5'
+            exclude testSourceSet
+            configFile teamPropsFile('static-analysis/checkstyle-modules.xml')
+        }
 
-        ruleSetFiles = rootProject.files('team-props/static-analysis/pmd-rules.xml')
-        ruleSets = []   // Note: this is a workaround to make the <exclude-pattern>s in pmd-rules.xml actually work
-        includeVariants { variant -> excludeTestAndRelease(variant) }
-    }
+        pmd {
+            toolVersion '5.8.1'
+            exclude testSourceSet
+            ruleSetFiles = files(teamPropsFile('static-analysis/pmd-rules.xml'))
+            ruleSets = []   // Note: this is a workaround to make the <exclude-pattern>s in pmd-rules.xml actually work
+        }
 
-    findbugs {
-        toolVersion findbugsVersion
-        excludeFilter teamPropsFile('static-analysis/findbugs-excludes.xml')
-        includeVariants { variant -> excludeTestAndRelease(variant) }
+        findbugs {
+            toolVersion '3.0.1'
+            exclude testSourceSet
+            excludeFilter teamPropsFile('static-analysis/findbugs-excludes.xml')
+        }
     }
 }
 
-static boolean excludeTestAndRelease(variant) {
-    return !variant.name.toLowerCase().endsWith('test') && !variant.name.toLowerCase().endsWith('release')
+project.plugins.withId('com.android.library') {
+    configureStaticAnalysis(project)
+}
+
+project.plugins.withId('com.android.application') {
+    configureStaticAnalysis(project)
 }
