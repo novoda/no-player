@@ -12,7 +12,8 @@ import java.util.HashMap;
 import static com.novoda.noplayer.internal.exoplayer.forwarder.ForwarderInformation.Methods;
 import static com.novoda.noplayer.internal.exoplayer.forwarder.ForwarderInformation.Parameters;
 
-@SuppressWarnings({"PMD.UnusedImports", "checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
+// This implements an interface method defined by ExoPlayer
+@SuppressWarnings({"PMD.UnusedImports", "checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
 class MediaSourceEventForwarder implements MediaSourceEventListener {
 
     private static final String NO_MEDIA_PERIOD_ID = null;

@@ -104,42 +104,54 @@ class NoPlayerAnalyticsListener implements AnalyticsListener {
     }
 
     @Override
-    public void onLoadStarted(EventTime eventTime, MediaSourceEventListener.LoadEventInfo loadEventInfo, MediaSourceEventListener.MediaLoadData mediaLoadData) {
+    public void onLoadStarted(EventTime eventTime,
+                              MediaSourceEventListener.LoadEventInfo loadEventInfo,
+                              MediaSourceEventListener.MediaLoadData mediaLoadData) {
         for (AnalyticsListener listener : listeners) {
             listener.onLoadStarted(eventTime, loadEventInfo, mediaLoadData);
         }
     }
 
     @Override
-    public void onLoadCompleted(EventTime eventTime, MediaSourceEventListener.LoadEventInfo loadEventInfo, MediaSourceEventListener.MediaLoadData mediaLoadData) {
+    public void onLoadCompleted(EventTime eventTime,
+                                MediaSourceEventListener.LoadEventInfo loadEventInfo,
+                                MediaSourceEventListener.MediaLoadData mediaLoadData) {
         for (AnalyticsListener listener : listeners) {
             listener.onLoadCompleted(eventTime, loadEventInfo, mediaLoadData);
         }
     }
 
     @Override
-    public void onLoadCanceled(EventTime eventTime, MediaSourceEventListener.LoadEventInfo loadEventInfo, MediaSourceEventListener.MediaLoadData mediaLoadData) {
+    public void onLoadCanceled(EventTime eventTime,
+                               MediaSourceEventListener.LoadEventInfo loadEventInfo,
+                               MediaSourceEventListener.MediaLoadData mediaLoadData) {
         for (AnalyticsListener listener : listeners) {
             listener.onLoadCanceled(eventTime, loadEventInfo, mediaLoadData);
         }
     }
 
     @Override
-    public void onLoadError(EventTime eventTime, MediaSourceEventListener.LoadEventInfo loadEventInfo, MediaSourceEventListener.MediaLoadData mediaLoadData, IOException error, boolean wasCanceled) {
+    public void onLoadError(EventTime eventTime,
+                            MediaSourceEventListener.LoadEventInfo loadEventInfo,
+                            MediaSourceEventListener.MediaLoadData mediaLoadData,
+                            IOException error,
+                            boolean wasCanceled) {
         for (AnalyticsListener listener : listeners) {
             listener.onLoadError(eventTime, loadEventInfo, mediaLoadData, error, wasCanceled);
         }
     }
 
     @Override
-    public void onDownstreamFormatChanged(EventTime eventTime, MediaSourceEventListener.MediaLoadData mediaLoadData) {
+    public void onDownstreamFormatChanged(EventTime eventTime,
+                                          MediaSourceEventListener.MediaLoadData mediaLoadData) {
         for (AnalyticsListener listener : listeners) {
             listener.onDownstreamFormatChanged(eventTime, mediaLoadData);
         }
     }
 
     @Override
-    public void onUpstreamDiscarded(EventTime eventTime, MediaSourceEventListener.MediaLoadData mediaLoadData) {
+    public void onUpstreamDiscarded(EventTime eventTime,
+                                    MediaSourceEventListener.MediaLoadData mediaLoadData) {
         for (AnalyticsListener listener : listeners) {
             listener.onUpstreamDiscarded(eventTime, mediaLoadData);
         }
@@ -167,14 +179,19 @@ class NoPlayerAnalyticsListener implements AnalyticsListener {
     }
 
     @Override
-    public void onBandwidthEstimate(EventTime eventTime, int totalLoadTimeMs, long totalBytesLoaded, long bitrateEstimate) {
+    public void onBandwidthEstimate(EventTime eventTime,
+                                    int totalLoadTimeMs,
+                                    long totalBytesLoaded,
+                                    long bitrateEstimate) {
         for (AnalyticsListener listener : listeners) {
             listener.onBandwidthEstimate(eventTime, totalLoadTimeMs, totalBytesLoaded, bitrateEstimate);
         }
     }
 
     @Override
-    public void onViewportSizeChange(EventTime eventTime, int width, int height) {
+    public void onViewportSizeChange(EventTime eventTime,
+                                     int width,
+                                     int height) {
         for (AnalyticsListener listener : listeners) {
             listener.onViewportSizeChange(eventTime, width, height);
         }
@@ -202,14 +219,19 @@ class NoPlayerAnalyticsListener implements AnalyticsListener {
     }
 
     @Override
-    public void onDecoderInitialized(EventTime eventTime, int trackType, String decoderName, long initializationDurationMs) {
+    public void onDecoderInitialized(EventTime eventTime,
+                                     int trackType,
+                                     String decoderName,
+                                     long initializationDurationMs) {
         for (AnalyticsListener listener : listeners) {
             listener.onDecoderInitialized(eventTime, trackType, decoderName, initializationDurationMs);
         }
     }
 
     @Override
-    public void onDecoderInputFormatChanged(EventTime eventTime, int trackType, Format format) {
+    public void onDecoderInputFormatChanged(EventTime eventTime,
+                                            int trackType,
+                                            Format format) {
         for (AnalyticsListener listener : listeners) {
             listener.onDecoderInputFormatChanged(eventTime, trackType, format);
         }
@@ -244,7 +266,11 @@ class NoPlayerAnalyticsListener implements AnalyticsListener {
     }
 
     @Override
-    public void onVideoSizeChanged(EventTime eventTime, int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+    public void onVideoSizeChanged(EventTime eventTime,
+                                   int width,
+                                   int height,
+                                   int unappliedRotationDegrees,
+                                   float pixelWidthHeightRatio) {
         for (AnalyticsListener listener : listeners) {
             listener.onVideoSizeChanged(eventTime, width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
         }
