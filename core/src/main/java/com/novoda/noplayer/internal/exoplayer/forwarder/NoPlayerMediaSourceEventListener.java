@@ -2,33 +2,34 @@ package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import android.support.annotation.Nullable;
 
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
-import com.novoda.noplayer.NoPlayer;
-import com.novoda.noplayer.model.Bitrate;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-class BitrateForwarder implements MediaSourceEventListener {
+@SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
+class NoPlayerMediaSourceEventListener implements MediaSourceEventListener {
 
-    private Bitrate videoBitrate = Bitrate.fromBitsPerSecond(0);
-    private Bitrate audioBitrate = Bitrate.fromBitsPerSecond(0);
+    private final List<MediaSourceEventListener> listeners = new CopyOnWriteArrayList<>();
 
-    private final NoPlayer.BitrateChangedListener bitrateChangedListener;
-
-    BitrateForwarder(NoPlayer.BitrateChangedListener bitrateChangedListener) {
-        this.bitrateChangedListener = bitrateChangedListener;
+    public void add(MediaSourceEventListener listener) {
+        listeners.add(listener);
     }
 
     @Override
     public void onMediaPeriodCreated(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
-        // TODO: should we send?
+        for (MediaSourceEventListener listener : listeners) {
+            listener.onMediaPeriodCreated(windowIndex, mediaPeriodId);
+        }
     }
 
     @Override
     public void onMediaPeriodReleased(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
-        // TODO: should we send?
+        for (MediaSourceEventListener listener : listeners) {
+            listener.onMediaPeriodReleased(windowIndex, mediaPeriodId);
+        }
     }
 
     @Override
@@ -36,7 +37,9 @@ class BitrateForwarder implements MediaSourceEventListener {
                               @Nullable MediaSource.MediaPeriodId mediaPeriodId,
                               LoadEventInfo loadEventInfo,
                               MediaLoadData mediaLoadData) {
-        // TODO: should we send?
+        for (MediaSourceEventListener listener : listeners) {
+            listener.onLoadStarted(windowIndex, mediaPeriodId, loadEventInfo, mediaLoadData);
+        }
     }
 
     @Override
@@ -44,7 +47,9 @@ class BitrateForwarder implements MediaSourceEventListener {
                                 @Nullable MediaSource.MediaPeriodId mediaPeriodId,
                                 LoadEventInfo loadEventInfo,
                                 MediaLoadData mediaLoadData) {
-        // TODO: should we send?
+        for (MediaSourceEventListener listener : listeners) {
+            listener.onLoadCompleted(windowIndex, mediaPeriodId, loadEventInfo, mediaLoadData);
+        }
     }
 
     @Override
@@ -52,7 +57,9 @@ class BitrateForwarder implements MediaSourceEventListener {
                                @Nullable MediaSource.MediaPeriodId mediaPeriodId,
                                LoadEventInfo loadEventInfo,
                                MediaLoadData mediaLoadData) {
-        // TODO: should we send?
+        for (MediaSourceEventListener listener : listeners) {
+            listener.onLoadCanceled(windowIndex, mediaPeriodId, loadEventInfo, mediaLoadData);
+        }
     }
 
     @Override
@@ -60,37 +67,34 @@ class BitrateForwarder implements MediaSourceEventListener {
                             @Nullable MediaSource.MediaPeriodId mediaPeriodId,
                             LoadEventInfo loadEventInfo,
                             MediaLoadData mediaLoadData,
-                            IOException error,
-                            boolean wasCanceled) {
-        // TODO: should we send?
+                            IOException error, boolean wasCanceled) {
+        for (MediaSourceEventListener listener : listeners) {
+            listener.onLoadError(windowIndex, mediaPeriodId, loadEventInfo, mediaLoadData, error, wasCanceled);
+        }
     }
 
     @Override
     public void onReadingStarted(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
-        // TODO: should we send?
+        for (MediaSourceEventListener listener : listeners) {
+            listener.onReadingStarted(windowIndex, mediaPeriodId);
+        }
     }
 
     @Override
     public void onUpstreamDiscarded(int windowIndex,
                                     MediaSource.MediaPeriodId mediaPeriodId,
                                     MediaLoadData mediaLoadData) {
-        // TODO: should we send?
+        for (MediaSourceEventListener listener : listeners) {
+            listener.onUpstreamDiscarded(windowIndex, mediaPeriodId, mediaLoadData);
+        }
     }
 
     @Override
     public void onDownstreamFormatChanged(int windowIndex,
                                           @Nullable MediaSource.MediaPeriodId mediaPeriodId,
                                           MediaLoadData mediaLoadData) {
-        if (mediaLoadData.trackFormat == null) {
-            return;
-        }
-
-        if (mediaLoadData.trackType == C.TRACK_TYPE_VIDEO) {
-            videoBitrate = Bitrate.fromBitsPerSecond(mediaLoadData.trackFormat.bitrate);
-            bitrateChangedListener.onBitrateChanged(audioBitrate, videoBitrate);
-        } else if (mediaLoadData.trackType == C.TRACK_TYPE_AUDIO) {
-            audioBitrate = Bitrate.fromBitsPerSecond(mediaLoadData.trackFormat.bitrate);
-            bitrateChangedListener.onBitrateChanged(audioBitrate, videoBitrate);
+        for (MediaSourceEventListener listener : listeners) {
+            listener.onDownstreamFormatChanged(windowIndex, mediaPeriodId, mediaLoadData);
         }
     }
 }

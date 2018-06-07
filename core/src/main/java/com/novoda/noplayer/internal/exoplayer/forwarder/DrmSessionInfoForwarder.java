@@ -1,12 +1,15 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.novoda.noplayer.NoPlayer;
 
 import java.util.Collections;
 import java.util.HashMap;
 
-class DrmSessionInfoForwarder implements DefaultDrmSessionManager.EventListener {
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ForwarderInformation.Methods;
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ForwarderInformation.Parameters;
+
+class DrmSessionInfoForwarder implements DefaultDrmSessionEventListener {
 
     private final NoPlayer.InfoListener infoListener;
 
@@ -16,27 +19,26 @@ class DrmSessionInfoForwarder implements DefaultDrmSessionManager.EventListener 
 
     @Override
     public void onDrmKeysLoaded() {
-        infoListener.onNewInfo("onDrmKeysLoaded", Collections.<String, String>emptyMap());
-
+        infoListener.onNewInfo(Methods.ON_DRM_KEYS_LOADED, Collections.<String, String>emptyMap());
     }
 
     @Override
     public void onDrmSessionManagerError(Exception error) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("error", String.valueOf(error));
+        callingMethodParameters.put(Parameters.ERROR, String.valueOf(error));
 
-        infoListener.onNewInfo("onDrmSessionManagerError", callingMethodParameters);
+        infoListener.onNewInfo(Methods.ON_DRM_SESSION_MANAGER_ERROR, callingMethodParameters);
     }
 
     @Override
     public void onDrmKeysRestored() {
-        infoListener.onNewInfo("onDrmKeysRestored", Collections.<String, String>emptyMap());
+        infoListener.onNewInfo(Methods.ON_DRM_KEYS_RESTORED, Collections.<String, String>emptyMap());
 
     }
 
     @Override
     public void onDrmKeysRemoved() {
-        infoListener.onNewInfo("onDrmKeysRemoved", Collections.<String, String>emptyMap());
+        infoListener.onNewInfo(Methods.ON_DRM_KEYS_REMOVED, Collections.<String, String>emptyMap());
     }
 }

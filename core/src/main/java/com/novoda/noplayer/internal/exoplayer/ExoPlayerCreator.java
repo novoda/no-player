@@ -7,7 +7,7 @@ import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
@@ -30,14 +30,13 @@ class ExoPlayerCreator {
 
     @NonNull
     public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator,
-                                  DefaultDrmSessionManager.EventListener drmSessionEventListener,
+                                  DefaultDrmSessionEventListener drmSessionEventListener,
                                   MediaCodecSelector mediaCodecSelector,
                                   TrackSelector trackSelector) {
         DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
         SubtitleDecoderFactory subtitleDecoderFactory = new NoPlayerSubtitleDecoderFactory();
         RenderersFactory renderersFactory = new SimpleRenderersFactory(
                 context,
-                drmSessionManager,
                 EXTENSION_RENDERER_MODE_OFF,
                 DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS,
                 mediaCodecSelector,
@@ -45,6 +44,6 @@ class ExoPlayerCreator {
         );
 
         DefaultLoadControl loadControl = new DefaultLoadControl();
-        return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+        return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl, drmSessionManager);
     }
 }

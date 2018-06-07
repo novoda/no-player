@@ -2,6 +2,7 @@ package com.novoda.noplayer.internal.exoplayer.drm;
 
 import android.os.Handler;
 
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
@@ -26,16 +27,18 @@ class StreamingDrmSessionCreator implements DrmSessionCreator {
     }
 
     @Override
-    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionManager.EventListener eventListener) {
+    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener) {
         FrameworkMediaDrm frameworkMediaDrm = frameworkMediaDrmCreator.create(WIDEVINE_MODULAR_UUID);
 
-        return new DefaultDrmSessionManager<>(
+        DefaultDrmSessionManager<FrameworkMediaCrypto> defaultDrmSessionManager = new DefaultDrmSessionManager<>(
                 WIDEVINE_MODULAR_UUID,
                 frameworkMediaDrm,
                 mediaDrmCallback,
-                NO_OPTIONAL_PARAMETERS,
-                handler,
-                eventListener
+                NO_OPTIONAL_PARAMETERS
         );
+        defaultDrmSessionManager.removeListener(eventListener);
+        defaultDrmSessionManager.addListener(handler, eventListener);
+
+        return defaultDrmSessionManager;
     }
 }

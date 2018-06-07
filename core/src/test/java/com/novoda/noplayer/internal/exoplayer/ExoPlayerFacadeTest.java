@@ -4,13 +4,16 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MediaSourceEventListener;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
@@ -26,6 +29,10 @@ import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,10 +42,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import utils.ExceptionMatcher;
 
-import java.util.Collections;
-import java.util.List;
+import utils.ExceptionMatcher;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,11 +97,11 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void whenLoadingVideo_thenSetsVideoDebugListener() {
+        public void whenLoadingVideo_thenSetsAnalyticsListener() {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(exoPlayer).setVideoDebugListener(exoPlayerForwarder.videoRendererEventListener());
+            verify(exoPlayer).addAnalyticsListener(exoPlayerForwarder.analyticsListener());
         }
 
         @Test
@@ -484,7 +489,9 @@ public class ExoPlayerFacadeTest {
         @Mock
         DrmSessionCreator drmSessionCreator;
         @Mock
-        DefaultDrmSessionManager.EventListener drmSessionEventListener;
+        DefaultDrmSessionEventListener drmSessionEventListener;
+        @Mock
+        MediaSourceEventListener mediaSourceEventListener;
         @Mock
         MediaCodecSelector mediaCodecSelector;
         @Mock
@@ -500,7 +507,8 @@ public class ExoPlayerFacadeTest {
         public void setUp() {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
-            given(trackSelectorCreator.create(OPTIONS)).willReturn(trackSelector);
+            given(exoPlayerForwarder.mediaSourceEventListener()).willReturn(mediaSourceEventListener);
+            given(trackSelectorCreator.create(eq(OPTIONS), any(DefaultBandwidthMeter.class))).willReturn(trackSelector);
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
@@ -519,10 +527,10 @@ public class ExoPlayerFacadeTest {
             MediaSource mediaSource = mock(MediaSource.class);
             given(
                     mediaSourceFactory.create(
-                            OPTIONS.contentType(),
-                            uri,
-                            exoPlayerForwarder.extractorMediaSourceListener(),
-                            exoPlayerForwarder.mediaSourceEventListener()
+                            eq(OPTIONS),
+                            eq(uri),
+                            eq(mediaSourceEventListener),
+                            any(DefaultBandwidthMeter.class)
                     )
             ).willReturn(mediaSource);
 

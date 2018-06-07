@@ -25,14 +25,14 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 
 @RunWith(Enclosed.class)
 public class NoPlayerCreatorTest {
 
-    public static abstract class Base {
+    public abstract static class Base {
 
         static final boolean USE_SECURE_CODEC = false;
         static final StreamingModularDrm STREAMING_MODULAR_DRM = mock(StreamingModularDrm.class);

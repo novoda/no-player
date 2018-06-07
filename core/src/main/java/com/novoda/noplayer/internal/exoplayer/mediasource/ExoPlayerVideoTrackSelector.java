@@ -4,12 +4,11 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
-import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.internal.utils.Optional;
+import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +18,15 @@ import static com.novoda.noplayer.internal.exoplayer.mediasource.TrackType.VIDEO
 public class ExoPlayerVideoTrackSelector {
 
     private final ExoPlayerTrackSelector trackSelector;
-    private final TrackSelection.Factory trackSelectionFactory;
 
-    public ExoPlayerVideoTrackSelector(ExoPlayerTrackSelector trackSelector, TrackSelection.Factory trackSelectionFactory) {
+    public ExoPlayerVideoTrackSelector(ExoPlayerTrackSelector trackSelector) {
         this.trackSelector = trackSelector;
-        this.trackSelectionFactory = trackSelectionFactory;
     }
 
     public boolean selectVideoTrack(PlayerVideoTrack videoTrack, RendererTypeRequester rendererTypeRequester) {
         TrackGroupArray trackGroups = trackSelector.trackGroups(VIDEO, rendererTypeRequester);
 
-        MappingTrackSelector.SelectionOverride selectionOverride = new MappingTrackSelector.SelectionOverride(
-                trackSelectionFactory,
+        DefaultTrackSelector.SelectionOverride selectionOverride = new DefaultTrackSelector.SelectionOverride(
                 videoTrack.groupIndex(),
                 videoTrack.formatIndex()
         );

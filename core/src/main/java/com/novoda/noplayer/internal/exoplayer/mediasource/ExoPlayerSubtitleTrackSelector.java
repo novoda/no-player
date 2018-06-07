@@ -3,8 +3,7 @@ package com.novoda.noplayer.internal.exoplayer.mediasource;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 
@@ -16,18 +15,15 @@ import static com.novoda.noplayer.internal.exoplayer.mediasource.TrackType.TEXT;
 public class ExoPlayerSubtitleTrackSelector {
 
     private final ExoPlayerTrackSelector trackSelector;
-    private final TrackSelection.Factory trackSelectionFactory;
 
-    public ExoPlayerSubtitleTrackSelector(ExoPlayerTrackSelector trackSelector, TrackSelection.Factory trackSelectionFactory) {
+    public ExoPlayerSubtitleTrackSelector(ExoPlayerTrackSelector trackSelector) {
         this.trackSelector = trackSelector;
-        this.trackSelectionFactory = trackSelectionFactory;
     }
 
     public boolean selectTextTrack(PlayerSubtitleTrack subtitleTrack, RendererTypeRequester rendererTypeRequester) {
         TrackGroupArray trackGroups = trackSelector.trackGroups(TEXT, rendererTypeRequester);
 
-        MappingTrackSelector.SelectionOverride selectionOverride = new MappingTrackSelector.SelectionOverride(
-                trackSelectionFactory,
+        DefaultTrackSelector.SelectionOverride selectionOverride = new DefaultTrackSelector.SelectionOverride(
                 subtitleTrack.groupIndex(),
                 subtitleTrack.formatIndex()
         );
