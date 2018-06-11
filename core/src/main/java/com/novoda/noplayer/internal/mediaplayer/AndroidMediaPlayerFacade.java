@@ -6,12 +6,13 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.Surface;
-
+import android.view.SurfaceHolder;
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Either;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
@@ -67,7 +68,7 @@ class AndroidMediaPlayerFacade {
         this.mediaPlayerCreator = mediaPlayerCreator;
     }
 
-    void prepareVideo(Uri videoUri, Surface surface) {
+    public void prepareVideo(Uri videoUri, Either<Surface, SurfaceHolder> surface) {
         requestAudioFocus();
         release();
         try {
@@ -83,7 +84,7 @@ class AndroidMediaPlayerFacade {
         audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 
-    private MediaPlayer createAndBindMediaPlayer(Surface surface,
+    private MediaPlayer createAndBindMediaPlayer(Either<Surface, SurfaceHolder> surface,
                                                  Uri videoUri) throws IOException, IllegalStateException, IllegalArgumentException {
         MediaPlayer mediaPlayer = mediaPlayerCreator.createMediaPlayer();
         mediaPlayer.setOnPreparedListener(internalPreparedListener);
@@ -92,7 +93,7 @@ class AndroidMediaPlayerFacade {
         mediaPlayer.setOnErrorListener(internalErrorListener);
         mediaPlayer.setOnBufferingUpdateListener(internalBufferingUpdateListener);
         mediaPlayer.setDataSource(context, videoUri, NO_HEADERS);
-        mediaPlayer.setSurface(surface);
+        attachSurface(mediaPlayer, surface);
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer.setScreenOnWhilePlaying(true);
 
@@ -173,11 +174,33 @@ class AndroidMediaPlayerFacade {
         }
     }
 
-    void start(Surface surface) throws IllegalStateException {
+    void start(Either<Surface, SurfaceHolder> surface) throws IllegalStateException {
         assertIsInPlaybackState();
-        mediaPlayer.setSurface(surface);
+        attachSurface(mediaPlayer, surface);
         currentState = PLAYING;
         mediaPlayer.start();
+    }
+
+    private void attachSurface(MediaPlayer mediaPlayer, Either<Surface, SurfaceHolder> surface) {
+        surface.apply(setSurface(mediaPlayer), setDisplay(mediaPlayer));
+    }
+
+    private Either.Consumer<Surface> setSurface(final MediaPlayer mediaPlayer) {
+        return new Either.Consumer<Surface>() {
+            @Override
+            public void accept(Surface value) {
+                mediaPlayer.setSurface(value);
+            }
+        };
+    }
+
+    private Either.Consumer<SurfaceHolder> setDisplay(final MediaPlayer mediaPlayer) {
+        return new Either.Consumer<SurfaceHolder>() {
+            @Override
+            public void accept(SurfaceHolder value) {
+                mediaPlayer.setDisplay(value);
+            }
+        };
     }
 
     void pause() throws IllegalStateException {
