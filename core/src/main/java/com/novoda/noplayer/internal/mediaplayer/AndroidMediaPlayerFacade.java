@@ -68,7 +68,7 @@ class AndroidMediaPlayerFacade {
         this.mediaPlayerCreator = mediaPlayerCreator;
     }
 
-    public void prepareVideo(Uri videoUri, Either<Surface, SurfaceHolder> surface) {
+    void prepareVideo(Uri videoUri, Either<Surface, SurfaceHolder> surface) {
         requestAudioFocus();
         release();
         try {
