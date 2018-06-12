@@ -181,26 +181,20 @@ class AndroidMediaPlayerFacade {
         mediaPlayer.start();
     }
 
-    private void attachSurface(MediaPlayer mediaPlayer, Either<Surface, SurfaceHolder> surface) {
-        surface.apply(setSurface(mediaPlayer), setDisplay(mediaPlayer));
-    }
-
-    private Either.Consumer<Surface> setSurface(final MediaPlayer mediaPlayer) {
-        return new Either.Consumer<Surface>() {
+    private void attachSurface(final MediaPlayer mediaPlayer, Either<Surface, SurfaceHolder> surface) {
+        Either.Consumer<Surface> setSurface = new Either.Consumer<Surface>() {
             @Override
             public void accept(Surface value) {
                 mediaPlayer.setSurface(value);
             }
         };
-    }
-
-    private Either.Consumer<SurfaceHolder> setDisplay(final MediaPlayer mediaPlayer) {
-        return new Either.Consumer<SurfaceHolder>() {
+        Either.Consumer<SurfaceHolder> setDisplay = new Either.Consumer<SurfaceHolder>() {
             @Override
             public void accept(SurfaceHolder value) {
                 mediaPlayer.setDisplay(value);
             }
         };
+        surface.apply(setSurface, setDisplay);
     }
 
     void pause() throws IllegalStateException {
