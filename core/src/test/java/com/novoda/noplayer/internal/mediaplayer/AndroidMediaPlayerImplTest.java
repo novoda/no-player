@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.mediaplayer;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.View;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
@@ -17,6 +18,7 @@ import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Either;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
@@ -686,7 +688,7 @@ public class AndroidMediaPlayerImplTest {
         @Mock
         NoPlayer.StateChangedListener stateChangedListener;
         @Mock
-        Surface surface;
+        Either<Surface, SurfaceHolder> surface;
         @Mock
         PlayerView playerView;
         @Mock

@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.TextureView;
+import com.novoda.noplayer.model.Either;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +14,12 @@ class PlayerViewSurfaceHolder implements SurfaceHolder.Callback, TextureView.Sur
 
     private final List<Callback> callbacks = new ArrayList<>();
     @Nullable
-    private Surface surface;
+    private Either<Surface, SurfaceHolder> eitherSurface;
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        this.surface = surfaceHolder.getSurface();
-        notifyListeners(surface);
+        this.eitherSurface = Either.right(surfaceHolder);
+        notifyListeners(eitherSurface);
         callbacks.clear();
     }
 
@@ -35,9 +36,15 @@ class PlayerViewSurfaceHolder implements SurfaceHolder.Callback, TextureView.Sur
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
-        this.surface = new Surface(surfaceTexture);
-        notifyListeners(surface);
+        this.eitherSurface = Either.left(new Surface(surfaceTexture));
+        notifyListeners(eitherSurface);
         callbacks.clear();
+    }
+
+    private void notifyListeners(Either<Surface, SurfaceHolder> either) {
+        for (Callback callback : callbacks) {
+            callback.onSurfaceReady(either);
+        }
     }
 
     @Override
@@ -58,27 +65,21 @@ class PlayerViewSurfaceHolder implements SurfaceHolder.Callback, TextureView.Sur
         // do nothing
     }
 
-    private void notifyListeners(Surface surface) {
-        for (Callback callback : callbacks) {
-            callback.onSurfaceReady(surface);
-        }
-    }
-
     private void setSurfaceNotReady() {
-        surface = null;
+        eitherSurface = null;
     }
 
     @Override
     public void requestSurface(Callback callback) {
-        if (isSurfaceHolderReady()) {
-            callback.onSurfaceReady(surface);
+        if (isSurfaceReady()) {
+            callback.onSurfaceReady(eitherSurface);
         } else {
             callbacks.add(callback);
         }
     }
 
-    private boolean isSurfaceHolderReady() {
-        return surface != null;
+    private boolean isSurfaceReady() {
+        return eitherSurface != null;
     }
 
     @Override

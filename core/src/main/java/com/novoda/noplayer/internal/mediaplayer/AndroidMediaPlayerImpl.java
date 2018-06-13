@@ -3,20 +3,22 @@ package com.novoda.noplayer.internal.mediaplayer;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.View;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerState;
-import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.PlayerSurfaceHolder;
+import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Either;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
@@ -146,7 +148,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         heart.startBeatingHeart();
         requestSurface(new SurfaceRequester.Callback() {
             @Override
-            public void onSurfaceReady(Surface surface) {
+            public void onSurfaceReady(Either<Surface, SurfaceHolder> surface) {
                 mediaPlayer.start(surface);
                 listenersHolder.getStateChangedListeners().onVideoPlaying();
             }
@@ -160,7 +162,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         } else {
             requestSurface(new SurfaceRequester.Callback() {
                 @Override
-                public void onSurfaceReady(Surface surface) {
+                public void onSurfaceReady(Either<Surface, SurfaceHolder> surface) {
                     initialSeekWorkaround(surface, positionInMillis);
                 }
             });
@@ -171,7 +173,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
      * Workaround to fix some devices (nexus 7 2013 in particular) from natively crashing the mediaplayer
      * by starting the mediaplayer before seeking it.
      */
-    private void initialSeekWorkaround(Surface surface, final long initialPlayPositionInMillis) throws IllegalStateException {
+    private void initialSeekWorkaround(Either<Surface, SurfaceHolder> surface, final long initialPlayPositionInMillis) throws IllegalStateException {
         listenersHolder.getBufferStateListeners().onBufferStarted();
         initialisePlaybackForSeeking(surface);
         delayedActionExecutor.performAfterDelay(new DelayedActionExecutor.Action() {
@@ -182,7 +184,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         }, INITIAL_PLAY_SEEK_DELAY_IN_MILLIS);
     }
 
-    private void initialisePlaybackForSeeking(Surface surface) {
+    private void initialisePlaybackForSeeking(Either<Surface, SurfaceHolder> surface) {
         mediaPlayer.start(surface);
         mediaPlayer.pause();
     }
@@ -231,7 +233,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         listenersHolder.getBufferStateListeners().onBufferStarted();
         requestSurface(new SurfaceRequester.Callback() {
             @Override
-            public void onSurfaceReady(Surface surface) {
+            public void onSurfaceReady(Either<Surface, SurfaceHolder> surface) {
                 mediaPlayer.prepareVideo(uri, surface);
             }
         });
