@@ -14,6 +14,9 @@ Some of the benefits are:
 - Maintains video Aspect Ratio by default
 - Player selection based on `ContentType` and DRM
 
+Experimental Features, use with caution:
+- Support for TextureView
+
 ## Adding to your project
 
 To start using this library, add these lines to the `build.gradle` of your project:
@@ -24,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.novoda:no-player:<latest-version>'
+    implementation 'com.novoda:no-player:<latest-version>'
 }
 ```
 ### Simple usage
