@@ -22,7 +22,7 @@ public class PlayerSurfaceHolder {
     public static PlayerSurfaceHolder create(TextureView textureView) {
         PlayerViewSurfaceHolder surfaceHolder = new PlayerViewSurfaceHolder();
         textureView.setSurfaceTextureListener(surfaceHolder);
-        return new PlayerSurfaceHolder(null, textureView, new PlayerViewSurfaceHolder());
+        return new PlayerSurfaceHolder(null, textureView, surfaceHolder);
     }
 
     PlayerSurfaceHolder(@Nullable SurfaceView surfaceView, @Nullable TextureView textureView, PlayerViewSurfaceHolder surfaceHolder) {
