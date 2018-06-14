@@ -59,5 +59,4 @@ public class OptionsBuilder {
     public Options build() {
         return new Options(contentType, minDurationBeforeQualityIncreaseInMillis, maxInitialBitrate);
     }
-
 }

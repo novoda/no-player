@@ -1,9 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-import android.view.SurfaceHolder;
 import android.view.View;
-
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.text.Cue;
@@ -13,9 +11,9 @@ import com.novoda.noplayer.NoPlayer.StateChangedListener;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.PlayerType;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.SurfaceHolderRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
@@ -24,10 +22,6 @@ import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.TextCues;
 import com.novoda.noplayer.model.Timeout;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,6 +34,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static android.provider.CalendarContract.CalendarCache.URI;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -222,7 +219,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, OPTIONS);
 
-            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -231,7 +228,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
         }
 
         @Test
@@ -587,10 +584,6 @@ public class ExoPlayerTwoImplTest {
         @Mock
         PlayerView playerView;
         @Mock
-        SurfaceHolderRequester surfaceHolderRequester;
-        @Mock
-        SurfaceHolder surfaceHolder;
-        @Mock
         StateChangedListener stateChangeListener;
         @Mock
         NoPlayer.VideoSizeChangedListener videoSizeChangedListener;
@@ -618,23 +611,17 @@ public class ExoPlayerTwoImplTest {
         MediaCodecSelector mediaCodecSelector;
         @Mock
         View containerView;
+        @Mock
+        PlayerSurfaceHolder playerSurfaceHolder;
 
         ExoPlayerTwoImpl player;
 
         @Before
         public void setUp() {
-            given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
+            given(playerView.getPlayerSurfaceHolder()).willReturn(playerSurfaceHolder);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);
-            doAnswer(new Answer<Void>() {
-                @Override
-                public Void answer(InvocationOnMock invocation) {
-                    SurfaceHolderRequester.Callback callback = invocation.getArgument(0);
-                    callback.onSurfaceHolderReady(surfaceHolder);
-                    return null;
-                }
-            }).when(surfaceHolderRequester).requestSurfaceHolder(any(SurfaceHolderRequester.Callback.class));
 
             given(listenersHolder.getErrorListeners()).willReturn(errorListener);
             given(listenersHolder.getPreparedListeners()).willReturn(preparedListener);

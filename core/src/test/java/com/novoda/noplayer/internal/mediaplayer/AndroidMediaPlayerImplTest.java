@@ -2,28 +2,27 @@ package com.novoda.noplayer.internal.mediaplayer;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
-
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.SurfaceHolderRequester;
+import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Either;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.Timeout;
-
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,6 +36,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
+
+import java.util.Collections;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -278,7 +279,6 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenAttachingPlayerView_thenAddsVideoSizeChangedListener() {
-            PlayerView playerView = mock(PlayerView.class);
             NoPlayer.VideoSizeChangedListener videoSizeChangedListener = mock(NoPlayer.VideoSizeChangedListener.class);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             player.attach(playerView);
@@ -288,7 +288,6 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenAttachingPlayerView_thenAddsStateChangedListener() {
-            PlayerView playerView = mock(PlayerView.class);
             NoPlayer.StateChangedListener stateChangedListener = mock(NoPlayer.StateChangedListener.class);
             given(playerView.getStateChangedListener()).willReturn(stateChangedListener);
             player.attach(playerView);
@@ -434,7 +433,7 @@ public class AndroidMediaPlayerImplTest {
         public void whenLoadingVideo_thenPreparesVideo() {
             player.loadVideo(URI, OPTIONS);
 
-            verify(mediaPlayer).prepareVideo(URI, surfaceHolder);
+            verify(mediaPlayer).prepareVideo(URI, surface);
         }
 
         @Test
@@ -448,7 +447,7 @@ public class AndroidMediaPlayerImplTest {
         public void whenLoadingVideoWithTimeout_thenPreparesVideo() {
             player.loadVideoWithTimeout(URI, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(mediaPlayer).prepareVideo(URI, surfaceHolder);
+            verify(mediaPlayer).prepareVideo(URI, surface);
         }
 
         @Test
@@ -476,7 +475,7 @@ public class AndroidMediaPlayerImplTest {
         public void whenStartingPlay_thenMediaPlayerStarts() {
             player.play();
 
-            verify(mediaPlayer).start(surfaceHolder);
+            verify(mediaPlayer).start(surface);
         }
 
         @Test
@@ -501,7 +500,7 @@ public class AndroidMediaPlayerImplTest {
 
             player.playAt(BEGINNING_POSITION);
 
-            verify(mediaPlayer).start(surfaceHolder);
+            verify(mediaPlayer).start(surface);
         }
 
         @Test
@@ -633,7 +632,7 @@ public class AndroidMediaPlayerImplTest {
         private void thenInitialisesPlaybackForSeeking() {
             InOrder inOrder = inOrder(mediaPlayer);
 
-            inOrder.verify(mediaPlayer).start(surfaceHolder);
+            inOrder.verify(mediaPlayer).start(surface);
             inOrder.verify(mediaPlayer).pause();
             inOrder.verifyNoMoreInteractions();
         }
@@ -689,7 +688,7 @@ public class AndroidMediaPlayerImplTest {
         @Mock
         NoPlayer.StateChangedListener stateChangedListener;
         @Mock
-        SurfaceHolder surfaceHolder;
+        Either<Surface, SurfaceHolder> surface;
         @Mock
         PlayerView playerView;
         @Mock
@@ -706,25 +705,28 @@ public class AndroidMediaPlayerImplTest {
         CheckBufferHeartbeatCallback.BufferListener bufferListener;
         @Mock
         View containerView;
+        @Mock
+        PlayerSurfaceHolder playerSurfaceHolder;
 
         AndroidMediaPlayerImpl player;
 
         @Before
         public void setUp() {
             NoPlayerLog.setLoggingEnabled(false);
-            SurfaceHolderRequester surfaceHolderRequester = mock(SurfaceHolderRequester.class);
-            given(playerView.getSurfaceHolderRequester()).willReturn(surfaceHolderRequester);
+            SurfaceRequester surfaceRequester = mock(SurfaceRequester.class);
+            given(playerView.getPlayerSurfaceHolder()).willReturn(playerSurfaceHolder);
+            given(playerSurfaceHolder.getSurfaceRequester()).willReturn(surfaceRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);
             doAnswer(new Answer<Void>() {
                 @Override
-                public Void answer(InvocationOnMock invocation) throws Throwable {
-                    SurfaceHolderRequester.Callback callback = invocation.getArgument(0);
-                    callback.onSurfaceHolderReady(surfaceHolder);
+                public Void answer(InvocationOnMock invocation) {
+                    SurfaceRequester.Callback callback = invocation.getArgument(0);
+                    callback.onSurfaceReady(surface);
                     return null;
                 }
-            }).when(surfaceHolderRequester).requestSurfaceHolder(any(SurfaceHolderRequester.Callback.class));
+            }).when(surfaceRequester).requestSurface(any(SurfaceRequester.Callback.class));
 
             given(listenersHolder.getPreparedListeners()).willReturn(preparedListener);
             given(listenersHolder.getBufferStateListeners()).willReturn(bufferStateListener);

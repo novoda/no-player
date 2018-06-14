@@ -2,17 +2,22 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.TextureView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MediaSourceEventListener;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
+import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
@@ -86,32 +91,40 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenAddsPlayerEventListener() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).addListener(exoPlayerForwarder.exoPlayerEventListener());
         }
 
         @Test
-        public void whenLoadingVideo_thenSetsVideoDebugListener() {
+        public void whenLoadingVideo_thenSetsAnalyticsListener() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(exoPlayer).setVideoDebugListener(exoPlayerForwarder.videoRendererEventListener());
+            verify(exoPlayer).addAnalyticsListener(exoPlayerForwarder.analyticsListener());
         }
 
         @Test
-        public void whenLoadingVideo_thenSetsSurfaceHolderOnExoPlayer() {
+        public void givenSurfaceContainerContainsSurfaceView_whenLoadingVideo_thenSetsSurfaceViewOnExoPlayer() {
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(exoPlayer).setVideoSurfaceHolder(surfaceHolder);
+            verify(exoPlayer).setVideoSurfaceView(surfaceView);
+        }
+
+        @Test
+        public void givenSurfaceContainerContainsTextureView_whenLoadingVideo_thenSetsTextureViewOnExoPlayer() {
+
+            facade.loadVideo(textureViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(exoPlayer).setVideoTextureView(textureView);
         }
 
         @Test
         public void givenLollipopDevice_whenLoadingVideo_thenSetsMovieAudioAttributesOnExoPlayer() {
             given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(true);
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             AudioAttributes expectedMovieAudioAttributes = new AudioAttributes.Builder()
                     .setContentType(C.CONTENT_TYPE_MOVIE)
@@ -123,7 +136,7 @@ public class ExoPlayerFacadeTest {
         public void givenNonLollipopDevice_whenLoadingVideo_thenDoesNotSetAudioAttributesOnExoPlayer() {
             given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(false);
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer, never()).setAudioAttributes(any(AudioAttributes.class));
         }
@@ -132,7 +145,7 @@ public class ExoPlayerFacadeTest {
         public void givenMediaSource_whenLoadingVideo_thenPreparesInternalExoPlayer() {
             MediaSource mediaSource = givenMediaSource();
 
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
         }
@@ -237,7 +250,7 @@ public class ExoPlayerFacadeTest {
 
         private void givenPlayerIsLoaded() {
             givenMediaSource();
-            facade.loadVideo(surfaceHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
         }
 
         @Test
@@ -476,11 +489,17 @@ public class ExoPlayerFacadeTest {
         @Mock
         DrmSessionCreator drmSessionCreator;
         @Mock
-        DefaultDrmSessionManager.EventListener drmSessionEventListener;
+        DefaultDrmSessionEventListener drmSessionEventListener;
+        @Mock
+        MediaSourceEventListener mediaSourceEventListener;
         @Mock
         MediaCodecSelector mediaCodecSelector;
         @Mock
-        SurfaceHolder surfaceHolder;
+        SurfaceView surfaceView;
+        @Mock
+        TextureView textureView;
+        PlayerSurfaceHolder surfaceViewHolder;
+        PlayerSurfaceHolder textureViewHolder;
 
         ExoPlayerFacade facade;
 
@@ -488,7 +507,8 @@ public class ExoPlayerFacadeTest {
         public void setUp() {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
-            given(trackSelectorCreator.create(OPTIONS)).willReturn(trackSelector);
+            given(exoPlayerForwarder.mediaSourceEventListener()).willReturn(mediaSourceEventListener);
+            given(trackSelectorCreator.create(eq(OPTIONS), any(DefaultBandwidthMeter.class))).willReturn(trackSelector);
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
@@ -498,16 +518,19 @@ public class ExoPlayerFacadeTest {
                     exoPlayerCreator,
                     rendererTypeRequesterCreator
             );
+            given(surfaceView.getHolder()).willReturn(mock(SurfaceHolder.class));
+            surfaceViewHolder = PlayerSurfaceHolder.create(surfaceView);
+            textureViewHolder = PlayerSurfaceHolder.create(textureView);
         }
 
         MediaSource givenMediaSource() {
             MediaSource mediaSource = mock(MediaSource.class);
             given(
                     mediaSourceFactory.create(
-                            OPTIONS.contentType(),
-                            uri,
-                            exoPlayerForwarder.extractorMediaSourceListener(),
-                            exoPlayerForwarder.mediaSourceEventListener()
+                            eq(OPTIONS),
+                            eq(uri),
+                            eq(mediaSourceEventListener),
+                            any(DefaultBandwidthMeter.class)
                     )
             ).willReturn(mediaSource);
 

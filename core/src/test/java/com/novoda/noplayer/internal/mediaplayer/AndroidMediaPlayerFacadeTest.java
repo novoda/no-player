@@ -4,21 +4,16 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.view.Surface;
 import android.view.SurfaceHolder;
-
-import com.novoda.noplayer.SurfaceHolderRequester;
+import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Either;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,8 +24,12 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
-
 import utils.ExceptionMatcher;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -84,9 +83,9 @@ public class AndroidMediaPlayerFacadeTest {
     @Mock
     private AudioManager audioManager;
     @Mock
-    private SurfaceHolderRequester surfaceHolderRequester;
+    private SurfaceRequester surfaceRequester;
     @Mock
-    private SurfaceHolder surfaceHolder;
+    private Surface surface;
     @Mock
     private MediaPlayer.OnPreparedListener preparedListener;
     @Mock
@@ -97,6 +96,7 @@ public class AndroidMediaPlayerFacadeTest {
     private MediaPlayer.OnCompletionListener completionListener;
     @Mock
     private MediaPlayerForwarder forwarder;
+    private Either<Surface, SurfaceHolder> eitherSurface;
 
     private AndroidMediaPlayerFacade facade;
 
@@ -108,19 +108,24 @@ public class AndroidMediaPlayerFacadeTest {
 
         given(mediaPlayerCreator.createMediaPlayer()).willReturn(mediaPlayer);
         given(playbackStateChecker.isInPlaybackState(eq(mediaPlayer), any(PlaybackStateChecker.PlaybackState.class))).willReturn(IS_IN_PLAYBACK_STATE);
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                SurfaceHolderRequester.Callback callback = invocation.getArgument(0);
-                callback.onSurfaceHolderReady(surfaceHolder);
-                return null;
-            }
-        }).when(surfaceHolderRequester).requestSurfaceHolder(any(SurfaceHolderRequester.Callback.class));
+        eitherSurface = Either.left(surface);
+        givenSurfaceRequesterReturns(eitherSurface);
 
         given(forwarder.onPreparedListener()).willReturn(preparedListener);
         given(forwarder.onCompletionListener()).willReturn(completionListener);
         given(forwarder.onErrorListener()).willReturn(errorListener);
         given(forwarder.onSizeChangedListener()).willReturn(videoSizeChangedListener);
+    }
+
+    private void givenSurfaceRequesterReturns(final Either<Surface, SurfaceHolder> surface) {
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) {
+                SurfaceRequester.Callback callback = invocation.getArgument(0);
+                callback.onSurfaceReady(surface);
+                return null;
+            }
+        }).when(surfaceRequester).requestSurface(any(SurfaceRequester.Callback.class));
     }
 
     @Test
@@ -140,8 +145,8 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void whenPreparingMultipleTimes_thenReleasesMediaPlayer() {
-        facade.prepareVideo(ANY_URI, surfaceHolder);
-        facade.prepareVideo(ANY_URI, surfaceHolder);
+        facade.prepareVideo(ANY_URI, eitherSurface);
+        facade.prepareVideo(ANY_URI, eitherSurface);
 
         verify(mediaPlayer).reset();
         verify(mediaPlayer).release();
@@ -155,8 +160,23 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
-    public void whenPreparing_thenSetsDisplay() {
-        givenMediaPlayerIsPrepared();
+    public void givenSurfaceRequesterReturnsSurface_whenPreparing_thenSetsSurface() {
+        Surface surface = mock(Surface.class);
+        Either<Surface, SurfaceHolder> eitherSurface = Either.left(surface);
+        givenSurfaceRequesterReturns(eitherSurface);
+
+        givenMediaPlayerIsPreparedWith(eitherSurface);
+
+        verify(mediaPlayer).setSurface(surface);
+    }
+
+    @Test
+    public void givenSurfaceRequesterReturnsSurfaceHolder_whenPreparing_thenSetsDisplay() {
+        SurfaceHolder surfaceHolder = mock(SurfaceHolder.class);
+        Either<Surface, SurfaceHolder> eitherSurface = Either.right(surfaceHolder);
+        givenSurfaceRequesterReturns(eitherSurface);
+
+        givenMediaPlayerIsPreparedWith(eitherSurface);
 
         verify(mediaPlayer).setDisplay(surfaceHolder);
     }
@@ -186,7 +206,7 @@ public class AndroidMediaPlayerFacadeTest {
     public void givenExceptionPreparingMediaPlayer_whenPreparingMediaPlayer_thenForwardsOnError() {
         doAnswer(new Answer<Void>() {
             @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
+            public Void answer(InvocationOnMock invocation) {
                 throw new IllegalStateException("cannot prepare async");
             }
         }).when(mediaPlayer).prepareAsync();
@@ -199,7 +219,7 @@ public class AndroidMediaPlayerFacadeTest {
 
     @Test
     public void givenBoundPreparedListener_andMediaPlayerIsPrepared_whenPrepared_thenForwardsOnPrepared() {
-        facade.prepareVideo(ANY_URI, surfaceHolder);
+        facade.prepareVideo(ANY_URI, eitherSurface);
         ArgumentCaptor<MediaPlayer.OnPreparedListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnPreparedListener.class);
         verify(mediaPlayer).setOnPreparedListener(argumentCaptor.capture());
         argumentCaptor.getValue().onPrepared(mediaPlayer);
@@ -291,11 +311,23 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     @Test
-    public void givenMediaPlayerIsPrepared_whenStarting_thenSetsDisplay() {
+    public void givenMediaPlayerIsPreparedWithSurface_whenStarting_thenSetsSurface() {
         givenMediaPlayerIsPrepared();
         reset(mediaPlayer);
 
-        facade.start(surfaceHolder);
+        facade.start(eitherSurface);
+
+        verify(mediaPlayer).setSurface(surface);
+    }
+
+    @Test
+    public void givenMediaPlayerIsPreparedWithSurfaceHolder_whenStarting_thenSetsDisplay() {
+        SurfaceHolder surfaceHolder = mock(SurfaceHolder.class);
+        Either<Surface, SurfaceHolder> eitherSurface = Either.right(surfaceHolder);
+        givenMediaPlayerIsPreparedWith(eitherSurface);
+        reset(mediaPlayer);
+
+        facade.start(eitherSurface);
 
         verify(mediaPlayer).setDisplay(surfaceHolder);
     }
@@ -304,14 +336,14 @@ public class AndroidMediaPlayerFacadeTest {
     public void givenMediaPlayerIsNotPrepared_whenStarting_thenThrowsIllegalStateException() {
         thrown.expect(ExceptionMatcher.matches(ERROR_MESSAGE, IllegalStateException.class));
 
-        facade.start(surfaceHolder);
+        facade.start(eitherSurface);
     }
 
     @Test
     public void givenMediaPlayerIsPrepared_whenStarting_thenStartsMediaPlayer() {
         givenMediaPlayerIsPrepared();
 
-        facade.start(surfaceHolder);
+        facade.start(eitherSurface);
 
         verify(mediaPlayer).start();
     }
@@ -604,7 +636,11 @@ public class AndroidMediaPlayerFacadeTest {
     }
 
     private void givenMediaPlayerIsPrepared() {
-        facade.prepareVideo(ANY_URI, surfaceHolder);
+        givenMediaPlayerIsPreparedWith(eitherSurface);
+    }
+
+    private void givenMediaPlayerIsPreparedWith(Either<Surface, SurfaceHolder> eitherSurface) {
+        facade.prepareVideo(ANY_URI, eitherSurface);
         ArgumentCaptor<MediaPlayer.OnPreparedListener> argumentCaptor = ArgumentCaptor.forClass(MediaPlayer.OnPreparedListener.class);
         verify(mediaPlayer).setOnPreparedListener(argumentCaptor.capture());
         argumentCaptor.getValue().onPrepared(mediaPlayer);

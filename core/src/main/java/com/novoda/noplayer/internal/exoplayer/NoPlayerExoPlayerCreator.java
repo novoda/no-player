@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.SystemClock;
@@ -44,15 +42,13 @@ public class NoPlayerExoPlayerCreator {
         }
 
         ExoPlayerTwoImpl create(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
-            DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-            DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent", bandwidthMeter);
-            MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(defaultDataSourceFactory, handler);
+            MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(context, handler);
 
             MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
                     ? SecurityDowngradingCodecSelector.newInstance()
                     : MediaCodecSelector.DEFAULT;
 
-            CompositeTrackSelectorCreator trackSelectorCreator = new CompositeTrackSelectorCreator(bandwidthMeter);
+            CompositeTrackSelectorCreator trackSelectorCreator = new CompositeTrackSelectorCreator();
 
             ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context);
             RendererTypeRequesterCreator rendererTypeRequesterCreator = new RendererTypeRequesterCreator();
