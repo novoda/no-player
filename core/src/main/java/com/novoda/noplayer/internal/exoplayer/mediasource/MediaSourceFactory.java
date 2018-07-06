@@ -37,7 +37,7 @@ public class MediaSourceFactory {
             case H264:
                 return createH264MediaSource(defaultDataSourceFactory, uri, mediaSourceEventListener);
             case DASH:
-                return createDashMediaSource(defaultDataSourceFactory, uri);
+                return createDashMediaSource(defaultDataSourceFactory, uri, mediaSourceEventListener);
             default:
                 throw new UnsupportedOperationException("Content type: " + options + " is not supported.");
         }
@@ -64,9 +64,12 @@ public class MediaSourceFactory {
     }
 
     private MediaSource createDashMediaSource(DefaultDataSourceFactory defaultDataSourceFactory,
-                                              Uri uri) {
+                                              Uri uri,
+                                              MediaSourceEventListener mediaSourceEventListener) {
         DefaultDashChunkSource.Factory chunkSourceFactory = new DefaultDashChunkSource.Factory(defaultDataSourceFactory);
         DashMediaSource.Factory factory = new DashMediaSource.Factory(chunkSourceFactory, defaultDataSourceFactory);
-        return factory.createMediaSource(uri);
+        DashMediaSource mediaSource = factory.createMediaSource(uri);
+        mediaSource.addEventListener(handler, mediaSourceEventListener);
+        return mediaSource;
     }
 }
