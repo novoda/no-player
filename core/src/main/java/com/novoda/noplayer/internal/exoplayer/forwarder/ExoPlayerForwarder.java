@@ -12,13 +12,13 @@ public class ExoPlayerForwarder {
     private final EventListener exoPlayerEventListener;
     private final NoPlayerMediaSourceEventListener mediaSourceEventListener;
     private final NoPlayerAnalyticsListener analyticsListener;
-    private final ExoPlayerVideoRendererEventListener videoListener;
+    private final ExoPlayerVideoListener videoListener;
     private final ExoPlayerDrmSessionEventListener drmSessionEventListener;
 
     public ExoPlayerForwarder() {
         exoPlayerEventListener = new EventListener();
         mediaSourceEventListener = new NoPlayerMediaSourceEventListener();
-        videoListener = new ExoPlayerVideoRendererEventListener();
+        videoListener = new ExoPlayerVideoListener();
         analyticsListener = new NoPlayerAnalyticsListener();
         drmSessionEventListener = new ExoPlayerDrmSessionEventListener();
     }
