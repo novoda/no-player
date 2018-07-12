@@ -63,8 +63,8 @@ publish {
     version = buildProperties.publish['version'].string
     bintrayUser = buildProperties.publish['bintrayUser'].string
     bintrayKey = buildProperties.publish['bintrayKey'].string
-
+    publishVersion = version
     uploadName = 'no-player'
-    description = 'player to wrap players'
+    desc = 'player to wrap players'
     website = 'https://github.com/novoda/no-player'
 }
