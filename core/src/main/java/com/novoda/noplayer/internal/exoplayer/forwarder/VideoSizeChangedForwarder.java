@@ -1,13 +1,9 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
-import android.view.Surface;
-
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.decoder.DecoderCounters;
-import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.android.exoplayer2.video.VideoListener;
 import com.novoda.noplayer.NoPlayer;
 
-class VideoSizeChangedForwarder implements VideoRendererEventListener {
+class VideoSizeChangedForwarder implements VideoListener {
 
     private final NoPlayer.VideoSizeChangedListener videoSizeChangedListener;
 
@@ -21,32 +17,7 @@ class VideoSizeChangedForwarder implements VideoRendererEventListener {
     }
 
     @Override
-    public void onVideoEnabled(DecoderCounters counters) {
-        // TODO: should we send?
-    }
-
-    @Override
-    public void onVideoDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
-        // TODO: should we send?
-    }
-
-    @Override
-    public void onVideoInputFormatChanged(Format format) {
-        // TODO: should we send?
-    }
-
-    @Override
-    public void onDroppedFrames(int count, long elapsedMs) {
-        // TODO: should we send?
-    }
-
-    @Override
-    public void onRenderedFirstFrame(Surface surface) {
-        // TODO: should we send?
-    }
-
-    @Override
-    public void onVideoDisabled(DecoderCounters counters) {
+    public void onRenderedFirstFrame() {
         // TODO: should we send?
     }
 }
