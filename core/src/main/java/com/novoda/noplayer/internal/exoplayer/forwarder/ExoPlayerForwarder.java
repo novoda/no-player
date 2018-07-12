@@ -67,7 +67,6 @@ public class ExoPlayerForwarder {
     public void bind(NoPlayer.InfoListener infoListeners) {
         exoPlayerEventListener.add(new EventInfoForwarder(infoListeners));
         mediaSourceEventListener.add(new MediaSourceEventForwarder(infoListeners));
-//        videoRendererEventListener.add(new VideoRendererInfoForwarder(infoListeners)); TODO figure out what to do here
         drmSessionEventListener.add(new DrmSessionInfoForwarder(infoListeners));
         analyticsListener.add(new AnalyticsListenerForwarder(infoListeners));
     }
