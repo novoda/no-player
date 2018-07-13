@@ -123,6 +123,7 @@ class ExoPlayerFacade {
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.addAnalyticsListener(forwarder.analyticsListener());
+        exoPlayer.addVideoListener(forwarder.videoListener());
 
         setMovieAudioAttributes(exoPlayer);
 
