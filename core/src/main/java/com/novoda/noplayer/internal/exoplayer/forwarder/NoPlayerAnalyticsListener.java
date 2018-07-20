@@ -13,6 +13,7 @@ import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.novoda.noplayer.NoPlayer;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,9 +22,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 class NoPlayerAnalyticsListener implements AnalyticsListener {
 
     private final List<AnalyticsListener> listeners = new CopyOnWriteArrayList<>();
+    private final List<NoPlayer.DroppedVideoFramesListener> droppedVideoFramesListeners = new CopyOnWriteArrayList<>();
 
     public void add(AnalyticsListener listener) {
         listeners.add(listener);
+    }
+
+    public void add(NoPlayer.DroppedVideoFramesListener listener) {
+        droppedVideoFramesListeners.add(listener);
     }
 
     @Override
@@ -262,6 +268,10 @@ class NoPlayerAnalyticsListener implements AnalyticsListener {
     public void onDroppedVideoFrames(EventTime eventTime, int droppedFrames, long elapsedMs) {
         for (AnalyticsListener listener : listeners) {
             listener.onDroppedVideoFrames(eventTime, droppedFrames, elapsedMs);
+        }
+
+        for (NoPlayer.DroppedVideoFramesListener listener : droppedVideoFramesListeners) {
+            listener.onDroppedVideoFrames(droppedFrames, elapsedMs);
         }
     }
 

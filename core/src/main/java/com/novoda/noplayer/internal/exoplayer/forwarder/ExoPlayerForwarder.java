@@ -39,6 +39,10 @@ public class ExoPlayerForwarder {
         return drmSessionEventListener;
     }
 
+    public AnalyticsListener analyticsListener() {
+        return analyticsListener;
+    }
+
     public void bind(NoPlayer.PreparedListener preparedListener, PlayerState playerState) {
         exoPlayerEventListener.add(new OnPrepareForwarder(preparedListener, playerState));
     }
@@ -71,7 +75,7 @@ public class ExoPlayerForwarder {
         analyticsListener.add(new AnalyticsListenerForwarder(infoListeners));
     }
 
-    public AnalyticsListener analyticsListener() {
-        return analyticsListener;
+    public void bind(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListeners) {
+        analyticsListener.add(droppedVideoFramesListeners);
     }
 }
