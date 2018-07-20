@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.View;
+
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
@@ -68,6 +69,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
         forwarder.bind(listenersHolder.getBitrateChangedListeners());
         forwarder.bind(listenersHolder.getInfoListeners());
+        forwarder.bind(listenersHolder.getDroppedVideoFramesListeners());
         listenersHolder.addPreparedListener(new PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {

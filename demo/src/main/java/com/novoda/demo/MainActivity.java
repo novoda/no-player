@@ -3,6 +3,7 @@ package com.novoda.demo;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -49,6 +50,14 @@ public class MainActivity extends Activity {
 
         demoPresenter = new DemoPresenter(controllerView, player, player.getListeners(), playerView);
         dialogCreator = new DialogCreator(this, player);
+
+        player.getListeners().addDroppedVideoFrames(new NoPlayer.DroppedVideoFramesListener() {
+            @Override
+            public void onDroppedVideoFrames(int droppedFrames) {
+                Log.v(getClass().toString(), "dropped frames: " + droppedFrames);
+            }
+        });
+
     }
 
     @Override
