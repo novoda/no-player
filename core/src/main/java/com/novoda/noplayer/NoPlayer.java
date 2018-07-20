@@ -307,6 +307,6 @@ public interface NoPlayer extends PlayerState {
 
     interface DroppedVideoFramesListener {
 
-        void onDroppedVideoFrames(int droppedFrames);
+        void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames);
     }
 }

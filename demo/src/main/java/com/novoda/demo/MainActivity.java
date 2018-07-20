@@ -53,8 +53,8 @@ public class MainActivity extends Activity {
 
         player.getListeners().addDroppedVideoFrames(new NoPlayer.DroppedVideoFramesListener() {
             @Override
-            public void onDroppedVideoFrames(int droppedFrames) {
-                Log.v(getClass().toString(), "dropped frames: " + droppedFrames);
+            public void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames) {
+                Log.v(getClass().toString(), "dropped frames: " + droppedFrames + " since: " + elapsedMsSinceLastDroppedFrames + "ms");
             }
         });
 

@@ -22,9 +22,9 @@ public class DroppedFramesListeners implements NoPlayer.DroppedVideoFramesListen
     }
 
     @Override
-    public void onDroppedVideoFrames(int droppedFrames) {
+    public void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames) {
         for (NoPlayer.DroppedVideoFramesListener listener : listeners) {
-            listener.onDroppedVideoFrames(droppedFrames);
+            listener.onDroppedVideoFrames(droppedFrames, elapsedMsSinceLastDroppedFrames);
         }
     }
 }

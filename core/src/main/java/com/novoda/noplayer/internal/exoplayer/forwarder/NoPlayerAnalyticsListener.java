@@ -271,7 +271,7 @@ class NoPlayerAnalyticsListener implements AnalyticsListener {
         }
 
         for (NoPlayer.DroppedVideoFramesListener listener : droppedVideoFramesListeners) {
-            listener.onDroppedVideoFrames(droppedFrames);
+            listener.onDroppedVideoFrames(droppedFrames, elapsedMs);
         }
     }
 
