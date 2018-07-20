@@ -132,7 +132,7 @@ public interface Listeners {
     void removeVideoSizeChangedListener(NoPlayer.VideoSizeChangedListener videoSizeChangedListener);
 
     /**
-     * Add a given {@link NoPlayer.DroppedVideoFramesListener} to be notified when video playback drop frames
+     * Add a given {@link NoPlayer.DroppedVideoFramesListener} to be notified when video playback drops frames
      *
      * @param droppedVideoFramesListener to notify
      */
