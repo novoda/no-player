@@ -304,4 +304,9 @@ public interface NoPlayer extends PlayerState {
 
         void onBeat(NoPlayer player);
     }
+
+    interface DroppedVideoFramesListener {
+
+        void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames);
+    }
 }
