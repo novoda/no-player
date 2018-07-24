@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.audio.AudioDecoderException;
 import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.audio.AudioSink;
+import com.google.android.exoplayer2.audio.DefaultAudioSink;
 import com.google.android.exoplayer2.drm.DecryptionException;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSession;
@@ -31,6 +32,7 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.Loader;
 import com.google.android.exoplayer2.upstream.UdpDataSource;
 import com.google.android.exoplayer2.upstream.cache.Cache;
+import com.google.android.exoplayer2.util.EGLSurfaceTexture;
 import com.google.android.exoplayer2.util.PriorityTaskManager;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.NoPlayerError;
@@ -261,6 +263,18 @@ final class ExoPlayerErrorMapper {
     }
 
     private static NoPlayer.PlayerError mapUnexpectedError(RuntimeException unexpectedException, String message) {
-        return null;
+        if (unexpectedException instanceof EGLSurfaceTexture.GlException) {
+            return new NoPlayerError(PlayerErrorType.UNEXPECTED_EGL_OPERATION_ERROR, message);
+        }
+
+        if (unexpectedException instanceof DefaultAudioSink.InvalidAudioTrackTimestampException) {
+            return new NoPlayerError(PlayerErrorType.UNEXPECTED_SPURIOUS_AUDIO_TRACK_TIMESTAMP_ERROR, message);
+        }
+
+        if (unexpectedException instanceof IllegalStateException) {
+            return new NoPlayerError(PlayerErrorType.UNEXPECTED_MULTIPLE_RENDERER_MEDIA_CLOCK_ENABLED_ERROR, message);
+        }
+
+        return new NoPlayerError(PlayerErrorType.UNEXPECTED_UNKNOWN_ERROR, message);
     }
 }
