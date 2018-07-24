@@ -1,7 +1,20 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
+import android.media.MediaCodec;
+
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ParserException;
+import com.google.android.exoplayer2.audio.AudioDecoderException;
+import com.google.android.exoplayer2.audio.AudioProcessor;
+import com.google.android.exoplayer2.audio.AudioSink;
+import com.google.android.exoplayer2.drm.DecryptionException;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DrmSession;
+import com.google.android.exoplayer2.drm.KeysExpiredException;
+import com.google.android.exoplayer2.drm.UnsupportedDrmException;
+import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer;
+import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
+import com.google.android.exoplayer2.metadata.MetadataDecoderException;
 import com.google.android.exoplayer2.offline.DownloadException;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.MergingMediaSource;
@@ -9,6 +22,7 @@ import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.source.dash.DashManifestStaleException;
 import com.google.android.exoplayer2.source.hls.SampleQueueMappingException;
 import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistTracker;
+import com.google.android.exoplayer2.text.SubtitleDecoderException;
 import com.google.android.exoplayer2.upstream.AssetDataSource;
 import com.google.android.exoplayer2.upstream.ContentDataSource;
 import com.google.android.exoplayer2.upstream.DataSourceException;
@@ -79,6 +93,8 @@ final class ExoPlayerErrorMapper {
                     return new NoPlayerError(PlayerErrorType.SOURCE_ALL_ADS_LOAD_ERROR_THEN_WILL_SKIP, message);
                 case AdsMediaSource.AdLoadException.TYPE_UNEXPECTED:
                     return new NoPlayerError(PlayerErrorType.SOURCE_ADS_LOAD_UNEXPECTED_ERROR_THEN_WILL_SKIP, message);
+                default:
+                    return new NoPlayerError(PlayerErrorType.SOURCE_ADS_LOAD_UNKNOWN_ERROR, message);
             }
         }
 
@@ -121,6 +137,8 @@ final class ExoPlayerErrorMapper {
                     return new NoPlayerError(PlayerErrorType.SOURCE_HTTP_CANNOT_READ_ERROR, message);
                 case HttpDataSource.HttpDataSourceException.TYPE_CLOSE:
                     return new NoPlayerError(PlayerErrorType.SOURCE_HTTP_CANNOT_CLOSE_ERROR, message);
+                default:
+                    return new NoPlayerError(PlayerErrorType.SOURCE_HTTP_UNKNOWN_ERROR, message);
             }
         }
 
@@ -145,29 +163,102 @@ final class ExoPlayerErrorMapper {
     }
 
     private static NoPlayer.PlayerError mapRendererError(Exception rendererException, String message) {
-        return null;
+        if (rendererException instanceof AudioSink.ConfigurationException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_AUDIO_SINK_CONFIGURATION_ERROR, message);
+        }
+
+        if (rendererException instanceof AudioSink.InitializationException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_AUDIO_SINK_INITIALISATION_ERROR, message);
+        }
+
+        if (rendererException instanceof AudioSink.WriteException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_AUDIO_SINK_WRITE_ERROR, message);
+        }
+
+        if (rendererException instanceof AudioProcessor.UnhandledFormatException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_AUDIO_UNHANDLED_FORMAT_ERROR, message);
+        }
+
+        if (rendererException instanceof AudioDecoderException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_AUDIO_DECODER_ERROR, message);
+        }
+
+        if (rendererException instanceof MediaCodecRenderer.DecoderInitializationException) {
+            MediaCodecRenderer.DecoderInitializationException decoderInitializationException = (MediaCodecRenderer.DecoderInitializationException) rendererException;
+            String fullMessage = "decoder-name:" + decoderInitializationException.decoderName + ", "
+                    + "mimetype:" + decoderInitializationException.mimeType + ", "
+                    + "secureCodeRequired:" + decoderInitializationException.secureDecoderRequired + ", "
+                    + "diagnosticInfo:" + decoderInitializationException.diagnosticInfo + ", "
+                    + "exceptionMessage:" + message;
+            return new NoPlayerError(PlayerErrorType.RENDERER_DECODER_INITIALISATION_ERROR, fullMessage);
+        }
+
+        if (rendererException instanceof MediaCodecUtil.DecoderQueryException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_MEDIA_CAPABILITIES_REQUEST_ERROR, message);
+        }
+
+        if (rendererException instanceof MetadataDecoderException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_DECODING_METADATA_ERROR, message);
+        }
+
+        if (rendererException instanceof SubtitleDecoderException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_DECODING_SUBTITLE_ERROR, message);
+        }
+
+        if (rendererException instanceof UnsupportedDrmException) {
+            UnsupportedDrmException unsupportedDrmException = (UnsupportedDrmException) rendererException;
+            switch (unsupportedDrmException.reason) {
+                case UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME:
+                    return new NoPlayerError(PlayerErrorType.RENDERER_UNSUPPORTED_DRM_SCHEME_ERROR, message);
+                case UnsupportedDrmException.REASON_INSTANTIATION_ERROR:
+                    return new NoPlayerError(PlayerErrorType.RENDERER_DRM_INSTANTIATION_ERROR, message);
+                default:
+                    return new NoPlayerError(PlayerErrorType.RENDERER_DRM_UNKNOWN_ERROR, message);
+            }
+        }
+
+        if (rendererException instanceof DefaultDrmSessionManager.MissingSchemeDataException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_CANNOT_ACQUIRE_DRM_SESSION_MISSING_SCHEME_FOR_REQUIRED_UUID_ERROR, message);
+        }
+
+        if (rendererException instanceof DrmSession.DrmSessionException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_DRM_SESSION_ERROR, message);
+        }
+
+        if (rendererException instanceof KeysExpiredException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_DRM_KEYS_EXPIRED_ERROR, message);
+        }
+
+        if (rendererException instanceof DecryptionException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_FAIL_DECRYPT_DATA_DUE_NON_PLATFORM_COMPONENT_ERROR, message);
+        }
+
+        if (rendererException instanceof MediaCodec.CryptoException) {
+            MediaCodec.CryptoException cryptoException = (MediaCodec.CryptoException) rendererException;
+            switch (cryptoException.getErrorCode()) {
+                case MediaCodec.CryptoException.ERROR_INSUFFICIENT_OUTPUT_PROTECTION:
+                    return new NoPlayerError(PlayerErrorType.RENDERER_CRYPTO_INSUFFICIENT_OUTPUT_PROTECTION_ERROR, message);
+                case MediaCodec.CryptoException.ERROR_KEY_EXPIRED:
+                    return new NoPlayerError(PlayerErrorType.RENDERER_CRYPTO_KEY_EXPIRED_ERROR, message);
+                case MediaCodec.CryptoException.ERROR_NO_KEY:
+                    return new NoPlayerError(PlayerErrorType.RENDERER_CRYPTO_KEY_NOT_FOUND_WHEN_DECRYPTION_ERROR, message);
+                case MediaCodec.CryptoException.ERROR_RESOURCE_BUSY:
+                    return new NoPlayerError(PlayerErrorType.RENDERER_CRYPTO_RESOURCE_BUSY_ERROR_THEN_SHOULD_RETRY, message);
+                case MediaCodec.CryptoException.ERROR_SESSION_NOT_OPENED:
+                    return new NoPlayerError(PlayerErrorType.RENDERER_CRYPTO_DECRYPTION_ATTEMPTED_ON_CLOSED_SEDDION_ERROR, message);
+                case MediaCodec.CryptoException.ERROR_UNSUPPORTED_OPERATION:
+                    return new NoPlayerError(PlayerErrorType.RENDERER_CRYPTO_LICENSE_POLICY_REQUIRED_NOT_SUPPORTED_BY_DEVICE_ERROR, message);
+                default:
+                    return new NoPlayerError(PlayerErrorType.RENDERER_CRYPTO_UNKNOWN_ERROR, message);
+            }
+        }
+
+        if (rendererException instanceof IllegalStateException) {
+            return new NoPlayerError(PlayerErrorType.RENDERER_MEDIA_REQUIRES_DRM_SESSION_MANAGER_ERROR, message);
+        }
+
+        return new NoPlayerError(PlayerErrorType.RENDERER_UNKNOWN_ERROR, message);
     }
-
-
-//    private static NoPlayer.PlayerError mapSourceError(IOException sourceException) {
-//        if (sourceException instanceof HttpDataSource.InvalidResponseCodeException) {
-//            return new NoPlayerError(PlayerErrorType.INVALID_RESPONSE_CODE, formatMessage(sourceException));
-//        } else if (sourceException instanceof ParserException) {
-//            return new NoPlayerError(PlayerErrorType.MALFORMED_CONTENT, formatMessage(sourceException));
-//        } else {
-//            return new NoPlayerError(PlayerErrorType.CONNECTIVITY_ERROR, formatMessage(sourceException));
-//        }
-//    }
-//
-//    private static NoPlayer.PlayerError mapRendererError(Throwable throwable, PlayerErrorType fallbackErrorType) {
-//        if (throwable instanceof MediaCodec.CryptoException) {
-//            return new NoPlayerError(PlayerErrorType.FAILED_DRM_DECRYPTION, formatMessage(throwable));
-//        } else if (throwable instanceof StreamingModularDrm.DrmRequestException) {
-//            return new NoPlayerError(PlayerErrorType.FAILED_DRM_REQUEST, formatMessage(throwable));
-//        } else {
-//            return new NoPlayerError(fallbackErrorType, formatMessage(throwable));
-//        }
-//    }
 
     private static NoPlayer.PlayerError mapUnexpectedError(RuntimeException unexpectedException, String message) {
         return null;
