@@ -105,7 +105,17 @@ final class ExoPlayerErrorMapper {
         }
 
         if (sourceException instanceof ClippingMediaSource.IllegalClippingException) {
-            return new NoPlayerError(PlayerErrorType.SOURCE_CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE, message);
+            ClippingMediaSource.IllegalClippingException illegalClippingException = (ClippingMediaSource.IllegalClippingException) sourceException;
+            switch (illegalClippingException.reason) {
+                case ClippingMediaSource.IllegalClippingException.REASON_INVALID_PERIOD_COUNT:
+                    return new NoPlayerError(PlayerErrorType.SOURCE_CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_INVALID_PERIOD_COUNT, message);
+                case ClippingMediaSource.IllegalClippingException.REASON_NOT_SEEKABLE_TO_START:
+                    return new NoPlayerError(PlayerErrorType.SOURCE_CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_NOT_SEEKABLE_TO_START, message);
+                case ClippingMediaSource.IllegalClippingException.REASON_START_EXCEEDS_END:
+                    return new NoPlayerError(PlayerErrorType.SOURCE_CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_START_EXCEEDS_END, message);
+                default:
+                    return new NoPlayerError(PlayerErrorType.SOURCE_CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_UNKNOWN_ERROR, message);
+            }
         }
 
         if (sourceException instanceof PriorityTaskManager.PriorityTooLowException) {
