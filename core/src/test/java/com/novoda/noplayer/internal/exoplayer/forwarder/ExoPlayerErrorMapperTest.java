@@ -1,6 +1,5 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
-import android.media.MediaCodec;
 import android.net.Uri;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
