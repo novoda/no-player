@@ -98,12 +98,13 @@ public class ExoPlayerErrorMapperTest {
                 new Object[]{createRenderer(new DrmSession.DrmSessionException(new Throwable())), PlayerErrorType.RENDERER_DRM_SESSION_ERROR},
                 new Object[]{createRenderer(new KeysExpiredException()), PlayerErrorType.RENDERER_DRM_KEYS_EXPIRED_ERROR},
                 new Object[]{createRenderer(new DecryptionException(0, "decryption-exception")), PlayerErrorType.RENDERER_FAIL_DECRYPT_DATA_DUE_NON_PLATFORM_COMPONENT_ERROR},
-                new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_NO_KEY, "no-key")), PlayerErrorType.RENDERER_CRYPTO_KEY_NOT_FOUND_WHEN_DECRYPTION_ERROR},
-                new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_KEY_EXPIRED, "key-expired")), PlayerErrorType.RENDERER_CRYPTO_KEY_EXPIRED_ERROR},
-                new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_RESOURCE_BUSY, "resource-busy")), PlayerErrorType.RENDERER_CRYPTO_RESOURCE_BUSY_ERROR_THEN_SHOULD_RETRY},
-                new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_INSUFFICIENT_OUTPUT_PROTECTION, "insufficient-output-protection")), PlayerErrorType.RENDERER_CRYPTO_INSUFFICIENT_OUTPUT_PROTECTION_ERROR},
-                new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_SESSION_NOT_OPENED, "session-not-opened")), PlayerErrorType.RENDERER_CRYPTO_DECRYPTION_ATTEMPTED_ON_CLOSED_SEDDION_ERROR},
-                new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_UNSUPPORTED_OPERATION, "unsupported-operation")), PlayerErrorType.RENDERER_CRYPTO_LICENSE_POLICY_REQUIRED_NOT_SUPPORTED_BY_DEVICE_ERROR},
+                // Crypto Exceptions cannot be instantiated, it throws a RuntimeException("Stub!")
+                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_NO_KEY, "no-key")), PlayerErrorType.RENDERER_CRYPTO_KEY_NOT_FOUND_WHEN_DECRYPTION_ERROR},
+                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_KEY_EXPIRED, "key-expired")), PlayerErrorType.RENDERER_CRYPTO_KEY_EXPIRED_ERROR},
+                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_RESOURCE_BUSY, "resource-busy")), PlayerErrorType.RENDERER_CRYPTO_RESOURCE_BUSY_ERROR_THEN_SHOULD_RETRY},
+                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_INSUFFICIENT_OUTPUT_PROTECTION, "insufficient-output-protection")), PlayerErrorType.RENDERER_CRYPTO_INSUFFICIENT_OUTPUT_PROTECTION_ERROR},
+                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_SESSION_NOT_OPENED, "session-not-opened")), PlayerErrorType.RENDERER_CRYPTO_DECRYPTION_ATTEMPTED_ON_CLOSED_SEDDION_ERROR},
+                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_UNSUPPORTED_OPERATION, "unsupported-operation")), PlayerErrorType.RENDERER_CRYPTO_LICENSE_POLICY_REQUIRED_NOT_SUPPORTED_BY_DEVICE_ERROR},
                 new Object[]{createRenderer(new IllegalStateException()), PlayerErrorType.RENDERER_MEDIA_REQUIRES_DRM_SESSION_MANAGER_ERROR}
 
                 // ExoPlaybackException.createForUnexpected constructor is package-protected, cannot create
