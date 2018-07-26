@@ -15,15 +15,16 @@ public final class ErrorFactory {
     }
 
     public static NoPlayer.PlayerError createErrorFrom(int type, int extra) {
-        switch (type) {
-            case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-                return new NoPlayerError(PlayerErrorType.MEDIA_PLAYER_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK, formatMessage(type, extra));
-            case MediaPlayer.MEDIA_ERROR_UNKNOWN:
-                return new NoPlayerError(PlayerErrorType.MEDIA_PLAYER_UNKNOWN_ERROR, formatMessage(type, extra));
-            case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-                return new NoPlayerError(PlayerErrorType.MEDIA_PLAYER_SERVER_DIED_ERROR, formatMessage(type, extra));
-            default:
-                return new NoPlayerError(PlayerErrorType.MEDIA_PLAYER_UNKNOWN_ERROR, formatMessage(type, extra));
-        }
+        return null;
+//        switch (type) {
+//            case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
+//                return new NoPlayerError(PlayerErrorType.MEDIA_PLAYER_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK, formatMessage(type, extra));
+//            case MediaPlayer.MEDIA_ERROR_UNKNOWN:
+//                return new NoPlayerError(PlayerErrorType.MEDIA_PLAYER_UNKNOWN_ERROR, formatMessage(type, extra));
+//            case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
+//                return new NoPlayerError(PlayerErrorType.MEDIA_PLAYER_SERVER_DIED_ERROR, formatMessage(type, extra));
+//            default:
+//                return new NoPlayerError(PlayerErrorType.MEDIA_PLAYER_UNKNOWN_ERROR, formatMessage(type, extra));
+//        }
     }
 }

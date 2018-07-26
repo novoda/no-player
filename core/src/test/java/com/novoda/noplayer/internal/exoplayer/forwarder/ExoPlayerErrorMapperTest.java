@@ -31,6 +31,8 @@ import com.google.android.exoplayer2.upstream.Loader;
 import com.google.android.exoplayer2.upstream.UdpDataSource;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.util.PriorityTaskManager;
+import com.novoda.noplayer.DetailErrorType;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerErrorType;
 
 import org.junit.Test;
@@ -41,6 +43,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static com.novoda.noplayer.DetailErrorType.*;
 import static com.novoda.noplayer.PlayerErrorType.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -48,65 +51,63 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class ExoPlayerErrorMapperTest {
 
     @Parameterized.Parameter(0)
-    public ExoPlaybackException exoPlaybackException;
-    @Parameterized.Parameter(1)
     public PlayerErrorType playerErrorType;
+    @Parameterized.Parameter(1)
+    public DetailErrorType detailErrorType;
+    @Parameterized.Parameter(2)
+    public ExoPlaybackException exoPlaybackException;
 
-    @Parameterized.Parameters(name = "Exception: {0} is mapped to {1}")
+    @Parameterized.Parameters(name = "{0} with detail {1} is mapped to {2}")
     public static Collection<Object[]> parameters() {
         return Arrays.asList(
-                new Object[]{createSource(new SampleQueueMappingException("mimetype-sample")), SOURCE_SAMPLE_QUEUE_MAPPING_ERROR},
-                new Object[]{createSource(new FileDataSource.FileDataSourceException(new IOException())), SOURCE_READING_LOCAL_FILE_ERROR},
-                new Object[]{createSource(new Loader.UnexpectedLoaderException(new Throwable())), SOURCE_UNEXPECTED_LOADING_ERROR},
-                new Object[]{createSource(new DashManifestStaleException()), PlayerErrorType.SOURCE_LIVE_STALE_MANIFEST_AND_NEW_MANIFEST_COULD_NOT_LOAD_ERROR},
-                new Object[]{createSource(new DownloadException("download-exception")), PlayerErrorType.SOURCE_DOWNLOAD_ERROR},
-                new Object[]{createSource(AdsMediaSource.AdLoadException.createForAd(new Exception())), PlayerErrorType.SOURCE_AD_LOAD_ERROR_THEN_WILL_SKIP},
-                new Object[]{createSource(AdsMediaSource.AdLoadException.createForAdGroup(new Exception(), 0)), PlayerErrorType.SOURCE_AD_GROUP_LOAD_ERROR_THEN_WILL_SKIP},
-                new Object[]{createSource(AdsMediaSource.AdLoadException.createForAllAds(new Exception())), PlayerErrorType.SOURCE_ALL_ADS_LOAD_ERROR_THEN_WILL_SKIP},
-                new Object[]{createSource(AdsMediaSource.AdLoadException.createForUnexpected(new RuntimeException())), PlayerErrorType.SOURCE_ADS_LOAD_UNEXPECTED_ERROR_THEN_WILL_SKIP},
-                new Object[]{createSource(new MergingMediaSource.IllegalMergeException(MergingMediaSource.IllegalMergeException.REASON_PERIOD_COUNT_MISMATCH)), PlayerErrorType.SOURCE_MERGING_MEDIA_SOURCE_CANNOT_MERGE_ITS_SOURCES},
-                new Object[]{createSource(new ClippingMediaSource.IllegalClippingException(ClippingMediaSource.IllegalClippingException.REASON_INVALID_PERIOD_COUNT)), PlayerErrorType.SOURCE_CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_INVALID_PERIOD_COUNT},
-                new Object[]{createSource(new ClippingMediaSource.IllegalClippingException(ClippingMediaSource.IllegalClippingException.REASON_NOT_SEEKABLE_TO_START)), PlayerErrorType.SOURCE_CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_NOT_SEEKABLE_TO_START},
-                new Object[]{createSource(new ClippingMediaSource.IllegalClippingException(ClippingMediaSource.IllegalClippingException.REASON_START_EXCEEDS_END)), PlayerErrorType.SOURCE_CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_START_EXCEEDS_END},
-                new Object[]{createSource(new PriorityTaskManager.PriorityTooLowException(1, 2)), PlayerErrorType.SOURCE_TASK_CANNOT_PROCEED_PRIORITY_TOO_LOW},
-                new Object[]{createSource(new ParserException()), PlayerErrorType.SOURCE_PARSING_MEDIA_DATA_OR_METADATA_ERROR},
-                new Object[]{createSource(new Cache.CacheException("cache-exception")), PlayerErrorType.SOURCE_CACHE_WRITING_DATA_ERROR},
+                new Object[]{SOURCE, SOURCE_SAMPLE_QUEUE_MAPPING_ERROR, createSource(new SampleQueueMappingException("mimetype-sample"))},
+                new Object[]{SOURCE, SOURCE_READING_LOCAL_FILE_ERROR, createSource(new FileDataSource.FileDataSourceException(new IOException()))},
+                new Object[]{SOURCE, SOURCE_UNEXPECTED_LOADING_ERROR, createSource(new Loader.UnexpectedLoaderException(new Throwable()))},
+                new Object[]{SOURCE, SOURCE_LIVE_STALE_MANIFEST_AND_NEW_MANIFEST_COULD_NOT_LOAD_ERROR, createSource(new DashManifestStaleException())},
+                new Object[]{SOURCE, SOURCE_DOWNLOAD_ERROR, createSource(new DownloadException("download-exception"))},
+                new Object[]{SOURCE, SOURCE_AD_LOAD_ERROR_THEN_WILL_SKIP, createSource(AdsMediaSource.AdLoadException.createForAd(new Exception()))},
+                new Object[]{SOURCE, SOURCE_AD_GROUP_LOAD_ERROR_THEN_WILL_SKIP, createSource(AdsMediaSource.AdLoadException.createForAdGroup(new Exception(), 0))},
+                new Object[]{SOURCE, SOURCE_ALL_ADS_LOAD_ERROR_THEN_WILL_SKIP, createSource(AdsMediaSource.AdLoadException.createForAllAds(new Exception()))},
+                new Object[]{SOURCE, SOURCE_ADS_LOAD_UNEXPECTED_ERROR_THEN_WILL_SKIP, createSource(AdsMediaSource.AdLoadException.createForUnexpected(new RuntimeException()))},
+                new Object[]{SOURCE, SOURCE_MERGING_MEDIA_SOURCE_CANNOT_MERGE_ITS_SOURCES, createSource(new MergingMediaSource.IllegalMergeException(MergingMediaSource.IllegalMergeException.REASON_PERIOD_COUNT_MISMATCH))},
+                new Object[]{SOURCE, SOURCE_CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_INVALID_PERIOD_COUNT, createSource(new ClippingMediaSource.IllegalClippingException(ClippingMediaSource.IllegalClippingException.REASON_INVALID_PERIOD_COUNT))},
+                new Object[]{SOURCE, SOURCE_CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_NOT_SEEKABLE_TO_START, createSource(new ClippingMediaSource.IllegalClippingException(ClippingMediaSource.IllegalClippingException.REASON_NOT_SEEKABLE_TO_START))},
+                new Object[]{SOURCE, SOURCE_CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_INVALID_PERIOD_COUNT, createSource(new ClippingMediaSource.IllegalClippingException(ClippingMediaSource.IllegalClippingException.REASON_INVALID_PERIOD_COUNT))},
+                new Object[]{SOURCE, SOURCE_TASK_CANNOT_PROCEED_PRIORITY_TOO_LOW, createSource(new PriorityTaskManager.PriorityTooLowException(1, 2))},
+                new Object[]{SOURCE, SOURCE_PARSING_MEDIA_DATA_OR_METADATA_ERROR, createSource(new ParserException())},
+                new Object[]{SOURCE, SOURCE_CACHE_WRITING_DATA_ERROR, createSource(new Cache.CacheException("cache-exception"))},
+                new Object[]{SOURCE, SOURCE_READ_LOCAL_ASSET_ERROR, createSource(new AssetDataSource.AssetDataSourceException(new IOException()))},
+                new Object[]{SOURCE, SOURCE_DATA_POSITION_OUT_OF_RANGE_ERROR, createSource(new DataSourceException(DataSourceException.POSITION_OUT_OF_RANGE))},
+
+                new Object[]{CONNECTIVITY, SOURCE_HTTP_CANNOT_OPEN_ERROR, createSource(new HttpDataSource.HttpDataSourceException(new DataSpec(Uri.EMPTY, 0), HttpDataSource.HttpDataSourceException.TYPE_OPEN))},
+                new Object[]{CONNECTIVITY, SOURCE_HTTP_CANNOT_READ_ERROR, createSource(new HttpDataSource.HttpDataSourceException(new DataSpec(Uri.EMPTY, 0), HttpDataSource.HttpDataSourceException.TYPE_READ))},
+                new Object[]{CONNECTIVITY, SOURCE_HTTP_CANNOT_CLOSE_ERROR, createSource(new HttpDataSource.HttpDataSourceException(new DataSpec(Uri.EMPTY, 0), HttpDataSource.HttpDataSourceException.TYPE_CLOSE))},
+                new Object[]{CONNECTIVITY, SOURCE_READ_CONTENT_URI_ERROR, createSource(new ContentDataSource.ContentDataSourceException(new IOException()))},
+                new Object[]{CONNECTIVITY, SOURCE_READ_FROM_UDP_ERROR, createSource(new UdpDataSource.UdpDataSourceException(new IOException()))},
+
+                new Object[]{RENDERER_DECODER, RENDERER_AUDIO_SINK_CONFIGURATION_ERROR, createRenderer(new AudioSink.ConfigurationException("configuration-exception"))},
+                new Object[]{RENDERER_DECODER, RENDERER_AUDIO_SINK_INITIALISATION_ERROR, createRenderer(new AudioSink.InitializationException(0, 0, 0, 0))},
+                new Object[]{RENDERER_DECODER, RENDERER_AUDIO_SINK_WRITE_ERROR, createRenderer(new AudioSink.WriteException(0))},
+                new Object[]{RENDERER_DECODER, RENDERER_AUDIO_UNHANDLED_FORMAT_ERROR, createRenderer(new AudioProcessor.UnhandledFormatException(0, 0, 0))},
+                new Object[]{RENDERER_DECODER, RENDERER_AUDIO_DECODER_ERROR, createRenderer(new AudioDecoderException("audio-decoder-exception"))},
+                new Object[]{RENDERER_DECODER, RENDERER_DECODER_INITIALISATION_ERROR, createRenderer(new MediaCodecRenderer.DecoderInitializationException(Format.createSampleFormat("id", "sample-mimety[e", 0), new Throwable(), true, 0))},
+                new Object[]{RENDERER_DECODER, RENDERER_DECODING_METADATA_ERROR, createRenderer(new MetadataDecoderException("metadata-decoder-exception"))},
+                new Object[]{RENDERER_DECODER, RENDERER_DECODING_SUBTITLE_ERROR, createRenderer(new SubtitleDecoderException("metadata-decoder-exception"))},
+
+                new Object[]{DRM, RENDERER_UNSUPPORTED_DRM_SCHEME_ERROR, createRenderer(new UnsupportedDrmException(UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME))},
+                new Object[]{DRM, RENDERER_DRM_INSTANTIATION_ERROR, createRenderer(new UnsupportedDrmException(UnsupportedDrmException.REASON_INSTANTIATION_ERROR))},
+                new Object[]{DRM, RENDERER_DRM_SESSION_ERROR, createRenderer(new DrmSession.DrmSessionException(new Throwable()))},
+                new Object[]{DRM, RENDERER_DRM_KEYS_EXPIRED_ERROR, createRenderer(new KeysExpiredException())},
+                new Object[]{DRM, RENDERER_MEDIA_REQUIRES_DRM_SESSION_MANAGER_ERROR, createRenderer(new IllegalStateException())},
+
+                new Object[]{CONTENT_DECRYPTION, RENDERER_FAIL_DECRYPT_DATA_DUE_NON_PLATFORM_COMPONENT_ERROR, createRenderer(new DecryptionException(0, "decryption-exception"))}
+
                 // PlaylistStuckException constructor is private, cannot create
                 // PlaylistResetException constructor is private, cannot create
-                new Object[]{createSource(new HttpDataSource.HttpDataSourceException(new DataSpec(Uri.EMPTY, 0), HttpDataSource.HttpDataSourceException.TYPE_OPEN)), PlayerErrorType.SOURCE_HTTP_CANNOT_OPEN_ERROR},
-                new Object[]{createSource(new HttpDataSource.HttpDataSourceException(new DataSpec(Uri.EMPTY, 0), HttpDataSource.HttpDataSourceException.TYPE_READ)), PlayerErrorType.SOURCE_HTTP_CANNOT_READ_ERROR},
-                new Object[]{createSource(new HttpDataSource.HttpDataSourceException(new DataSpec(Uri.EMPTY, 0), HttpDataSource.HttpDataSourceException.TYPE_CLOSE)), PlayerErrorType.SOURCE_HTTP_CANNOT_CLOSE_ERROR},
-                new Object[]{createSource(new AssetDataSource.AssetDataSourceException(new IOException())), PlayerErrorType.SOURCE_READ_LOCAL_ASSET_ERROR},
-                new Object[]{createSource(new ContentDataSource.ContentDataSourceException(new IOException())), PlayerErrorType.SOURCE_READ_CONTENT_URI_ERROR},
-                new Object[]{createSource(new UdpDataSource.UdpDataSourceException(new IOException())), PlayerErrorType.SOURCE_READ_FROM_UDP_ERROR},
-                new Object[]{createSource(new DataSourceException(DataSourceException.POSITION_OUT_OF_RANGE)), PlayerErrorType.SOURCE_DATA_POSITION_OUT_OF_RANGE_ERROR},
-
-                new Object[]{createRenderer(new AudioSink.ConfigurationException("configuration-exception")), PlayerErrorType.RENDERER_AUDIO_SINK_CONFIGURATION_ERROR},
-                new Object[]{createRenderer(new AudioSink.InitializationException(0, 0, 0, 0)), PlayerErrorType.RENDERER_AUDIO_SINK_INITIALISATION_ERROR},
-                new Object[]{createRenderer(new AudioSink.WriteException(0)), PlayerErrorType.RENDERER_AUDIO_SINK_WRITE_ERROR},
-                new Object[]{createRenderer(new AudioProcessor.UnhandledFormatException(0, 0, 0)), PlayerErrorType.RENDERER_AUDIO_UNHANDLED_FORMAT_ERROR},
-                new Object[]{createRenderer(new AudioDecoderException("audio-decoder-exception")), PlayerErrorType.RENDERER_AUDIO_DECODER_ERROR},
-                new Object[]{createRenderer(new MediaCodecRenderer.DecoderInitializationException(Format.createSampleFormat("id", "sample-mimety[e", 0), new Throwable(), true, 0)), PlayerErrorType.RENDERER_DECODER_INITIALISATION_ERROR},
-                // MediaCodecUtil.DecoderQueryException constructor is private, cannot create
-                new Object[]{createRenderer(new MetadataDecoderException("metadata-decoder-exception")), PlayerErrorType.RENDERER_DECODING_METADATA_ERROR},
-                new Object[]{createRenderer(new SubtitleDecoderException("metadata-decoder-exception")), PlayerErrorType.RENDERER_DECODING_SUBTITLE_ERROR},
-                new Object[]{createRenderer(new UnsupportedDrmException(UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME)), PlayerErrorType.RENDERER_UNSUPPORTED_DRM_SCHEME_ERROR},
-                new Object[]{createRenderer(new UnsupportedDrmException(UnsupportedDrmException.REASON_INSTANTIATION_ERROR)), PlayerErrorType.RENDERER_DRM_INSTANTIATION_ERROR},
-                new Object[]{createRenderer(new UnsupportedDrmException(UnsupportedDrmException.REASON_INSTANTIATION_ERROR)), PlayerErrorType.RENDERER_DRM_INSTANTIATION_ERROR},
-                // DefaultDrmSessionManager.MissingSchemeDataException constructor is private, cannot create
-                new Object[]{createRenderer(new DrmSession.DrmSessionException(new Throwable())), PlayerErrorType.RENDERER_DRM_SESSION_ERROR},
-                new Object[]{createRenderer(new KeysExpiredException()), PlayerErrorType.RENDERER_DRM_KEYS_EXPIRED_ERROR},
-                new Object[]{createRenderer(new DecryptionException(0, "decryption-exception")), PlayerErrorType.RENDERER_FAIL_DECRYPT_DATA_DUE_NON_PLATFORM_COMPONENT_ERROR},
-                // Crypto Exceptions cannot be instantiated, it throws a RuntimeException("Stub!")
-                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_NO_KEY, "no-key")), PlayerErrorType.RENDERER_CRYPTO_KEY_NOT_FOUND_WHEN_DECRYPTION_ERROR},
-                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_KEY_EXPIRED, "key-expired")), PlayerErrorType.RENDERER_CRYPTO_KEY_EXPIRED_ERROR},
-                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_RESOURCE_BUSY, "resource-busy")), PlayerErrorType.RENDERER_CRYPTO_RESOURCE_BUSY_ERROR_THEN_SHOULD_RETRY},
-                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_INSUFFICIENT_OUTPUT_PROTECTION, "insufficient-output-protection")), PlayerErrorType.RENDERER_CRYPTO_INSUFFICIENT_OUTPUT_PROTECTION_ERROR},
-                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_SESSION_NOT_OPENED, "session-not-opened")), PlayerErrorType.RENDERER_CRYPTO_DECRYPTION_ATTEMPTED_ON_CLOSED_SEDDION_ERROR},
-                // new Object[]{createRenderer(new MediaCodec.CryptoException(MediaCodec.CryptoException.ERROR_UNSUPPORTED_OPERATION, "unsupported-operation")), PlayerErrorType.RENDERER_CRYPTO_LICENSE_POLICY_REQUIRED_NOT_SUPPORTED_BY_DEVICE_ERROR},
-                new Object[]{createRenderer(new IllegalStateException()), PlayerErrorType.RENDERER_MEDIA_REQUIRES_DRM_SESSION_MANAGER_ERROR}
-
                 // ExoPlaybackException.createForUnexpected constructor is package-protected, cannot create
+                // MediaCodecUtil.DecoderQueryException constructor is private, cannot create
+                // DefaultDrmSessionManager.MissingSchemeDataException constructor is private, cannot create
+                // Crypto Exceptions cannot be instantiated, it throws a RuntimeException("Stub!")
         );
     }
 
@@ -120,6 +121,8 @@ public class ExoPlayerErrorMapperTest {
 
     @Test
     public void mapErrors() {
-        assertThat(ExoPlayerErrorMapper.errorFor(exoPlaybackException).type()).isEqualTo(playerErrorType);
+        NoPlayer.PlayerError playerError = ExoPlayerErrorMapper.errorFor(exoPlaybackException);
+        assertThat(playerError.type()).isEqualTo(playerErrorType);
+        assertThat(playerError.detailType()).isEqualTo(detailErrorType);
     }
 }
