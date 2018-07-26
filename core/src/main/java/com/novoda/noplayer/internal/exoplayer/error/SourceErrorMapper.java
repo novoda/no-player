@@ -30,7 +30,7 @@ final class SourceErrorMapper {
         // non-instantiable class
     }
 
-    @SuppressWarnings({"PMD.StdCyclomaticComplexity", "PMD.CyclomaticComplexity"})
+    @SuppressWarnings({"PMD.StdCyclomaticComplexity", "PMD.CyclomaticComplexity", "PMD.ModifiedCyclomaticComplexity", "PMD.NPathComplexity"})
     static NoPlayer.PlayerError map(IOException sourceException, String message) {
         if (sourceException instanceof SampleQueueMappingException) {
             return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.SAMPLE_QUEUE_MAPPING_ERROR, message);
