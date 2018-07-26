@@ -34,6 +34,7 @@ import com.google.android.exoplayer2.util.PriorityTaskManager;
 import com.novoda.noplayer.DetailErrorType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerErrorType;
+import com.novoda.noplayer.internal.exoplayer.error.ExoPlayerErrorMapper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,14 +44,53 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.novoda.noplayer.DetailErrorType.*;
-import static com.novoda.noplayer.PlayerErrorType.*;
+import static com.novoda.noplayer.DetailErrorType.ADS_LOAD_UNEXPECTED_ERROR_THEN_WILL_SKIP;
+import static com.novoda.noplayer.DetailErrorType.AD_GROUP_LOAD_ERROR_THEN_WILL_SKIP;
+import static com.novoda.noplayer.DetailErrorType.AD_LOAD_ERROR_THEN_WILL_SKIP;
+import static com.novoda.noplayer.DetailErrorType.ALL_ADS_LOAD_ERROR_THEN_WILL_SKIP;
+import static com.novoda.noplayer.DetailErrorType.AUDIO_DECODER_ERROR;
+import static com.novoda.noplayer.DetailErrorType.AUDIO_SINK_CONFIGURATION_ERROR;
+import static com.novoda.noplayer.DetailErrorType.AUDIO_SINK_INITIALISATION_ERROR;
+import static com.novoda.noplayer.DetailErrorType.AUDIO_SINK_WRITE_ERROR;
+import static com.novoda.noplayer.DetailErrorType.AUDIO_UNHANDLED_FORMAT_ERROR;
+import static com.novoda.noplayer.DetailErrorType.CACHE_WRITING_DATA_ERROR;
+import static com.novoda.noplayer.DetailErrorType.CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_INVALID_PERIOD_COUNT;
+import static com.novoda.noplayer.DetailErrorType.CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_NOT_SEEKABLE_TO_START;
+import static com.novoda.noplayer.DetailErrorType.DATA_POSITION_OUT_OF_RANGE_ERROR;
+import static com.novoda.noplayer.DetailErrorType.DECODING_METADATA_ERROR;
+import static com.novoda.noplayer.DetailErrorType.DECODING_SUBTITLE_ERROR;
+import static com.novoda.noplayer.DetailErrorType.DOWNLOAD_ERROR;
+import static com.novoda.noplayer.DetailErrorType.DRM_INSTANTIATION_ERROR;
+import static com.novoda.noplayer.DetailErrorType.DRM_KEYS_EXPIRED_ERROR;
+import static com.novoda.noplayer.DetailErrorType.DRM_SESSION_ERROR;
+import static com.novoda.noplayer.DetailErrorType.FAIL_DECRYPT_DATA_DUE_NON_PLATFORM_COMPONENT_ERROR;
+import static com.novoda.noplayer.DetailErrorType.HTTP_CANNOT_CLOSE_ERROR;
+import static com.novoda.noplayer.DetailErrorType.HTTP_CANNOT_OPEN_ERROR;
+import static com.novoda.noplayer.DetailErrorType.HTTP_CANNOT_READ_ERROR;
+import static com.novoda.noplayer.DetailErrorType.INITIALISATION_ERROR;
+import static com.novoda.noplayer.DetailErrorType.LIVE_STALE_MANIFEST_AND_NEW_MANIFEST_COULD_NOT_LOAD_ERROR;
+import static com.novoda.noplayer.DetailErrorType.MEDIA_REQUIRES_DRM_SESSION_MANAGER_ERROR;
+import static com.novoda.noplayer.DetailErrorType.MERGING_MEDIA_SOURCE_CANNOT_MERGE_ITS_SOURCES;
+import static com.novoda.noplayer.DetailErrorType.PARSING_MEDIA_DATA_OR_METADATA_ERROR;
+import static com.novoda.noplayer.DetailErrorType.READING_LOCAL_FILE_ERROR;
+import static com.novoda.noplayer.DetailErrorType.READ_CONTENT_URI_ERROR;
+import static com.novoda.noplayer.DetailErrorType.READ_FROM_UDP_ERROR;
+import static com.novoda.noplayer.DetailErrorType.READ_LOCAL_ASSET_ERROR;
+import static com.novoda.noplayer.DetailErrorType.SAMPLE_QUEUE_MAPPING_ERROR;
+import static com.novoda.noplayer.DetailErrorType.TASK_CANNOT_PROCEED_PRIORITY_TOO_LOW;
+import static com.novoda.noplayer.DetailErrorType.UNEXPECTED_LOADING_ERROR;
+import static com.novoda.noplayer.DetailErrorType.UNSUPPORTED_DRM_SCHEME_ERROR;
+import static com.novoda.noplayer.PlayerErrorType.CONNECTIVITY;
+import static com.novoda.noplayer.PlayerErrorType.CONTENT_DECRYPTION;
+import static com.novoda.noplayer.PlayerErrorType.DRM;
+import static com.novoda.noplayer.PlayerErrorType.RENDERER_DECODER;
+import static com.novoda.noplayer.PlayerErrorType.SOURCE;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class ExoPlayerErrorMapperTest {
 
-    @Parameterized.Parameter(0)
+    @Parameterized.Parameter
     public PlayerErrorType playerErrorType;
     @Parameterized.Parameter(1)
     public DetailErrorType detailErrorType;

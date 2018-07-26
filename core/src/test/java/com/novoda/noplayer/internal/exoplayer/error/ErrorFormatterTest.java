@@ -1,4 +1,5 @@
-package com.novoda.noplayer.internal.exoplayer.forwarder;
+package com.novoda.noplayer.internal.exoplayer.error;
+
 
 import org.junit.Test;
 
