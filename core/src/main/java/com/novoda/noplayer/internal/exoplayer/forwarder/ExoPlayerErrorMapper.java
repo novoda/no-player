@@ -1,6 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import android.media.MediaCodec;
+import android.support.annotation.NonNull;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ParserException;
@@ -86,17 +87,7 @@ final class ExoPlayerErrorMapper {
         }
 
         if (sourceException instanceof AdsMediaSource.AdLoadException) {
-            AdsMediaSource.AdLoadException adLoadException = (AdsMediaSource.AdLoadException) sourceException;
-            switch (adLoadException.type) {
-                case AdsMediaSource.AdLoadException.TYPE_AD:
-                    return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.AD_LOAD_ERROR_THEN_WILL_SKIP, message);
-                case AdsMediaSource.AdLoadException.TYPE_AD_GROUP:
-                    return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.AD_GROUP_LOAD_ERROR_THEN_WILL_SKIP, message);
-                case AdsMediaSource.AdLoadException.TYPE_ALL_ADS:
-                    return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.ALL_ADS_LOAD_ERROR_THEN_WILL_SKIP, message);
-                case AdsMediaSource.AdLoadException.TYPE_UNEXPECTED:
-                    return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.ADS_LOAD_UNEXPECTED_ERROR_THEN_WILL_SKIP, message);
-            }
+            return mapAdsError((AdsMediaSource.AdLoadException) sourceException, message);
         }
 
         if (sourceException instanceof MergingMediaSource.IllegalMergeException) {
@@ -104,17 +95,7 @@ final class ExoPlayerErrorMapper {
         }
 
         if (sourceException instanceof ClippingMediaSource.IllegalClippingException) {
-            ClippingMediaSource.IllegalClippingException illegalClippingException = (ClippingMediaSource.IllegalClippingException) sourceException;
-            switch (illegalClippingException.reason) {
-                case ClippingMediaSource.IllegalClippingException.REASON_INVALID_PERIOD_COUNT:
-                    return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_INVALID_PERIOD_COUNT, message);
-                case ClippingMediaSource.IllegalClippingException.REASON_NOT_SEEKABLE_TO_START:
-                    return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_NOT_SEEKABLE_TO_START, message);
-                case ClippingMediaSource.IllegalClippingException.REASON_START_EXCEEDS_END:
-                    return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_START_EXCEEDS_END, message);
-                default:
-                    return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_UNKNOWN_ERROR, message);
-            }
+            return mapClippingError((ClippingMediaSource.IllegalClippingException) sourceException, message);
         }
 
         if (sourceException instanceof PriorityTaskManager.PriorityTooLowException) {
@@ -131,24 +112,24 @@ final class ExoPlayerErrorMapper {
 
         if (sourceException instanceof HlsPlaylistTracker.PlaylistStuckException) {
             HlsPlaylistTracker.PlaylistStuckException playlistStuckException = (HlsPlaylistTracker.PlaylistStuckException) sourceException;
-            return new NoPlayerError(PlayerErrorType.CONNECTIVITY, DetailErrorType.HLS_PLAYLIST_STUCK_SERVER_SIDE_ERROR, playlistStuckException.url + " - " + message);
+            return new NoPlayerError(
+                    PlayerErrorType.CONNECTIVITY,
+                    DetailErrorType.HLS_PLAYLIST_STUCK_SERVER_SIDE_ERROR,
+                    playlistStuckException.url + " - " + message
+            );
         }
 
         if (sourceException instanceof HlsPlaylistTracker.PlaylistResetException) {
             HlsPlaylistTracker.PlaylistResetException playlistStuckException = (HlsPlaylistTracker.PlaylistResetException) sourceException;
-            return new NoPlayerError(PlayerErrorType.CONNECTIVITY, DetailErrorType.HLS_PLAYLIST_SERVER_HAS_RESET, playlistStuckException.url + " - " + message);
+            return new NoPlayerError(
+                    PlayerErrorType.CONNECTIVITY,
+                    DetailErrorType.HLS_PLAYLIST_SERVER_HAS_RESET,
+                    playlistStuckException.url + " - " + message
+            );
         }
 
         if (sourceException instanceof HttpDataSource.HttpDataSourceException) {
-            HttpDataSource.HttpDataSourceException httpDataSourceException = (HttpDataSource.HttpDataSourceException) sourceException;
-            switch (httpDataSourceException.type) {
-                case HttpDataSource.HttpDataSourceException.TYPE_OPEN:
-                    return new NoPlayerError(PlayerErrorType.CONNECTIVITY, DetailErrorType.HTTP_CANNOT_OPEN_ERROR, message);
-                case HttpDataSource.HttpDataSourceException.TYPE_READ:
-                    return new NoPlayerError(PlayerErrorType.CONNECTIVITY, DetailErrorType.HTTP_CANNOT_READ_ERROR, message);
-                case HttpDataSource.HttpDataSourceException.TYPE_CLOSE:
-                    return new NoPlayerError(PlayerErrorType.CONNECTIVITY, DetailErrorType.HTTP_CANNOT_CLOSE_ERROR, message);
-            }
+            return mapHttpDataSourceException((HttpDataSource.HttpDataSourceException) sourceException, message);
         }
 
         if (sourceException instanceof AssetDataSource.AssetDataSourceException) {
@@ -169,6 +150,63 @@ final class ExoPlayerErrorMapper {
 
         return new NoPlayerError(PlayerErrorType.UNKNOWN, DetailErrorType.UNKNOWN, message);
 
+    }
+
+    private static NoPlayer.PlayerError mapAdsError(AdsMediaSource.AdLoadException adLoadException, String message) {
+        switch (adLoadException.type) {
+            case AdsMediaSource.AdLoadException.TYPE_AD:
+                return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.AD_LOAD_ERROR_THEN_WILL_SKIP, message);
+            case AdsMediaSource.AdLoadException.TYPE_AD_GROUP:
+                return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.AD_GROUP_LOAD_ERROR_THEN_WILL_SKIP, message);
+            case AdsMediaSource.AdLoadException.TYPE_ALL_ADS:
+                return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.ALL_ADS_LOAD_ERROR_THEN_WILL_SKIP, message);
+            case AdsMediaSource.AdLoadException.TYPE_UNEXPECTED:
+                return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.ADS_LOAD_UNEXPECTED_ERROR_THEN_WILL_SKIP, message);
+            default:
+                return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.UNKNOWN, message);
+        }
+    }
+
+    private static NoPlayer.PlayerError mapClippingError(ClippingMediaSource.IllegalClippingException illegalClippingException, String message) {
+        switch (illegalClippingException.reason) {
+            case ClippingMediaSource.IllegalClippingException.REASON_INVALID_PERIOD_COUNT:
+                return new NoPlayerError(
+                        PlayerErrorType.SOURCE,
+                        DetailErrorType.CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_INVALID_PERIOD_COUNT,
+                        message
+                );
+            case ClippingMediaSource.IllegalClippingException.REASON_NOT_SEEKABLE_TO_START:
+                return new NoPlayerError(
+                        PlayerErrorType.SOURCE,
+                        DetailErrorType.CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_NOT_SEEKABLE_TO_START,
+                        message
+                );
+            case ClippingMediaSource.IllegalClippingException.REASON_START_EXCEEDS_END:
+                return new NoPlayerError(
+                        PlayerErrorType.SOURCE,
+                        DetailErrorType.CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_START_EXCEEDS_END,
+                        message
+                );
+            default:
+                return new NoPlayerError(
+                        PlayerErrorType.SOURCE,
+                        DetailErrorType.UNKNOWN,
+                        message
+                );
+        }
+    }
+
+    private static NoPlayer.PlayerError mapHttpDataSourceException(HttpDataSource.HttpDataSourceException httpDataSourceException, String message) {
+        switch (httpDataSourceException.type) {
+            case HttpDataSource.HttpDataSourceException.TYPE_OPEN:
+                return new NoPlayerError(PlayerErrorType.CONNECTIVITY, DetailErrorType.HTTP_CANNOT_OPEN_ERROR, message);
+            case HttpDataSource.HttpDataSourceException.TYPE_READ:
+                return new NoPlayerError(PlayerErrorType.CONNECTIVITY, DetailErrorType.HTTP_CANNOT_READ_ERROR, message);
+            case HttpDataSource.HttpDataSourceException.TYPE_CLOSE:
+                return new NoPlayerError(PlayerErrorType.CONNECTIVITY, DetailErrorType.HTTP_CANNOT_CLOSE_ERROR, message);
+            default:
+                return new NoPlayerError(PlayerErrorType.CONNECTIVITY, DetailErrorType.UNKNOWN, message);
+        }
     }
 
     private static NoPlayer.PlayerError mapRendererError(Exception rendererException, String message) {
@@ -193,7 +231,8 @@ final class ExoPlayerErrorMapper {
         }
 
         if (rendererException instanceof MediaCodecRenderer.DecoderInitializationException) {
-            MediaCodecRenderer.DecoderInitializationException decoderInitializationException = (MediaCodecRenderer.DecoderInitializationException) rendererException;
+            MediaCodecRenderer.DecoderInitializationException decoderInitializationException =
+                    (MediaCodecRenderer.DecoderInitializationException) rendererException;
             String fullMessage = "decoder-name:" + decoderInitializationException.decoderName + ", "
                     + "mimetype:" + decoderInitializationException.mimeType + ", "
                     + "secureCodeRequired:" + decoderInitializationException.secureDecoderRequired + ", "
@@ -256,7 +295,11 @@ final class ExoPlayerErrorMapper {
                 case MediaCodec.CryptoException.ERROR_SESSION_NOT_OPENED:
                     return new NoPlayerError(PlayerErrorType.CONTENT_DECRYPTION, DetailErrorType.ATTEMPTED_ON_CLOSED_SEDDION_ERROR, message);
                 case MediaCodec.CryptoException.ERROR_UNSUPPORTED_OPERATION:
-                    return new NoPlayerError(PlayerErrorType.CONTENT_DECRYPTION, DetailErrorType.LICENSE_POLICY_REQUIRED_NOT_SUPPORTED_BY_DEVICE_ERROR, message);
+                    return new NoPlayerError(
+                            PlayerErrorType.CONTENT_DECRYPTION,
+                            DetailErrorType.LICENSE_POLICY_REQUIRED_NOT_SUPPORTED_BY_DEVICE_ERROR,
+                            message
+                    );
             }
         }
 
