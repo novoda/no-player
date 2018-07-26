@@ -57,7 +57,7 @@ public class ExoPlayerErrorMapperTest {
     @Parameterized.Parameter(2)
     public ExoPlaybackException exoPlaybackException;
 
-    @Parameterized.Parameters(name = "{0} with detail {1} is mapped to {2}")
+    @Parameterized.Parameters(name = "{0} with detail {1} is mapped from {2}")
     public static Collection<Object[]> parameters() {
         return Arrays.asList(
                 new Object[]{SOURCE, SOURCE_SAMPLE_QUEUE_MAPPING_ERROR, createSource(new SampleQueueMappingException("mimetype-sample"))},
