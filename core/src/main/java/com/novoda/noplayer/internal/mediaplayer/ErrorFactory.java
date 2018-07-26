@@ -16,7 +16,7 @@ public final class ErrorFactory {
     public static NoPlayer.PlayerError createErrorFrom(int type, int extra) {
         switch (type) {
             case MediaPlayer.MEDIA_ERROR_IO:
-                return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.SOURCE_MEDIA_PLAYER_IO, String.valueOf(extra));
+                return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.MEDIA_PLAYER_IO, String.valueOf(extra));
             case MediaPlayer.MEDIA_ERROR_MALFORMED:
                 return new NoPlayerError(PlayerErrorType.SOURCE, DetailErrorType.MEDIA_PLAYER_MALFORMED, String.valueOf(extra));
             case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
