@@ -13,6 +13,7 @@ public final class ErrorFactory {
         // no instances
     }
 
+    @SuppressWarnings({"PMD.StdCyclomaticComplexity", "PMD.CyclomaticComplexity"})
     public static NoPlayer.PlayerError createErrorFrom(int type, int extra) {
         String message = String.valueOf(extra);
         switch (type) {

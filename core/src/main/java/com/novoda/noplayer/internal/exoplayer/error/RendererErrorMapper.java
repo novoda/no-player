@@ -25,6 +25,7 @@ final class RendererErrorMapper {
         // non-instantiable class
     }
 
+    @SuppressWarnings({"PMD.StdCyclomaticComplexity", "PMD.CyclomaticComplexity"})
     static NoPlayer.PlayerError map(Exception rendererException, String message) {
         if (rendererException instanceof AudioSink.ConfigurationException) {
             return new NoPlayerError(PlayerErrorType.RENDERER_DECODER, DetailErrorType.AUDIO_SINK_CONFIGURATION_ERROR, message);
