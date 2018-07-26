@@ -1,7 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import android.media.MediaCodec;
-import android.support.annotation.NonNull;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ParserException;
@@ -300,6 +299,8 @@ final class ExoPlayerErrorMapper {
                             DetailErrorType.LICENSE_POLICY_REQUIRED_NOT_SUPPORTED_BY_DEVICE_ERROR,
                             message
                     );
+                default:
+                    return new NoPlayerError(PlayerErrorType.CONTENT_DECRYPTION, DetailErrorType.UNKNOWN, message);
             }
         }
 
