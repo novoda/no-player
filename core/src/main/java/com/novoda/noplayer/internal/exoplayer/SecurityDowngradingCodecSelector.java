@@ -26,7 +26,7 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
     }
 
     @Override
-    public MediaCodecInfo getPassthroughDecoderInfo() throws MediaCodecUtil.DecoderQueryException {
+    public MediaCodecInfo getPassthroughDecoderInfo() {
         return internalMediaCodecUtil.getPassthroughDecoderInfo();
     }
 
@@ -36,7 +36,7 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
             return MediaCodecUtil.getDecoderInfo(mimeType, requiresSecureDecoder);
         }
 
-        MediaCodecInfo getPassthroughDecoderInfo() throws MediaCodecUtil.DecoderQueryException {
+        MediaCodecInfo getPassthroughDecoderInfo() {
             return MediaCodecUtil.getPassthroughDecoderInfo();
         }
     }
