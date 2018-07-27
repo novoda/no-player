@@ -2,7 +2,7 @@ package com.novoda.noplayer;
 
 /**
  * Assume all errors are thrown by Exo Player, MEDIA_PLAYER prefix will
- * indicate that the error is thrown by Meda Player.
+ * indicate that the error is thrown by Media Player.
  */
 public enum DetailErrorType {
 
