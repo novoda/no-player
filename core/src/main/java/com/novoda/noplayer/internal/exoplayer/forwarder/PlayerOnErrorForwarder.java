@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.internal.exoplayer.error.ExoPlayerErrorMapper;
 
 class PlayerOnErrorForwarder implements Player.EventListener {
 
