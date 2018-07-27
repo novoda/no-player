@@ -6,8 +6,6 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.NoPlayerError;
 import com.novoda.noplayer.PlayerErrorType;
 
-import static com.novoda.noplayer.internal.exoplayer.error.ErrorFormatter.formatMessage;
-
 public final class ExoPlayerErrorMapper {
 
     private ExoPlayerErrorMapper() {
@@ -15,7 +13,7 @@ public final class ExoPlayerErrorMapper {
     }
 
     public static NoPlayer.PlayerError errorFor(ExoPlaybackException exception) {
-        String message = formatMessage(exception.getCause());
+        String message = ErrorFormatter.formatMessage(exception.getCause());
 
         switch (exception.type) {
             case ExoPlaybackException.TYPE_SOURCE:
@@ -25,7 +23,7 @@ public final class ExoPlayerErrorMapper {
             case ExoPlaybackException.TYPE_UNEXPECTED:
                 return UnexpectedErrorMapper.map(exception.getUnexpectedException(), message);
             default:
-                return new NoPlayerError(PlayerErrorType.UNKNOWN, DetailErrorType.UNKNOWN, formatMessage(exception.getCause()));
+                return new NoPlayerError(PlayerErrorType.UNKNOWN, DetailErrorType.UNKNOWN, message);
         }
     }
 }
