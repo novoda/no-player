@@ -1,6 +1,6 @@
 ![noplayer](art/noplayer-header.png)
 
-[![CI status](https://ci.novoda.com/buildStatus/icon?job=no-player)](https://ci.novoda.com/job/no-player/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda/maven/no-player/images/download.svg)](https://bintray.com/novoda/maven/no-player/_latestVersion) [![Apache 2.0 Licence](https://img.shields.io/github/license/novoda/no-player.svg)](https://github.com/novoda/no-player/blob/master/LICENSE)
+[![CI status](https://ci.novoda.com/buildStatus/icon?job=no-player)](https://ci.novoda.com/job/no-player/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda/maven/no-player/images/download.svg)](https://bintray.com/novoda/maven/no-player/_latestVersion) ![Tests](https://img.shields.io/jenkins/t/https/ci.novoda.com/view/Open%20source/job/no-player.svg) ![Coverage](https://img.shields.io/jenkins/j/https/ci.novoda.com/view/Open%20source/job/no-player.svg) [![Apache 2.0 Licence](https://img.shields.io/github/license/novoda/no-player.svg)](https://github.com/novoda/no-player/blob/master/LICENSE)
 
 A simplified Android `Player` wrapper for [MediaPlayer](https://developer.android.com/reference/android/media/MediaPlayer.html) and [ExoPlayer](https://google.github.io/ExoPlayer/).
 
