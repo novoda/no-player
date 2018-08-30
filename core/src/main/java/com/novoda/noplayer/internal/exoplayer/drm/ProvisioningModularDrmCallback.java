@@ -1,6 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer.drm;
 
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.MediaDrmCallback;
@@ -28,6 +29,12 @@ class ProvisioningModularDrmCallback implements MediaDrmCallback {
 
     @Override
     public byte[] executeKeyRequest(UUID uuid, ExoMediaDrm.KeyRequest request, @Nullable String mediaProvidedLicenseServerUrl) throws Exception {
-        return streamingModularDrm.executeKeyRequest(new ModularDrmKeyRequest(request.getDefaultUrl(), request.getData()));
+        String url = request.getDefaultUrl();
+
+        if (TextUtils.isEmpty(url)) {
+            url = mediaProvidedLicenseServerUrl;
+        }
+
+        return streamingModularDrm.executeKeyRequest(new ModularDrmKeyRequest(url, request.getData()));
     }
 }
