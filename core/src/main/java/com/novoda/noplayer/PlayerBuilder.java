@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
@@ -105,20 +104,7 @@ public class PlayerBuilder {
         downgradeSecureDecoder = true;
         return this;
     }
-
-    /**
-     * Allows to use a custom data source factory for Exoplayer.
-     * e.g A custom data source can implement cachin mechanism
-     * e.g The OkHttpDataSource extension can be used
-     *
-     * @param dataSourceFactory a custom {@link DataSource.Factory} to be used when creating {@link MediaSource}
-     * @return {@link PlayerBuilder}
-     */
-    public PlayerBuilder withDataSourceFactory(DataSource.Factory dataSourceFactory) {
-        this.dataSourceFactory = Optional.of(dataSourceFactory);
-        return this;
-    }
-
+    
     /**
      * Builds a new {@link NoPlayer} instance.
      *
