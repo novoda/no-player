@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
@@ -13,6 +15,7 @@ import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
+import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +29,7 @@ public class PlayerBuilder {
     private DrmType drmType = DrmType.NONE;
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
+    private Optional<DataSource.Factory> dataSourceFactory = Optional.absent();
     private boolean downgradeSecureDecoder;
 
     /**
@@ -103,6 +107,19 @@ public class PlayerBuilder {
     }
 
     /**
+     * Allows to use a custom data source factory for Exoplayer.
+     * e.g A custom data source can implement cachin mechanism
+     * e.g The OkHttpDataSource extension can be used
+     *
+     * @param dataSourceFactory a custom {@link DataSource.Factory} to be used when creating {@link MediaSource}
+     * @return {@link PlayerBuilder}
+     */
+    public PlayerBuilder withDataSourceFactory(DataSource.Factory dataSourceFactory) {
+        this.dataSourceFactory = Optional.of(dataSourceFactory);
+        return this;
+    }
+
+    /**
      * Builds a new {@link NoPlayer} instance.
      *
      * @param context The {@link Context} associated with the player.
@@ -121,7 +138,7 @@ public class PlayerBuilder {
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
                 context,
                 prioritizedPlayerTypes,
-                NoPlayerExoPlayerCreator.newInstance(handler),
+                NoPlayerExoPlayerCreator.newInstance(handler, dataSourceFactory),
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
