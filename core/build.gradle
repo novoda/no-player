@@ -24,7 +24,10 @@ buildProperties {
     publish {
         def generateVersion = {
             boolean isSnapshot = cli['bintraySnapshot'].or(false).boolean
-            return isSnapshot ? "SNAPSHOT-${System.getenv('BUILD_NUMBER')?:'LOCAL'}" : version
+            boolean isExperimental = cli['bintrayExperimental'].or(false).boolean
+            def snapshotVersion = "SNAPSHOT-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
+            def experimentalVersion = "EXPERIMENTAL-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
+            return isSnapshot ? snapshotVersion : isExperimental ? experimentalVersion : version
         }
         using(['version': "${generateVersion()}"])
                 .or(buildProperties.bintray)
