@@ -28,7 +28,6 @@ public class PlayerBuilder {
     private DrmType drmType = DrmType.NONE;
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
-    private Optional<DataSource.Factory> dataSourceFactory = Optional.absent();
     private boolean downgradeSecureDecoder;
 
     /**
@@ -81,7 +80,7 @@ public class PlayerBuilder {
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will prioritise the underlying player when
      * multiple underlying players share the same features.
      *
-     * @param playerType First {@link PlayerType} with the highest priority.
+     * @param playerType  First {@link PlayerType} with the highest priority.
      * @param playerTypes Remaining {@link PlayerType} in order of priority.
      * @return {@link PlayerBuilder}
      * @see NoPlayer
@@ -104,7 +103,7 @@ public class PlayerBuilder {
         downgradeSecureDecoder = true;
         return this;
     }
-    
+
     /**
      * Builds a new {@link NoPlayer} instance.
      *
@@ -124,10 +123,11 @@ public class PlayerBuilder {
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
                 context,
                 prioritizedPlayerTypes,
-                NoPlayerExoPlayerCreator.newInstance(handler, dataSourceFactory),
+                NoPlayerExoPlayerCreator.newInstance(handler, Optional.<DataSource.Factory>absent()),
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
         return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder);
     }
+
 }
