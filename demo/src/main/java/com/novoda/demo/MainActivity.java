@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Adding a test comment.
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
         PlayerView playerView = findViewById(R.id.player_view);
