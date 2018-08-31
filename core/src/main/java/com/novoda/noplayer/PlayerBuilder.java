@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
@@ -14,7 +13,6 @@ import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
-import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,7 +78,7 @@ public class PlayerBuilder {
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will prioritise the underlying player when
      * multiple underlying players share the same features.
      *
-     * @param playerType  First {@link PlayerType} with the highest priority.
+     * @param playerType First {@link PlayerType} with the highest priority.
      * @param playerTypes Remaining {@link PlayerType} in order of priority.
      * @return {@link PlayerBuilder}
      * @see NoPlayer
@@ -123,7 +121,7 @@ public class PlayerBuilder {
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
                 context,
                 prioritizedPlayerTypes,
-                NoPlayerExoPlayerCreator.newInstance(handler, Optional.<DataSource.Factory>absent()),
+                NoPlayerExoPlayerCreator.newInstance(handler),
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );

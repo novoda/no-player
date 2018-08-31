@@ -20,6 +20,11 @@ public class NoPlayerExoPlayerCreator {
 
     private final InternalCreator internalCreator;
 
+    public static NoPlayerExoPlayerCreator newInstance(Handler handler) {
+        InternalCreator internalCreator = new InternalCreator(handler, Optional.<DataSource.Factory>absent());
+        return new NoPlayerExoPlayerCreator(internalCreator);
+    }
+
     public static NoPlayerExoPlayerCreator newInstance(Handler handler, Optional<DataSource.Factory> dataSourceFactory) {
         InternalCreator internalCreator = new InternalCreator(handler, dataSourceFactory);
         return new NoPlayerExoPlayerCreator(internalCreator);
