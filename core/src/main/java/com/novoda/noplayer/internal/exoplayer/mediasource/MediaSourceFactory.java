@@ -11,26 +11,29 @@ import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.novoda.noplayer.Options;
+import com.novoda.noplayer.internal.utils.Optional;
 
 public class MediaSourceFactory {
 
     private final Context context;
     private final Handler handler;
+    private final Optional<DataSource.Factory> dataSourceFactory;
 
-    public MediaSourceFactory(Context context, Handler handler) {
+    public MediaSourceFactory(Context context, Handler handler, Optional<DataSource.Factory> dataSourceFactory) {
         this.context = context;
         this.handler = handler;
+        this.dataSourceFactory = dataSourceFactory;
     }
 
     public MediaSource create(Options options,
                               Uri uri,
                               MediaSourceEventListener mediaSourceEventListener,
                               DefaultBandwidthMeter bandwidthMeter) {
-        DefaultDataSourceFactory defaultDataSourceFactory = new DefaultDataSourceFactory(context, "user-agent", bandwidthMeter);
-
+        DefaultDataSourceFactory defaultDataSourceFactory = createDataSourceFactory(bandwidthMeter);
         switch (options.contentType()) {
             case HLS:
                 return createHlsMediaSource(defaultDataSourceFactory, uri, mediaSourceEventListener);
@@ -40,6 +43,14 @@ public class MediaSourceFactory {
                 return createDashMediaSource(defaultDataSourceFactory, uri, mediaSourceEventListener);
             default:
                 throw new UnsupportedOperationException("Content type: " + options + " is not supported.");
+        }
+    }
+
+    private DefaultDataSourceFactory createDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
+        if (dataSourceFactory.isPresent()) {
+            return new DefaultDataSourceFactory(context, bandwidthMeter, dataSourceFactory.get());
+        } else {
+            return new DefaultDataSourceFactory(context, "user-agent", bandwidthMeter);
         }
     }
 
