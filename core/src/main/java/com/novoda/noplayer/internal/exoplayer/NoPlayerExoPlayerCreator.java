@@ -25,8 +25,8 @@ public class NoPlayerExoPlayerCreator {
         return new NoPlayerExoPlayerCreator(internalCreator);
     }
 
-    public static NoPlayerExoPlayerCreator newInstance(Handler handler, Optional<DataSource.Factory> dataSourceFactory) {
-        InternalCreator internalCreator = new InternalCreator(handler, dataSourceFactory);
+    public static NoPlayerExoPlayerCreator newInstance(Handler handler, DataSource.Factory dataSourceFactory) {
+        InternalCreator internalCreator = new InternalCreator(handler, Optional.of(dataSourceFactory));
         return new NoPlayerExoPlayerCreator(internalCreator);
     }
 
