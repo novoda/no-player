@@ -24,7 +24,14 @@ buildProperties {
     publish {
         def generateVersion = {
             boolean isSnapshot = cli['bintraySnapshot'].or(false).boolean
-            return isSnapshot ? "SNAPSHOT-${System.getenv('BUILD_NUMBER')?:'LOCAL'}" : version
+            if (isSnapshot) {
+                return "SNAPSHOT-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}";
+            }
+            boolean isExperimental = cli['bintrayExperimental'].or(false).boolean
+            if (isExperimental) {
+                return "EXPERIMENTAL-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}";
+            }
+            return version
         }
         using(['version': "${generateVersion()}"])
                 .or(buildProperties.bintray)
@@ -48,10 +55,10 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.android.exoplayer:exoplayer:2.8.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.4'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.19.0'
+    testImplementation 'org.mockito:mockito-core:2.22.0'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
 }
 
