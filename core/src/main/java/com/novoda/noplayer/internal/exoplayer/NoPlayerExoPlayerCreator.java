@@ -62,7 +62,9 @@ public class NoPlayerExoPlayerCreator {
             ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context);
             RendererTypeRequesterCreator rendererTypeRequesterCreator = new RendererTypeRequesterCreator();
             AndroidDeviceVersion androidDeviceVersion = AndroidDeviceVersion.newInstance();
+            BandwidthMeterCreator bandwidthMeterCreator = new BandwidthMeterCreator(context);
             ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(
+                    bandwidthMeterCreator,
                     androidDeviceVersion,
                     mediaSourceFactory,
                     trackSelectorCreator,

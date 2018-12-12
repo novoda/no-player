@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
@@ -28,6 +29,7 @@ class ExoPlayerFacade {
     private static final boolean RESET_POSITION = true;
     private static final boolean DO_NOT_RESET_STATE = false;
 
+    private final BandwidthMeterCreator bandwidthMeterCreator;
     private final AndroidDeviceVersion androidDeviceVersion;
     private final MediaSourceFactory mediaSourceFactory;
     private final CompositeTrackSelectorCreator trackSelectorCreator;
@@ -43,11 +45,13 @@ class ExoPlayerFacade {
     @Nullable
     private Options options;
 
-    ExoPlayerFacade(AndroidDeviceVersion androidDeviceVersion,
+    ExoPlayerFacade(BandwidthMeterCreator bandwidthMeterCreator,
+                    AndroidDeviceVersion androidDeviceVersion,
                     MediaSourceFactory mediaSourceFactory,
                     CompositeTrackSelectorCreator trackSelectorCreator,
                     ExoPlayerCreator exoPlayerCreator,
                     RendererTypeRequesterCreator rendererTypeRequesterCreator) {
+        this.bandwidthMeterCreator = bandwidthMeterCreator;
         this.androidDeviceVersion = androidDeviceVersion;
         this.mediaSourceFactory = mediaSourceFactory;
         this.trackSelectorCreator = trackSelectorCreator;
@@ -109,9 +113,7 @@ class ExoPlayerFacade {
                    MediaCodecSelector mediaCodecSelector) {
         this.options = options;
 
-        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter.Builder()
-                .setInitialBitrateEstimate(options.maxInitialBitrate())
-                .build();
+        DefaultBandwidthMeter bandwidthMeter = bandwidthMeterCreator.create(options.maxInitialBitrate());
 
         compositeTrackSelector = trackSelectorCreator.create(options, bandwidthMeter);
         exoPlayer = exoPlayerCreator.create(
@@ -140,7 +142,7 @@ class ExoPlayerFacade {
     private void setMovieAudioAttributes(SimpleExoPlayer exoPlayer) {
         if (androidDeviceVersion.isLollipopTwentyOneOrAbove()) {
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MOVIE)
+                    .setContentType(C.CONTENT_TYPE_MOVIE)
                     .build();
             exoPlayer.setAudioAttributes(audioAttributes);
         }

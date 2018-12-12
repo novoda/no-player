@@ -27,8 +27,6 @@ class ForwarderInformation {
         static final String BITRATE_ESTIMATE = "bitrateEstimate";
         static final String WIDTH = "width";
         static final String HEIGHT = "height";
-        static final String NETWORK_INFO = "networkInfo";
-        static final String NO_NETWORK_INFO = "null";
         static final String METADATA = "metadata";
         static final String TRACK_TYPE = "trackType";
         static final String DECODER_COUNTERS = "decoderCounters";
@@ -48,8 +46,6 @@ class ForwarderInformation {
         static final String MANIFEST = "manifest";
         static final String WINDOW_INDEX = "windowIndex";
         static final String MEDIA_PERIOD_ID = "mediaPeriodId";
-        static final String COUNT = "count";
-        static final String INITIALIZED_TIMESTAMP_MS = "initializedTimestampMs";
 
     }
 
@@ -79,8 +75,7 @@ class ForwarderInformation {
         static final String ON_MEDIA_PERIOD_RELEASED = "onMediaPeriodReleased";
         static final String ON_READING_STARTED = "onReadingStarted";
         static final String ON_BANDWIDTH_ESTIMATE = "onBandwidthEstimate";
-        static final String ON_VIEWPORT_SIZE_CHANGE = "onViewportSizeChange";
-        static final String ON_NETWORK_TYPE_CHANGED = "onNetworkTypeChanged";
+        static final String ON_SURFACE_SIZE_CHANGED = "onSurfaceSizeChanged";
         static final String ON_METADATA = "onMetadata";
         static final String ON_DECODER_ENABLED = "onDecoderEnabled";
         static final String ON_DECODER_INITIALIZED = "onDecoderInitialized";
@@ -97,9 +92,5 @@ class ForwarderInformation {
         static final String ON_DRM_KEYS_REMOVED = "onDrmKeysRemoved";
         static final String ON_LOADING_CHANGED = "onLoadingChanged";
         static final String ON_SHUFFLE_MODE_ENABLED_CHANGED = "onShuffleModeEnabledChanged";
-        static final String ON_VIDEO_ENABLED = "onVideoEnabled";
-        static final String ON_VIDEO_DECODER_INITIALIZED = "onVideoDecoderInitialized";
-        static final String ON_VIDEO_INPUT_FORMAT_CHANGED = "onVideoInputFormatChanged";
-        static final String ON_VIDEO_DISABLED = "onVideoDisabled";
     }
 }

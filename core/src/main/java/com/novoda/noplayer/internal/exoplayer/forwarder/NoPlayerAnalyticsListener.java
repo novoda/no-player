@@ -1,7 +1,5 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
-import android.net.NetworkInfo;
-import android.support.annotation.Nullable;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -195,18 +193,9 @@ class NoPlayerAnalyticsListener implements AnalyticsListener {
     }
 
     @Override
-    public void onViewportSizeChange(EventTime eventTime,
-                                     int width,
-                                     int height) {
+    public void onSurfaceSizeChanged(EventTime eventTime, int width, int height) {
         for (AnalyticsListener listener : listeners) {
-            listener.onViewportSizeChange(eventTime, width, height);
-        }
-    }
-
-    @Override
-    public void onNetworkTypeChanged(EventTime eventTime, @Nullable NetworkInfo networkInfo) {
-        for (AnalyticsListener listener : listeners) {
-            listener.onNetworkTypeChanged(eventTime, networkInfo);
+            listener.onSurfaceSizeChanged(eventTime, width, height);
         }
     }
 

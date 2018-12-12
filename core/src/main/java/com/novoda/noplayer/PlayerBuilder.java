@@ -78,7 +78,7 @@ public class PlayerBuilder {
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will prioritise the underlying player when
      * multiple underlying players share the same features.
      *
-     * @param playerType First {@link PlayerType} with the highest priority.
+     * @param playerType  First {@link PlayerType} with the highest priority.
      * @param playerTypes Remaining {@link PlayerType} in order of priority.
      * @return {@link PlayerBuilder}
      * @see NoPlayer
@@ -111,6 +111,7 @@ public class PlayerBuilder {
      * @see NoPlayer
      */
     public NoPlayer build(Context context) throws UnableToCreatePlayerException {
+        Context applicationContext = context.getApplicationContext();
         Handler handler = new Handler(Looper.getMainLooper());
         ProvisionExecutorCreator provisionExecutorCreator = new ProvisionExecutorCreator();
         DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(
@@ -119,7 +120,7 @@ public class PlayerBuilder {
                 handler
         );
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
-                context,
+                applicationContext,
                 prioritizedPlayerTypes,
                 NoPlayerExoPlayerCreator.newInstance(handler),
                 NoPlayerMediaPlayerCreator.newInstance(handler),
