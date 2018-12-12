@@ -55,7 +55,7 @@ public class NoPlayerExoPlayerCreator {
 
             MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
                     ? SecurityDowngradingCodecSelector.newInstance()
-                    : MediaCodecSelector.DEFAULT;
+                    : MediaCodecSelector.DEFAULT_WITH_FALLBACK;
 
             CompositeTrackSelectorCreator trackSelectorCreator = new CompositeTrackSelectorCreator();
 
