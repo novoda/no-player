@@ -78,7 +78,7 @@ public class PlayerBuilder {
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will prioritise the underlying player when
      * multiple underlying players share the same features.
      *
-     * @param playerType  First {@link PlayerType} with the highest priority.
+     * @param playerType First {@link PlayerType} with the highest priority.
      * @param playerTypes Remaining {@link PlayerType} in order of priority.
      * @return {@link PlayerBuilder}
      * @see NoPlayer
