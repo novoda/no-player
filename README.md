@@ -31,7 +31,7 @@ dependencies {
 }
 ```
 
-From no-player 4.5.0 this is also needed in the android section of your 'build.gradle'
+From no-player 4.5.0 this is also needed in the android section of your `build.gradle`
 
 ```groovy
 compileOptions {
