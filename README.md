@@ -30,6 +30,15 @@ dependencies {
     implementation 'com.novoda:no-player:<latest-version>'
 }
 ```
+
+From no-player 4.5.0 this is also needed in the android section of your `build.gradle`
+
+```groovy
+compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+}
+```
+
 ### Simple usage
 
  1. Create a `Player`:
