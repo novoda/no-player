@@ -1,5 +1,5 @@
 allprojects {
-    version = '4.4.6'
+    version = '4.5.0'
 }
 
 def teamPropsFile(propsFile) {
@@ -9,8 +9,8 @@ def teamPropsFile(propsFile) {
 
 buildscript {
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
 
     dependencies {
@@ -23,8 +23,8 @@ buildscript {
 
 subprojects {
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
 
     apply from: teamPropsFile('static-analysis.gradle')

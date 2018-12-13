@@ -52,13 +52,17 @@ android {
         abortOnError true
         warningsAsErrors true
     }
+
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    implementation 'com.google.android.exoplayer:exoplayer:2.8.4'
+    implementation 'com.google.android.exoplayer:exoplayer:2.9.2'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.22.0'
+    testImplementation 'org.mockito:mockito-core:2.23.4'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
 }
 

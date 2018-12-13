@@ -44,6 +44,6 @@ class ExoPlayerCreator {
         );
 
         DefaultLoadControl loadControl = new DefaultLoadControl();
-        return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl, drmSessionManager);
+        return ExoPlayerFactory.newSimpleInstance(context, renderersFactory, trackSelector, loadControl, drmSessionManager);
     }
 }

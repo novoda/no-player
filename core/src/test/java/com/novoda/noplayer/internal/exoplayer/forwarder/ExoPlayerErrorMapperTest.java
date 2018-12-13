@@ -13,7 +13,6 @@ import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.KeysExpiredException;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer;
-import com.google.android.exoplayer2.metadata.MetadataDecoderException;
 import com.google.android.exoplayer2.offline.DownloadException;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.MergingMediaSource;
@@ -36,13 +35,13 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerErrorType;
 import com.novoda.noplayer.internal.exoplayer.error.ExoPlayerErrorMapper;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import static com.novoda.noplayer.DetailErrorType.ADS_LOAD_UNEXPECTED_ERROR_THEN_WILL_SKIP;
 import static com.novoda.noplayer.DetailErrorType.AD_GROUP_LOAD_ERROR_THEN_WILL_SKIP;
@@ -57,7 +56,6 @@ import static com.novoda.noplayer.DetailErrorType.CACHE_WRITING_DATA_ERROR;
 import static com.novoda.noplayer.DetailErrorType.CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_INVALID_PERIOD_COUNT;
 import static com.novoda.noplayer.DetailErrorType.CLIPPING_MEDIA_SOURCE_CANNOT_CLIP_WRAPPED_SOURCE_NOT_SEEKABLE_TO_START;
 import static com.novoda.noplayer.DetailErrorType.DATA_POSITION_OUT_OF_RANGE_ERROR;
-import static com.novoda.noplayer.DetailErrorType.DECODING_METADATA_ERROR;
 import static com.novoda.noplayer.DetailErrorType.DECODING_SUBTITLE_ERROR;
 import static com.novoda.noplayer.DetailErrorType.DOWNLOAD_ERROR;
 import static com.novoda.noplayer.DetailErrorType.DRM_INSTANTIATION_ERROR;
@@ -131,7 +129,6 @@ public class ExoPlayerErrorMapperTest {
                 new Object[]{RENDERER_DECODER, AUDIO_UNHANDLED_FORMAT_ERROR, createRenderer(new AudioProcessor.UnhandledFormatException(0, 0, 0))},
                 new Object[]{RENDERER_DECODER, AUDIO_DECODER_ERROR, createRenderer(new AudioDecoderException("audio-decoder-exception"))},
                 new Object[]{RENDERER_DECODER, INITIALISATION_ERROR, createRenderer(new MediaCodecRenderer.DecoderInitializationException(Format.createSampleFormat("id", "sample-mimety[e", 0), new Throwable(), true, 0))},
-                new Object[]{RENDERER_DECODER, DECODING_METADATA_ERROR, createRenderer(new MetadataDecoderException("metadata-decoder-exception"))},
                 new Object[]{RENDERER_DECODER, DECODING_SUBTITLE_ERROR, createRenderer(new SubtitleDecoderException("metadata-decoder-exception"))},
 
                 new Object[]{DRM, UNSUPPORTED_DRM_SCHEME_ERROR, createRenderer(new UnsupportedDrmException(UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME))},

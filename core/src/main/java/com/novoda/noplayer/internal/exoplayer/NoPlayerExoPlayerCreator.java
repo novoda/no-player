@@ -55,14 +55,16 @@ public class NoPlayerExoPlayerCreator {
 
             MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
                     ? SecurityDowngradingCodecSelector.newInstance()
-                    : MediaCodecSelector.DEFAULT;
+                    : MediaCodecSelector.DEFAULT_WITH_FALLBACK;
 
             CompositeTrackSelectorCreator trackSelectorCreator = new CompositeTrackSelectorCreator();
 
             ExoPlayerCreator exoPlayerCreator = new ExoPlayerCreator(context);
             RendererTypeRequesterCreator rendererTypeRequesterCreator = new RendererTypeRequesterCreator();
             AndroidDeviceVersion androidDeviceVersion = AndroidDeviceVersion.newInstance();
+            BandwidthMeterCreator bandwidthMeterCreator = new BandwidthMeterCreator(context);
             ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(
+                    bandwidthMeterCreator,
                     androidDeviceVersion,
                     mediaSourceFactory,
                     trackSelectorCreator,

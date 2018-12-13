@@ -1,7 +1,5 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
-import android.net.NetworkInfo;
-import android.support.annotation.Nullable;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -258,24 +256,14 @@ class AnalyticsListenerForwarder implements AnalyticsListener {
     }
 
     @Override
-    public void onViewportSizeChange(EventTime eventTime, int width, int height) {
+    public void onSurfaceSizeChanged(EventTime eventTime, int width, int height) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
         callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
         callingMethodParameters.put(Parameters.WIDTH, String.valueOf(width));
         callingMethodParameters.put(Parameters.HEIGHT, String.valueOf(height));
 
-        infoListeners.onNewInfo(Methods.ON_VIEWPORT_SIZE_CHANGE, callingMethodParameters);
-    }
-
-    @Override
-    public void onNetworkTypeChanged(EventTime eventTime, @Nullable NetworkInfo networkInfo) {
-        HashMap<String, String> callingMethodParameters = new HashMap<>();
-
-        callingMethodParameters.put(Parameters.EVENT_TIME, eventTime.toString());
-        callingMethodParameters.put(Parameters.NETWORK_INFO, networkInfo == null ? Parameters.NO_NETWORK_INFO : networkInfo.toString());
-
-        infoListeners.onNewInfo(Methods.ON_NETWORK_TYPE_CHANGED, callingMethodParameters);
+        infoListeners.onNewInfo(Methods.ON_SURFACE_SIZE_CHANGED, callingMethodParameters);
     }
 
     @Override
