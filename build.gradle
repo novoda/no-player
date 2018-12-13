@@ -25,6 +25,7 @@ subprojects {
     repositories {
         jcenter()
         google()
+        mavenCentral()
     }
 
     apply from: teamPropsFile('static-analysis.gradle')
