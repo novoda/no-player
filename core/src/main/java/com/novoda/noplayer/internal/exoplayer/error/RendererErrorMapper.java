@@ -12,7 +12,6 @@ import com.google.android.exoplayer2.drm.KeysExpiredException;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
-import com.google.android.exoplayer2.metadata.MetadataDecoderException;
 import com.google.android.exoplayer2.text.SubtitleDecoderException;
 import com.novoda.noplayer.DetailErrorType;
 import com.novoda.noplayer.NoPlayer;
@@ -60,10 +59,6 @@ final class RendererErrorMapper {
 
         if (rendererException instanceof MediaCodecUtil.DecoderQueryException) {
             return new NoPlayerError(PlayerErrorType.DEVICE_MEDIA_CAPABILITIES, DetailErrorType.UNKNOWN, message);
-        }
-
-        if (rendererException instanceof MetadataDecoderException) {
-            return new NoPlayerError(PlayerErrorType.RENDERER_DECODER, DetailErrorType.DECODING_METADATA_ERROR, message);
         }
 
         if (rendererException instanceof SubtitleDecoderException) {

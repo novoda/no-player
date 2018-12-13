@@ -47,6 +47,7 @@ import utils.ExceptionMatcher;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -469,6 +470,10 @@ public class ExoPlayerFacadeTest {
         public MockitoRule mockitoRule = MockitoJUnit.rule();
 
         @Mock
+        BandwidthMeterCreator bandwidthMeterCreator;
+        @Mock
+        DefaultBandwidthMeter defaultBandwidthMeter;
+        @Mock
         AndroidDeviceVersion androidDeviceVersion;
         @Mock
         SimpleExoPlayer exoPlayer;
@@ -508,10 +513,12 @@ public class ExoPlayerFacadeTest {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
             given(exoPlayerForwarder.mediaSourceEventListener()).willReturn(mediaSourceEventListener);
-            given(trackSelectorCreator.create(eq(OPTIONS), any(DefaultBandwidthMeter.class))).willReturn(trackSelector);
+            given(bandwidthMeterCreator.create(anyLong())).willReturn(defaultBandwidthMeter);
+            given(trackSelectorCreator.create(OPTIONS, defaultBandwidthMeter)).willReturn(trackSelector);
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
+                    bandwidthMeterCreator,
                     androidDeviceVersion,
                     mediaSourceFactory,
                     trackSelectorCreator,
@@ -527,10 +534,10 @@ public class ExoPlayerFacadeTest {
             MediaSource mediaSource = mock(MediaSource.class);
             given(
                     mediaSourceFactory.create(
-                            eq(OPTIONS),
-                            eq(uri),
-                            eq(mediaSourceEventListener),
-                            any(DefaultBandwidthMeter.class)
+                            OPTIONS,
+                            uri,
+                            mediaSourceEventListener,
+                            defaultBandwidthMeter
                     )
             ).willReturn(mediaSource);
 

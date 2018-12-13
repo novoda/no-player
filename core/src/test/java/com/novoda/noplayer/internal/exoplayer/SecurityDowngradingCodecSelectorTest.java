@@ -30,10 +30,10 @@ public class SecurityDowngradingCodecSelectorTest {
     public void whenContentIsSecure_thenRequiresSecureDecoderIsFalse() throws MediaCodecUtil.DecoderQueryException {
         SecurityDowngradingCodecSelector securityDowngradingCodecSelector = new SecurityDowngradingCodecSelector(internalMediaCodecUtil);
 
-        securityDowngradingCodecSelector.getDecoderInfo(ANY_MIME_TYPE, CONTENT_SECURE);
+        securityDowngradingCodecSelector.getDecoderInfos(ANY_MIME_TYPE, CONTENT_SECURE);
 
         ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
-        verify(internalMediaCodecUtil).getDecoderInfo(eq(ANY_MIME_TYPE), argumentCaptor.capture());
+        verify(internalMediaCodecUtil).getDecoderInfos(eq(ANY_MIME_TYPE), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isFalse();
     }
 
@@ -41,10 +41,10 @@ public class SecurityDowngradingCodecSelectorTest {
     public void whenContentIsInsecure_thenRequiresSecureDecoderIsFalse() throws MediaCodecUtil.DecoderQueryException {
         SecurityDowngradingCodecSelector securityDowngradingCodecSelector = new SecurityDowngradingCodecSelector(internalMediaCodecUtil);
 
-        securityDowngradingCodecSelector.getDecoderInfo(ANY_MIME_TYPE, CONTENT_INSECURE);
+        securityDowngradingCodecSelector.getDecoderInfos(ANY_MIME_TYPE, CONTENT_INSECURE);
 
         ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
-        verify(internalMediaCodecUtil).getDecoderInfo(eq(ANY_MIME_TYPE), argumentCaptor.capture());
+        verify(internalMediaCodecUtil).getDecoderInfos(eq(ANY_MIME_TYPE), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isFalse();
     }
 

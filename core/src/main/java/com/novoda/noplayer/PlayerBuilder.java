@@ -111,6 +111,7 @@ public class PlayerBuilder {
      * @see NoPlayer
      */
     public NoPlayer build(Context context) throws UnableToCreatePlayerException {
+        Context applicationContext = context.getApplicationContext();
         Handler handler = new Handler(Looper.getMainLooper());
         ProvisionExecutorCreator provisionExecutorCreator = new ProvisionExecutorCreator();
         DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(
@@ -119,7 +120,7 @@ public class PlayerBuilder {
                 handler
         );
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
-                context,
+                applicationContext,
                 prioritizedPlayerTypes,
                 NoPlayerExoPlayerCreator.newInstance(handler),
                 NoPlayerMediaPlayerCreator.newInstance(handler),

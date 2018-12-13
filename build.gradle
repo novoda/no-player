@@ -9,8 +9,8 @@ def teamPropsFile(propsFile) {
 
 buildscript {
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
 
     dependencies {
@@ -23,8 +23,8 @@ buildscript {
 
 subprojects {
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
 
     apply from: teamPropsFile('static-analysis.gradle')
