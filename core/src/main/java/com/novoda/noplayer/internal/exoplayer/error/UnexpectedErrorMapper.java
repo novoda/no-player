@@ -22,7 +22,7 @@ final class UnexpectedErrorMapper {
             return new NoPlayerError(PlayerErrorType.UNEXPECTED, DetailErrorType.SPURIOUS_AUDIO_TRACK_TIMESTAMP_ERROR, message);
         }
 
-        if (unexpectedException instanceof IllegalStateException) {
+        if (unexpectedException instanceof IllegalStateException && message.contains("Multiple renderer media clocks")) {
             return new NoPlayerError(PlayerErrorType.UNEXPECTED, DetailErrorType.MULTIPLE_RENDERER_MEDIA_CLOCK_ENABLED_ERROR, message);
         }
 

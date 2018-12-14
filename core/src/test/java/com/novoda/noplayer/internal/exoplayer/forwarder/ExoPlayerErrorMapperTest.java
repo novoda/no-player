@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer.forwarder;
 import android.net.Uri;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlaybackExceptionFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.audio.AudioDecoderException;
@@ -69,6 +70,7 @@ import static com.novoda.noplayer.DetailErrorType.INITIALISATION_ERROR;
 import static com.novoda.noplayer.DetailErrorType.LIVE_STALE_MANIFEST_AND_NEW_MANIFEST_COULD_NOT_LOAD_ERROR;
 import static com.novoda.noplayer.DetailErrorType.MEDIA_REQUIRES_DRM_SESSION_MANAGER_ERROR;
 import static com.novoda.noplayer.DetailErrorType.MERGING_MEDIA_SOURCE_CANNOT_MERGE_ITS_SOURCES;
+import static com.novoda.noplayer.DetailErrorType.MULTIPLE_RENDERER_MEDIA_CLOCK_ENABLED_ERROR;
 import static com.novoda.noplayer.DetailErrorType.PARSING_MEDIA_DATA_OR_METADATA_ERROR;
 import static com.novoda.noplayer.DetailErrorType.READING_LOCAL_FILE_ERROR;
 import static com.novoda.noplayer.DetailErrorType.READ_CONTENT_URI_ERROR;
@@ -83,6 +85,7 @@ import static com.novoda.noplayer.PlayerErrorType.CONTENT_DECRYPTION;
 import static com.novoda.noplayer.PlayerErrorType.DRM;
 import static com.novoda.noplayer.PlayerErrorType.RENDERER_DECODER;
 import static com.novoda.noplayer.PlayerErrorType.SOURCE;
+import static com.novoda.noplayer.PlayerErrorType.UNEXPECTED;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
@@ -137,11 +140,14 @@ public class ExoPlayerErrorMapperTest {
                 new Object[]{DRM, DRM_KEYS_EXPIRED_ERROR, createRenderer(new KeysExpiredException())},
                 new Object[]{DRM, MEDIA_REQUIRES_DRM_SESSION_MANAGER_ERROR, createRenderer(new IllegalStateException())},
 
-                new Object[]{CONTENT_DECRYPTION, FAIL_DECRYPT_DATA_DUE_NON_PLATFORM_COMPONENT_ERROR, createRenderer(new DecryptionException(0, "decryption-exception"))}
+                new Object[]{CONTENT_DECRYPTION, FAIL_DECRYPT_DATA_DUE_NON_PLATFORM_COMPONENT_ERROR, createRenderer(new DecryptionException(0, "decryption-exception"))},
 
+                new Object[]{UNEXPECTED, MULTIPLE_RENDERER_MEDIA_CLOCK_ENABLED_ERROR, ExoPlaybackExceptionFactory.createForUnexpected(new IllegalStateException("Multiple renderer media clocks enabled."))},
+                new Object[]{PlayerErrorType.UNKNOWN, DetailErrorType.UNKNOWN, ExoPlaybackExceptionFactory.createForUnexpected(new IllegalStateException("Any other exception"))}
+                // DefaultAudioSink.InvalidAudioTrackTimestampException is private, cannot create
+                // EGLSurfaceTexture.GlException is private, cannot create
                 // PlaylistStuckException constructor is private, cannot create
                 // PlaylistResetException constructor is private, cannot create
-                // ExoPlaybackException.createForUnexpected constructor is package-protected, cannot create
                 // MediaCodecUtil.DecoderQueryException constructor is private, cannot create
                 // DefaultDrmSessionManager.MissingSchemeDataException constructor is private, cannot create
                 // Crypto Exceptions cannot be instantiated, it throws a RuntimeException("Stub!")
