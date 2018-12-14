@@ -1,5 +1,8 @@
 package com.novoda.noplayer.internal.exoplayer.error;
 
+import android.media.MediaCodec;
+import android.os.Build;
+
 import com.google.android.exoplayer2.audio.DefaultAudioSink;
 import com.google.android.exoplayer2.util.EGLSurfaceTexture;
 import com.novoda.noplayer.DetailErrorType;
@@ -24,6 +27,11 @@ final class UnexpectedErrorMapper {
 
         if (unexpectedException instanceof IllegalStateException && message.contains("Multiple renderer media clocks")) {
             return new NoPlayerError(PlayerErrorType.UNEXPECTED, DetailErrorType.MULTIPLE_RENDERER_MEDIA_CLOCK_ENABLED_ERROR, message);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && unexpectedException instanceof MediaCodec.CodecException) {
+            String errorMessage = ErrorFormatter.formatCodecException((MediaCodec.CodecException) unexpectedException);
+            return new NoPlayerError(PlayerErrorType.UNEXPECTED, DetailErrorType.UNEXPECTED_CODEC_ERROR, errorMessage);
         }
 
         return new NoPlayerError(PlayerErrorType.UNKNOWN, DetailErrorType.UNKNOWN, message);
