@@ -1,5 +1,5 @@
 allprojects {
-    version = '4.5.1'
+    version = '4.5.2'
 }
 
 def teamPropsFile(propsFile) {
@@ -14,7 +14,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.3.0'
         classpath 'com.novoda:bintray-release:0.9'
         classpath 'com.novoda:gradle-static-analysis-plugin:0.8'
         classpath 'com.novoda:gradle-build-properties-plugin:0.4.1'
