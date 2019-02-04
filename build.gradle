@@ -1,5 +1,5 @@
 allprojects {
-    version = '4.5.1'
+    version = '4.5.2'
 }
 
 def teamPropsFile(propsFile) {
@@ -14,10 +14,11 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
-        classpath 'com.novoda:bintray-release:0.8.1'
-        classpath 'com.novoda:gradle-static-analysis-plugin:0.5.2'
+        classpath 'com.android.tools.build:gradle:3.3.0'
+        classpath 'com.novoda:bintray-release:0.9'
+        classpath 'com.novoda:gradle-static-analysis-plugin:0.8'
         classpath 'com.novoda:gradle-build-properties-plugin:0.4.1'
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.20.0"
     }
 }
 
@@ -28,4 +29,21 @@ subprojects {
     }
 
     apply from: teamPropsFile('static-analysis.gradle')
+}
+
+allprojects {
+    apply plugin: 'com.github.ben-manes.versions'
+
+    dependencyUpdates.resolutionStrategy {
+        componentSelection { rules ->
+            rules.all { ComponentSelection selection ->
+                boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm'].any { qualifier ->
+                    selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+                }
+                if (rejected) {
+                    selection.reject('Release candidate')
+                }
+            }
+        }
+    }
 }
