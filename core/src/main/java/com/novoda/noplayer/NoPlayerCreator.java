@@ -32,23 +32,32 @@ class NoPlayerCreator {
         this.drmSessionCreatorFactory = drmSessionCreatorFactory;
     }
 
-    NoPlayer create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
+    NoPlayer create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder, boolean allowCrossProtocolRedirects) {
         for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
-                return createPlayerForType(player, drmType, drmHandler, downgradeSecureDecoder);
+                return createPlayerForType(player, drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects);
             }
         }
         throw UnableToCreatePlayerException.unhandledDrmType(drmType);
     }
 
-    private NoPlayer createPlayerForType(PlayerType playerType, DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder) {
+    private NoPlayer createPlayerForType(PlayerType playerType,
+                                         DrmType drmType,
+                                         DrmHandler drmHandler,
+                                         boolean downgradeSecureDecoder,
+                                         boolean allowCrossProtocolRedirects) {
         switch (playerType) {
             case MEDIA_PLAYER:
                 return noPlayerMediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
                 try {
                     DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler);
-                    return noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, downgradeSecureDecoder);
+                    return noPlayerExoPlayerCreator.createExoPlayer(
+                            context,
+                            drmSessionCreator,
+                            downgradeSecureDecoder,
+                            allowCrossProtocolRedirects
+                    );
                 } catch (DrmSessionCreatorException exception) {
                     throw new UnableToCreatePlayerException(exception);
                 }

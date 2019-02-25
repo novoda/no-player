@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 public class NoPlayerExoPlayerCreatorTest {
 
     private static final boolean USE_SECURE_CODEC = true;
+    private static final boolean ALLOW_CROSS_PROTOCOL_REDIRECTS = true;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -34,13 +35,13 @@ public class NoPlayerExoPlayerCreatorTest {
 
     @Before
     public void setUp() {
-        given(internalCreator.create(context, drmSessionCreator, USE_SECURE_CODEC)).willReturn(player);
+        given(internalCreator.create(context, drmSessionCreator, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS)).willReturn(player);
         creator = new NoPlayerExoPlayerCreator(internalCreator);
     }
 
     @Test
     public void whenCreatingExoPlayerTwo_thenInitialisesPlayer() {
-        creator.createExoPlayer(context, drmSessionCreator, USE_SECURE_CODEC);
+        creator.createExoPlayer(context, drmSessionCreator, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS);
 
         verify(player).initialise();
     }

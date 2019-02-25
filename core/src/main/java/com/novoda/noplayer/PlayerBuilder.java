@@ -27,6 +27,8 @@ public class PlayerBuilder {
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
     private boolean downgradeSecureDecoder;
+    private String userAgent = "user-agent";
+    private boolean allowCrossProtocolRedirects = false;
 
     /**
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine classic DRM.
@@ -103,15 +105,33 @@ public class PlayerBuilder {
     }
 
     /**
+     *
+     * @param userAgent The application's userAgent value
+     * @return {@link PlayerBuilder}
+     */
+    public PlayerBuilder withUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+        return this;
+    }
+
+    /**
+     * Network connections will be allowed to perform redirects between HTTP and HTTPS protocols
+     * @return {@link PlayerBuilder}
+     */
+    public PlayerBuilder allowCrossProtocolRedirects() {
+        allowCrossProtocolRedirects = true;
+        return this;
+    }
+
+    /**
      * Builds a new {@link NoPlayer} instance.
      *
      * @param context The {@link Context} associated with the player.
-     * @param userAgent The application's userAgent value
      * @return a {@link NoPlayer} instance.
      * @throws UnableToCreatePlayerException thrown when the configuration is not supported and there is no way to recover.
      * @see NoPlayer
      */
-    public NoPlayer build(Context context, String userAgent) throws UnableToCreatePlayerException {
+    public NoPlayer build(Context context) throws UnableToCreatePlayerException {
         Context applicationContext = context.getApplicationContext();
         Handler handler = new Handler(Looper.getMainLooper());
         ProvisionExecutorCreator provisionExecutorCreator = new ProvisionExecutorCreator();
@@ -127,7 +147,7 @@ public class PlayerBuilder {
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
-        return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder);
+        return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects);
     }
 
 }

@@ -25,12 +25,18 @@ public class MediaSourceFactory {
     private final Handler handler;
     private final Optional<DataSource.Factory> dataSourceFactory;
     private final String userAgent;
+    private final boolean allowCrossProtocolRedirects;
 
-    public MediaSourceFactory(Context context, String userAgent, Handler handler, Optional<DataSource.Factory> dataSourceFactory) {
+    public MediaSourceFactory(Context context,
+                              String userAgent,
+                              Handler handler,
+                              Optional<DataSource.Factory> dataSourceFactory,
+                              boolean allowCrossProtocolRedirects) {
         this.context = context;
         this.handler = handler;
         this.dataSourceFactory = dataSourceFactory;
         this.userAgent = userAgent;
+        this.allowCrossProtocolRedirects = allowCrossProtocolRedirects;
     }
 
     public MediaSource create(Options options,
@@ -59,7 +65,7 @@ public class MediaSourceFactory {
                     bandwidthMeter,
                     DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
                     DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-                    true /* allowCrossProtocolRedirects */
+                    allowCrossProtocolRedirects
             );
 
             return new DefaultDataSourceFactory(context, bandwidthMeter, httpDataSourceFactory);

@@ -34,8 +34,11 @@ public class NoPlayerExoPlayerCreator {
         this.internalCreator = internalCreator;
     }
 
-    public NoPlayer createExoPlayer(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
-        ExoPlayerTwoImpl player = internalCreator.create(context, drmSessionCreator, downgradeSecureDecoder);
+    public NoPlayer createExoPlayer(Context context,
+                                    DrmSessionCreator drmSessionCreator,
+                                    boolean downgradeSecureDecoder,
+                                    boolean allowCrossProtocolRedirects) {
+        ExoPlayerTwoImpl player = internalCreator.create(context, drmSessionCreator, downgradeSecureDecoder, allowCrossProtocolRedirects);
         player.initialise();
         return player;
     }
@@ -52,8 +55,17 @@ public class NoPlayerExoPlayerCreator {
             this.dataSourceFactory = dataSourceFactory;
         }
 
-        ExoPlayerTwoImpl create(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
-            MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(context, userAgent, handler, dataSourceFactory);
+        ExoPlayerTwoImpl create(Context context,
+                                DrmSessionCreator drmSessionCreator,
+                                boolean downgradeSecureDecoder,
+                                boolean allowCrossProtocolRedirects) {
+            MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(
+                    context,
+                    userAgent,
+                    handler,
+                    dataSourceFactory,
+                    allowCrossProtocolRedirects
+            );
 
             MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
                     ? SecurityDowngradingCodecSelector.newInstance()
