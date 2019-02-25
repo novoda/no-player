@@ -14,6 +14,8 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.internal.utils.Optional;
 
@@ -50,7 +52,15 @@ public class MediaSourceFactory {
         if (dataSourceFactory.isPresent()) {
             return new DefaultDataSourceFactory(context, bandwidthMeter, dataSourceFactory.get());
         } else {
-            return new DefaultDataSourceFactory(context, "user-agent", bandwidthMeter);
+            DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory(
+                    "user-agent",
+                    bandwidthMeter,
+                    DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                    DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+                    true /* allowCrossProtocolRedirects */
+            );
+
+            return new DefaultDataSourceFactory(context, bandwidthMeter, httpDataSourceFactory);
         }
     }
 
