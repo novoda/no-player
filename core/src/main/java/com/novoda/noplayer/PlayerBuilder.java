@@ -106,11 +106,12 @@ public class PlayerBuilder {
      * Builds a new {@link NoPlayer} instance.
      *
      * @param context The {@link Context} associated with the player.
+     * @param userAgent The application's userAgent value
      * @return a {@link NoPlayer} instance.
      * @throws UnableToCreatePlayerException thrown when the configuration is not supported and there is no way to recover.
      * @see NoPlayer
      */
-    public NoPlayer build(Context context) throws UnableToCreatePlayerException {
+    public NoPlayer build(Context context, String userAgent) throws UnableToCreatePlayerException {
         Context applicationContext = context.getApplicationContext();
         Handler handler = new Handler(Looper.getMainLooper());
         ProvisionExecutorCreator provisionExecutorCreator = new ProvisionExecutorCreator();
@@ -122,7 +123,7 @@ public class PlayerBuilder {
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
                 applicationContext,
                 prioritizedPlayerTypes,
-                NoPlayerExoPlayerCreator.newInstance(handler),
+                NoPlayerExoPlayerCreator.newInstance(userAgent, handler),
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );

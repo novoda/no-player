@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
         player = new PlayerBuilder()
                 .withWidevineModularStreamingDrm(drmHandler)
                 .withDowngradedSecureDecoder()
-                .build(this);
+                .build(this, "Android/Linux");
 
         demoPresenter = new DemoPresenter(controllerView, player, player.getListeners(), playerView);
         dialogCreator = new DialogCreator(this, player);

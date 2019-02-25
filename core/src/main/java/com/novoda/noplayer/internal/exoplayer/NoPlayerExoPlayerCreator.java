@@ -20,13 +20,13 @@ public class NoPlayerExoPlayerCreator {
 
     private final InternalCreator internalCreator;
 
-    public static NoPlayerExoPlayerCreator newInstance(Handler handler) {
-        InternalCreator internalCreator = new InternalCreator(handler, Optional.<DataSource.Factory>absent());
+    public static NoPlayerExoPlayerCreator newInstance(String userAgent, Handler handler) {
+        InternalCreator internalCreator = new InternalCreator(userAgent, handler, Optional.<DataSource.Factory>absent());
         return new NoPlayerExoPlayerCreator(internalCreator);
     }
 
-    public static NoPlayerExoPlayerCreator newInstance(Handler handler, DataSource.Factory dataSourceFactory) {
-        InternalCreator internalCreator = new InternalCreator(handler, Optional.of(dataSourceFactory));
+    public static NoPlayerExoPlayerCreator newInstance(String userAgent, Handler handler, DataSource.Factory dataSourceFactory) {
+        InternalCreator internalCreator = new InternalCreator(userAgent, handler, Optional.of(dataSourceFactory));
         return new NoPlayerExoPlayerCreator(internalCreator);
     }
 
@@ -44,14 +44,16 @@ public class NoPlayerExoPlayerCreator {
 
         private final Handler handler;
         private final Optional<DataSource.Factory> dataSourceFactory;
+        private final String userAgent;
 
-        InternalCreator(Handler handler, Optional<DataSource.Factory> dataSourceFactory) {
+        InternalCreator(String userAgent, Handler handler, Optional<DataSource.Factory> dataSourceFactory) {
+            this.userAgent = userAgent;
             this.handler = handler;
             this.dataSourceFactory = dataSourceFactory;
         }
 
         ExoPlayerTwoImpl create(Context context, DrmSessionCreator drmSessionCreator, boolean downgradeSecureDecoder) {
-            MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(context, handler, dataSourceFactory);
+            MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(context, userAgent, handler, dataSourceFactory);
 
             MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
                     ? SecurityDowngradingCodecSelector.newInstance()

@@ -24,11 +24,13 @@ public class MediaSourceFactory {
     private final Context context;
     private final Handler handler;
     private final Optional<DataSource.Factory> dataSourceFactory;
+    private final String userAgent;
 
-    public MediaSourceFactory(Context context, Handler handler, Optional<DataSource.Factory> dataSourceFactory) {
+    public MediaSourceFactory(Context context, String userAgent, Handler handler, Optional<DataSource.Factory> dataSourceFactory) {
         this.context = context;
         this.handler = handler;
         this.dataSourceFactory = dataSourceFactory;
+        this.userAgent = userAgent;
     }
 
     public MediaSource create(Options options,
@@ -53,7 +55,7 @@ public class MediaSourceFactory {
             return new DefaultDataSourceFactory(context, bandwidthMeter, dataSourceFactory.get());
         } else {
             DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory(
-                    "user-agent",
+                    userAgent,
                     bandwidthMeter,
                     DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
                     DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
