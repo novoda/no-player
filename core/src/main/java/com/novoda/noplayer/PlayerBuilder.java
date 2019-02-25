@@ -26,7 +26,9 @@ public class PlayerBuilder {
     private DrmType drmType = DrmType.NONE;
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
-    private boolean downgradeSecureDecoder;
+    private boolean downgradeSecureDecoder; /* initialised to false by default */
+    private boolean allowCrossProtocolRedirects; /* initialised to false by default */
+    private String userAgent = "user-agent";
 
     /**
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine classic DRM.
@@ -103,6 +105,24 @@ public class PlayerBuilder {
     }
 
     /**
+     * @param userAgent The application's user-agent value
+     * @return {@link PlayerBuilder}
+     */
+    public PlayerBuilder withUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+        return this;
+    }
+
+    /**
+     * Network connections will be allowed to perform redirects between HTTP and HTTPS protocols
+     * @return {@link PlayerBuilder}
+     */
+    public PlayerBuilder allowCrossProtocolRedirects() {
+        allowCrossProtocolRedirects = true;
+        return this;
+    }
+
+    /**
      * Builds a new {@link NoPlayer} instance.
      *
      * @param context The {@link Context} associated with the player.
@@ -122,11 +142,11 @@ public class PlayerBuilder {
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
                 applicationContext,
                 prioritizedPlayerTypes,
-                NoPlayerExoPlayerCreator.newInstance(handler),
+                NoPlayerExoPlayerCreator.newInstance(userAgent, handler),
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
-        return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder);
+        return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects);
     }
 
 }
