@@ -105,7 +105,6 @@ public class PlayerBuilder {
     }
 
     /**
-     *
      * @param userAgent The application's userAgent value
      * @return {@link PlayerBuilder}
      */
