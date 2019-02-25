@@ -14,6 +14,8 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.internal.utils.Optional;
 
@@ -22,11 +24,19 @@ public class MediaSourceFactory {
     private final Context context;
     private final Handler handler;
     private final Optional<DataSource.Factory> dataSourceFactory;
+    private final String userAgent;
+    private final boolean allowCrossProtocolRedirects;
 
-    public MediaSourceFactory(Context context, Handler handler, Optional<DataSource.Factory> dataSourceFactory) {
+    public MediaSourceFactory(Context context,
+                              String userAgent,
+                              Handler handler,
+                              Optional<DataSource.Factory> dataSourceFactory,
+                              boolean allowCrossProtocolRedirects) {
         this.context = context;
         this.handler = handler;
         this.dataSourceFactory = dataSourceFactory;
+        this.userAgent = userAgent;
+        this.allowCrossProtocolRedirects = allowCrossProtocolRedirects;
     }
 
     public MediaSource create(Options options,
@@ -50,7 +60,15 @@ public class MediaSourceFactory {
         if (dataSourceFactory.isPresent()) {
             return new DefaultDataSourceFactory(context, bandwidthMeter, dataSourceFactory.get());
         } else {
-            return new DefaultDataSourceFactory(context, "user-agent", bandwidthMeter);
+            DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory(
+                    userAgent,
+                    bandwidthMeter,
+                    DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                    DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+                    allowCrossProtocolRedirects
+            );
+
+            return new DefaultDataSourceFactory(context, bandwidthMeter, httpDataSourceFactory);
         }
     }
 
