@@ -105,7 +105,7 @@ public class PlayerBuilder {
     }
 
     /**
-     * @param userAgent The application's userAgent value
+     * @param userAgent The application's user-agent value
      * @return {@link PlayerBuilder}
      */
     public PlayerBuilder withUserAgent(String userAgent) {
