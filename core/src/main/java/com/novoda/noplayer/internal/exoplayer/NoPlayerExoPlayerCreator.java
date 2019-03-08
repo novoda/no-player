@@ -2,9 +2,13 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
+import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.SystemClock;
@@ -16,17 +20,34 @@ import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.LoadTimeout;
 
+import java.io.IOException;
+
 public class NoPlayerExoPlayerCreator {
 
     private final InternalCreator internalCreator;
 
     public static NoPlayerExoPlayerCreator newInstance(String userAgent, Handler handler) {
-        InternalCreator internalCreator = new InternalCreator(userAgent, handler, Optional.<DataSource.Factory>absent());
+        InternalCreator internalCreator = new InternalCreator(
+                userAgent,
+                handler,
+                Optional.<DataSource.Factory>absent(),
+                Optional.<AdvertsLoader>absent()
+        );
+        return new NoPlayerExoPlayerCreator(internalCreator);
+    }
+
+    public static NoPlayerExoPlayerCreator newInstance(String userAgent, Handler handler, AdvertsLoader advertsLoader) {
+        InternalCreator internalCreator = new InternalCreator(
+                userAgent,
+                handler,
+                Optional.<DataSource.Factory>absent(),
+                Optional.<AdvertsLoader>of(advertsLoader)
+        );
         return new NoPlayerExoPlayerCreator(internalCreator);
     }
 
     public static NoPlayerExoPlayerCreator newInstance(String userAgent, Handler handler, DataSource.Factory dataSourceFactory) {
-        InternalCreator internalCreator = new InternalCreator(userAgent, handler, Optional.of(dataSourceFactory));
+        InternalCreator internalCreator = new InternalCreator(userAgent, handler, Optional.of(dataSourceFactory), Optional.<AdvertsLoader>absent());
         return new NoPlayerExoPlayerCreator(internalCreator);
     }
 
@@ -47,29 +68,34 @@ public class NoPlayerExoPlayerCreator {
 
         private final Handler handler;
         private final Optional<DataSource.Factory> dataSourceFactory;
+        private final Optional<AdvertsLoader> advertsLoader;
         private final String userAgent;
 
-        InternalCreator(String userAgent, Handler handler, Optional<DataSource.Factory> dataSourceFactory) {
+        InternalCreator(String userAgent, Handler handler, Optional<DataSource.Factory> dataSourceFactory, Optional<AdvertsLoader> advertsLoader) {
             this.userAgent = userAgent;
             this.handler = handler;
             this.dataSourceFactory = dataSourceFactory;
+            this.advertsLoader = advertsLoader;
         }
 
         ExoPlayerTwoImpl create(Context context,
                                 DrmSessionCreator drmSessionCreator,
                                 boolean downgradeSecureDecoder,
                                 boolean allowCrossProtocolRedirects) {
+            Optional<AdsLoader> adsLoader = createAdsLoaderFrom(advertsLoader);
+
             MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(
                     context,
                     userAgent,
                     handler,
                     dataSourceFactory,
+                    adsLoader,
                     allowCrossProtocolRedirects
             );
 
             MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
                     ? SecurityDowngradingCodecSelector.newInstance()
-                    : MediaCodecSelector.DEFAULT_WITH_FALLBACK;
+                    : MediaCodecSelector.DEFAULT;
 
             CompositeTrackSelectorCreator trackSelectorCreator = new CompositeTrackSelectorCreator();
 
@@ -100,6 +126,45 @@ public class NoPlayerExoPlayerCreator {
                     drmSessionCreator,
                     mediaCodecSelector
             );
+        }
+
+        private Optional<AdsLoader> createAdsLoaderFrom(Optional<AdvertsLoader> advertsLoader) {
+            if (advertsLoader.isPresent()) {
+                AdsLoader adsLoader = new AdsLoader() {
+                    @Override
+                    public void setSupportedContentTypes(int... contentTypes) {
+
+                    }
+
+                    @Override
+                    public void start(EventListener eventListener, AdViewProvider adViewProvider) {
+
+                    }
+
+                    @Override
+                    public void stop() {
+
+                    }
+
+                    @Override
+                    public void setPlayer(@Nullable Player player) {
+
+                    }
+
+                    @Override
+                    public void release() {
+
+                    }
+
+                    @Override
+                    public void handlePrepareError(int adGroupIndex, int adIndexInAdGroup, IOException exception) {
+
+                    }
+                };
+                return Optional.of(adsLoader);
+            } else {
+                return Optional.absent();
+            }
         }
     }
 }
