@@ -1,20 +1,19 @@
 package com.novoda.noplayer;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-class AdvertBreak {
+public class AdvertBreak {
 
-    private final TimeUnit startTime;
+    private final long startTimeInMicros;
     private final List<Advert> adverts;
 
-    public AdvertBreak(TimeUnit startTime, List<Advert> adverts) {
-        this.startTime = startTime;
+    public AdvertBreak(long startTimeInMicros, List<Advert> adverts) {
+        this.startTimeInMicros = startTimeInMicros;
         this.adverts = adverts;
     }
 
-    public TimeUnit startTime() {
-        return startTime;
+    public long startTime() {
+        return startTimeInMicros;
     }
 
     public List<Advert> adverts() {
@@ -32,7 +31,7 @@ class AdvertBreak {
 
         AdvertBreak that = (AdvertBreak) o;
 
-        if (startTime != that.startTime) {
+        if (startTimeInMicros != that.startTimeInMicros) {
             return false;
         }
         return adverts != null ? adverts.equals(that.adverts) : that.adverts == null;
@@ -40,7 +39,7 @@ class AdvertBreak {
 
     @Override
     public int hashCode() {
-        int result = startTime != null ? startTime.hashCode() : 0;
+        int result = (int) (startTimeInMicros ^ (startTimeInMicros >>> 32));
         result = 31 * result + (adverts != null ? adverts.hashCode() : 0);
         return result;
     }
@@ -48,7 +47,7 @@ class AdvertBreak {
     @Override
     public String toString() {
         return "AdvertBreak{"
-                + "startTime=" + startTime
+                + "startTimeInMicros=" + startTimeInMicros
                 + ", adverts=" + adverts
                 + '}';
     }

@@ -4,6 +4,12 @@ import java.util.List;
 
 public interface AdvertsLoader {
 
-    List<AdvertBreak> load();
+    void load(Callback callback);
+
+    interface Callback {
+        void onAdvertsLoaded(List<AdvertBreak> advertBreaks);
+
+        void onAdvertsError(String message);
+    }
 
 }

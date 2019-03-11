@@ -2,20 +2,18 @@ package com.novoda.noplayer;
 
 import android.net.Uri;
 
-import java.util.concurrent.TimeUnit;
+public class Advert {
 
-class Advert {
-
-    private final TimeUnit duration;
+    private final long durationInMicros;
     private final Uri uri;
 
-    public Advert(TimeUnit duration, Uri uri) {
-        this.duration = duration;
+    public Advert(long durationInMicros, Uri uri) {
+        this.durationInMicros = durationInMicros;
         this.uri = uri;
     }
 
-    public TimeUnit duration() {
-        return duration;
+    public long durationInMicros() {
+        return durationInMicros;
     }
 
     public Uri uri() {
@@ -33,7 +31,7 @@ class Advert {
 
         Advert advert = (Advert) o;
 
-        if (duration != advert.duration) {
+        if (durationInMicros != advert.durationInMicros) {
             return false;
         }
         return uri != null ? uri.equals(advert.uri) : advert.uri == null;
@@ -41,7 +39,7 @@ class Advert {
 
     @Override
     public int hashCode() {
-        int result = duration != null ? duration.hashCode() : 0;
+        int result = (int) (durationInMicros ^ (durationInMicros >>> 32));
         result = 31 * result + (uri != null ? uri.hashCode() : 0);
         return result;
     }
@@ -49,7 +47,7 @@ class Advert {
     @Override
     public String toString() {
         return "Advert{"
-                + "duration=" + duration
+                + "durationInMicros=" + durationInMicros
                 + ", uri=" + uri
                 + '}';
     }
