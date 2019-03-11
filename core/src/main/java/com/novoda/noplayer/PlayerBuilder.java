@@ -146,14 +146,21 @@ public class PlayerBuilder {
                 provisionExecutorCreator,
                 handler
         );
+
+        NoPlayerExoPlayerCreator noPlayerExoPlayerCreator = createExoPlayerCreator(handler);
+
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
                 applicationContext,
                 prioritizedPlayerTypes,
-                NoPlayerExoPlayerCreator.newInstance(userAgent, handler, advertsLoader),
+                noPlayerExoPlayerCreator,
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
         return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects);
+    }
+
+    private NoPlayerExoPlayerCreator createExoPlayerCreator(Handler handler) {
+        return advertsLoader == null ? NoPlayerExoPlayerCreator.newInstance(userAgent, handler) : NoPlayerExoPlayerCreator.newInstance(userAgent, handler, advertsLoader);
     }
 
 }
