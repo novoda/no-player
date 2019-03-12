@@ -2,17 +2,9 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
-import com.google.android.exoplayer2.source.ads.AdPlaybackState;
-import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.novoda.noplayer.Advert;
-import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.Heart;
@@ -24,10 +16,6 @@ import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.LoadTimeout;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class NoPlayerExoPlayerCreator {
 
@@ -89,7 +77,7 @@ public class NoPlayerExoPlayerCreator {
                                 DrmSessionCreator drmSessionCreator,
                                 boolean downgradeSecureDecoder,
                                 boolean allowCrossProtocolRedirects) {
-            Optional<AdsLoader> adsLoader = createAdsLoaderFrom(advertsLoader);
+            Optional<MyAdsLoader> adsLoader = createAdsLoaderFrom(advertsLoader);
 
             MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(
                     context,
@@ -116,7 +104,8 @@ public class NoPlayerExoPlayerCreator {
                     mediaSourceFactory,
                     trackSelectorCreator,
                     exoPlayerCreator,
-                    rendererTypeRequesterCreator
+                    rendererTypeRequesterCreator,
+                    adsLoader
             );
 
             PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
@@ -135,128 +124,16 @@ public class NoPlayerExoPlayerCreator {
             );
         }
 
-        private Optional<AdsLoader> createAdsLoaderFrom(final Optional<AdvertsLoader> advertsLoader) {
+        private Optional<MyAdsLoader> createAdsLoaderFrom(final Optional<AdvertsLoader> advertsLoader) {
             if (advertsLoader.isPresent()) {
                 final AdvertsLoader loader = advertsLoader.get();
-                AdsLoader adsLoader = new AdsLoader() {
-                    @Nullable
-                    private Player player;
-                    @Nullable
-                    private AdPlaybackState adPlaybackState;
-
-                    @Override
-                    public void setSupportedContentTypes(int... contentTypes) {
-                        for (int contentType : contentTypes) {
-                            Log.e("LOADER", "setSupportedContentTypes: " + contentType);
-                        }
-                    }
-
-                    @Override
-                    public void start(final EventListener eventListener, AdViewProvider adViewProvider) {
-                        if (adPlaybackState == null) {
-                            Log.e("LOADER", "calling client load");
-                            loader.load(new AdvertsLoader.Callback() {
-                                @Override
-                                public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
-                                    Log.e("LOADER", "starting load");
-                                    long[] advertOffsets = getAdvertOffsets(advertBreaks);
-                                    adPlaybackState = new AdPlaybackState(advertOffsets);
-                                    long[][] advertBreaksWithAdvertDurations = getAdvertBreakDurations(advertBreaks);
-                                    adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
-
-                                    for (int i = 0; i < advertBreaks.size(); i++) {
-                                        List<Advert> adverts = advertBreaks.get(i).adverts();
-
-                                        adPlaybackState = adPlaybackState.withAdCount(i, adverts.size());
-
-                                        for (int j = 0; j < adverts.size(); j++) {
-                                            Advert advert = adverts.get(j);
-                                            adPlaybackState = adPlaybackState.withAdUri(i, j, advert.uri());
-                                        }
-                                    }
-
-                                    Log.e("LOADER", "retrieved adverts");
-
-                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Log.e("LOADER", "send to main thread");
-                                            updateAdPlaybackState();
-                                        }
-                                    });
-                                }
-
-                                private void updateAdPlaybackState() {
-                                    if (eventListener != null) {
-                                        Log.e("LOADER", "playback state: " + adPlaybackState);
-                                        eventListener.onAdPlaybackState(adPlaybackState);
-                                    }
-                                }
-
-                                @Override
-                                public void onAdvertsError(String message) {
-                                    eventListener.onAdLoadError(null, null);
-                                    Log.e("LOADER", "fail: " + message);
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void stop() {
-                        if (adPlaybackState != null && player != null) {
-                            adPlaybackState = adPlaybackState.withAdResumePositionUs(TimeUnit.MILLISECONDS.toMicros(player.getCurrentPosition()));
-                        }
-                    }
-
-                    @Override
-                    public void setPlayer(@Nullable Player player) {
-                        Log.e("LOADER", "setPlayer");
-                        this.player = player;
-                    }
-
-                    @Override
-                    public void release() {
-                        Log.e("LOADER", "release");
-                        adPlaybackState = null;
-                        player = null;
-                    }
-
-                    @Override
-                    public void handlePrepareError(int adGroupIndex, int adIndexInAdGroup, IOException exception) {
-                        if (adPlaybackState != null) {
-                            Log.e("LOADER", "group: " + adGroupIndex + " ad: " + adIndexInAdGroup + " handlePrepareError: " + exception);
-                            adPlaybackState = adPlaybackState.withAdLoadError(adGroupIndex, adIndexInAdGroup);
-                        }
-                    }
-                };
+                MyAdsLoader adsLoader = new MyAdsLoader(loader);
                 return Optional.of(adsLoader);
             } else {
                 return Optional.absent();
             }
         }
+
     }
 
-    private static long[] getAdvertOffsets(List<AdvertBreak> advertBreaks) {
-        long[] advertOffsets = new long[advertBreaks.size()];
-        for (int i = 0; i < advertOffsets.length; i++) {
-            advertOffsets[i] = advertBreaks.get(i).startTime();
-        }
-        return advertOffsets;
-    }
-
-    private static long[][] getAdvertBreakDurations(List<AdvertBreak> advertBreaks) {
-        long[][] advertBreaksWithAdvertDurations = new long[advertBreaks.size()][];
-        for (int i = 0; i < advertBreaks.size(); i++) {
-            AdvertBreak advertBreak = advertBreaks.get(i);
-            List<Advert> adverts = advertBreak.adverts();
-            long[] advertDurations = new long[adverts.size()];
-
-            for (int j = 0; j < adverts.size(); j++) {
-                advertDurations[j] = adverts.get(j).durationInMicros();
-            }
-            advertBreaksWithAdvertDurations[i] = advertDurations;
-        }
-        return advertBreaksWithAdvertDurations;
-    }
 }

@@ -8,7 +8,6 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
-import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
@@ -19,6 +18,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.novoda.noplayer.Options;
+import com.novoda.noplayer.internal.exoplayer.MyAdsLoader;
 import com.novoda.noplayer.internal.utils.Optional;
 
 public class MediaSourceFactory {
@@ -27,14 +27,14 @@ public class MediaSourceFactory {
     private final Handler handler;
     private final Optional<DataSource.Factory> dataSourceFactory;
     private final String userAgent;
-    private final Optional<AdsLoader> advertsLoader;
+    private final Optional<MyAdsLoader> advertsLoader;
     private final boolean allowCrossProtocolRedirects;
 
     public MediaSourceFactory(Context context,
                               String userAgent,
                               Handler handler,
                               Optional<DataSource.Factory> dataSourceFactory,
-                              Optional<AdsLoader> advertsLoader,
+                              Optional<MyAdsLoader> advertsLoader,
                               boolean allowCrossProtocolRedirects) {
         this.context = context;
         this.handler = handler;
