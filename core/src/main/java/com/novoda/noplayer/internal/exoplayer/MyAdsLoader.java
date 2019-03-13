@@ -5,7 +5,6 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
@@ -14,7 +13,6 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.util.Assertions;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertsLoader;
@@ -22,7 +20,6 @@ import com.novoda.noplayer.AdvertsLoader;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 
 public class MyAdsLoader implements AdsLoader, Player.EventListener {
 
@@ -34,12 +31,10 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
     @Nullable
     private AdPlaybackState adPlaybackState;
     @Nullable
-    private Timeline timeline;
-    @Nullable
     private EventListener eventListener;
 
-    private long contentDurationMs = C.TIME_UNSET;
-    private long pendingContentPositionMs = C.TIME_UNSET;
+    private int adIndexInGroup = -1;
+    private int adGroupIndex = -1;
 
     private final Timeline.Period period = new Timeline.Period();
 
@@ -110,7 +105,7 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
     @Override
     public void stop() {
         Log.e("LOADER", "Stopping load");
-        if (adPlaybackState != null && player != null) {
+        if (adPlaybackState != null && player != null && adIndexInGroup != -1 && adGroupIndex  != -1) {
             adPlaybackState = adPlaybackState.withAdResumePositionUs(TimeUnit.MILLISECONDS.toMicros(player.getCurrentPosition()));
         }
         eventListener = null;
@@ -140,18 +135,13 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        Log.e("LOADER", "Timeline changed");
+        Log.e("LOADER", "Timeline changed" + " contentPosition " + player.getContentPosition() + " currentPosition " + player.getCurrentPosition() + " adIndex " + player.getCurrentAdIndexInAdGroup() + " adGroup " + player.getCurrentAdGroupIndex());
         if (reason == Player.TIMELINE_CHANGE_REASON_RESET) {
             // The player is being reset and this source will be released.
             return;
         }
-        Assertions.checkArgument(timeline.getPeriodCount() == 1);
-        this.timeline = timeline;
-        long contentDurationUs = timeline.getPeriod(0, period).durationUs;
-        long contentDurationMs = C.usToMs(contentDurationUs);
-        if (contentDurationUs != C.TIME_UNSET) {
-            adPlaybackState = adPlaybackState.withContentDurationUs(contentDurationUs);
-        }
+        adGroupIndex = player.getCurrentAdGroupIndex();
+        adIndexInGroup = player.getCurrentAdIndexInAdGroup();
     }
 
     @Override
@@ -196,27 +186,13 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onPositionDiscontinuity(int reason) {
-        Log.e("LOADER", "Position Discontinuity");
-        if (isContentCompleted()) {
-            for (int i = 0; i < adPlaybackState.adGroupCount; i++) {
-                if (adPlaybackState.adGroupTimesUs[i] != C.TIME_END_OF_SOURCE) {
-                    adPlaybackState = adPlaybackState.withSkippedAdGroup(i);
-                }
-            }
+        Log.e("LOADER", "Position Discontinuity " + reason + " contentPosition " + player.getContentPosition() + " currentPosition " + player.getCurrentPosition() + " adIndex " + player.getCurrentAdIndexInAdGroup() + " adGroup " + player.getCurrentAdGroupIndex());
+        if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION) {
+            adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
+            adGroupIndex = player.getCurrentAdGroupIndex();
+            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
             updateAdPlaybackState();
-        } else {
-            long positionMs = player.getCurrentPosition();
-            timeline.getPeriod(0, period);
-            int newAdGroupIndex = period.getAdGroupIndexForPositionUs(C.msToUs(positionMs));
-            if (newAdGroupIndex != C.INDEX_UNSET) {
-                pendingContentPositionMs = positionMs;
-            }
         }
-    }
-
-    private boolean isContentCompleted() {
-        return contentDurationMs != C.TIME_UNSET && pendingContentPositionMs == C.TIME_UNSET
-                && player.getContentPosition() + END_OF_CONTENT_POSITION_THRESHOLD_MS >= contentDurationMs;
     }
 
     private static long[] getAdvertOffsets(List<AdvertBreak> advertBreaks) {
