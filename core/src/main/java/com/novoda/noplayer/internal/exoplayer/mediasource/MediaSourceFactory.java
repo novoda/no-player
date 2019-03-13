@@ -67,7 +67,7 @@ public class MediaSourceFactory {
 
         if (advertsLoader.isPresent()) {
             AdsMediaSource adsMediaSource = new AdsMediaSource(contentMediaSource, defaultDataSourceFactory, advertsLoader.get(), null);
-            contentMediaSource.addEventListener(handler, mediaSourceEventListener);
+            adsMediaSource.addEventListener(handler, mediaSourceEventListener);
             return adsMediaSource;
         } else {
             contentMediaSource.addEventListener(handler, mediaSourceEventListener);

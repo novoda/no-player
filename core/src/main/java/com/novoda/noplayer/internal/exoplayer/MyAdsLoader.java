@@ -105,7 +105,7 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
     @Override
     public void stop() {
         Log.e("LOADER", "Stopping load");
-        if (adPlaybackState != null && player != null && adIndexInGroup != -1 && adGroupIndex  != -1) {
+        if (adPlaybackState != null && player != null && adIndexInGroup != -1 && adGroupIndex != -1) {
             adPlaybackState = adPlaybackState.withAdResumePositionUs(TimeUnit.MILLISECONDS.toMicros(player.getCurrentPosition()));
         }
         eventListener = null;
@@ -188,10 +188,12 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
     public void onPositionDiscontinuity(int reason) {
         Log.e("LOADER", "Position Discontinuity " + reason + " contentPosition " + player.getContentPosition() + " currentPosition " + player.getCurrentPosition() + " adIndex " + player.getCurrentAdIndexInAdGroup() + " adGroup " + player.getCurrentAdGroupIndex());
         if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION) {
-            adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
+            if (adGroupIndex != -1 && adIndexInGroup != -1) {
+                adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
+                updateAdPlaybackState();
+            }
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-            updateAdPlaybackState();
         }
     }
 
