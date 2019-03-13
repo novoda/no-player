@@ -18,6 +18,8 @@ import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertsLoader;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -49,6 +51,10 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
         }
     }
 
+    private static int compareLong(long x, long y) {
+        return (x < y) ? -1 : ((x == y) ? 0 : 1);
+    }
+
     @Override
     public void start(final EventListener eventListener, AdViewProvider adViewProvider) {
         Log.e("LOADER", "Starting load");
@@ -58,6 +64,12 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
             loader.load(new AdvertsLoader.Callback() {
                 @Override
                 public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
+                    Collections.sort(advertBreaks, new Comparator<AdvertBreak>() {
+                        @Override
+                        public int compare(AdvertBreak o1, AdvertBreak o2) {
+                            return compareLong(o1.startTime(), o2.startTime());
+                        }
+                    });
                     Log.e("LOADER", "adsLoaded transforming");
                     long[] advertOffsets = getAdvertOffsets(advertBreaks);
                     adPlaybackState = new AdPlaybackState(advertOffsets);
@@ -135,7 +147,7 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        Log.e("LOADER", "Timeline changed" + " contentPosition " + player.getContentPosition() + " currentPosition " + player.getCurrentPosition() + " adIndex " + player.getCurrentAdIndexInAdGroup() + " adGroup " + player.getCurrentAdGroupIndex());
+        Log.e("LOADER", "Timeline changed reason"  + reason + " contentPosition " + player.getContentPosition() + " currentPosition " + player.getCurrentPosition() + " adIndex " + player.getCurrentAdIndexInAdGroup() + " adGroup " + player.getCurrentAdGroupIndex());
         if (reason == Player.TIMELINE_CHANGE_REASON_RESET) {
             // The player is being reset and this source will be released.
             return;
