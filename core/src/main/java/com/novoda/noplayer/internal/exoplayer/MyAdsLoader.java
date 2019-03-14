@@ -19,7 +19,6 @@ import com.novoda.noplayer.AdvertsLoader;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -47,10 +46,6 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
         }
     }
 
-    private static int compareLong(long x, long y) {
-        return (x < y) ? -1 : ((x == y) ? 0 : 1);
-    }
-
     @Override
     public void start(final EventListener eventListener, AdViewProvider adViewProvider) {
         Log.e("LOADER", "Starting load");
@@ -60,12 +55,7 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
             loader.load(new AdvertsLoader.Callback() {
                 @Override
                 public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
-                    Collections.sort(advertBreaks, new Comparator<AdvertBreak>() {
-                        @Override
-                        public int compare(AdvertBreak o1, AdvertBreak o2) {
-                            return compareLong(o1.startTime(), o2.startTime());
-                        }
-                    });
+                    Collections.sort(advertBreaks, new AdvertBreakStartTimeComparer());
                     Log.e("LOADER", "adsLoaded transforming");
                     long[] advertOffsets = getAdvertOffsets(advertBreaks);
                     adPlaybackState = new AdPlaybackState(advertOffsets);
