@@ -2,9 +2,10 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import com.novoda.noplayer.AdvertBreak;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-class AdvertBreakStartTimeComparer implements Comparator<AdvertBreak> {
+class AdvertBreakStartTimeComparer implements Comparator<AdvertBreak>, Serializable {
 
     @Override
     public int compare(AdvertBreak o1, AdvertBreak o2) {
