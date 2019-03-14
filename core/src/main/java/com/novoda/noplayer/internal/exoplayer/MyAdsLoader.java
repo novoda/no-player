@@ -52,46 +52,48 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
         this.eventListener = eventListener;
         if (adPlaybackState == null) {
             Log.e("LOADER", "calling client load");
-            loader.load(new AdvertsLoader.Callback() {
-                @Override
-                public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
-                    Collections.sort(advertBreaks, new AdvertBreakStartTimeComparer());
-                    Log.e("LOADER", "adsLoaded transforming");
-                    long[] advertOffsets = getAdvertOffsets(advertBreaks);
-                    adPlaybackState = new AdPlaybackState(advertOffsets);
-                    long[][] advertBreaksWithAdvertDurations = getAdvertBreakDurations(advertBreaks);
-                    adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
+            loader.load(advertsLoadedCallback);
+        }
+    }
 
-                    for (int i = 0; i < advertBreaks.size(); i++) {
-                        List<Advert> adverts = advertBreaks.get(i).adverts();
+    private final AdvertsLoader.Callback advertsLoadedCallback = new AdvertsLoader.Callback() {
+        @Override
+        public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
+            Collections.sort(advertBreaks, new AdvertBreakStartTimeComparer());
+            Log.e("LOADER", "adsLoaded transforming");
+            long[] advertOffsets = getAdvertOffsets(advertBreaks);
+            adPlaybackState = new AdPlaybackState(advertOffsets);
+            long[][] advertBreaksWithAdvertDurations = getAdvertBreakDurations(advertBreaks);
+            adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
 
-                        adPlaybackState = adPlaybackState.withAdCount(i, adverts.size());
+            for (int i = 0; i < advertBreaks.size(); i++) {
+                List<Advert> adverts = advertBreaks.get(i).adverts();
 
-                        for (int j = 0; j < adverts.size(); j++) {
-                            Advert advert = adverts.get(j);
-                            adPlaybackState = adPlaybackState.withAdUri(i, j, advert.uri());
-                        }
-                    }
+                adPlaybackState = adPlaybackState.withAdCount(i, adverts.size());
 
-                    Log.e("LOADER", "retrieved adverts");
-
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.e("LOADER", "send to main thread");
-                            updateAdPlaybackState();
-                        }
-                    });
+                for (int j = 0; j < adverts.size(); j++) {
+                    Advert advert = adverts.get(j);
+                    adPlaybackState = adPlaybackState.withAdUri(i, j, advert.uri());
                 }
+            }
 
+            Log.e("LOADER", "retrieved adverts");
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
-                public void onAdvertsError(String message) {
-                    eventListener.onAdLoadError(null, null);
-                    Log.e("LOADER", "fail: " + message);
+                public void run() {
+                    Log.e("LOADER", "send to main thread");
+                    updateAdPlaybackState();
                 }
             });
         }
-    }
+
+        @Override
+        public void onAdvertsError(String message) {
+            eventListener.onAdLoadError(null, null);
+            Log.e("LOADER", "fail: " + message);
+        }
+    };
 
     private void updateAdPlaybackState() {
         if (eventListener != null) {
@@ -135,13 +137,17 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        Log.e("LOADER", "Timeline changed reason" + reason + " contentPosition " + player.getContentPosition() + " currentPosition " + player.getCurrentPosition() + " adIndex " + player.getCurrentAdIndexInAdGroup() + " adGroup " + player.getCurrentAdGroupIndex());
+        Log.e("LOADER", "Timeline changed");
         if (reason == Player.TIMELINE_CHANGE_REASON_RESET) {
             // The player is being reset and this source will be released.
             return;
         }
-        adGroupIndex = player.getCurrentAdGroupIndex();
-        adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+
+        if (player != null) {
+            Log.e("LOADER", "reason " + reason + " contentPosition " + player.getContentPosition() + " currentPosition " + player.getCurrentPosition() + " adIndex " + player.getCurrentAdIndexInAdGroup() + " adGroup " + player.getCurrentAdGroupIndex());
+            adGroupIndex = player.getCurrentAdGroupIndex();
+            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+        }
     }
 
     @Override
