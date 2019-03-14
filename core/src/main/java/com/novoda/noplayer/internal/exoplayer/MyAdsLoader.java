@@ -63,15 +63,18 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
             Collections.sort(advertBreaks, new AdvertBreakStartTimeComparer());
             Log.e("LOADER", "adsLoaded transforming");
             long[] advertOffsets = AdvertBreakUtils.advertOffsets(advertBreaks);
-            long[][] advertBreaksWithAdvertDurations = AdvertBreakUtils.advertBreakDurations(advertBreaks);
-
             adPlaybackState = new AdPlaybackState(advertOffsets);
+
+            long[][] advertBreaksWithAdvertDurations = AdvertBreakUtils.advertBreakDurations(advertBreaks);
             adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
+
+            int[] numberOfAdvertsPerBreak = AdvertBreakUtils.numberOfAdvertsPerAdvertBreak(advertBreaks);
+            for (int i = 0; i < numberOfAdvertsPerBreak.length; i++) {
+                adPlaybackState = adPlaybackState.withAdCount(i, numberOfAdvertsPerBreak[i]);
+            }
 
             for (int i = 0; i < advertBreaks.size(); i++) {
                 List<Advert> adverts = advertBreaks.get(i).adverts();
-
-                adPlaybackState = adPlaybackState.withAdCount(i, adverts.size());
 
                 for (int j = 0; j < adverts.size(); j++) {
                     Advert advert = adverts.get(j);

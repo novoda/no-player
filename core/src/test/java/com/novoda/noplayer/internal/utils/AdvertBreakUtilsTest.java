@@ -57,4 +57,13 @@ public class AdvertBreakUtilsTest {
                 {ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS, THREE_SECONDS_IN_MICROS}
         });
     }
+
+    @Test
+    public void extractsTheNumberOfAdvertsPerBreak() {
+        List<AdvertBreak> advertBreaks = Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK);
+
+        int[] numberOfAdvertsPerBreak = AdvertBreakUtils.numberOfAdvertsPerAdvertBreak(advertBreaks);
+
+        assertThat(numberOfAdvertsPerBreak).containsSequence(1, 2, 3);
+    }
 }

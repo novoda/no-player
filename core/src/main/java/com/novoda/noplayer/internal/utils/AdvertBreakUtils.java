@@ -30,4 +30,15 @@ public final class AdvertBreakUtils {
         return advertBreaksWithAdvertDurations;
     }
 
+    public static int[] numberOfAdvertsPerAdvertBreak(List<AdvertBreak> advertBreaks) {
+        int[] numberOfAdvertsPerBreak = new int[advertBreaks.size()];
+        for (int i = 0; i < advertBreaks.size(); i++) {
+            List<Advert> adverts = advertBreaks.get(i).adverts();
+
+            numberOfAdvertsPerBreak[i] = adverts.size();
+        }
+
+        return numberOfAdvertsPerBreak;
+    }
+
 }
