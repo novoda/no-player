@@ -160,7 +160,11 @@ public class PlayerBuilder {
     }
 
     private NoPlayerExoPlayerCreator createExoPlayerCreator(Handler handler) {
-        return advertsLoader == null ? NoPlayerExoPlayerCreator.newInstance(userAgent, handler) : NoPlayerExoPlayerCreator.newInstance(userAgent, handler, advertsLoader);
+        if (advertsLoader == null) {
+            return NoPlayerExoPlayerCreator.newInstance(userAgent, handler);
+        } else {
+            return NoPlayerExoPlayerCreator.newInstance(userAgent, handler, advertsLoader);
+        }
     }
 
 }
