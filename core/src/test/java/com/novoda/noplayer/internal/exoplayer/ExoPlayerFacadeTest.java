@@ -524,7 +524,7 @@ public class ExoPlayerFacadeTest {
                     trackSelectorCreator,
                     exoPlayerCreator,
                     rendererTypeRequesterCreator,
-                    adsLoader
+                    Optional.<MyAdsLoader>absent()
             );
             given(surfaceView.getHolder()).willReturn(mock(SurfaceHolder.class));
             surfaceViewHolder = PlayerSurfaceHolder.create(surfaceView);
