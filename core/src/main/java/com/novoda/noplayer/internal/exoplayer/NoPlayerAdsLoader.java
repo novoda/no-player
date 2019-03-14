@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MyAdsLoader implements AdsLoader, Player.EventListener {
+public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     private final AdvertsLoader loader;
     @Nullable
@@ -28,7 +28,7 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
 
-    MyAdsLoader(AdvertsLoader loader) {
+    NoPlayerAdsLoader(AdvertsLoader loader) {
         this.loader = loader;
     }
 

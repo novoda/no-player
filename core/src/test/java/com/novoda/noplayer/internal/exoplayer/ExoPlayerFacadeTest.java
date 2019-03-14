@@ -528,9 +528,9 @@ public class ExoPlayerFacadeTest {
         @Mock
         RendererTypeRequesterCreator rendererTypeRequesterCreator;
         @Mock
-        Optional<MyAdsLoader> optionalAdsLoader;
+        Optional<NoPlayerAdsLoader> optionalAdsLoader;
         @Mock
-        MyAdsLoader adsLoader;
+        NoPlayerAdsLoader adsLoader;
         @Mock
         DrmSessionCreator drmSessionCreator;
         @Mock

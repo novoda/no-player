@@ -18,7 +18,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.novoda.noplayer.Options;
-import com.novoda.noplayer.internal.exoplayer.MyAdsLoader;
+import com.novoda.noplayer.internal.exoplayer.NoPlayerAdsLoader;
 import com.novoda.noplayer.internal.utils.Optional;
 
 public class MediaSourceFactory {
@@ -27,14 +27,14 @@ public class MediaSourceFactory {
     private final Handler handler;
     private final Optional<DataSource.Factory> dataSourceFactory;
     private final String userAgent;
-    private final Optional<MyAdsLoader> advertsLoader;
+    private final Optional<NoPlayerAdsLoader> advertsLoader;
     private final boolean allowCrossProtocolRedirects;
 
     public MediaSourceFactory(Context context,
                               String userAgent,
                               Handler handler,
                               Optional<DataSource.Factory> dataSourceFactory,
-                              Optional<MyAdsLoader> advertsLoader,
+                              Optional<NoPlayerAdsLoader> advertsLoader,
                               boolean allowCrossProtocolRedirects) {
         this.context = context;
         this.handler = handler;

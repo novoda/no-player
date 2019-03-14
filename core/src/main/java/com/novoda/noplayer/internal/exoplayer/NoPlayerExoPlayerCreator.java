@@ -77,7 +77,7 @@ public class NoPlayerExoPlayerCreator {
                                 DrmSessionCreator drmSessionCreator,
                                 boolean downgradeSecureDecoder,
                                 boolean allowCrossProtocolRedirects) {
-            Optional<MyAdsLoader> adsLoader = createAdsLoaderFrom(advertsLoader);
+            Optional<NoPlayerAdsLoader> adsLoader = createAdsLoaderFrom(advertsLoader);
 
             MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(
                     context,
@@ -124,10 +124,10 @@ public class NoPlayerExoPlayerCreator {
             );
         }
 
-        private Optional<MyAdsLoader> createAdsLoaderFrom(final Optional<AdvertsLoader> advertsLoader) {
+        private Optional<NoPlayerAdsLoader> createAdsLoaderFrom(final Optional<AdvertsLoader> advertsLoader) {
             if (advertsLoader.isPresent()) {
                 final AdvertsLoader loader = advertsLoader.get();
-                MyAdsLoader adsLoader = new MyAdsLoader(loader);
+                NoPlayerAdsLoader adsLoader = new NoPlayerAdsLoader(loader);
                 return Optional.of(adsLoader);
             } else {
                 return Optional.absent();
