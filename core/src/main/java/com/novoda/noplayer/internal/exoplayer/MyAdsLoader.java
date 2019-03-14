@@ -63,7 +63,7 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
             Collections.sort(advertBreaks, new AdvertBreakStartTimeComparer());
             Log.e("LOADER", "adsLoaded transforming");
             long[] advertOffsets = AdvertBreakUtils.advertOffsets(advertBreaks);
-            long[][] advertBreaksWithAdvertDurations = getAdvertBreakDurations(advertBreaks);
+            long[][] advertBreaksWithAdvertDurations = AdvertBreakUtils.advertBreakDurations(advertBreaks);
 
             adPlaybackState = new AdPlaybackState(advertOffsets);
             adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
@@ -207,21 +207,5 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
         }
-    }
-
-    private static long[][] getAdvertBreakDurations(List<AdvertBreak> advertBreaks) {
-        long[][] advertBreaksWithAdvertDurations = new long[advertBreaks.size()][];
-        for (int i = 0; i < advertBreaks.size(); i++) {
-            AdvertBreak advertBreak = advertBreaks.get(i);
-            List<Advert> adverts = advertBreak.adverts();
-            long[] advertDurations = new long[adverts.size()];
-
-            for (int j = 0; j < adverts.size(); j++) {
-                advertDurations[j] = adverts.get(j).durationInMicros();
-                Log.e("LOADER", "AdvertDuration: " + advertDurations[j]);
-            }
-            advertBreaksWithAdvertDurations[i] = advertDurations;
-        }
-        return advertBreaksWithAdvertDurations;
     }
 }
