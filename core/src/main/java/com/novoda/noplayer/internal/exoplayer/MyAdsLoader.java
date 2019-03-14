@@ -112,8 +112,10 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
     @Override
     public void setPlayer(@Nullable Player player) {
         Log.e("LOADER", "setPlayer");
-        this.player = player;
-        this.player.addListener(this);
+        if (player != null) {
+            this.player = player;
+            this.player.addListener(this);
+        }
     }
 
     @Override
@@ -184,12 +186,16 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onPositionDiscontinuity(int reason) {
-        Log.e("LOADER", "Position Discontinuity " + reason + " contentPosition " + player.getContentPosition() + " currentPosition " + player.getCurrentPosition() + " adIndex " + player.getCurrentAdIndexInAdGroup() + " adGroup " + player.getCurrentAdGroupIndex());
-        if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION) {
+        Log.e("LOADER", "Position Discontinuity ");
+        if (player != null) {
+            Log.e("LOADER", " reason " + reason + " contentPosition " + player.getContentPosition() + " currentPosition " + player.getCurrentPosition() + " adIndex " + player.getCurrentAdIndexInAdGroup() + " adGroup " + player.getCurrentAdGroupIndex());
+        }
+        if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION && player != null && adPlaybackState != null) {
             if (adGroupIndex != -1 && adIndexInGroup != -1) {
                 adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
                 updateAdPlaybackState();
             }
+
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
         }
