@@ -20,9 +20,13 @@ public class AdvertBreakUtilsTest {
     private static final int TWO_SECONDS_IN_MICROS = 2000000;
     private static final int THREE_SECONDS_IN_MICROS = 3000000;
 
-    private static final Advert FIRST_ADVERT = new Advert(ONE_SECOND_IN_MICROS, mock(Uri.class));
-    private static final Advert SECOND_ADVERT = new Advert(TWO_SECONDS_IN_MICROS, mock(Uri.class));
-    private static final Advert THIRD_ADVERT = new Advert(THREE_SECONDS_IN_MICROS, mock(Uri.class));
+    private static final Uri FIRST_URI = mock(Uri.class);
+    private static final Uri SECOND_URI = mock(Uri.class);
+    private static final Uri THIRD_URI = mock(Uri.class);
+
+    private static final Advert FIRST_ADVERT = new Advert(ONE_SECOND_IN_MICROS, FIRST_URI);
+    private static final Advert SECOND_ADVERT = new Advert(TWO_SECONDS_IN_MICROS, SECOND_URI);
+    private static final Advert THIRD_ADVERT = new Advert(THREE_SECONDS_IN_MICROS, THIRD_URI);
 
     private static final AdvertBreak FIRST_ADVERT_BREAK = new AdvertBreak(
             ONE_SECOND_IN_MICROS, Collections.singletonList(FIRST_ADVERT)
@@ -65,5 +69,18 @@ public class AdvertBreakUtilsTest {
         int[] numberOfAdvertsPerBreak = AdvertBreakUtils.numberOfAdvertsPerAdvertBreak(advertBreaks);
 
         assertThat(numberOfAdvertsPerBreak).containsSequence(1, 2, 3);
+    }
+
+    @Test
+    public void extractsTheUrisForAnAdvertBreak() {
+        List<AdvertBreak> advertBreaks = Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK);
+
+        Uri[][] advertUrisByAdvertBreak = AdvertBreakUtils.advertUrisByAdvertBreak(advertBreaks);
+
+        assertThat(advertUrisByAdvertBreak).isEqualTo(new Uri[][]{
+                {FIRST_URI},
+                {FIRST_URI, SECOND_URI},
+                {FIRST_URI, SECOND_URI, THIRD_URI}
+        });
     }
 }
