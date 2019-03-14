@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertsLoader;
+import com.novoda.noplayer.internal.utils.AdvertBreakUtils;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -61,9 +62,10 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
         public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
             Collections.sort(advertBreaks, new AdvertBreakStartTimeComparer());
             Log.e("LOADER", "adsLoaded transforming");
-            long[] advertOffsets = getAdvertOffsets(advertBreaks);
-            adPlaybackState = new AdPlaybackState(advertOffsets);
+            long[] advertOffsets = AdvertBreakUtils.advertOffsets(advertBreaks);
             long[][] advertBreaksWithAdvertDurations = getAdvertBreakDurations(advertBreaks);
+
+            adPlaybackState = new AdPlaybackState(advertOffsets);
             adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
 
             for (int i = 0; i < advertBreaks.size(); i++) {
@@ -205,14 +207,6 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
         }
-    }
-
-    private static long[] getAdvertOffsets(List<AdvertBreak> advertBreaks) {
-        long[] advertOffsets = new long[advertBreaks.size()];
-        for (int i = 0; i < advertOffsets.length; i++) {
-            advertOffsets[i] = advertBreaks.get(i).startTime();
-        }
-        return advertOffsets;
     }
 
     private static long[][] getAdvertBreakDurations(List<AdvertBreak> advertBreaks) {
