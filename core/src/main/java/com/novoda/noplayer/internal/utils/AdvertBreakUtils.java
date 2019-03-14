@@ -7,7 +7,7 @@ import java.util.List;
 
 public final class AdvertBreakUtils {
 
-    public static long[] advertOffsets(List<AdvertBreak> advertBreaks) {
+    public static long[] advertBreakOffset(List<AdvertBreak> advertBreaks) {
         long[] advertOffsets = new long[advertBreaks.size()];
         for (int i = 0; i < advertOffsets.length; i++) {
             advertOffsets[i] = advertBreaks.get(i).startTime();
@@ -15,7 +15,7 @@ public final class AdvertBreakUtils {
         return advertOffsets;
     }
 
-    public static long[][] advertBreakDurations(List<AdvertBreak> advertBreaks) {
+    public static long[][] advertDurationsByAdvertBreak(List<AdvertBreak> advertBreaks) {
         long[][] advertBreaksWithAdvertDurations = new long[advertBreaks.size()][];
         for (int i = 0; i < advertBreaks.size(); i++) {
             AdvertBreak advertBreak = advertBreaks.get(i);

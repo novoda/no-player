@@ -40,7 +40,7 @@ public class AdvertBreakUtilsTest {
     public void extractsAdvertBreakOffsets() {
         List<AdvertBreak> advertBreaks = Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK);
 
-        long[] advertOffsets = AdvertBreakUtils.advertOffsets(advertBreaks);
+        long[] advertOffsets = AdvertBreakUtils.advertBreakOffset(advertBreaks);
 
         assertThat(advertOffsets).containsOnly(ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS, THREE_SECONDS_IN_MICROS);
     }
@@ -49,7 +49,7 @@ public class AdvertBreakUtilsTest {
     public void extractsAdvertBreakDurations() {
         List<AdvertBreak> advertBreaks = Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK);
 
-        long[][] advertBreakDurations = AdvertBreakUtils.advertBreakDurations(advertBreaks);
+        long[][] advertBreakDurations = AdvertBreakUtils.advertDurationsByAdvertBreak(advertBreaks);
 
         assertThat(advertBreakDurations).isEqualTo(new long[][]{
                 {ONE_SECOND_IN_MICROS},
