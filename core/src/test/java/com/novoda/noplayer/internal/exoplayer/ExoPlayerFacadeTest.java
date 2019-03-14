@@ -106,6 +106,42 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
+        public void givenAdsLoader_whenLoadingVideo_thenSetsPlayerOnAdLoader() {
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(adsLoader).setPlayer(exoPlayer);
+        }
+
+        @Test
+        public void givenAdsLoader_whenReleasing_thenReleasesAdsLoader() {
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+
+            facade.release();
+
+            verify(adsLoader).release();
+        }
+
+        @Test
+        public void givenAbsentAdsLoader_whenLoadingVideo_thenDoesNotSetPlayerOnAdLoader() {
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(adsLoader, never()).setPlayer(exoPlayer);
+        }
+
+        @Test
+        public void givenAbsentAdsLoader_whenReleasing_thenDoesNotReleaseAdsLoader() {
+
+            facade.release();
+
+            verify(adsLoader, never()).release();
+        }
+
+        @Test
         public void givenSurfaceContainerContainsSurfaceView_whenLoadingVideo_thenSetsSurfaceViewOnExoPlayer() {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
@@ -492,6 +528,10 @@ public class ExoPlayerFacadeTest {
         @Mock
         RendererTypeRequesterCreator rendererTypeRequesterCreator;
         @Mock
+        Optional<MyAdsLoader> optionalAdsLoader;
+        @Mock
+        MyAdsLoader adsLoader;
+        @Mock
         DrmSessionCreator drmSessionCreator;
         @Mock
         DefaultDrmSessionEventListener drmSessionEventListener;
@@ -524,7 +564,7 @@ public class ExoPlayerFacadeTest {
                     trackSelectorCreator,
                     exoPlayerCreator,
                     rendererTypeRequesterCreator,
-                    Optional.<MyAdsLoader>absent()
+                    optionalAdsLoader
             );
             given(surfaceView.getHolder()).willReturn(mock(SurfaceHolder.class));
             surfaceViewHolder = PlayerSurfaceHolder.create(surfaceView);

@@ -102,6 +102,10 @@ class ExoPlayerFacade {
     }
 
     void release() {
+        if (adsLoader.isPresent()) {
+            adsLoader.get().release();
+        }
+
         if (exoPlayer != null) {
             exoPlayer.release();
             exoPlayer = null;
