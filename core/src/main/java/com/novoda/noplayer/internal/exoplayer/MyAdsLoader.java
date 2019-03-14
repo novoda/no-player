@@ -13,13 +13,10 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertsLoader;
-import com.novoda.noplayer.internal.utils.AdvertBreakUtils;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -60,27 +57,7 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
     private final AdvertsLoader.Callback advertsLoadedCallback = new AdvertsLoader.Callback() {
         @Override
         public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
-            Collections.sort(advertBreaks, new AdvertBreakStartTimeComparer());
-            Log.e("LOADER", "adsLoaded transforming");
-            long[] advertOffsets = AdvertBreakUtils.advertBreakOffset(advertBreaks);
-            adPlaybackState = new AdPlaybackState(advertOffsets);
-
-            long[][] advertBreaksWithAdvertDurations = AdvertBreakUtils.advertDurationsByAdvertBreak(advertBreaks);
-            adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
-
-            int[] numberOfAdvertsPerBreak = AdvertBreakUtils.numberOfAdvertsPerAdvertBreak(advertBreaks);
-            for (int i = 0; i < numberOfAdvertsPerBreak.length; i++) {
-                adPlaybackState = adPlaybackState.withAdCount(i, numberOfAdvertsPerBreak[i]);
-            }
-
-            for (int i = 0; i < advertBreaks.size(); i++) {
-                List<Advert> adverts = advertBreaks.get(i).adverts();
-
-                for (int j = 0; j < adverts.size(); j++) {
-                    Advert advert = adverts.get(j);
-                    adPlaybackState = adPlaybackState.withAdUri(i, j, advert.uri());
-                }
-            }
+            adPlaybackState = AdvertPlaybackState.from(advertBreaks);
 
             Log.e("LOADER", "retrieved adverts");
 
