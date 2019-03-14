@@ -25,8 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 public class MyAdsLoader implements AdsLoader, Player.EventListener {
 
-    private static final long END_OF_CONTENT_POSITION_THRESHOLD_MS = 5000;
-
     private final AdvertsLoader loader;
     @Nullable
     private Player player;
@@ -37,8 +35,6 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
 
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
-
-    private final Timeline.Period period = new Timeline.Period();
 
     public MyAdsLoader(AdvertsLoader loader) {
         this.loader = loader;
@@ -147,7 +143,7 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        Log.e("LOADER", "Timeline changed reason"  + reason + " contentPosition " + player.getContentPosition() + " currentPosition " + player.getCurrentPosition() + " adIndex " + player.getCurrentAdIndexInAdGroup() + " adGroup " + player.getCurrentAdGroupIndex());
+        Log.e("LOADER", "Timeline changed reason" + reason + " contentPosition " + player.getContentPosition() + " currentPosition " + player.getCurrentPosition() + " adIndex " + player.getCurrentAdIndexInAdGroup() + " adGroup " + player.getCurrentAdGroupIndex());
         if (reason == Player.TIMELINE_CHANGE_REASON_RESET) {
             // The player is being reset and this source will be released.
             return;
