@@ -72,7 +72,7 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void stop() {
-        if (adPlaybackState != null && player != null && adIndexInGroup != -1 && adGroupIndex != -1) {
+        if (adPlaybackState != null && player != null && player.isPlayingAd()) {
             adPlaybackState = adPlaybackState.withAdResumePositionUs(TimeUnit.MILLISECONDS.toMicros(player.getCurrentPosition()));
         }
         eventListener = null;
