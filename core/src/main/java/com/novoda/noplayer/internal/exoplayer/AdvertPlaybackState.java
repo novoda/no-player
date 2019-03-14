@@ -9,6 +9,9 @@ import java.util.List;
 
 public final class AdvertPlaybackState {
 
+    private AdvertPlaybackState() {
+    }
+
     public static AdPlaybackState from(List<AdvertBreak> advertBreaks) {
         Collections.sort(advertBreaks, new AdvertBreakStartTimeComparer());
 
