@@ -36,7 +36,7 @@ public class MyAdsLoader implements AdsLoader, Player.EventListener {
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
 
-    public MyAdsLoader(AdvertsLoader loader) {
+    MyAdsLoader(AdvertsLoader loader) {
         this.loader = loader;
     }
 
