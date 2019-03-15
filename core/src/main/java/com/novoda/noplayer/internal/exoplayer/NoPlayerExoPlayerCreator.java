@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
+import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
@@ -77,7 +78,7 @@ public class NoPlayerExoPlayerCreator {
                                 DrmSessionCreator drmSessionCreator,
                                 boolean downgradeSecureDecoder,
                                 boolean allowCrossProtocolRedirects) {
-            Optional<NoPlayerAdsLoader> adsLoader = createAdsLoaderFrom(advertsLoader);
+            Optional<AdsLoader> adsLoader = createAdsLoaderFrom(advertsLoader);
 
             MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(
                     context,
@@ -124,10 +125,10 @@ public class NoPlayerExoPlayerCreator {
             );
         }
 
-        private Optional<NoPlayerAdsLoader> createAdsLoaderFrom(final Optional<AdvertsLoader> advertsLoader) {
+        private Optional<AdsLoader> createAdsLoaderFrom(final Optional<AdvertsLoader> advertsLoader) {
             if (advertsLoader.isPresent()) {
                 final AdvertsLoader loader = advertsLoader.get();
-                NoPlayerAdsLoader adsLoader = new NoPlayerAdsLoader(loader);
+                AdsLoader adsLoader = new NoPlayerAdsLoader(loader);
                 return Optional.of(adsLoader);
             } else {
                 return Optional.absent();
