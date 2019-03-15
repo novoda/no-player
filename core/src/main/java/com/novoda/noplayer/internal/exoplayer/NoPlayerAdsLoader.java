@@ -48,7 +48,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         if (loadingAds != null) {
             return;
         }
-        
+
         if (adPlaybackState == null) {
             loadingAds = loader.load(advertsLoadedCallback);
         } else {
