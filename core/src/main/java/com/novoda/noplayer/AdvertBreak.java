@@ -4,16 +4,16 @@ import java.util.List;
 
 public class AdvertBreak {
 
-    private final long startTimeInMicros;
+    private final long startTimeInMillis;
     private final List<Advert> adverts;
 
-    public AdvertBreak(long startTimeInMicros, List<Advert> adverts) {
-        this.startTimeInMicros = startTimeInMicros;
+    public AdvertBreak(long startTimeInMillis, List<Advert> adverts) {
+        this.startTimeInMillis = startTimeInMillis;
         this.adverts = adverts;
     }
 
-    public long startTime() {
-        return startTimeInMicros;
+    public long startTimeInMillis() {
+        return startTimeInMillis;
     }
 
     public List<Advert> adverts() {
@@ -31,7 +31,7 @@ public class AdvertBreak {
 
         AdvertBreak that = (AdvertBreak) o;
 
-        if (startTimeInMicros != that.startTimeInMicros) {
+        if (startTimeInMillis != that.startTimeInMillis) {
             return false;
         }
         return adverts != null ? adverts.equals(that.adverts) : that.adverts == null;
@@ -39,7 +39,7 @@ public class AdvertBreak {
 
     @Override
     public int hashCode() {
-        int result = (int) (startTimeInMicros ^ (startTimeInMicros >>> 32));
+        int result = (int) (startTimeInMillis ^ (startTimeInMillis >>> 32));
         result = 31 * result + (adverts != null ? adverts.hashCode() : 0);
         return result;
     }
@@ -47,7 +47,7 @@ public class AdvertBreak {
     @Override
     public String toString() {
         return "AdvertBreak{"
-                + "startTimeInMicros=" + startTimeInMicros
+                + "startTimeInMillis=" + startTimeInMillis
                 + ", adverts=" + adverts
                 + '}';
     }

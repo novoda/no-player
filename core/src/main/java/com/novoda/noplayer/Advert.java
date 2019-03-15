@@ -4,16 +4,16 @@ import android.net.Uri;
 
 public class Advert {
 
-    private final long durationInMicros;
+    private final long durationInMillis;
     private final Uri uri;
 
-    public Advert(long durationInMicros, Uri uri) {
-        this.durationInMicros = durationInMicros;
+    public Advert(long durationInMillis, Uri uri) {
+        this.durationInMillis = durationInMillis;
         this.uri = uri;
     }
 
-    public long durationInMicros() {
-        return durationInMicros;
+    public long durationInMillis() {
+        return durationInMillis;
     }
 
     public Uri uri() {
@@ -31,7 +31,7 @@ public class Advert {
 
         Advert advert = (Advert) o;
 
-        if (durationInMicros != advert.durationInMicros) {
+        if (durationInMillis != advert.durationInMillis) {
             return false;
         }
         return uri != null ? uri.equals(advert.uri) : advert.uri == null;
@@ -39,7 +39,7 @@ public class Advert {
 
     @Override
     public int hashCode() {
-        int result = (int) (durationInMicros ^ (durationInMicros >>> 32));
+        int result = (int) (durationInMillis ^ (durationInMillis >>> 32));
         result = 31 * result + (uri != null ? uri.hashCode() : 0);
         return result;
     }
@@ -47,7 +47,7 @@ public class Advert {
     @Override
     public String toString() {
         return "Advert{"
-                + "durationInMicros=" + durationInMicros
+                + "durationInMillis=" + durationInMillis
                 + ", uri=" + uri
                 + '}';
     }

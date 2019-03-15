@@ -21,24 +21,28 @@ public class AdvertPlaybackStateTest {
     private static final int TWO_SECONDS_IN_MICROS = 2000000;
     private static final int THREE_SECONDS_IN_MICROS = 3000000;
 
+    private static final int ONE_SECOND_IN_MILLIS = 1000;
+    private static final int TWO_SECONDS_IN_MILLIS = 2000;
+    private static final int THREE_SECONDS_IN_MILLIS = 3000;
+
     private static final Uri FIRST_URI = mock(Uri.class);
     private static final Uri SECOND_URI = mock(Uri.class);
     private static final Uri THIRD_URI = mock(Uri.class);
 
-    private static final Advert FIRST_ADVERT = new Advert(ONE_SECOND_IN_MICROS, FIRST_URI);
-    private static final Advert SECOND_ADVERT = new Advert(TWO_SECONDS_IN_MICROS, SECOND_URI);
-    private static final Advert THIRD_ADVERT = new Advert(THREE_SECONDS_IN_MICROS, THIRD_URI);
+    private static final Advert FIRST_ADVERT = new Advert(ONE_SECOND_IN_MILLIS, FIRST_URI);
+    private static final Advert SECOND_ADVERT = new Advert(TWO_SECONDS_IN_MILLIS, SECOND_URI);
+    private static final Advert THIRD_ADVERT = new Advert(THREE_SECONDS_IN_MILLIS, THIRD_URI);
 
     private static final AdvertBreak FIRST_ADVERT_BREAK = new AdvertBreak(
-            ONE_SECOND_IN_MICROS, Collections.singletonList(FIRST_ADVERT)
+            ONE_SECOND_IN_MILLIS, Collections.singletonList(FIRST_ADVERT)
     );
 
     private static final AdvertBreak SECOND_ADVERT_BREAK = new AdvertBreak(
-            TWO_SECONDS_IN_MICROS, Arrays.asList(FIRST_ADVERT, SECOND_ADVERT)
+            TWO_SECONDS_IN_MILLIS, Arrays.asList(FIRST_ADVERT, SECOND_ADVERT)
     );
 
     private static final AdvertBreak THIRD_ADVERT_BREAK = new AdvertBreak(
-            THREE_SECONDS_IN_MICROS, Arrays.asList(FIRST_ADVERT, SECOND_ADVERT, THIRD_ADVERT)
+            THREE_SECONDS_IN_MILLIS, Arrays.asList(FIRST_ADVERT, SECOND_ADVERT, THIRD_ADVERT)
     );
 
     @Test

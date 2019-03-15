@@ -9,7 +9,7 @@ class AdvertBreakStartTimeComparator implements Comparator<AdvertBreak>, Seriali
 
     @Override
     public int compare(AdvertBreak o1, AdvertBreak o2) {
-        return compareLong(o1.startTime(), o2.startTime());
+        return compareLong(o1.startTimeInMillis(), o2.startTimeInMillis());
     }
 
     private static int compareLong(long x, long y) {

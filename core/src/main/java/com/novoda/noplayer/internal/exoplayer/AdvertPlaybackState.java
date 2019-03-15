@@ -1,5 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
@@ -32,7 +33,7 @@ public final class AdvertPlaybackState {
 
             for (int j = 0; j < advertsCount; j++) {
                 Advert advert = adverts.get(j);
-                advertDurations[j] = advert.durationInMicros();
+                advertDurations[j] = C.msToUs(advert.durationInMillis());
                 adPlaybackState = adPlaybackState.withAdUri(i, j, advert.uri());
             }
 
@@ -45,7 +46,7 @@ public final class AdvertPlaybackState {
     private static long[] advertBreakOffset(List<AdvertBreak> advertBreaks) {
         long[] advertOffsets = new long[advertBreaks.size()];
         for (int i = 0; i < advertOffsets.length; i++) {
-            advertOffsets[i] = advertBreaks.get(i).startTime();
+            advertOffsets[i] = C.msToUs(advertBreaks.get(i).startTimeInMillis());
         }
         return advertOffsets;
     }
