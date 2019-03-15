@@ -31,6 +31,13 @@ public class PlayerBuilder {
     private String userAgent = "user-agent";
     private AdvertsLoader advertsLoader;
 
+    /**
+     * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will play adverts provided by the passed in loader
+     *
+     * @param advertsLoader The loader used by NoPlayer to fetch what adverts to play.
+     * @return {@link PlayerBuilder}
+     * @see NoPlayer
+     */
     public PlayerBuilder withAdverts(AdvertsLoader advertsLoader) {
         this.advertsLoader = advertsLoader;
         return this;
