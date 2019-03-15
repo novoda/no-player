@@ -95,11 +95,9 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     }
 
     @Override
-    public void setPlayer(@Nullable Player player) {
-        if (player != null) {
-            this.player = player;
-            this.player.addListener(this);
-        }
+    public void setPlayer(Player player) {
+        this.player = player;
+        this.player.addListener(this);
     }
 
     @Override
