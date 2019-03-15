@@ -50,6 +50,19 @@ public class MediaSourceFactory {
                               DefaultBandwidthMeter bandwidthMeter) {
         DefaultDataSourceFactory defaultDataSourceFactory = createDataSourceFactory(bandwidthMeter);
 
+        MediaSource contentMediaSource = getMediaSourceFor(options, uri, defaultDataSourceFactory);
+
+        if (advertsLoader.isPresent()) {
+            AdsMediaSource adsMediaSource = new AdsMediaSource(contentMediaSource, defaultDataSourceFactory, advertsLoader.get(), null);
+            adsMediaSource.addEventListener(handler, mediaSourceEventListener);
+            return adsMediaSource;
+        } else {
+            contentMediaSource.addEventListener(handler, mediaSourceEventListener);
+            return contentMediaSource;
+        }
+    }
+
+    private MediaSource getMediaSourceFor(Options options, Uri uri, DefaultDataSourceFactory defaultDataSourceFactory) {
         MediaSource contentMediaSource;
         switch (options.contentType()) {
             case HLS:
@@ -64,15 +77,7 @@ public class MediaSourceFactory {
             default:
                 throw new UnsupportedOperationException("Content type: " + options + " is not supported.");
         }
-
-        if (advertsLoader.isPresent()) {
-            AdsMediaSource adsMediaSource = new AdsMediaSource(contentMediaSource, defaultDataSourceFactory, advertsLoader.get(), null);
-            adsMediaSource.addEventListener(handler, mediaSourceEventListener);
-            return adsMediaSource;
-        } else {
-            contentMediaSource.addEventListener(handler, mediaSourceEventListener);
-            return contentMediaSource;
-        }
+        return contentMediaSource;
     }
 
     private DefaultDataSourceFactory createDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {

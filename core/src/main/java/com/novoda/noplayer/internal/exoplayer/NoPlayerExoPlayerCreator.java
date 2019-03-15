@@ -125,9 +125,9 @@ public class NoPlayerExoPlayerCreator {
             );
         }
 
-        private Optional<AdsLoader> createAdsLoaderFrom(final Optional<AdvertsLoader> advertsLoader) {
+        private Optional<AdsLoader> createAdsLoaderFrom(Optional<AdvertsLoader> advertsLoader) {
             if (advertsLoader.isPresent()) {
-                final AdvertsLoader loader = advertsLoader.get();
+                AdvertsLoader loader = advertsLoader.get();
                 AdsLoader adsLoader = new NoPlayerAdsLoader(loader);
                 return Optional.of(adsLoader);
             } else {
