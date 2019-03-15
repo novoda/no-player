@@ -18,17 +18,19 @@ public final class AdvertPlaybackState {
         long[] advertOffsets = advertBreakOffset(advertBreaks);
         AdPlaybackState adPlaybackState = new AdPlaybackState(advertOffsets);
 
-        long[][] advertBreaksWithAdvertDurations = new long[advertBreaks.size()][];
+        int advertBreaksCount = advertBreaks.size();
+        long[][] advertBreaksWithAdvertDurations = new long[advertBreaksCount][];
 
-        for (int i = 0; i < advertBreaks.size(); i++) {
+        for (int i = 0; i < advertBreaksCount; i++) {
             AdvertBreak advertBreak = advertBreaks.get(i);
             List<Advert> adverts = advertBreak.adverts();
 
-            long[] advertDurations = new long[adverts.size()];
+            int advertsCount = adverts.size();
+            adPlaybackState = adPlaybackState.withAdCount(i, advertsCount);
 
-            adPlaybackState = adPlaybackState.withAdCount(i, adverts.size());
+            long[] advertDurations = new long[advertsCount];
 
-            for (int j = 0; j < adverts.size(); j++) {
+            for (int j = 0; j < advertsCount; j++) {
                 Advert advert = adverts.get(j);
                 advertDurations[j] = advert.durationInMicros();
                 adPlaybackState = adPlaybackState.withAdUri(i, j, advert.uri());
