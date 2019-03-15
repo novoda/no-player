@@ -5,7 +5,7 @@ import com.novoda.noplayer.AdvertBreak;
 import java.io.Serializable;
 import java.util.Comparator;
 
-class AdvertBreakStartTimeComparer implements Comparator<AdvertBreak>, Serializable {
+class AdvertBreakStartTimeComparator implements Comparator<AdvertBreak>, Serializable {
 
     @Override
     public int compare(AdvertBreak o1, AdvertBreak o2) {

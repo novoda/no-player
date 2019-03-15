@@ -13,7 +13,7 @@ public final class AdvertPlaybackState {
     }
 
     public static AdPlaybackState from(List<AdvertBreak> advertBreaks) {
-        Collections.sort(advertBreaks, new AdvertBreakStartTimeComparer());
+        Collections.sort(advertBreaks, new AdvertBreakStartTimeComparator());
 
         long[] advertOffsets = advertBreakOffset(advertBreaks);
         AdPlaybackState adPlaybackState = new AdPlaybackState(advertOffsets);

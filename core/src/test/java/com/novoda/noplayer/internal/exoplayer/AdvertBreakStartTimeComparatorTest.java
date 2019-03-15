@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class AdvertBreakStartTimeComparerTest {
+public class AdvertBreakStartTimeComparatorTest {
 
     private static final AdvertBreak FIRST_ADVERT_BREAK = new AdvertBreak(
             10000, Collections.<Advert>emptyList()
@@ -28,7 +28,7 @@ public class AdvertBreakStartTimeComparerTest {
     @Test
     public void sortsBasedOnStartTime() {
         List<AdvertBreak> advertBreaks = Arrays.asList(THIRD_ADVERT_BREAK, SECOND_ADVERT_BREAK, FIRST_ADVERT_BREAK);
-        Collections.sort(advertBreaks, new AdvertBreakStartTimeComparer());
+        Collections.sort(advertBreaks, new AdvertBreakStartTimeComparator());
 
         assertThat(advertBreaks).containsExactly(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK);
     }
