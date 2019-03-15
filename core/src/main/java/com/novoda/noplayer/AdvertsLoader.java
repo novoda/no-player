@@ -4,12 +4,16 @@ import java.util.List;
 
 public interface AdvertsLoader {
 
-    void load(Callback callback);
+    Cancellable load(Callback callback);
 
     interface Callback {
         void onAdvertsLoaded(List<AdvertBreak> advertBreaks);
 
         void onAdvertsError(String message);
+    }
+
+    interface Cancellable {
+        void cancel();
     }
 
 }
