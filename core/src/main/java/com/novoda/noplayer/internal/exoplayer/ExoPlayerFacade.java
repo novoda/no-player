@@ -9,6 +9,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerSurfaceHolder;
@@ -35,6 +36,7 @@ class ExoPlayerFacade {
     private final CompositeTrackSelectorCreator trackSelectorCreator;
     private final ExoPlayerCreator exoPlayerCreator;
     private final RendererTypeRequesterCreator rendererTypeRequesterCreator;
+    private final Optional<AdsLoader> adsLoader;
 
     @Nullable
     private SimpleExoPlayer exoPlayer;
@@ -50,13 +52,15 @@ class ExoPlayerFacade {
                     MediaSourceFactory mediaSourceFactory,
                     CompositeTrackSelectorCreator trackSelectorCreator,
                     ExoPlayerCreator exoPlayerCreator,
-                    RendererTypeRequesterCreator rendererTypeRequesterCreator) {
+                    RendererTypeRequesterCreator rendererTypeRequesterCreator,
+                    Optional<AdsLoader> adsLoader) {
         this.bandwidthMeterCreator = bandwidthMeterCreator;
         this.androidDeviceVersion = androidDeviceVersion;
         this.mediaSourceFactory = mediaSourceFactory;
         this.trackSelectorCreator = trackSelectorCreator;
         this.exoPlayerCreator = exoPlayerCreator;
         this.rendererTypeRequesterCreator = rendererTypeRequesterCreator;
+        this.adsLoader = adsLoader;
     }
 
     boolean isPlaying() {
@@ -99,6 +103,10 @@ class ExoPlayerFacade {
     }
 
     void release() {
+        if (adsLoader.isPresent()) {
+            adsLoader.get().release();
+        }
+
         if (exoPlayer != null) {
             exoPlayer.release();
             exoPlayer = null;
@@ -137,6 +145,9 @@ class ExoPlayerFacade {
         );
         attachToSurface(playerSurfaceHolder);
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
+        if (adsLoader.isPresent()) {
+            adsLoader.get().setPlayer(exoPlayer);
+        }
     }
 
     private void setMovieAudioAttributes(SimpleExoPlayer exoPlayer) {

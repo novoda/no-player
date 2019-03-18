@@ -8,6 +8,8 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
+import com.google.android.exoplayer2.source.ads.AdsLoader;
+import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -25,17 +27,20 @@ public class MediaSourceFactory {
     private final Handler handler;
     private final Optional<DataSource.Factory> dataSourceFactory;
     private final String userAgent;
+    private final Optional<AdsLoader> advertsLoader;
     private final boolean allowCrossProtocolRedirects;
 
     public MediaSourceFactory(Context context,
                               String userAgent,
                               Handler handler,
                               Optional<DataSource.Factory> dataSourceFactory,
+                              Optional<AdsLoader> advertsLoader,
                               boolean allowCrossProtocolRedirects) {
         this.context = context;
         this.handler = handler;
         this.dataSourceFactory = dataSourceFactory;
         this.userAgent = userAgent;
+        this.advertsLoader = advertsLoader;
         this.allowCrossProtocolRedirects = allowCrossProtocolRedirects;
     }
 
@@ -44,16 +49,35 @@ public class MediaSourceFactory {
                               MediaSourceEventListener mediaSourceEventListener,
                               DefaultBandwidthMeter bandwidthMeter) {
         DefaultDataSourceFactory defaultDataSourceFactory = createDataSourceFactory(bandwidthMeter);
+
+        MediaSource contentMediaSource = getMediaSourceFor(options, uri, defaultDataSourceFactory);
+
+        if (advertsLoader.isPresent()) {
+            AdsMediaSource adsMediaSource = new AdsMediaSource(contentMediaSource, defaultDataSourceFactory, advertsLoader.get(), null);
+            adsMediaSource.addEventListener(handler, mediaSourceEventListener);
+            return adsMediaSource;
+        } else {
+            contentMediaSource.addEventListener(handler, mediaSourceEventListener);
+            return contentMediaSource;
+        }
+    }
+
+    private MediaSource getMediaSourceFor(Options options, Uri uri, DefaultDataSourceFactory defaultDataSourceFactory) {
+        MediaSource contentMediaSource;
         switch (options.contentType()) {
             case HLS:
-                return createHlsMediaSource(defaultDataSourceFactory, uri, mediaSourceEventListener);
+                contentMediaSource = createHlsMediaSource(defaultDataSourceFactory, uri);
+                break;
             case H264:
-                return createH264MediaSource(defaultDataSourceFactory, uri, mediaSourceEventListener);
+                contentMediaSource = createH264MediaSource(defaultDataSourceFactory, uri);
+                break;
             case DASH:
-                return createDashMediaSource(defaultDataSourceFactory, uri, mediaSourceEventListener);
+                contentMediaSource = createDashMediaSource(defaultDataSourceFactory, uri);
+                break;
             default:
                 throw new UnsupportedOperationException("Content type: " + options + " is not supported.");
         }
+        return contentMediaSource;
     }
 
     private DefaultDataSourceFactory createDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
@@ -73,32 +97,23 @@ public class MediaSourceFactory {
     }
 
     private MediaSource createHlsMediaSource(DefaultDataSourceFactory defaultDataSourceFactory,
-                                             Uri uri,
-                                             MediaSourceEventListener mediaSourceEventListener) {
+                                             Uri uri) {
         HlsMediaSource.Factory factory = new HlsMediaSource.Factory(defaultDataSourceFactory);
-        HlsMediaSource hlsMediaSource = factory.createMediaSource(uri);
-        hlsMediaSource.addEventListener(handler, mediaSourceEventListener);
-        return hlsMediaSource;
+        return factory.createMediaSource(uri);
     }
 
     private MediaSource createH264MediaSource(DefaultDataSourceFactory defaultDataSourceFactory,
-                                              Uri uri,
-                                              MediaSourceEventListener mediaSourceEventListener) {
+                                              Uri uri) {
         ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(defaultDataSourceFactory);
-        ExtractorMediaSource extractorMediaSource = factory
+        return factory
                 .setExtractorsFactory(new DefaultExtractorsFactory())
                 .createMediaSource(uri);
-        extractorMediaSource.addEventListener(handler, mediaSourceEventListener);
-        return extractorMediaSource;
     }
 
     private MediaSource createDashMediaSource(DefaultDataSourceFactory defaultDataSourceFactory,
-                                              Uri uri,
-                                              MediaSourceEventListener mediaSourceEventListener) {
+                                              Uri uri) {
         DefaultDashChunkSource.Factory chunkSourceFactory = new DefaultDashChunkSource.Factory(defaultDataSourceFactory);
         DashMediaSource.Factory factory = new DashMediaSource.Factory(chunkSourceFactory, defaultDataSourceFactory);
-        DashMediaSource mediaSource = factory.createMediaSource(uri);
-        mediaSource.addEventListener(handler, mediaSourceEventListener);
-        return mediaSource;
+        return factory.createMediaSource(uri);
     }
 }
