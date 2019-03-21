@@ -579,7 +579,8 @@ public class ExoPlayerFacadeTest {
                             OPTIONS,
                             uri,
                             mediaSourceEventListener,
-                            defaultBandwidthMeter
+                            defaultBandwidthMeter,
+                            optionalAdsLoader
                     )
             ).willReturn(mediaSource);
 
