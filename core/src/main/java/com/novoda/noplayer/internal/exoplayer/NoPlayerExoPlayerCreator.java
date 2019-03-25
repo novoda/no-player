@@ -11,7 +11,7 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.SystemClock;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
-import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
+import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerListener;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
@@ -109,14 +109,14 @@ public class NoPlayerExoPlayerCreator {
             );
 
             PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
-            ExoPlayerForwarder exoPlayerForwarder = new ExoPlayerForwarder();
+            ExoPlayerListener exoPlayerListener = new ExoPlayerListener();
             LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), handler);
             Heart heart = Heart.newInstance(handler);
 
             return new ExoPlayerTwoImpl(
                     exoPlayerFacade,
                     listenersHolder,
-                    exoPlayerForwarder,
+                    exoPlayerListener,
                     loadTimeout,
                     heart,
                     drmSessionCreator,

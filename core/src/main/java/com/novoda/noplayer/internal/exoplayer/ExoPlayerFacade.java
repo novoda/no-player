@@ -14,7 +14,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
-import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
+import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerListener;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 import com.novoda.noplayer.internal.utils.Optional;
@@ -117,7 +117,7 @@ class ExoPlayerFacade {
                    DrmSessionCreator drmSessionCreator,
                    Uri uri,
                    Options options,
-                   ExoPlayerForwarder forwarder,
+                   ExoPlayerListener exoPlayerListener,
                    MediaCodecSelector mediaCodecSelector) {
         this.options = options;
 
@@ -126,21 +126,21 @@ class ExoPlayerFacade {
         compositeTrackSelector = trackSelectorCreator.create(options, bandwidthMeter);
         exoPlayer = exoPlayerCreator.create(
                 drmSessionCreator,
-                forwarder.drmSessionEventListener(),
+                exoPlayerListener,
                 mediaCodecSelector,
                 compositeTrackSelector.trackSelector()
         );
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
-        exoPlayer.addListener(forwarder.exoPlayerEventListener());
-        exoPlayer.addAnalyticsListener(forwarder.analyticsListener());
-        exoPlayer.addVideoListener(forwarder.videoListener());
+        exoPlayer.addListener(exoPlayerListener);
+        exoPlayer.addAnalyticsListener(exoPlayerListener);
+        exoPlayer.addVideoListener(exoPlayerListener);
 
         setMovieAudioAttributes(exoPlayer);
 
         MediaSource mediaSource = mediaSourceFactory.create(
                 options,
                 uri,
-                forwarder.mediaSourceEventListener(),
+                exoPlayerListener,
                 bandwidthMeter,
                 adsLoader
         );

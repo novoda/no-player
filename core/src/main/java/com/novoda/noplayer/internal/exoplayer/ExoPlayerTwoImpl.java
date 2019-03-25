@@ -13,7 +13,7 @@ import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
-import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
+import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerListener;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
@@ -31,7 +31,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
     private final ExoPlayerFacade exoPlayer;
     private final PlayerListenersHolder listenersHolder;
-    private final ExoPlayerForwarder forwarder;
+    private final ExoPlayerListener exoPlayerListener;
     private final Heart heart;
     private final DrmSessionCreator drmSessionCreator;
     private final MediaCodecSelector mediaCodecSelector;
@@ -46,7 +46,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
     ExoPlayerTwoImpl(ExoPlayerFacade exoPlayer,
                      PlayerListenersHolder listenersHolder,
-                     ExoPlayerForwarder exoPlayerForwarder,
+                     ExoPlayerListener exoPlayerListener,
                      LoadTimeout loadTimeoutParam,
                      Heart heart,
                      DrmSessionCreator drmSessionCreator,
@@ -54,7 +54,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
-        this.forwarder = exoPlayerForwarder;
+        this.exoPlayerListener = exoPlayerListener;
         this.heart = heart;
         this.drmSessionCreator = drmSessionCreator;
         this.mediaCodecSelector = mediaCodecSelector;
@@ -62,14 +62,14 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
     void initialise() {
         heart.bind(new Heart.Heartbeat(listenersHolder.getHeartbeatCallbacks(), this));
-        forwarder.bind(listenersHolder.getPreparedListeners(), this);
-        forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
-        forwarder.bind(listenersHolder.getErrorListeners());
-        forwarder.bind(listenersHolder.getBufferStateListeners());
-        forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
-        forwarder.bind(listenersHolder.getBitrateChangedListeners());
-        forwarder.bind(listenersHolder.getInfoListeners());
-        forwarder.bind(listenersHolder.getDroppedVideoFramesListeners());
+        exoPlayerListener.bind(listenersHolder.getPreparedListeners(), this);
+        exoPlayerListener.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
+        exoPlayerListener.bind(listenersHolder.getErrorListeners());
+        exoPlayerListener.bind(listenersHolder.getBufferStateListeners());
+        exoPlayerListener.bind(listenersHolder.getVideoSizeChangedListeners());
+        exoPlayerListener.bind(listenersHolder.getBitrateChangedListeners());
+        exoPlayerListener.bind(listenersHolder.getInfoListeners());
+        exoPlayerListener.bind(listenersHolder.getDroppedVideoFramesListeners());
         listenersHolder.addPreparedListener(new PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
@@ -201,7 +201,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
             stop();
         }
         assertPlayerViewIsAttached();
-        exoPlayer.loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, options, forwarder, mediaCodecSelector);
+        exoPlayer.loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, options, exoPlayerListener, mediaCodecSelector);
         createSurfaceByShowingVideoContainer();
     }
 

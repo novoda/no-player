@@ -18,12 +18,13 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.PlayerState;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-class ExoPlayerListener implements Player.EventListener, MediaSourceEventListener, AnalyticsListener, VideoListener, DefaultDrmSessionEventListener {
+public class ExoPlayerListener implements Player.EventListener, MediaSourceEventListener, AnalyticsListener, VideoListener, DefaultDrmSessionEventListener {
 
     private final List<Player.EventListener> playerEventListeners = new CopyOnWriteArrayList<>();
     private final List<MediaSourceEventListener> mediaSourceEventListeners = new CopyOnWriteArrayList<>();
@@ -32,28 +33,40 @@ class ExoPlayerListener implements Player.EventListener, MediaSourceEventListene
     private final List<VideoListener> videoListeners = new CopyOnWriteArrayList<>();
     private final List<DefaultDrmSessionEventListener> drmSessionEventListeners = new CopyOnWriteArrayList<>();
 
-    public void add(Player.EventListener listener) {
-        playerEventListeners.add(listener);
+    public void bind(NoPlayer.PreparedListener preparedListener, PlayerState playerState) {
+        playerEventListeners.add(new OnPrepareForwarder(preparedListener, playerState));
     }
 
-    public void add(MediaSourceEventListener listener) {
-        mediaSourceEventListeners.add(listener);
+    public void bind(NoPlayer.CompletionListener completionListener, NoPlayer.StateChangedListener stateChangedListener) {
+        playerEventListeners.add(new OnCompletionForwarder(completionListener));
+        playerEventListeners.add(new OnCompletionStateChangedForwarder(stateChangedListener));
     }
 
-    public void add(AnalyticsListener listener) {
-        analyticsListeners.add(listener);
+    public void bind(NoPlayer.ErrorListener errorListener) {
+        playerEventListeners.add(new PlayerOnErrorForwarder(errorListener));
     }
 
-    public void add(NoPlayer.DroppedVideoFramesListener listener) {
-        droppedVideoFramesListeners.add(listener);
+    public void bind(NoPlayer.BufferStateListener bufferStateListener) {
+        playerEventListeners.add(new BufferStateForwarder(bufferStateListener));
     }
 
-    public void add(VideoListener listener) {
-        videoListeners.add(listener);
+    public void bind(NoPlayer.VideoSizeChangedListener videoSizeChangedListener) {
+        videoListeners.add(new VideoSizeChangedForwarder(videoSizeChangedListener));
     }
 
-    void add(DefaultDrmSessionEventListener listener) {
-        drmSessionEventListeners.add(listener);
+    public void bind(NoPlayer.BitrateChangedListener bitrateChangedListener) {
+        mediaSourceEventListeners.add(new BitrateForwarder(bitrateChangedListener));
+    }
+
+    public void bind(NoPlayer.InfoListener infoListeners) {
+        playerEventListeners.add(new EventInfoForwarder(infoListeners));
+        mediaSourceEventListeners.add(new MediaSourceEventForwarder(infoListeners));
+        drmSessionEventListeners.add(new DrmSessionInfoForwarder(infoListeners));
+        analyticsListeners.add(new AnalyticsListenerForwarder(infoListeners));
+    }
+
+    public void bind(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListener) {
+        droppedVideoFramesListeners.add(droppedVideoFramesListener);
     }
 
     @Override
