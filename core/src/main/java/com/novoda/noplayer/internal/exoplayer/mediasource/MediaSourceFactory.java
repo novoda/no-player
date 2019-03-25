@@ -27,27 +27,25 @@ public class MediaSourceFactory {
     private final Handler handler;
     private final Optional<DataSource.Factory> dataSourceFactory;
     private final String userAgent;
-    private final Optional<AdsLoader> advertsLoader;
     private final boolean allowCrossProtocolRedirects;
 
     public MediaSourceFactory(Context context,
                               String userAgent,
                               Handler handler,
                               Optional<DataSource.Factory> dataSourceFactory,
-                              Optional<AdsLoader> advertsLoader,
                               boolean allowCrossProtocolRedirects) {
         this.context = context;
         this.handler = handler;
         this.dataSourceFactory = dataSourceFactory;
         this.userAgent = userAgent;
-        this.advertsLoader = advertsLoader;
         this.allowCrossProtocolRedirects = allowCrossProtocolRedirects;
     }
 
     public MediaSource create(Options options,
                               Uri uri,
                               MediaSourceEventListener mediaSourceEventListener,
-                              DefaultBandwidthMeter bandwidthMeter) {
+                              DefaultBandwidthMeter bandwidthMeter,
+                              Optional<AdsLoader> advertsLoader) {
         DefaultDataSourceFactory defaultDataSourceFactory = createDataSourceFactory(bandwidthMeter);
 
         MediaSource contentMediaSource = getMediaSourceFor(options, uri, defaultDataSourceFactory);

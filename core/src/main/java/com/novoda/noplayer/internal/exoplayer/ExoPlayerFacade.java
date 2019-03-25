@@ -141,7 +141,8 @@ class ExoPlayerFacade {
                 options,
                 uri,
                 forwarder.mediaSourceEventListener(),
-                bandwidthMeter
+                bandwidthMeter,
+                adsLoader
         );
         attachToSurface(playerSurfaceHolder);
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);

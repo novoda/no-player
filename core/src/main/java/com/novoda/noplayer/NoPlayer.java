@@ -273,6 +273,11 @@ public interface NoPlayer extends PlayerState {
         void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
     }
 
+    interface AdvertListener {
+
+        void onAdvertEvent(String event); // TODO either pass different data in one method or have separate methods per event
+    }
+
     /**
      * A listener for debugging information.
      */
