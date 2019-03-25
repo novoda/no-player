@@ -9,7 +9,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerSurfaceHolder;
@@ -45,7 +44,7 @@ class ExoPlayerFacade {
     private RendererTypeRequester rendererTypeRequester;
     @Nullable
     private Options options;
-    private Optional<AdsLoader> adsLoader = Optional.absent();
+    private ExoPlayerListener exoPlayerListener;
 
     ExoPlayerFacade(BandwidthMeterCreator bandwidthMeterCreator,
                     AndroidDeviceVersion androidDeviceVersion,
@@ -101,8 +100,9 @@ class ExoPlayerFacade {
     }
 
     void release() {
-        if (adsLoader.isPresent()) {
-            adsLoader.get().release();
+        if (exoPlayerListener != null) {
+            exoPlayerListener.release();
+            exoPlayerListener = null;
         }
 
         if (exoPlayer != null) {
@@ -130,7 +130,7 @@ class ExoPlayerFacade {
         );
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
         exoPlayerListener.bind(exoPlayer);
-        this.adsLoader = exoPlayerListener.adsLoader();
+        this.exoPlayerListener = exoPlayerListener;
 
         setMovieAudioAttributes(exoPlayer);
 
@@ -138,13 +138,9 @@ class ExoPlayerFacade {
                 options,
                 uri,
                 exoPlayerListener,
-                bandwidthMeter,
-                adsLoader
+                bandwidthMeter
         );
         attachToSurface(playerSurfaceHolder);
-        if (adsLoader.isPresent()) {
-            adsLoader.get().setPlayer(exoPlayer);
-        }
         exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
     }
 

@@ -1,5 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.view.Surface;
 
@@ -16,19 +17,23 @@ import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.video.VideoListener;
+import com.novoda.noplayer.AdvertBreak;
+import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
-import com.novoda.noplayer.internal.exoplayer.NoPlayerAdsLoaderForwarder;
+import com.novoda.noplayer.internal.exoplayer.AdvertPlaybackState;
 import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
-public class ExoPlayerListener implements Player.EventListener, MediaSourceEventListener, AnalyticsListener, VideoListener, DefaultDrmSessionEventListener {
+public class ExoPlayerListener implements Player.EventListener, MediaSourceEventListener, AnalyticsListener, VideoListener, DefaultDrmSessionEventListener, AdsLoader {
 
     private final List<Player.EventListener> playerEventListeners = new CopyOnWriteArrayList<>();
     private final List<MediaSourceEventListener> mediaSourceEventListeners = new CopyOnWriteArrayList<>();
@@ -36,15 +41,30 @@ public class ExoPlayerListener implements Player.EventListener, MediaSourceEvent
     private final List<NoPlayer.DroppedVideoFramesListener> droppedVideoFramesListeners = new CopyOnWriteArrayList<>();
     private final List<VideoListener> videoListeners = new CopyOnWriteArrayList<>();
     private final List<DefaultDrmSessionEventListener> drmSessionEventListeners = new CopyOnWriteArrayList<>();
-    private final Optional<NoPlayerAdsLoaderForwarder> adsLoaderForwarder;
+    private final Optional<AdvertsLoader> advertsLoader;
+    private final Handler handler;
+
     private Optional<SimpleExoPlayer> exoPlayer = Optional.absent();
+    @Nullable
+    private AdPlaybackState adPlaybackState;
+    @Nullable
+    private EventListener eventListener;
+    @Nullable
+    private AdvertsLoader.Cancellable loadingAds;
 
-    public ExoPlayerListener(Optional<AdsLoader> adsLoader) {
-        adsLoaderForwarder = adsLoader.isPresent() ? Optional.of(new NoPlayerAdsLoaderForwarder(adsLoader.get())) : Optional.<NoPlayerAdsLoaderForwarder>absent();
-    }
+    private int adIndexInGroup = -1;
+    private int adGroupIndex = -1;
 
-    public Optional<AdsLoader> adsLoader() {
-        return adsLoaderForwarder.isPresent() ? Optional.<AdsLoader>of(adsLoaderForwarder.get()) : Optional.<AdsLoader>absent();
+    private NoPlayer.AdvertListener advertListener = new NoPlayer.AdvertListener() {
+        @Override
+        public void onAdvertEvent(String event) {
+
+        }
+    };
+
+    public ExoPlayerListener(Optional<AdvertsLoader> advertsLoader, Handler handler) {
+        this.advertsLoader = advertsLoader;
+        this.handler = handler;
     }
 
     public void bind(SimpleExoPlayer player) {
@@ -91,15 +111,31 @@ public class ExoPlayerListener implements Player.EventListener, MediaSourceEvent
     }
 
     public void bind(NoPlayer.AdvertListener advertListener) {
-        if (adsLoaderForwarder.isPresent()) {
-            adsLoaderForwarder.get().bind(advertListener);
-        }
+        this.advertListener = advertListener;
+    }
+
+    public boolean canLoadAdverts() {
+        return advertsLoader.isPresent();
     }
 
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest, @Player.TimelineChangeReason int reason) {
         for (Player.EventListener listener : playerEventListeners) {
             listener.onTimelineChanged(timeline, manifest, reason);
+        }
+
+        if (reason == Player.TIMELINE_CHANGE_REASON_RESET) {
+            // The player is being reset and this source will be released.
+            return;
+        }
+
+        if (exoPlayer.isPresent()) {
+            adGroupIndex = exoPlayer.get().getCurrentAdGroupIndex();
+            adIndexInGroup = exoPlayer.get().getCurrentAdIndexInAdGroup();
+        }
+
+        if (isPlayingAdvert()) {
+            advertListener.onAdvertEvent("onTimelineChanged");
         }
     }
 
@@ -153,6 +189,16 @@ public class ExoPlayerListener implements Player.EventListener, MediaSourceEvent
     public void onPositionDiscontinuity(int reason) {
         for (Player.EventListener listener : playerEventListeners) {
             listener.onPositionDiscontinuity(reason);
+        }
+
+        if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION && exoPlayer.isPresent() && adPlaybackState != null) {
+            if (adGroupIndex != -1 && adIndexInGroup != -1) {
+                adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
+                updateAdPlaybackState();
+            }
+
+            adGroupIndex = exoPlayer.get().getCurrentAdGroupIndex();
+            adIndexInGroup = exoPlayer.get().getCurrentAdIndexInAdGroup();
         }
     }
 
@@ -572,4 +618,77 @@ public class ExoPlayerListener implements Player.EventListener, MediaSourceEvent
         }
     }
 
+    @Override
+    public void setSupportedContentTypes(int... contentTypes) {
+        // no-op
+    }
+
+    @Override
+    public void start(final EventListener eventListener, AdViewProvider adViewProvider) {
+        this.eventListener = eventListener;
+        if (loadingAds != null) {
+            return;
+        }
+
+        if (adPlaybackState == null && advertsLoader.isPresent()) {
+            loadingAds = advertsLoader.get().load(advertsLoadedCallback);
+        } else {
+            updateAdPlaybackState();
+        }
+    }
+
+    private final AdvertsLoader.Callback advertsLoadedCallback = new AdvertsLoader.Callback() {
+        @Override
+        public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
+            loadingAds = null;
+            adPlaybackState = AdvertPlaybackState.from(advertBreaks);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    updateAdPlaybackState();
+                }
+            });
+        }
+
+        @Override
+        public void onAdvertsError(String message) {
+            loadingAds = null;
+            eventListener.onAdLoadError(null, null);
+        }
+    };
+
+    private void updateAdPlaybackState() {
+        if (eventListener != null) {
+            eventListener.onAdPlaybackState(adPlaybackState);
+        }
+    }
+
+    @Override
+    public void stop() {
+        if (loadingAds != null) {
+            loadingAds.cancel();
+            loadingAds = null;
+        }
+        if (adPlaybackState != null && exoPlayer.isPresent() && exoPlayer.get().isPlayingAd()) {
+            adPlaybackState = adPlaybackState.withAdResumePositionUs(TimeUnit.MILLISECONDS.toMicros(exoPlayer.get().getCurrentPosition()));
+        }
+        eventListener = null;
+    }
+
+    @Override
+    public void setPlayer(Player player) {
+        // no-op
+    }
+
+    @Override
+    public void release() {
+        adPlaybackState = null;
+    }
+
+    @Override
+    public void handlePrepareError(int adGroupIndex, int adIndexInAdGroup, IOException exception) {
+        if (adPlaybackState != null) {
+            adPlaybackState = adPlaybackState.withAdLoadError(adGroupIndex, adIndexInAdGroup);
+        }
+    }
 }

@@ -2,9 +2,9 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
-import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
@@ -37,7 +37,7 @@ public class NoPlayerExoPlayerCreator {
                 userAgent,
                 handler,
                 Optional.<DataSource.Factory>absent(),
-                Optional.<AdvertsLoader>of(advertsLoader)
+                Optional.of(advertsLoader)
         );
         return new NoPlayerExoPlayerCreator(internalCreator);
     }
@@ -78,8 +78,6 @@ public class NoPlayerExoPlayerCreator {
                                 DrmSessionCreator drmSessionCreator,
                                 boolean downgradeSecureDecoder,
                                 boolean allowCrossProtocolRedirects) {
-            Optional<AdsLoader> adsLoader = createAdsLoaderFrom(advertsLoader);
-
             MediaSourceFactory mediaSourceFactory = new MediaSourceFactory(
                     context,
                     userAgent,
@@ -108,7 +106,7 @@ public class NoPlayerExoPlayerCreator {
             );
 
             PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
-            ExoPlayerListener exoPlayerListener = new ExoPlayerListener(adsLoader);
+            ExoPlayerListener exoPlayerListener = new ExoPlayerListener(advertsLoader, new Handler(Looper.getMainLooper()));
             LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), handler);
             Heart heart = Heart.newInstance(handler);
 
@@ -122,17 +120,5 @@ public class NoPlayerExoPlayerCreator {
                     mediaCodecSelector
             );
         }
-
-        private Optional<AdsLoader> createAdsLoaderFrom(Optional<AdvertsLoader> advertsLoader) {
-            if (advertsLoader.isPresent()) {
-                AdvertsLoader loader = advertsLoader.get();
-                AdsLoader adsLoader = new NoPlayerAdsLoader(loader);
-                return Optional.of(adsLoader);
-            } else {
-                return Optional.absent();
-            }
-        }
-
     }
-
 }

@@ -7,8 +7,6 @@ import android.os.Handler;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
-import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
@@ -19,6 +17,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.novoda.noplayer.Options;
+import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerListener;
 import com.novoda.noplayer.internal.utils.Optional;
 
 public class MediaSourceFactory {
@@ -43,19 +42,18 @@ public class MediaSourceFactory {
 
     public MediaSource create(Options options,
                               Uri uri,
-                              MediaSourceEventListener mediaSourceEventListener,
-                              DefaultBandwidthMeter bandwidthMeter,
-                              Optional<AdsLoader> advertsLoader) {
+                              ExoPlayerListener exoPlayerListener,
+                              DefaultBandwidthMeter bandwidthMeter) {
         DefaultDataSourceFactory defaultDataSourceFactory = createDataSourceFactory(bandwidthMeter);
 
         MediaSource contentMediaSource = getMediaSourceFor(options, uri, defaultDataSourceFactory);
 
-        if (advertsLoader.isPresent()) {
-            AdsMediaSource adsMediaSource = new AdsMediaSource(contentMediaSource, defaultDataSourceFactory, advertsLoader.get(), null);
-            adsMediaSource.addEventListener(handler, mediaSourceEventListener);
+        if (exoPlayerListener.canLoadAdverts()) {
+            AdsMediaSource adsMediaSource = new AdsMediaSource(contentMediaSource, defaultDataSourceFactory, exoPlayerListener, null);
+            adsMediaSource.addEventListener(handler, exoPlayerListener);
             return adsMediaSource;
         } else {
-            contentMediaSource.addEventListener(handler, mediaSourceEventListener);
+            contentMediaSource.addEventListener(handler, exoPlayerListener);
             return contentMediaSource;
         }
     }
