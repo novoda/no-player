@@ -3,9 +3,12 @@ package com.novoda.noplayer.internal.exoplayer.forwarder;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
+import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.internal.exoplayer.NoPlayerAdsLoaderForwarder;
+import com.novoda.noplayer.internal.utils.Optional;
 
 public class ExoPlayerForwarder {
 
@@ -14,13 +17,15 @@ public class ExoPlayerForwarder {
     private final NoPlayerAnalyticsListener analyticsListener;
     private final ExoPlayerVideoListener videoListener;
     private final ExoPlayerDrmSessionEventListener drmSessionEventListener;
+    private final Optional<NoPlayerAdsLoaderForwarder> adsLoaderForwarder;
 
-    public ExoPlayerForwarder() {
+    public ExoPlayerForwarder(Optional<AdsLoader> adsLoader) {
         exoPlayerEventListener = new EventListener();
         mediaSourceEventListener = new NoPlayerMediaSourceEventListener();
         videoListener = new ExoPlayerVideoListener();
         analyticsListener = new NoPlayerAnalyticsListener();
         drmSessionEventListener = new ExoPlayerDrmSessionEventListener();
+        adsLoaderForwarder = adsLoader.isPresent() ? Optional.of(new NoPlayerAdsLoaderForwarder(adsLoader.get())) : Optional.<NoPlayerAdsLoaderForwarder>absent();
     }
 
     public EventListener exoPlayerEventListener() {
@@ -41,6 +46,16 @@ public class ExoPlayerForwarder {
 
     public AnalyticsListener analyticsListener() {
         return analyticsListener;
+    }
+
+    public Optional<AdsLoader> adsLoader() {
+        return adsLoaderForwarder.isPresent() ? Optional.<AdsLoader>of(adsLoaderForwarder.get()) : Optional.<AdsLoader>absent();
+    }
+
+    public void bind(NoPlayer.AdvertListener advertListener) {
+        if (adsLoaderForwarder.isPresent()) {
+            adsLoaderForwarder.get().bind(advertListener);
+        }
     }
 
     public void bind(NoPlayer.PreparedListener preparedListener, PlayerState playerState) {
