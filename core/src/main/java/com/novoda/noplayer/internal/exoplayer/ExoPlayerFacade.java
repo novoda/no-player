@@ -131,9 +131,7 @@ class ExoPlayerFacade {
                 compositeTrackSelector.trackSelector()
         );
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
-        exoPlayer.addListener(exoPlayerListener);
-        exoPlayer.addAnalyticsListener(exoPlayerListener);
-        exoPlayer.addVideoListener(exoPlayerListener);
+        exoPlayerListener.bind(exoPlayer);
 
         setMovieAudioAttributes(exoPlayer);
 
@@ -145,10 +143,10 @@ class ExoPlayerFacade {
                 adsLoader
         );
         attachToSurface(playerSurfaceHolder);
-        exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
         if (adsLoader.isPresent()) {
             adsLoader.get().setPlayer(exoPlayer);
         }
+        exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
     }
 
     private void setMovieAudioAttributes(SimpleExoPlayer exoPlayer) {

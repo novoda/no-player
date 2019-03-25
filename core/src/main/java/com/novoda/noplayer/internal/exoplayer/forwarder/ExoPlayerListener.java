@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
@@ -19,6 +20,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,6 +34,14 @@ public class ExoPlayerListener implements Player.EventListener, MediaSourceEvent
     private final List<NoPlayer.DroppedVideoFramesListener> droppedVideoFramesListeners = new CopyOnWriteArrayList<>();
     private final List<VideoListener> videoListeners = new CopyOnWriteArrayList<>();
     private final List<DefaultDrmSessionEventListener> drmSessionEventListeners = new CopyOnWriteArrayList<>();
+    private Optional<SimpleExoPlayer> exoPlayer = Optional.absent();
+
+    public void bind(SimpleExoPlayer player) {
+        this.exoPlayer = Optional.of(player);
+        player.addListener(this);
+        player.addAnalyticsListener(this);
+        player.addVideoListener(this);
+    }
 
     public void bind(NoPlayer.PreparedListener preparedListener, PlayerState playerState) {
         playerEventListeners.add(new OnPrepareForwarder(preparedListener, playerState));
@@ -74,6 +84,10 @@ public class ExoPlayerListener implements Player.EventListener, MediaSourceEvent
         for (Player.EventListener listener : playerEventListeners) {
             listener.onTimelineChanged(timeline, manifest, reason);
         }
+    }
+
+    private boolean isPlayingAdvert() {
+        return exoPlayer.isPresent() && exoPlayer.get().isPlayingAd();
     }
 
     @Override
