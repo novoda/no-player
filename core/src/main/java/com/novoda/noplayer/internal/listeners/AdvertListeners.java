@@ -26,6 +26,5 @@ class AdvertListeners implements NoPlayer.AdvertListener {
         for (NoPlayer.AdvertListener listener : listeners) {
             listener.onAdvertEvent(event);
         }
-
     }
 }

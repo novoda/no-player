@@ -104,12 +104,11 @@ public class NoPlayerExoPlayerCreator {
                     mediaSourceFactory,
                     trackSelectorCreator,
                     exoPlayerCreator,
-                    rendererTypeRequesterCreator,
-                    adsLoader
+                    rendererTypeRequesterCreator
             );
 
             PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
-            ExoPlayerListener exoPlayerListener = new ExoPlayerListener();
+            ExoPlayerListener exoPlayerListener = new ExoPlayerListener(adsLoader);
             LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), handler);
             Heart heart = Heart.newInstance(handler);
 

@@ -16,10 +16,12 @@ import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.internal.exoplayer.NoPlayerAdsLoaderForwarder;
 import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
@@ -34,7 +36,16 @@ public class ExoPlayerListener implements Player.EventListener, MediaSourceEvent
     private final List<NoPlayer.DroppedVideoFramesListener> droppedVideoFramesListeners = new CopyOnWriteArrayList<>();
     private final List<VideoListener> videoListeners = new CopyOnWriteArrayList<>();
     private final List<DefaultDrmSessionEventListener> drmSessionEventListeners = new CopyOnWriteArrayList<>();
+    private final Optional<NoPlayerAdsLoaderForwarder> adsLoaderForwarder;
     private Optional<SimpleExoPlayer> exoPlayer = Optional.absent();
+
+    public ExoPlayerListener(Optional<AdsLoader> adsLoader) {
+        adsLoaderForwarder = adsLoader.isPresent() ? Optional.of(new NoPlayerAdsLoaderForwarder(adsLoader.get())) : Optional.<NoPlayerAdsLoaderForwarder>absent();
+    }
+
+    public Optional<AdsLoader> adsLoader() {
+        return adsLoaderForwarder.isPresent() ? Optional.<AdsLoader>of(adsLoaderForwarder.get()) : Optional.<AdsLoader>absent();
+    }
 
     public void bind(SimpleExoPlayer player) {
         this.exoPlayer = Optional.of(player);
@@ -77,6 +88,12 @@ public class ExoPlayerListener implements Player.EventListener, MediaSourceEvent
 
     public void bind(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListener) {
         droppedVideoFramesListeners.add(droppedVideoFramesListener);
+    }
+
+    public void bind(NoPlayer.AdvertListener advertListener) {
+        if (adsLoaderForwarder.isPresent()) {
+            adsLoaderForwarder.get().bind(advertListener);
+        }
     }
 
     @Override
