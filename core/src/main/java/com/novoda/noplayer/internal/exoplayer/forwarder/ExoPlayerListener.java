@@ -58,7 +58,7 @@ public class ExoPlayerListener implements Player.EventListener, MediaSourceEvent
     private NoPlayer.AdvertListener advertListener = new NoPlayer.AdvertListener() {
         @Override
         public void onAdvertEvent(String event) {
-
+            // no-op
         }
     };
 
