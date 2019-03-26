@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
+// This combines all of the listeners that ExoPlayer requires.
+@SuppressWarnings({"checkstyle:visibilitymodifier", "PMD.ExcessivePublicCount", "PMD.ExcessiveImports"})
 public class ExoPlayerListener implements Player.EventListener, MediaSourceEventListener, AnalyticsListener, VideoListener, DefaultDrmSessionEventListener, AdsLoader {
 
     private final List<Player.EventListener> playerEventListeners = new CopyOnWriteArrayList<>();
