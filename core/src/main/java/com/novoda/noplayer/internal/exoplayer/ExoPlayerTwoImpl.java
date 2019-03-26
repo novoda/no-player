@@ -98,6 +98,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
+    public boolean isPlayingAdvert() {
+        return exoPlayer.isPlayingAdvert();
+    }
+
+    @Override
+    public boolean isPlayingContent() {
+        return exoPlayer.isPlayingContent();
+    }
+
+    @Override
     public int videoWidth() {
         return videoWidth;
     }
@@ -110,6 +120,11 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public long playheadPositionInMillis() throws IllegalStateException {
         return exoPlayer.playheadPositionInMillis();
+    }
+
+    @Override
+    public long advertBreakDurationInMillis() {
+        return exoPlayer.advertBreakDurationInMillis();
     }
 
     @Override

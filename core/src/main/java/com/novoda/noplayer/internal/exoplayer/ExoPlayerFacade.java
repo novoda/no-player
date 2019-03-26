@@ -67,9 +67,21 @@ class ExoPlayerFacade {
         return exoPlayer != null && exoPlayer.getPlayWhenReady();
     }
 
+    boolean isPlayingAdvert() {
+        return false;
+    }
+
+    boolean isPlayingContent() {
+        return false;
+    }
+
     long playheadPositionInMillis() throws IllegalStateException {
         assertVideoLoaded();
         return exoPlayer.getCurrentPosition();
+    }
+
+    long advertBreakDurationInMillis() {
+        return 0;
     }
 
     long mediaDurationInMillis() throws IllegalStateException {
@@ -252,5 +264,4 @@ class ExoPlayerFacade {
             throw new IllegalStateException("Video must be loaded before trying to interact with the player");
         }
     }
-
 }
