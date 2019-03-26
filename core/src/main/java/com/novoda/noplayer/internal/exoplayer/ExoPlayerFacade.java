@@ -87,7 +87,6 @@ class ExoPlayerFacade {
         if (!isPlayingAdvert() || !(currentTimeline instanceof SinglePeriodAdTimeline) || adsLoader.isAbsent()) {
             return 0;
         }
-        NoPlayerAdsLoader loader = adsLoader.get();
         SinglePeriodAdTimeline adTimeline = ((SinglePeriodAdTimeline) currentTimeline);
         Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
         int currentAdGroupIndex = exoPlayer.getCurrentAdGroupIndex();
@@ -97,12 +96,35 @@ class ExoPlayerFacade {
         for (int i = 0; i < numberOfAdverts; i++) {
             long advertDurationInMicros = period.getAdDurationUs(currentAdGroupIndex, i);
             if (advertDurationInMicros == C.TIME_UNSET) {
-                advertDurationInMicros = loader.advertDurationBy(currentAdGroupIndex, i);
+                advertDurationInMicros = adsLoader.get().advertDurationBy(currentAdGroupIndex, i);
             }
             advertBreakDurationInMicros += advertDurationInMicros;
         }
 
         return C.usToMs(advertBreakDurationInMicros);
+    }
+
+    long positionInAdvertBreakInMillis() {
+        assertVideoLoaded();
+        Timeline currentTimeline = exoPlayer.getCurrentTimeline();
+        if (!isPlayingAdvert() || !(currentTimeline instanceof SinglePeriodAdTimeline) || adsLoader.isAbsent()) {
+            return 0;
+        }
+
+        SinglePeriodAdTimeline adTimeline = ((SinglePeriodAdTimeline) currentTimeline);
+        Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
+        int currentAdGroupIndex = exoPlayer.getCurrentAdGroupIndex();
+        int previousAdIndexInGroup = exoPlayer.getCurrentAdIndexInAdGroup() - 1;
+
+        long playedAdvertBreakDurationInMicros = 0;
+        for (int i = previousAdIndexInGroup; i >= 0; i--) {
+            long advertDurationInMicros = period.getAdDurationUs(currentAdGroupIndex, i);
+            if (advertDurationInMicros == C.TIME_UNSET) {
+                advertDurationInMicros = adsLoader.get().advertDurationBy(currentAdGroupIndex, i);
+            }
+            playedAdvertBreakDurationInMicros += advertDurationInMicros;
+        }
+        return C.usToMs(playedAdvertBreakDurationInMicros) + playheadPositionInMillis();
     }
 
     long mediaDurationInMillis() throws IllegalStateException {

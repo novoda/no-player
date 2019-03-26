@@ -12,6 +12,8 @@ public interface PlayerState {
 
     int videoHeight();
 
+    long positionInAdvertBreakInMillis();
+
     long advertBreakDurationInMillis();
 
     long playheadPositionInMillis();

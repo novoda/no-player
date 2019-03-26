@@ -272,6 +272,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
+    public long positionInAdvertBreakInMillis() {
+        return 0;
+    }
+
+    @Override
     public long playheadPositionInMillis() throws IllegalStateException {
         return isSeeking() ? seekToPositionInMillis : mediaPlayer.currentPositionInMillis();
     }

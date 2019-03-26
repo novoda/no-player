@@ -128,6 +128,11 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
+    public long positionInAdvertBreakInMillis() {
+        return exoPlayer.positionInAdvertBreakInMillis();
+    }
+
+    @Override
     public long mediaDurationInMillis() throws IllegalStateException {
         return exoPlayer.mediaDurationInMillis();
     }
