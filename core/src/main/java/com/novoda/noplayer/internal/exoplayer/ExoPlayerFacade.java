@@ -6,10 +6,11 @@ import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ads.AdsLoader;
+import com.google.android.exoplayer2.source.ads.SinglePeriodAdTimeline;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerSurfaceHolder;
@@ -68,11 +69,11 @@ class ExoPlayerFacade {
     }
 
     boolean isPlayingAdvert() {
-        return false;
+        return isPlaying() && exoPlayer.isPlayingAd();
     }
 
     boolean isPlayingContent() {
-        return false;
+        return isPlaying() && !exoPlayer.isPlayingAd();
     }
 
     long playheadPositionInMillis() throws IllegalStateException {
@@ -81,7 +82,27 @@ class ExoPlayerFacade {
     }
 
     long advertBreakDurationInMillis() {
-        return 0;
+        assertVideoLoaded();
+        Timeline currentTimeline = exoPlayer.getCurrentTimeline();
+        if (!isPlayingAdvert() || !(currentTimeline instanceof SinglePeriodAdTimeline)) {
+            return 0;
+        }
+
+        SinglePeriodAdTimeline adTimeline = ((SinglePeriodAdTimeline) currentTimeline);
+        Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
+        int currentAdGroupIndex = exoPlayer.getCurrentAdGroupIndex();
+        int numberOfAdverts = period.getAdCountInAdGroup(currentAdGroupIndex);
+
+        long advertBreakDurationInMicros = 0;
+        for (int i = 0; i < numberOfAdverts; i++) {
+            long advertDurationInMicros = period.getAdDurationUs(currentAdGroupIndex, i);
+            if (advertDurationInMicros == C.TIME_UNSET) {
+                return 0;
+            }
+            advertBreakDurationInMicros += advertDurationInMicros;
+        }
+
+        return C.usToMs(advertBreakDurationInMicros);
     }
 
     long mediaDurationInMillis() throws IllegalStateException {
