@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
@@ -31,6 +32,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     private AdvertsLoader.Cancellable loadingAds;
     @Nullable
     private NoPlayer.AdvertListener advertListener;
+    @Nullable
+    private List<AdvertBreak> advertBreaks;
 
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
@@ -66,9 +69,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     private final AdvertsLoader.Callback advertsLoadedCallback = new AdvertsLoader.Callback() {
         @Override
-        public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
+        public void onAdvertsLoaded(List<AdvertBreak> breaks) {
             loadingAds = null;
-            adPlaybackState = AdvertPlaybackState.from(advertBreaks);
+            advertBreaks = breaks;
+            adPlaybackState = AdvertPlaybackState.from(breaks);
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -89,6 +93,19 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         if (eventListener != null) {
             eventListener.onAdPlaybackState(adPlaybackState);
         }
+    }
+
+    public long advertDurationBy(int advertGroupIndex, int advertIndexInAdvertGroup) {
+        if (advertBreaks == null || advertGroupIndex >= advertBreaks.size()) {
+            return 0;
+        }
+
+        AdvertBreak advertBreak = advertBreaks.get(advertGroupIndex);
+        if (advertIndexInAdvertGroup >= advertBreak.adverts().size()) {
+            return 0;
+        }
+
+        return C.msToUs(advertBreak.adverts().get(advertIndexInAdvertGroup).durationInMillis());
     }
 
     @Override

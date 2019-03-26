@@ -84,10 +84,10 @@ class ExoPlayerFacade {
     long advertBreakDurationInMillis() {
         assertVideoLoaded();
         Timeline currentTimeline = exoPlayer.getCurrentTimeline();
-        if (!isPlayingAdvert() || !(currentTimeline instanceof SinglePeriodAdTimeline)) {
+        if (!isPlayingAdvert() || !(currentTimeline instanceof SinglePeriodAdTimeline) || adsLoader.isAbsent()) {
             return 0;
         }
-
+        NoPlayerAdsLoader loader = adsLoader.get();
         SinglePeriodAdTimeline adTimeline = ((SinglePeriodAdTimeline) currentTimeline);
         Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
         int currentAdGroupIndex = exoPlayer.getCurrentAdGroupIndex();
@@ -97,7 +97,7 @@ class ExoPlayerFacade {
         for (int i = 0; i < numberOfAdverts; i++) {
             long advertDurationInMicros = period.getAdDurationUs(currentAdGroupIndex, i);
             if (advertDurationInMicros == C.TIME_UNSET) {
-                return 0;
+                advertDurationInMicros = loader.advertDurationBy(currentAdGroupIndex, i);
             }
             advertBreakDurationInMicros += advertDurationInMicros;
         }
