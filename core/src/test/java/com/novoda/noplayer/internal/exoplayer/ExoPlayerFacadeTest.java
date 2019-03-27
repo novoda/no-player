@@ -65,6 +65,7 @@ public class ExoPlayerFacadeTest {
     private static final int TEN_PERCENT = 10;
 
     private static final boolean IS_PLAYING = true;
+    private static final boolean IS_NOT_PLAYING = false;
     private static final boolean PLAY_WHEN_READY = true;
     private static final boolean DO_NOT_PLAY_WHEN_READY = false;
     private static final boolean RESET_POSITION = true;
@@ -196,6 +197,22 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
+        public void whenQueryingIsPlayingAdvert_thenReturnsFalse() {
+
+            boolean isPlaying = facade.isPlayingAdvert();
+
+            assertThat(isPlaying).isFalse();
+        }
+
+        @Test
+        public void whenQueryingisPlayingContent_thenReturnsFalse() {
+
+            boolean isPlaying = facade.isPlayingContent();
+
+            assertThat(isPlaying).isFalse();
+        }
+
+        @Test
         public void whenQueryingPlayheadPosition_thenThrowsIllegalStateException() {
             thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
@@ -207,6 +224,20 @@ public class ExoPlayerFacadeTest {
             thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
             facade.mediaDurationInMillis();
+        }
+
+        @Test
+        public void whenQueryingAdvertBreakDuration_thenThrowsIllegalStateException() {
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
+
+            facade.advertBreakDurationInMillis();
+        }
+
+        @Test
+        public void whenQueryingPositionInAdvertBreak_thenThrowsIllegalStateException() {
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
+
+            facade.positionInAdvertBreakInMillis();
         }
 
         @Test
@@ -341,6 +372,46 @@ public class ExoPlayerFacadeTest {
             given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
 
             boolean isPlaying = facade.isPlaying();
+
+            assertThat(isPlaying).isTrue();
+        }
+
+        @Test
+        public void givenExoPlayerIsReadyToPlayAndIsPlayingAd_whenQueryingIsPlayingAdvert_thenReturnsTrue() {
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+
+            boolean isPlaying = facade.isPlayingAdvert();
+
+            assertThat(isPlaying).isTrue();
+        }
+
+        @Test
+        public void givenExoPlayerIsReadyToPlayAndIsNotPlayingAd_whenQueryingIsPlayingAdvert_thenReturnsFalse() {
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
+
+            boolean isPlaying = facade.isPlayingAdvert();
+
+            assertThat(isPlaying).isFalse();
+        }
+
+        @Test
+        public void givenExoPlayerIsReadyToPlayAndIsPlayingAd_whenQueryingIsPlayingContent_thenReturnsFalse() {
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+
+            boolean isPlaying = facade.isPlayingContent();
+
+            assertThat(isPlaying).isFalse();
+        }
+
+        @Test
+        public void givenExoPlayerIsReadyToPlayAndIsNotPlayingAd_whenQueryingIsPlayingContent_thenReturnsTrue() {
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
+
+            boolean isPlaying = facade.isPlayingContent();
 
             assertThat(isPlaying).isTrue();
         }
