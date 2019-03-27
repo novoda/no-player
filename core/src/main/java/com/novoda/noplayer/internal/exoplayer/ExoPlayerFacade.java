@@ -2,7 +2,6 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -89,47 +88,46 @@ class ExoPlayerFacade {
     long advertBreakDurationInMillis() {
         assertVideoLoaded();
         Timeline currentTimeline = exoPlayer.getCurrentTimeline();
-        if (!isPlayingAdvert() || !(currentTimeline instanceof SinglePeriodAdTimeline) || adsLoader.isAbsent()) {
+        if (!isPlayingAdvert() || adsLoader.isAbsent() || !(currentTimeline instanceof SinglePeriodAdTimeline)) {
             return 0;
         }
-        SinglePeriodAdTimeline adTimeline = ((SinglePeriodAdTimeline) currentTimeline);
+        SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
         Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
+
         int currentAdGroupIndex = exoPlayer.getCurrentAdGroupIndex();
-        int numberOfAdverts = period.getAdCountInAdGroup(currentAdGroupIndex);
+        int advertCount = period.getAdCountInAdGroup(currentAdGroupIndex);
 
-        long advertBreakDurationInMicros = 0;
-        for (int i = 0; i < numberOfAdverts; i++) {
-            long advertDurationInMicros = period.getAdDurationUs(currentAdGroupIndex, i);
-            if (advertDurationInMicros == C.TIME_UNSET) {
-                advertDurationInMicros = adsLoader.get().advertDurationBy(currentAdGroupIndex, i);
-            }
-            advertBreakDurationInMicros += advertDurationInMicros;
-        }
-
+        long advertBreakDurationInMicros = combinedAdvertDurationInGroup(period, advertCount);
         return C.usToMs(advertBreakDurationInMicros);
     }
 
     long positionInAdvertBreakInMillis() {
         assertVideoLoaded();
         Timeline currentTimeline = exoPlayer.getCurrentTimeline();
-        if (!isPlayingAdvert() || !(currentTimeline instanceof SinglePeriodAdTimeline) || adsLoader.isAbsent()) {
+        if (!isPlayingAdvert() || adsLoader.isAbsent() || !(currentTimeline instanceof SinglePeriodAdTimeline)) {
             return 0;
         }
-
-        SinglePeriodAdTimeline adTimeline = ((SinglePeriodAdTimeline) currentTimeline);
+        SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
         Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
-        int currentAdGroupIndex = exoPlayer.getCurrentAdGroupIndex();
-        int previousAdIndexInGroup = exoPlayer.getCurrentAdIndexInAdGroup() - 1;
 
-        long playedAdvertBreakDurationInMicros = 0;
-        for (int i = previousAdIndexInGroup; i >= 0; i--) {
-            long advertDurationInMicros = period.getAdDurationUs(currentAdGroupIndex, i);
-            if (advertDurationInMicros == C.TIME_UNSET) {
-                advertDurationInMicros = adsLoader.get().advertDurationBy(currentAdGroupIndex, i);
-            }
-            playedAdvertBreakDurationInMicros += advertDurationInMicros;
-        }
+        int advertCount = exoPlayer.getCurrentAdIndexInAdGroup();
+
+        long playedAdvertBreakDurationInMicros = combinedAdvertDurationInGroup(period, advertCount);
         return C.usToMs(playedAdvertBreakDurationInMicros) + playheadPositionInMillis();
+    }
+
+    private long combinedAdvertDurationInGroup(Timeline.Period period,
+                                               int numberOfAdvertsToInclude) {
+        int adGroupIndex = exoPlayer.getCurrentAdGroupIndex();
+        long advertBreakDurationInMicros = 0;
+        for (int i = 0; i < numberOfAdvertsToInclude; i++) {
+            long advertDurationInMicros = period.getAdDurationUs(adGroupIndex, i);
+            if (advertDurationInMicros == C.TIME_UNSET) {
+                advertDurationInMicros = adsLoader.get().advertDurationBy(adGroupIndex, i);
+            }
+            advertBreakDurationInMicros += advertDurationInMicros;
+        }
+        return advertBreakDurationInMicros;
     }
 
     int bufferPercentage() throws IllegalStateException {

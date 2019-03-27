@@ -4,15 +4,18 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
+import com.google.android.exoplayer2.source.SinglePeriodTimeline;
+import com.google.android.exoplayer2.source.ads.AdPlaybackState;
+import com.google.android.exoplayer2.source.ads.SinglePeriodAdTimeline;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
@@ -30,7 +33,6 @@ import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,11 +42,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import utils.ExceptionMatcher;
 
 import java.util.Collections;
 import java.util.List;
-
-import utils.ExceptionMatcher;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -62,6 +63,8 @@ public class ExoPlayerFacadeTest {
 
     private static final long TWO_MINUTES_IN_MILLIS = 120000;
     private static final long TEN_MINUTES_IN_MILLIS = 600000;
+    private static final long MICROS = 1000;
+    private static final long[] ADVERT_DURATIONS = {10 * MICROS, 20 * MICROS, 30 * MICROS, 40 * MICROS};
 
     private static final int TEN_PERCENT = 10;
 
@@ -476,6 +479,132 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
+        public void whenGettingAdvertBreakDuration_thenReturnsDurationOfAllAdsInTheBreak() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            long[] durations = {100 * MICROS, 200 * MICROS, 300 * MICROS, 400 * MICROS};
+            givenAdGroupAtPositionContainsAdsWithDurations(2, durations);
+
+            long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
+
+            assertThat(advertBreakDurationInMillis).isEqualTo(1000);
+        }
+
+        @Test
+        public void whenGettingAdvertBreakDuration_andDurationIsUnset_thenUsesDurationFromAdsLoader() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+            long[] durations = {100 * MICROS, 200 * MICROS, C.TIME_UNSET, 400 * MICROS};
+            givenAdGroupAtPositionContainsAdsWithDurations(2, durations);
+            given(adsLoader.advertDurationBy(2, 2)).willReturn(800 * MICROS);
+
+            long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
+
+            assertThat(advertBreakDurationInMillis).isEqualTo(1500);
+        }
+
+        @Test
+        public void whenGettingAdvertBreakDuration_andAdvertIsNotPlaying_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isAbsent()).willReturn(false);
+
+            long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
+
+            assertThat(advertBreakDurationInMillis).isEqualTo(0);
+        }
+
+        @Test
+        public void whenGettingAdvertBreakDuration_andPlayerIsNotReady_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
+            given(optionalAdsLoader.isAbsent()).willReturn(false);
+
+            long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
+
+            assertThat(advertBreakDurationInMillis).isEqualTo(0);
+        }
+
+        @Test
+        public void whenGettingAdvertBreakDuration_andAdvertLoaderIsMissing_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
+            given(optionalAdsLoader.isAbsent()).willReturn(true);
+
+            long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
+
+            assertThat(advertBreakDurationInMillis).isEqualTo(0);
+        }
+
+        @Test
+        public void whenGettingPositionInAdvertBreak_thenReturnsDurationOfPreviousAdsInBreakWithCurrentPlayheadPosition() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            long[] durations = {100 * MICROS, 200 * MICROS, 300 * MICROS, 400 * MICROS};
+            givenAdGroupAtPositionContainsAdsWithDurations(1, durations);
+            given(exoPlayer.getCurrentPosition()).willReturn(150L);
+            given(exoPlayer.getCurrentAdIndexInAdGroup()).willReturn(2);
+
+            long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
+
+            assertThat(positionInAdvertBreakInMillis).isEqualTo(450);
+        }
+
+        @Test
+        public void whenGettingPositionInAdvertBreak_andDurationIsUnset_thenUsesDurationFromAdsLoader() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+            long[] durations = {100 * MICROS, 200 * MICROS, C.TIME_UNSET, 400 * MICROS};
+            givenAdGroupAtPositionContainsAdsWithDurations(2, durations);
+            given(adsLoader.advertDurationBy(2, 2)).willReturn(800 * MICROS);
+            given(exoPlayer.getCurrentPosition()).willReturn(150L);
+            given(exoPlayer.getCurrentAdIndexInAdGroup()).willReturn(3);
+
+            long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
+
+            assertThat(positionInAdvertBreakInMillis).isEqualTo(1250);
+        }
+
+        @Test
+        public void whenGettingPositionInAdvertBreak_andAdvertIsNotPlaying_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isAbsent()).willReturn(false);
+
+            long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
+
+            assertThat(positionInAdvertBreakInMillis).isEqualTo(0);
+        }
+
+        @Test
+        public void whenGettingPositionInAdvertBreak_andPlayerIsNotReady_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
+            given(optionalAdsLoader.isAbsent()).willReturn(false);
+
+            long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
+
+            assertThat(positionInAdvertBreakInMillis).isEqualTo(0);
+        }
+
+        @Test
+        public void whenGettingPositionInAdvertBreak_andAdvertLoaderIsMissing_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
+            given(optionalAdsLoader.isAbsent()).willReturn(true);
+
+            long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
+
+            assertThat(positionInAdvertBreakInMillis).isEqualTo(0);
+        }
+
+        @Test
         public void whenGettingBufferPercentage_thenReturnsBufferPercentage() {
             given(exoPlayer.getBufferedPercentage()).willReturn(TEN_PERCENT);
 
@@ -701,6 +830,30 @@ public class ExoPlayerFacadeTest {
             ).willReturn(mediaSource);
 
             return mediaSource;
+        }
+
+        void givenAdGroupAtPositionContainsAdsWithDurations(int position, long[] durations) {
+            Timeline contentTimeline = new SinglePeriodTimeline(1, false, false);
+            SinglePeriodAdTimeline timeline = new SinglePeriodAdTimeline(contentTimeline, adPlaybackState(position, durations));
+            given(exoPlayer.getCurrentTimeline()).willReturn(timeline);
+            given(exoPlayer.getCurrentAdGroupIndex()).willReturn(position);
+        }
+
+        AdPlaybackState adPlaybackState(int position, long[] durations) {
+            long[] adGroupTimesUs = {0, 100, 200, 300};
+            long[][] adGroupDurations = {
+                    ADVERT_DURATIONS,
+                    ADVERT_DURATIONS,
+                    ADVERT_DURATIONS,
+                    ADVERT_DURATIONS
+            };
+            adGroupDurations[position] = durations;
+            return new AdPlaybackState(adGroupTimesUs)
+                    .withAdCount(0, adGroupDurations[0].length)
+                    .withAdCount(1, adGroupDurations[1].length)
+                    .withAdCount(2, adGroupDurations[2].length)
+                    .withAdCount(3, adGroupDurations[3].length)
+                    .withAdDurationsUs(adGroupDurations);
         }
     }
 }
