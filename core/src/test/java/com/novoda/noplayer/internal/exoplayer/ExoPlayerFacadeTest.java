@@ -13,7 +13,6 @@ import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
-import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Options;
@@ -31,9 +30,6 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,6 +39,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Collections;
+import java.util.List;
 
 import utils.ExceptionMatcher;
 
@@ -529,7 +528,7 @@ public class ExoPlayerFacadeTest {
         @Mock
         RendererTypeRequesterCreator rendererTypeRequesterCreator;
         @Mock
-        Optional<AdsLoader> optionalAdsLoader;
+        Optional<NoPlayerAdsLoader> optionalAdsLoader;
         @Mock
         NoPlayerAdsLoader adsLoader;
         @Mock
