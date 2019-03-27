@@ -2,6 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -25,6 +26,8 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
 
+// Not much we can do, wrapping ExoPlayer is a lot of work
+@SuppressWarnings("PMD.GodClass")
 class ExoPlayerFacade {
 
     private static final boolean RESET_POSITION = true;
