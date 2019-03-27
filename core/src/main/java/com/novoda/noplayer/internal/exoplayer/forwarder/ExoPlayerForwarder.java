@@ -6,6 +6,7 @@ import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.internal.utils.Optional;
 
 public class ExoPlayerForwarder {
 
@@ -14,7 +15,7 @@ public class ExoPlayerForwarder {
     private final NoPlayerAnalyticsListener analyticsListener;
     private final ExoPlayerVideoListener videoListener;
     private final ExoPlayerDrmSessionEventListener drmSessionEventListener;
-    private NoPlayer.AdvertListener advertListeners;
+    private Optional<NoPlayer.AdvertListener> advertListeners = Optional.absent();
 
     public ExoPlayerForwarder() {
         exoPlayerEventListener = new EventListener();
@@ -44,7 +45,7 @@ public class ExoPlayerForwarder {
         return analyticsListener;
     }
 
-    public NoPlayer.AdvertListener advertListener() {
+    public Optional<NoPlayer.AdvertListener> advertListener() {
         return advertListeners;
     }
 
@@ -85,6 +86,6 @@ public class ExoPlayerForwarder {
     }
 
     public void bind(NoPlayer.AdvertListener advertListeners) {
-        this.advertListeners = advertListeners;
+        this.advertListeners = Optional.of(advertListeners);
     }
 }

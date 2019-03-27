@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,8 +30,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     private EventListener eventListener;
     @Nullable
     private AdvertsLoader.Cancellable loadingAds;
-    @Nullable
-    private NoPlayer.AdvertListener advertListener;
+
+    private Optional<NoPlayer.AdvertListener> advertListener = Optional.absent();
 
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
@@ -40,7 +41,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         this.handler = new Handler(Looper.getMainLooper());
     }
 
-    public void bind(NoPlayer.AdvertListener advertListener) {
+    public void bind(Optional<NoPlayer.AdvertListener> advertListener) {
         this.advertListener = advertListener;
     }
 
@@ -153,8 +154,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     }
 
     private void notifyEventIfPossible(String event) {
-        if (advertListener != null) {
-            advertListener.onAdvertEvent(event);
+        if (advertListener.isPresent()) {
+            advertListener.get().onAdvertEvent(event);
         }
     }
 }
