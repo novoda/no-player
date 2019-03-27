@@ -9,7 +9,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerSurfaceHolder;
@@ -36,7 +35,7 @@ class ExoPlayerFacade {
     private final CompositeTrackSelectorCreator trackSelectorCreator;
     private final ExoPlayerCreator exoPlayerCreator;
     private final RendererTypeRequesterCreator rendererTypeRequesterCreator;
-    private final Optional<AdsLoader> adsLoader;
+    private final Optional<NoPlayerAdsLoader> adsLoader;
 
     @Nullable
     private SimpleExoPlayer exoPlayer;
@@ -53,7 +52,7 @@ class ExoPlayerFacade {
                     CompositeTrackSelectorCreator trackSelectorCreator,
                     ExoPlayerCreator exoPlayerCreator,
                     RendererTypeRequesterCreator rendererTypeRequesterCreator,
-                    Optional<AdsLoader> adsLoader) {
+                    Optional<NoPlayerAdsLoader> adsLoader) {
         this.bandwidthMeterCreator = bandwidthMeterCreator;
         this.androidDeviceVersion = androidDeviceVersion;
         this.mediaSourceFactory = mediaSourceFactory;
@@ -136,6 +135,10 @@ class ExoPlayerFacade {
         exoPlayer.addVideoListener(forwarder.videoListener());
 
         setMovieAudioAttributes(exoPlayer);
+
+        if (adsLoader.isPresent()) {
+            adsLoader.get().bind(forwarder.advertListener());
+        }
 
         MediaSource mediaSource = mediaSourceFactory.create(
                 options,

@@ -10,6 +10,8 @@ import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertsLoader;
+import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,12 +31,18 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     @Nullable
     private AdvertsLoader.Cancellable loadingAds;
 
+    private Optional<NoPlayer.AdvertListener> advertListener = Optional.absent();
+
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
 
     NoPlayerAdsLoader(AdvertsLoader loader) {
         this.loader = loader;
         this.handler = new Handler(Looper.getMainLooper());
+    }
+
+    public void bind(Optional<NoPlayer.AdvertListener> advertListener) {
+        this.advertListener = advertListener;
     }
 
     @Override
@@ -50,6 +58,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
 
         if (adPlaybackState == null) {
+            notifyEventIfPossible("start loading adverts");
             loadingAds = loader.load(advertsLoadedCallback);
         } else {
             updateAdPlaybackState();
@@ -64,6 +73,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    notifyEventIfPossible("adverts loaded");
                     updateAdPlaybackState();
                 }
             });
@@ -140,6 +150,12 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+        }
+    }
+
+    private void notifyEventIfPossible(String event) {
+        if (advertListener.isPresent()) {
+            advertListener.get().onAdvertEvent(event);
         }
     }
 }
