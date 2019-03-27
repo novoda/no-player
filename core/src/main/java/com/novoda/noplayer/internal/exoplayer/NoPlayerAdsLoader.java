@@ -10,6 +10,7 @@ import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertsLoader;
+import com.novoda.noplayer.NoPlayer;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +29,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     private EventListener eventListener;
     @Nullable
     private AdvertsLoader.Cancellable loadingAds;
+    @Nullable
+    private NoPlayer.AdvertListener advertListener;
 
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
@@ -35,6 +38,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     NoPlayerAdsLoader(AdvertsLoader loader) {
         this.loader = loader;
         this.handler = new Handler(Looper.getMainLooper());
+    }
+
+    public void bind(NoPlayer.AdvertListener advertListener) {
+        this.advertListener = advertListener;
     }
 
     @Override
@@ -50,6 +57,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
 
         if (adPlaybackState == null) {
+            notifyEventIfPossible("start loading adverts");
             loadingAds = loader.load(advertsLoadedCallback);
         } else {
             updateAdPlaybackState();
@@ -64,6 +72,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    notifyEventIfPossible("adverts loaded");
                     updateAdPlaybackState();
                 }
             });
@@ -140,6 +149,12 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+        }
+    }
+
+    private void notifyEventIfPossible(String event) {
+        if (advertListener != null) {
+            advertListener.onAdvertEvent(event);
         }
     }
 }

@@ -14,6 +14,7 @@ public class ExoPlayerForwarder {
     private final NoPlayerAnalyticsListener analyticsListener;
     private final ExoPlayerVideoListener videoListener;
     private final ExoPlayerDrmSessionEventListener drmSessionEventListener;
+    private NoPlayer.AdvertListener advertListeners;
 
     public ExoPlayerForwarder() {
         exoPlayerEventListener = new EventListener();
@@ -41,6 +42,10 @@ public class ExoPlayerForwarder {
 
     public AnalyticsListener analyticsListener() {
         return analyticsListener;
+    }
+
+    public NoPlayer.AdvertListener advertListener() {
+        return advertListeners;
     }
 
     public void bind(NoPlayer.PreparedListener preparedListener, PlayerState playerState) {
@@ -77,5 +82,9 @@ public class ExoPlayerForwarder {
 
     public void bind(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListeners) {
         analyticsListener.add(droppedVideoFramesListeners);
+    }
+
+    public void bind(NoPlayer.AdvertListener advertListeners) {
+        this.advertListeners = advertListeners;
     }
 }

@@ -36,7 +36,7 @@ class ExoPlayerFacade {
     private final CompositeTrackSelectorCreator trackSelectorCreator;
     private final ExoPlayerCreator exoPlayerCreator;
     private final RendererTypeRequesterCreator rendererTypeRequesterCreator;
-    private final Optional<AdsLoader> adsLoader;
+    private final Optional<NoPlayerAdsLoader> adsLoader;
 
     @Nullable
     private SimpleExoPlayer exoPlayer;
@@ -53,7 +53,7 @@ class ExoPlayerFacade {
                     CompositeTrackSelectorCreator trackSelectorCreator,
                     ExoPlayerCreator exoPlayerCreator,
                     RendererTypeRequesterCreator rendererTypeRequesterCreator,
-                    Optional<AdsLoader> adsLoader) {
+                    Optional<NoPlayerAdsLoader> adsLoader) {
         this.bandwidthMeterCreator = bandwidthMeterCreator;
         this.androidDeviceVersion = androidDeviceVersion;
         this.mediaSourceFactory = mediaSourceFactory;
@@ -136,6 +136,10 @@ class ExoPlayerFacade {
         exoPlayer.addVideoListener(forwarder.videoListener());
 
         setMovieAudioAttributes(exoPlayer);
+
+        if (adsLoader.isPresent()) {
+            adsLoader.get().bind(forwarder.advertListener());
+        }
 
         MediaSource mediaSource = mediaSourceFactory.create(
                 options,

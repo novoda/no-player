@@ -8,7 +8,6 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
-import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
@@ -19,6 +18,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.novoda.noplayer.Options;
+import com.novoda.noplayer.internal.exoplayer.NoPlayerAdsLoader;
 import com.novoda.noplayer.internal.utils.Optional;
 
 public class MediaSourceFactory {
@@ -45,7 +45,7 @@ public class MediaSourceFactory {
                               Uri uri,
                               MediaSourceEventListener mediaSourceEventListener,
                               DefaultBandwidthMeter bandwidthMeter,
-                              Optional<AdsLoader> advertsLoader) {
+                              Optional<NoPlayerAdsLoader> advertsLoader) {
         DefaultDataSourceFactory defaultDataSourceFactory = createDataSourceFactory(bandwidthMeter);
 
         MediaSource contentMediaSource = getMediaSourceFor(options, uri, defaultDataSourceFactory);
