@@ -13,9 +13,9 @@ import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
-import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerSurfaceHolder;
@@ -107,6 +107,16 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
+        public void givenAdsLoader_whenLoadingVideo_thenBindsAdvertListener() {
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener());
+        }
+
+        @Test
         public void givenAdsLoader_whenLoadingVideo_thenSetsPlayerOnAdLoader() {
             given(optionalAdsLoader.isPresent()).willReturn(true);
             given(optionalAdsLoader.get()).willReturn(adsLoader);
@@ -124,6 +134,14 @@ public class ExoPlayerFacadeTest {
             facade.release();
 
             verify(adsLoader).release();
+        }
+
+        @Test
+        public void givenAdsLoader_whenLoadingVideo_thenDoesNotBindAdvertListener() {
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener());
         }
 
         @Test
@@ -529,7 +547,7 @@ public class ExoPlayerFacadeTest {
         @Mock
         RendererTypeRequesterCreator rendererTypeRequesterCreator;
         @Mock
-        Optional<AdsLoader> optionalAdsLoader;
+        Optional<NoPlayerAdsLoader> optionalAdsLoader;
         @Mock
         NoPlayerAdsLoader adsLoader;
         @Mock
@@ -538,6 +556,8 @@ public class ExoPlayerFacadeTest {
         DefaultDrmSessionEventListener drmSessionEventListener;
         @Mock
         MediaSourceEventListener mediaSourceEventListener;
+        @Mock
+        NoPlayer.AdvertListener advertListener;
         @Mock
         MediaCodecSelector mediaCodecSelector;
         @Mock
@@ -554,6 +574,7 @@ public class ExoPlayerFacadeTest {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
             given(exoPlayerForwarder.mediaSourceEventListener()).willReturn(mediaSourceEventListener);
+            given(exoPlayerForwarder.advertListener()).willReturn(advertListener);
             given(bandwidthMeterCreator.create(anyLong())).willReturn(defaultBandwidthMeter);
             given(trackSelectorCreator.create(OPTIONS, defaultBandwidthMeter)).willReturn(trackSelector);
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
