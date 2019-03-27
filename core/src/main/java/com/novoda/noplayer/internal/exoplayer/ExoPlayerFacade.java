@@ -76,6 +76,11 @@ class ExoPlayerFacade {
         return isPlaying() && !exoPlayer.isPlayingAd();
     }
 
+    long mediaDurationInMillis() throws IllegalStateException {
+        assertVideoLoaded();
+        return exoPlayer.getDuration();
+    }
+
     long playheadPositionInMillis() throws IllegalStateException {
         assertVideoLoaded();
         return exoPlayer.getCurrentPosition();
@@ -125,11 +130,6 @@ class ExoPlayerFacade {
             playedAdvertBreakDurationInMicros += advertDurationInMicros;
         }
         return C.usToMs(playedAdvertBreakDurationInMicros) + playheadPositionInMillis();
-    }
-
-    long mediaDurationInMillis() throws IllegalStateException {
-        assertVideoLoaded();
-        return exoPlayer.getDuration();
     }
 
     int bufferPercentage() throws IllegalStateException {
