@@ -17,6 +17,7 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +26,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     private static final String TAG = "ADS";
     private final AdvertsLoader loader;
     private final Handler handler;
+    private final List<AdvertBreak> advertBreaks;
 
     @Nullable
     private Player player;
@@ -36,8 +38,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     private AdvertsLoader.Cancellable loadingAds;
 
     private Optional<NoPlayer.AdvertListener> advertListener = Optional.absent();
-    @Nullable
-    private List<AdvertBreak> advertBreaks;
 
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
@@ -45,6 +45,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     NoPlayerAdsLoader(AdvertsLoader loader) {
         this.loader = loader;
         this.handler = new Handler(Looper.getMainLooper());
+        this.advertBreaks = new ArrayList<>();
     }
 
     public void bind(Optional<NoPlayer.AdvertListener> advertListener) {
@@ -75,7 +76,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         @Override
         public void onAdvertsLoaded(List<AdvertBreak> breaks) {
             loadingAds = null;
-            advertBreaks = breaks;
+            advertBreaks.clear();
+            advertBreaks.addAll(breaks);
             adPlaybackState = AdvertPlaybackState.from(breaks);
             handler.post(new Runnable() {
                 @Override
@@ -99,14 +101,14 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
     }
 
-    public long advertDurationBy(int advertGroupIndex, int advertIndexInAdvertGroup) {
-        if (advertBreaks == null || advertGroupIndex >= advertBreaks.size()) {
-            return 0;
+    long advertDurationBy(int advertGroupIndex, int advertIndexInAdvertGroup) {
+        if (advertGroupIndex >= advertBreaks.size()) {
+            throw new IllegalStateException("Advert is being played but no data about advert breaks is cached.");
         }
 
         AdvertBreak advertBreak = advertBreaks.get(advertGroupIndex);
         if (advertIndexInAdvertGroup >= advertBreak.adverts().size()) {
-            return 0;
+            throw new IllegalStateException("Cached advert break data contains less adverts than current index.");
         }
 
         return C.msToUs(advertBreak.adverts().get(advertIndexInAdvertGroup).durationInMillis());
