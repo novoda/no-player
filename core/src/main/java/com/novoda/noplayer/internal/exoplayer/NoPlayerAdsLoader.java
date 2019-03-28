@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
-    private static final String TAG = "ADS";
     private final AdvertsLoader loader;
     private final Handler handler;
     private final List<AdvertBreak> advertBreaks;
