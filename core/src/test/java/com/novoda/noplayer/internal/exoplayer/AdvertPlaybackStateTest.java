@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
+import com.novoda.noplayer.AdvertId;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +22,10 @@ public class AdvertPlaybackStateTest {
     private static final int TWO_SECONDS_IN_MICROS = 2000000;
     private static final int THREE_SECONDS_IN_MICROS = 3000000;
 
+    private static final AdvertId FIRST_ADVERT_ID = new AdvertId("advert_one");
+    private static final AdvertId SECOND_ADVERT_ID = new AdvertId("advert_two");
+    private static final AdvertId THIRD_ADVERT_ID = new AdvertId("advert_three");
+
     private static final int ONE_SECOND_IN_MILLIS = 1000;
     private static final int TWO_SECONDS_IN_MILLIS = 2000;
     private static final int THREE_SECONDS_IN_MILLIS = 3000;
@@ -29,9 +34,9 @@ public class AdvertPlaybackStateTest {
     private static final Uri SECOND_URI = mock(Uri.class);
     private static final Uri THIRD_URI = mock(Uri.class);
 
-    private static final Advert FIRST_ADVERT = new Advert(ONE_SECOND_IN_MILLIS, FIRST_URI);
-    private static final Advert SECOND_ADVERT = new Advert(TWO_SECONDS_IN_MILLIS, SECOND_URI);
-    private static final Advert THIRD_ADVERT = new Advert(THREE_SECONDS_IN_MILLIS, THIRD_URI);
+    private static final Advert FIRST_ADVERT = new Advert(FIRST_ADVERT_ID, ONE_SECOND_IN_MILLIS, FIRST_URI);
+    private static final Advert SECOND_ADVERT = new Advert(SECOND_ADVERT_ID, TWO_SECONDS_IN_MILLIS, SECOND_URI);
+    private static final Advert THIRD_ADVERT = new Advert(THIRD_ADVERT_ID, THREE_SECONDS_IN_MILLIS, THIRD_URI);
 
     private static final AdvertBreak FIRST_ADVERT_BREAK = new AdvertBreak(
             ONE_SECOND_IN_MILLIS, Collections.singletonList(FIRST_ADVERT)

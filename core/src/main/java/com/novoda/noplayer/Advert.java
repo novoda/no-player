@@ -4,12 +4,18 @@ import android.net.Uri;
 
 public class Advert {
 
+    private final AdvertId advertId;
     private final long durationInMillis;
     private final Uri uri;
 
-    public Advert(long durationInMillis, Uri uri) {
+    public Advert(AdvertId advertId, long durationInMillis, Uri uri) {
+        this.advertId = advertId;
         this.durationInMillis = durationInMillis;
         this.uri = uri;
+    }
+
+    public AdvertId advertId() {
+        return advertId;
     }
 
     public long durationInMillis() {

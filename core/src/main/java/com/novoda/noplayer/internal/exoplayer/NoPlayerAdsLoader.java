@@ -10,6 +10,7 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
+import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
@@ -159,7 +160,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
 
             if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && adGroupIndex != -1 && adIndexInGroup != -1) {
-                notifyEventIfPossible("starting advert: " + adGroupIndex + ":" + adIndexInGroup);
+                Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
+                if (advertListener.isPresent()) {
+                    advertListener.get().onAdvertStart(advert.advertId());
+                }
             }
         }
     }
@@ -169,7 +173,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         Log.e(TAG, "onPositionDiscontinuity: " + reason);
         if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION && player != null && adPlaybackState != null) {
             if (adGroupIndex != -1 && adIndexInGroup != -1) {
-                notifyEventIfPossible("played advert: " + adGroupIndex + ":" + adIndexInGroup);
+                Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
+                if (advertListener.isPresent()) {
+                    advertListener.get().onAdvertEnd(advert.advertId());
+                }
+
                 adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
                 updateAdPlaybackState();
             }
@@ -177,7 +185,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
             if (adGroupIndex != -1 && adIndexInGroup != -1) {
-                notifyEventIfPossible("starting advert: " + adGroupIndex + ":" + adIndexInGroup);
+                Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
+                if (advertListener.isPresent()) {
+                    advertListener.get().onAdvertStart(advert.advertId());
+                }
             }
         }
     }
