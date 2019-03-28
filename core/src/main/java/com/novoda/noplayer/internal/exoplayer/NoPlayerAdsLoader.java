@@ -175,9 +175,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     public void onPositionDiscontinuity(int reason) {
         if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION && player != null && adPlaybackState != null) {
             if (adGroupIndex != -1 && adIndexInGroup != -1) {
-                Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
-                advertListener.onAdvertEnd(advert.advertId());
-
+                notifyAdvertEnd();
                 adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
                 updateAdPlaybackState();
             }
@@ -185,6 +183,16 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
             notifyAdvertStart();
+        }
+    }
+
+    private void notifyAdvertEnd() {
+        AdvertBreak advertBreak = advertBreaks.get(adGroupIndex);
+        List<Advert> adverts = advertBreak.adverts();
+        advertListener.onAdvertEnd(adverts.get(adIndexInGroup).advertId());
+
+        if (adIndexInGroup == adverts.size() - 1) {
+            advertListener.onAdvertBreakEnd(advertBreak.advertBreakId());
         }
     }
 
