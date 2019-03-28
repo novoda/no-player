@@ -85,7 +85,7 @@ class ExoPlayerFacade {
         return exoPlayer.getCurrentPosition();
     }
 
-    long advertBreakDurationInMillis() {
+    long advertBreakDurationInMillis() throws IllegalStateException {
         assertVideoLoaded();
         Timeline currentTimeline = exoPlayer.getCurrentTimeline();
         if (!isPlayingAdvert() || adsLoader.isAbsent() || !(currentTimeline instanceof SinglePeriodAdTimeline)) {
@@ -101,7 +101,7 @@ class ExoPlayerFacade {
         return C.usToMs(advertBreakDurationInMicros);
     }
 
-    long positionInAdvertBreakInMillis() {
+    long positionInAdvertBreakInMillis() throws IllegalStateException {
         assertVideoLoaded();
         Timeline currentTimeline = exoPlayer.getCurrentTimeline();
         if (!isPlayingAdvert() || adsLoader.isAbsent() || !(currentTimeline instanceof SinglePeriodAdTimeline)) {
