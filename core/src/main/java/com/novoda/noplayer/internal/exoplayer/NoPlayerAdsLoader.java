@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
+public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     private final AdvertsLoader loader;
     private final Handler handler;
