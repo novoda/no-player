@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
+import com.novoda.noplayer.AdvertBreakId;
 import com.novoda.noplayer.AdvertId;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
@@ -68,7 +69,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
 
         if (adPlaybackState == null) {
-            advertListener.onAdvertEvent("start loading adverts");
             loadingAds = loader.load(advertsLoadedCallback);
         } else {
             updateAdPlaybackState();
@@ -88,7 +88,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    advertListener.onAdvertEvent("adverts loaded");
                     updateAdPlaybackState();
                 }
             });
@@ -197,12 +196,12 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         INSTANCE;
 
         @Override
-        public void onAdvertBreakStart(AdvertBreak advertBreak) {
+        public void onAdvertBreakStart(AdvertBreakId advertBreakId) {
             // no-op
         }
 
         @Override
-        public void onAdvertBreakEnd(AdvertBreak advertBreak) {
+        public void onAdvertBreakEnd(AdvertBreakId advertBreakId) {
             // no-op
         }
 
@@ -213,11 +212,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
         @Override
         public void onAdvertEnd(AdvertId advertId) {
-            // no-op
-        }
-
-        @Override
-        public void onAdvertEvent(String event) {
             // no-op
         }
     }

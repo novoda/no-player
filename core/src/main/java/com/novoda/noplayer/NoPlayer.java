@@ -275,15 +275,13 @@ public interface NoPlayer extends PlayerState {
 
     interface AdvertListener {
 
-        void onAdvertBreakStart(AdvertBreak advertBreak);
+        void onAdvertBreakStart(AdvertBreakId advertBreakId);
 
-        void onAdvertBreakEnd(AdvertBreak advertBreak);
+        void onAdvertBreakEnd(AdvertBreakId advertBreakId);
 
         void onAdvertStart(AdvertId advertId);
 
         void onAdvertEnd(AdvertId advertId);
-
-        void onAdvertEvent(String event); // TODO either pass different data in one method or have separate methods per event
     }
 
     /**

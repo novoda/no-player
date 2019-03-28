@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
+import com.novoda.noplayer.AdvertBreakId;
 import com.novoda.noplayer.AdvertId;
 
 import java.util.Arrays;
@@ -21,6 +22,10 @@ public class AdvertPlaybackStateTest {
     private static final int ONE_SECOND_IN_MICROS = 1000000;
     private static final int TWO_SECONDS_IN_MICROS = 2000000;
     private static final int THREE_SECONDS_IN_MICROS = 3000000;
+
+    private static final AdvertBreakId FIRST_ADVERT_BREAK_ID = new AdvertBreakId("advert_break_one");
+    private static final AdvertBreakId SECOND_ADVERT_BREAK_ID = new AdvertBreakId("advert_break_two");
+    private static final AdvertBreakId THIRD_ADVERT_BREAK_ID = new AdvertBreakId("advert_break_three");
 
     private static final AdvertId FIRST_ADVERT_ID = new AdvertId("advert_one");
     private static final AdvertId SECOND_ADVERT_ID = new AdvertId("advert_two");
@@ -39,15 +44,15 @@ public class AdvertPlaybackStateTest {
     private static final Advert THIRD_ADVERT = new Advert(THIRD_ADVERT_ID, THREE_SECONDS_IN_MILLIS, THIRD_URI);
 
     private static final AdvertBreak FIRST_ADVERT_BREAK = new AdvertBreak(
-            ONE_SECOND_IN_MILLIS, Collections.singletonList(FIRST_ADVERT)
+            FIRST_ADVERT_BREAK_ID, ONE_SECOND_IN_MILLIS, Collections.singletonList(FIRST_ADVERT)
     );
 
     private static final AdvertBreak SECOND_ADVERT_BREAK = new AdvertBreak(
-            TWO_SECONDS_IN_MILLIS, Arrays.asList(FIRST_ADVERT, SECOND_ADVERT)
+            SECOND_ADVERT_BREAK_ID, TWO_SECONDS_IN_MILLIS, Arrays.asList(FIRST_ADVERT, SECOND_ADVERT)
     );
 
     private static final AdvertBreak THIRD_ADVERT_BREAK = new AdvertBreak(
-            THREE_SECONDS_IN_MILLIS, Arrays.asList(FIRST_ADVERT, SECOND_ADVERT, THIRD_ADVERT)
+            THIRD_ADVERT_BREAK_ID, THREE_SECONDS_IN_MILLIS, Arrays.asList(FIRST_ADVERT, SECOND_ADVERT, THIRD_ADVERT)
     );
 
     @Test

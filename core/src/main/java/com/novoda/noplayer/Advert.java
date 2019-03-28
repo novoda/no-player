@@ -40,12 +40,16 @@ public class Advert {
         if (durationInMillis != advert.durationInMillis) {
             return false;
         }
+        if (advertId != null ? !advertId.equals(advert.advertId) : advert.advertId != null) {
+            return false;
+        }
         return uri != null ? uri.equals(advert.uri) : advert.uri == null;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (durationInMillis ^ (durationInMillis >>> 32));
+        int result = advertId != null ? advertId.hashCode() : 0;
+        result = 31 * result + (int) (durationInMillis ^ (durationInMillis >>> 32));
         result = 31 * result + (uri != null ? uri.hashCode() : 0);
         return result;
     }
@@ -53,7 +57,8 @@ public class Advert {
     @Override
     public String toString() {
         return "Advert{"
-                + "durationInMillis=" + durationInMillis
+                + "advertId=" + advertId
+                + ", durationInMillis=" + durationInMillis
                 + ", uri=" + uri
                 + '}';
     }
