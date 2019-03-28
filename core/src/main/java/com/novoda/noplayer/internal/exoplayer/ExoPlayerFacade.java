@@ -2,7 +2,6 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
@@ -99,7 +98,6 @@ class ExoPlayerFacade {
         Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
 
         int currentAdGroupIndex = exoPlayer.getCurrentAdGroupIndex();
-        Log.e("TAG", "currentAdGroupIndex: " + currentAdGroupIndex);
         int advertCount = period.getAdCountInAdGroup(currentAdGroupIndex);
 
         long advertBreakDurationInMicros = combinedAdvertDurationInGroup(period, advertCount);
@@ -123,7 +121,6 @@ class ExoPlayerFacade {
 
     private long combinedAdvertDurationInGroup(Timeline.Period period, int numberOfAdvertsToInclude) {
         int adGroupIndex = exoPlayer.getCurrentAdGroupIndex();
-        Log.e("TAG", "adGroupIndex: " + adGroupIndex);
         long advertBreakDurationInMicros = 0;
         NoPlayerAdsLoader noPlayerAdsLoader = adsLoader.get();
 

@@ -3,7 +3,6 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
@@ -115,10 +114,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
         AdvertBreak advertBreak = advertBreaks.get(advertGroupIndex);
         if (advertIndexInAdvertGroup >= advertBreak.adverts().size()) {
-            throw new IllegalStateException("Cached advert break data contains less adverts than current index. Cached adverts: "
-                                                    + advertBreak.adverts().size()
-                                                    + " index: " + advertIndexInAdvertGroup
-            );
+            throw new IllegalStateException("Cached advert break data contains less adverts than current index.");
         }
 
         return C.msToUs(advertBreak.adverts().get(advertIndexInAdvertGroup).durationInMillis());
@@ -161,7 +157,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        Log.e(TAG, "onTimelineChanged: " + reason);
         if (reason == Player.TIMELINE_CHANGE_REASON_RESET) {
             // The player is being reset and this source will be released.
             return;
@@ -180,7 +175,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onPositionDiscontinuity(int reason) {
-        Log.e(TAG, "onPositionDiscontinuity: " + reason);
         if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION && player != null && adPlaybackState != null) {
             if (adGroupIndex != -1 && adIndexInGroup != -1) {
                 Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
