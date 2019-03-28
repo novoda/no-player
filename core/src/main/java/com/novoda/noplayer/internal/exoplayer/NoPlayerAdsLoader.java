@@ -165,9 +165,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
 
-            if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && adGroupIndex != -1 && adIndexInGroup != -1) {
-                Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
-                advertListener.onAdvertStart(advert.advertId());
+            if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED) {
+                notifyAdvertStart();
             }
         }
     }
@@ -185,10 +184,14 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-            if (adGroupIndex != -1 && adIndexInGroup != -1) {
-                Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
-                advertListener.onAdvertStart(advert.advertId());
-            }
+            notifyAdvertStart();
+        }
+    }
+
+    private void notifyAdvertStart() {
+        if (adGroupIndex != -1 && adIndexInGroup != -1) {
+            Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
+            advertListener.onAdvertStart(advert.advertId());
         }
     }
 
