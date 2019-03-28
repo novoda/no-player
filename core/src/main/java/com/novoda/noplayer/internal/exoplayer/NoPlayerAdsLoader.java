@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
+import com.novoda.noplayer.AdvertId;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.utils.Optional;
@@ -37,8 +38,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     @Nullable
     private AdvertsLoader.Cancellable loadingAds;
 
-    private Optional<NoPlayer.AdvertListener> advertListener = Optional.absent();
-
+    private NoPlayer.AdvertListener advertListener = NoOpAdvertListener.INSTANCE;
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
 
@@ -49,7 +49,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     }
 
     public void bind(Optional<NoPlayer.AdvertListener> advertListener) {
-        this.advertListener = advertListener;
+        if (advertListener.isPresent()) {
+            this.advertListener = advertListener.get();
+        } else {
+            this.advertListener = NoOpAdvertListener.INSTANCE;
+        }
     }
 
     @Override
@@ -65,7 +69,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
 
         if (adPlaybackState == null) {
-            notifyEventIfPossible("start loading adverts");
+            advertListener.onAdvertEvent("start loading adverts");
             loadingAds = loader.load(advertsLoadedCallback);
         } else {
             updateAdPlaybackState();
@@ -82,7 +86,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    notifyEventIfPossible("adverts loaded");
+                    advertListener.onAdvertEvent("adverts loaded");
                     updateAdPlaybackState();
                 }
             });
@@ -163,9 +167,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
             if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && adGroupIndex != -1 && adIndexInGroup != -1) {
                 Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
-                if (advertListener.isPresent()) {
-                    advertListener.get().onAdvertStart(advert.advertId());
-                }
+                advertListener.onAdvertStart(advert.advertId());
             }
         }
     }
@@ -176,9 +178,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION && player != null && adPlaybackState != null) {
             if (adGroupIndex != -1 && adIndexInGroup != -1) {
                 Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
-                if (advertListener.isPresent()) {
-                    advertListener.get().onAdvertEnd(advert.advertId());
-                }
+                advertListener.onAdvertEnd(advert.advertId());
 
                 adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
                 updateAdPlaybackState();
@@ -188,16 +188,37 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
             if (adGroupIndex != -1 && adIndexInGroup != -1) {
                 Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
-                if (advertListener.isPresent()) {
-                    advertListener.get().onAdvertStart(advert.advertId());
-                }
+                advertListener.onAdvertStart(advert.advertId());
             }
         }
     }
 
-    private void notifyEventIfPossible(String event) {
-        if (advertListener.isPresent()) {
-            advertListener.get().onAdvertEvent(event);
+    private enum NoOpAdvertListener implements NoPlayer.AdvertListener {
+        INSTANCE;
+
+        @Override
+        public void onAdvertBreakStart(AdvertBreak advertBreak) {
+            // no-op
+        }
+
+        @Override
+        public void onAdvertBreakEnd(AdvertBreak advertBreak) {
+            // no-op
+        }
+
+        @Override
+        public void onAdvertStart(AdvertId advertId) {
+            // no-op
+        }
+
+        @Override
+        public void onAdvertEnd(AdvertId advertId) {
+            // no-op
+        }
+
+        @Override
+        public void onAdvertEvent(String event) {
+            // no-op
         }
     }
 }
