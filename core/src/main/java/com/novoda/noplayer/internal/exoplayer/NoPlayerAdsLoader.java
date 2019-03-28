@@ -97,7 +97,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
     }
 
-    public long advertDurationBy(int advertGroupIndex, int advertIndexInAdvertGroup) {
+    long advertDurationBy(int advertGroupIndex, int advertIndexInAdvertGroup) {
         if (advertBreaks == null || advertGroupIndex >= advertBreaks.size()) {
             return 0;
         }
