@@ -120,6 +120,7 @@ class ExoPlayerFacade {
         int adGroupIndex = exoPlayer.getCurrentAdGroupIndex();
         long advertBreakDurationInMicros = 0;
         NoPlayerAdsLoader noPlayerAdsLoader = adsLoader.get();
+
         for (int i = 0; i < numberOfAdvertsToInclude; i++) {
             long advertDurationInMicros = period.getAdDurationUs(adGroupIndex, i);
             if (advertDurationInMicros == C.TIME_UNSET) {
@@ -127,6 +128,7 @@ class ExoPlayerFacade {
             }
             advertBreakDurationInMicros += advertDurationInMicros;
         }
+
         return advertBreakDurationInMicros;
     }
 
