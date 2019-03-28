@@ -116,8 +116,7 @@ class ExoPlayerFacade {
         return C.usToMs(playedAdvertBreakDurationInMicros) + playheadPositionInMillis();
     }
 
-    private long combinedAdvertDurationInGroup(Timeline.Period period,
-                                               int numberOfAdvertsToInclude) {
+    private long combinedAdvertDurationInGroup(Timeline.Period period, int numberOfAdvertsToInclude) {
         int adGroupIndex = exoPlayer.getCurrentAdGroupIndex();
         long advertBreakDurationInMicros = 0;
         for (int i = 0; i < numberOfAdvertsToInclude; i++) {
