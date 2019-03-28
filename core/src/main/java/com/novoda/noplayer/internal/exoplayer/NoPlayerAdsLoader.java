@@ -80,9 +80,12 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         @Override
         public void onAdvertsLoaded(List<AdvertBreak> breaks) {
             loadingAds = null;
+            AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks);
             advertBreaks.clear();
-            advertBreaks.addAll(breaks);
-            adPlaybackState = AdvertPlaybackState.from(breaks);
+            advertBreaks.addAll(advertPlaybackState.advertBreaks());
+
+            adPlaybackState = advertPlaybackState.adPlaybackState();
+
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -112,7 +115,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
         AdvertBreak advertBreak = advertBreaks.get(advertGroupIndex);
         if (advertIndexInAdvertGroup >= advertBreak.adverts().size()) {
-            throw new IllegalStateException("Cached advert break data contains less adverts than current index.");
+            throw new IllegalStateException("Cached advert break data contains less adverts than current index. Cached adverts: "
+                                                    + advertBreak.adverts().size()
+                                                    + " index: " + advertIndexInAdvertGroup
+            );
         }
 
         return C.msToUs(advertBreak.adverts().get(advertIndexInAdvertGroup).durationInMillis());

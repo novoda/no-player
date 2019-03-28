@@ -54,13 +54,24 @@ public class AdvertPlaybackStateTest {
     public void createsCorrectAdvertPlaybackState() {
         List<AdvertBreak> advertBreaks = Arrays.asList(THIRD_ADVERT_BREAK, SECOND_ADVERT_BREAK, FIRST_ADVERT_BREAK);
 
-        AdPlaybackState adPlaybackState = AdvertPlaybackState.from(advertBreaks);
+        AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks);
+        AdPlaybackState adPlaybackState = advertPlaybackState.adPlaybackState();
 
         assertThat(adPlaybackState.adGroupCount).isEqualTo(3);
         assertThat(adPlaybackState.adGroupTimesUs).containsSequence(ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS, THREE_SECONDS_IN_MICROS);
         assertThatGroupContains(adPlaybackState.adGroups[0], 1, new long[]{ONE_SECOND_IN_MICROS}, new Uri[]{FIRST_URI});
         assertThatGroupContains(adPlaybackState.adGroups[1], 2, new long[]{ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS}, new Uri[]{FIRST_URI, SECOND_URI});
         assertThatGroupContains(adPlaybackState.adGroups[2], 3, new long[]{ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS, THREE_SECONDS_IN_MICROS}, new Uri[]{FIRST_URI, SECOND_URI, THIRD_URI});
+    }
+
+    @Test
+    public void advertBreaksAreReorderedBasedOnStartTime() {
+        List<AdvertBreak> advertBreaks = Arrays.asList(THIRD_ADVERT_BREAK, SECOND_ADVERT_BREAK, FIRST_ADVERT_BREAK);
+
+        AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks);
+        List<AdvertBreak> actualAdvertBreaks = advertPlaybackState.advertBreaks();
+
+        assertThat(actualAdvertBreaks).containsExactly(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK);
     }
 
     private void assertThatGroupContains(AdPlaybackState.AdGroup adGroup, int numberOfAdverts, long[] advertDurations, Uri[] advertUris) {

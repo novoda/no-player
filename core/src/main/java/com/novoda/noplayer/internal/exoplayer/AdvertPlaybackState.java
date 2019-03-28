@@ -8,12 +8,12 @@ import com.novoda.noplayer.AdvertBreak;
 import java.util.Collections;
 import java.util.List;
 
-public final class AdvertPlaybackState {
+final class AdvertPlaybackState {
 
-    private AdvertPlaybackState() {
-    }
+    private final AdPlaybackState adPlaybackState;
+    private final List<AdvertBreak> advertBreaks;
 
-    public static AdPlaybackState from(List<AdvertBreak> advertBreaks) {
+    static AdvertPlaybackState from(List<AdvertBreak> advertBreaks) {
         Collections.sort(advertBreaks, new AdvertBreakStartTimeComparator());
 
         long[] advertOffsets = advertBreakOffset(advertBreaks);
@@ -40,7 +40,21 @@ public final class AdvertPlaybackState {
             advertBreaksWithAdvertDurations[i] = advertDurations;
         }
 
-        return adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
+        adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
+        return new AdvertPlaybackState(adPlaybackState, advertBreaks);
+    }
+
+    private AdvertPlaybackState(AdPlaybackState adPlaybackState, List<AdvertBreak> advertBreaks) {
+        this.adPlaybackState = adPlaybackState;
+        this.advertBreaks = advertBreaks;
+    }
+
+    AdPlaybackState adPlaybackState() {
+        return adPlaybackState;
+    }
+
+    List<AdvertBreak> advertBreaks() {
+        return advertBreaks;
     }
 
     private static long[] advertBreakOffset(List<AdvertBreak> advertBreaks) {
