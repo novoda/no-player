@@ -190,7 +190,12 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     private void notifyAdvertStart() {
         if (adGroupIndex != -1 && adIndexInGroup != -1) {
-            Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
+            AdvertBreak advertBreak = advertBreaks.get(adGroupIndex);
+            if (adIndexInGroup == 0) {
+                advertListener.onAdvertBreakStart(advertBreak.advertBreakId());
+            }
+
+            Advert advert = advertBreak.adverts().get(adIndexInGroup);
             advertListener.onAdvertStart(advert.advertId());
         }
     }

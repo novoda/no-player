@@ -14,6 +14,10 @@ public class AdvertBreak {
         this.adverts = adverts;
     }
 
+    public AdvertBreakId advertBreakId() {
+        return advertBreakId;
+    }
+
     public long startTimeInMillis() {
         return startTimeInMillis;
     }
