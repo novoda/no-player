@@ -3,7 +3,6 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
@@ -42,9 +41,13 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
 
-    NoPlayerAdsLoader(AdvertsLoader loader) {
+    static NoPlayerAdsLoader create(AdvertsLoader loader) {
+        return new NoPlayerAdsLoader(loader, new Handler(Looper.getMainLooper()));
+    }
+
+    NoPlayerAdsLoader(AdvertsLoader loader, Handler handler) {
         this.loader = loader;
-        this.handler = new Handler(Looper.getMainLooper());
+        this.handler = handler;
     }
 
     public void bind(Optional<NoPlayer.AdvertListener> advertListener) {
