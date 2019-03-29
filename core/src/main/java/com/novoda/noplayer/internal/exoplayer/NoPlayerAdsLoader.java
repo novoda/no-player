@@ -19,6 +19,7 @@ import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +27,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     private final AdvertsLoader loader;
     private final Handler handler;
-    private final List<AdvertBreak> advertBreaks;
 
     @Nullable
     private Player player;
@@ -38,13 +38,13 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     private AdvertsLoader.Cancellable loadingAds;
 
     private NoPlayer.AdvertListener advertListener = NoOpAdvertListener.INSTANCE;
+    private List<AdvertBreak> advertBreaks = Collections.emptyList();
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
 
     NoPlayerAdsLoader(AdvertsLoader loader) {
         this.loader = loader;
         this.handler = new Handler(Looper.getMainLooper());
-        this.advertBreaks = new ArrayList<>();
     }
 
     public void bind(Optional<NoPlayer.AdvertListener> advertListener) {
@@ -79,11 +79,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         public void onAdvertsLoaded(List<AdvertBreak> breaks) {
             loadingAds = null;
             AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks);
-            advertBreaks.clear();
-            advertBreaks.addAll(advertPlaybackState.advertBreaks());
-
+            advertBreaks = new ArrayList<>(advertPlaybackState.advertBreaks());
             adPlaybackState = advertPlaybackState.adPlaybackState();
-
             handler.post(new Runnable() {
                 @Override
                 public void run() {

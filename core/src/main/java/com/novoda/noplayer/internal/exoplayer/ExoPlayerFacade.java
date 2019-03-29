@@ -91,32 +91,34 @@ class ExoPlayerFacade {
     long advertBreakDurationInMillis() throws IllegalStateException {
         assertVideoLoaded();
         Timeline currentTimeline = exoPlayer.getCurrentTimeline();
-        if (!isPlayingAdvert() || adsLoader.isAbsent() || !(currentTimeline instanceof SinglePeriodAdTimeline)) {
-            return 0;
+        if (isPlayingAdvert() && adsLoader.isPresent() && currentTimeline instanceof SinglePeriodAdTimeline) {
+            SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
+            Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
+
+            int currentAdGroupIndex = exoPlayer.getCurrentAdGroupIndex();
+            int advertCount = period.getAdCountInAdGroup(currentAdGroupIndex);
+
+            long advertBreakDurationInMicros = combinedAdvertDurationInGroup(period, advertCount);
+            return C.usToMs(advertBreakDurationInMicros);
         }
-        SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
-        Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
 
-        int currentAdGroupIndex = exoPlayer.getCurrentAdGroupIndex();
-        int advertCount = period.getAdCountInAdGroup(currentAdGroupIndex);
-
-        long advertBreakDurationInMicros = combinedAdvertDurationInGroup(period, advertCount);
-        return C.usToMs(advertBreakDurationInMicros);
+        return 0;
     }
 
     long positionInAdvertBreakInMillis() throws IllegalStateException {
         assertVideoLoaded();
         Timeline currentTimeline = exoPlayer.getCurrentTimeline();
-        if (!isPlayingAdvert() || adsLoader.isAbsent() || !(currentTimeline instanceof SinglePeriodAdTimeline)) {
-            return 0;
+        if (isPlayingAdvert() && adsLoader.isPresent() && currentTimeline instanceof SinglePeriodAdTimeline) {
+            SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
+            Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
+
+            int advertCount = exoPlayer.getCurrentAdIndexInAdGroup();
+
+            long playedAdvertBreakDurationInMicros = combinedAdvertDurationInGroup(period, advertCount);
+            return C.usToMs(playedAdvertBreakDurationInMicros) + playheadPositionInMillis();
         }
-        SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
-        Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
 
-        int advertCount = exoPlayer.getCurrentAdIndexInAdGroup();
-
-        long playedAdvertBreakDurationInMicros = combinedAdvertDurationInGroup(period, advertCount);
-        return C.usToMs(playedAdvertBreakDurationInMicros) + playheadPositionInMillis();
+        return 0;
     }
 
     private long combinedAdvertDurationInGroup(Timeline.Period period, int numberOfAdvertsToInclude) {
