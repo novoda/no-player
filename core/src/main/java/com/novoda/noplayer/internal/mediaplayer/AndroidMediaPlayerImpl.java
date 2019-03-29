@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
+
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
@@ -208,6 +209,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
+    public boolean isPlayingAdvert() {
+        return false;
+    }
+
+    @Override
+    public boolean isPlayingContent() {
+        return mediaPlayer.isPlaying();
+    }
+
+    @Override
     public void seekTo(long positionInMillis) throws IllegalStateException {
         seekToPositionInMillis = positionInMillis;
         mediaPlayer.seekTo(positionInMillis);
@@ -253,6 +264,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     public void loadVideoWithTimeout(Uri uri, Options options, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback) {
         loadTimeout.start(timeout, loadTimeoutCallback);
         loadVideo(uri, options);
+    }
+
+    @Override
+    public long advertBreakDurationInMillis() {
+        return 0;
+    }
+
+    @Override
+    public long positionInAdvertBreakInMillis() {
+        return 0;
     }
 
     @Override

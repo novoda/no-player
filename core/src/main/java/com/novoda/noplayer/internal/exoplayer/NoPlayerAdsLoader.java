@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
@@ -14,6 +15,8 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +35,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     private AdvertsLoader.Cancellable loadingAds;
 
     private Optional<NoPlayer.AdvertListener> advertListener = Optional.absent();
-
+    private List<AdvertBreak> advertBreaks = Collections.emptyList();
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
 
@@ -67,9 +70,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     private final AdvertsLoader.Callback advertsLoadedCallback = new AdvertsLoader.Callback() {
         @Override
-        public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
+        public void onAdvertsLoaded(List<AdvertBreak> breaks) {
             loadingAds = null;
-            adPlaybackState = AdvertPlaybackState.from(advertBreaks);
+            advertBreaks = new ArrayList<>(breaks);
+            adPlaybackState = AdvertPlaybackState.from(breaks);
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -90,6 +94,19 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         if (eventListener != null) {
             eventListener.onAdPlaybackState(adPlaybackState);
         }
+    }
+
+    long advertDurationBy(int advertGroupIndex, int advertIndexInAdvertGroup) {
+        if (advertGroupIndex >= advertBreaks.size()) {
+            throw new IllegalStateException("Advert is being played but no data about advert breaks is cached.");
+        }
+
+        AdvertBreak advertBreak = advertBreaks.get(advertGroupIndex);
+        if (advertIndexInAdvertGroup >= advertBreak.adverts().size()) {
+            throw new IllegalStateException("Cached advert break data contains less adverts than current index.");
+        }
+
+        return C.msToUs(advertBreak.adverts().get(advertIndexInAdvertGroup).durationInMillis());
     }
 
     @Override

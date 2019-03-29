@@ -6,9 +6,11 @@ import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ads.SinglePeriodAdTimeline;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerSurfaceHolder;
@@ -24,6 +26,8 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
 
+// Not much we can do, wrapping ExoPlayer is a lot of work
+@SuppressWarnings("PMD.GodClass")
 class ExoPlayerFacade {
 
     private static final boolean RESET_POSITION = true;
@@ -66,14 +70,71 @@ class ExoPlayerFacade {
         return exoPlayer != null && exoPlayer.getPlayWhenReady();
     }
 
-    long playheadPositionInMillis() throws IllegalStateException {
-        assertVideoLoaded();
-        return exoPlayer.getCurrentPosition();
+    boolean isPlayingAdvert() {
+        return isPlaying() && exoPlayer.isPlayingAd();
+    }
+
+    boolean isPlayingContent() {
+        return isPlaying() && !exoPlayer.isPlayingAd();
     }
 
     long mediaDurationInMillis() throws IllegalStateException {
         assertVideoLoaded();
         return exoPlayer.getDuration();
+    }
+
+    long playheadPositionInMillis() throws IllegalStateException {
+        assertVideoLoaded();
+        return exoPlayer.getCurrentPosition();
+    }
+
+    long advertBreakDurationInMillis() throws IllegalStateException {
+        assertVideoLoaded();
+        Timeline currentTimeline = exoPlayer.getCurrentTimeline();
+        if (isPlayingAdvert() && adsLoader.isPresent() && currentTimeline instanceof SinglePeriodAdTimeline) {
+            SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
+            Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
+
+            int currentAdGroupIndex = exoPlayer.getCurrentAdGroupIndex();
+            int advertCount = period.getAdCountInAdGroup(currentAdGroupIndex);
+
+            long advertBreakDurationInMicros = combinedAdvertDurationInGroup(period, advertCount);
+            return C.usToMs(advertBreakDurationInMicros);
+        }
+
+        return 0;
+    }
+
+    long positionInAdvertBreakInMillis() throws IllegalStateException {
+        assertVideoLoaded();
+        Timeline currentTimeline = exoPlayer.getCurrentTimeline();
+        if (isPlayingAdvert() && adsLoader.isPresent() && currentTimeline instanceof SinglePeriodAdTimeline) {
+            SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
+            Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
+
+            int advertCount = exoPlayer.getCurrentAdIndexInAdGroup();
+
+            long playedAdvertBreakDurationInMicros = combinedAdvertDurationInGroup(period, advertCount);
+            return C.usToMs(playedAdvertBreakDurationInMicros) + playheadPositionInMillis();
+        }
+
+        return 0;
+    }
+
+    private long combinedAdvertDurationInGroup(Timeline.Period period, int numberOfAdvertsToInclude) {
+        int adGroupIndex = exoPlayer.getCurrentAdGroupIndex();
+        long advertBreakDurationInMicros = 0;
+        NoPlayerAdsLoader noPlayerAdsLoader = adsLoader.get();
+
+        for (int i = 0; i < numberOfAdvertsToInclude; i++) {
+            long advertDurationInMicros = period.getAdDurationUs(adGroupIndex, i);
+            if (advertDurationInMicros == C.TIME_UNSET) {
+                advertDurationInMicros = noPlayerAdsLoader.advertDurationBy(adGroupIndex, i);
+            }
+            advertBreakDurationInMicros += advertDurationInMicros;
+        }
+
+        return advertBreakDurationInMicros;
     }
 
     int bufferPercentage() throws IllegalStateException {
@@ -251,5 +312,4 @@ class ExoPlayerFacade {
             throw new IllegalStateException("Video must be loaded before trying to interact with the player");
         }
     }
-
 }
