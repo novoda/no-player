@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -33,6 +34,10 @@ import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,10 +47,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import utils.ExceptionMatcher;
 
-import java.util.Collections;
-import java.util.List;
+import utils.ExceptionMatcher;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -482,7 +485,7 @@ public class ExoPlayerFacadeTest {
         public void whenGettingAdvertBreakDuration_thenReturnsDurationOfAllAdsInTheBreak() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
             given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
-            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
             long[] durations = {100 * MICROS, 200 * MICROS, 300 * MICROS, 400 * MICROS};
             givenAdGroupAtPositionContainsAdsWithDurations(2, durations);
 
@@ -495,7 +498,7 @@ public class ExoPlayerFacadeTest {
         public void whenGettingAdvertBreakDuration_andDurationIsUnset_thenUsesDurationFromAdsLoader() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
             given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
-            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
             given(optionalAdsLoader.get()).willReturn(adsLoader);
             long[] durations = {100 * MICROS, 200 * MICROS, C.TIME_UNSET, 400 * MICROS};
             givenAdGroupAtPositionContainsAdsWithDurations(2, durations);
@@ -510,7 +513,7 @@ public class ExoPlayerFacadeTest {
         public void whenGettingAdvertBreakDuration_andAdvertIsNotPlaying_thenReturnsZero() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
             given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
-            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
 
             long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
 
@@ -521,7 +524,7 @@ public class ExoPlayerFacadeTest {
         public void whenGettingAdvertBreakDuration_andPlayerIsNotReady_thenReturnsZero() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
             given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
-            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
 
             long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
 
@@ -532,7 +535,7 @@ public class ExoPlayerFacadeTest {
         public void whenGettingAdvertBreakDuration_andAdvertLoaderIsMissing_thenReturnsZero() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
             given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
-            given(optionalAdsLoader.isAbsent()).willReturn(true);
+            given(optionalAdsLoader.isPresent()).willReturn(false);
 
             long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
 
@@ -543,7 +546,7 @@ public class ExoPlayerFacadeTest {
         public void whenGettingPositionInAdvertBreak_thenReturnsDurationOfPreviousAdsInBreakWithCurrentPlayheadPosition() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
             given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
-            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
             long[] durations = {100 * MICROS, 200 * MICROS, 300 * MICROS, 400 * MICROS};
             givenAdGroupAtPositionContainsAdsWithDurations(1, durations);
             given(exoPlayer.getCurrentPosition()).willReturn(150L);
@@ -558,7 +561,7 @@ public class ExoPlayerFacadeTest {
         public void whenGettingPositionInAdvertBreak_andDurationIsUnset_thenUsesDurationFromAdsLoader() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
             given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
-            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
             given(optionalAdsLoader.get()).willReturn(adsLoader);
             long[] durations = {100 * MICROS, 200 * MICROS, C.TIME_UNSET, 400 * MICROS};
             givenAdGroupAtPositionContainsAdsWithDurations(2, durations);
@@ -575,7 +578,7 @@ public class ExoPlayerFacadeTest {
         public void whenGettingPositionInAdvertBreak_andAdvertIsNotPlaying_thenReturnsZero() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
             given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
-            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
 
             long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
 
@@ -586,7 +589,7 @@ public class ExoPlayerFacadeTest {
         public void whenGettingPositionInAdvertBreak_andPlayerIsNotReady_thenReturnsZero() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
             given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
-            given(optionalAdsLoader.isAbsent()).willReturn(false);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
 
             long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
 
@@ -597,7 +600,7 @@ public class ExoPlayerFacadeTest {
         public void whenGettingPositionInAdvertBreak_andAdvertLoaderIsMissing_thenReturnsZero() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
             given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
-            given(optionalAdsLoader.isAbsent()).willReturn(true);
+            given(optionalAdsLoader.isPresent()).willReturn(false);
 
             long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
 
