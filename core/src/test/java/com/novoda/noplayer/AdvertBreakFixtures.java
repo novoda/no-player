@@ -1,6 +1,7 @@
 package com.novoda.noplayer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AdvertBreakFixtures {
@@ -29,6 +30,11 @@ public class AdvertBreakFixtures {
 
     public AdvertBreakFixtures withAdvert(Advert advert) {
         adverts.add(advert);
+        return this;
+    }
+
+    public AdvertBreakFixtures withAdverts(Advert... adverts) {
+        Collections.addAll(this.adverts, adverts);
         return this;
     }
 
