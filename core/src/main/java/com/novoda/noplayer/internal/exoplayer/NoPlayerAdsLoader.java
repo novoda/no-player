@@ -161,7 +161,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
 
-            if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && adGroupIndex != -1 && adIndexInGroup != -1) {
+            if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && isPlayingAdvert()) {
                 notifyAdvertStart(advertBreaks.get(adGroupIndex));
             }
         }
@@ -170,7 +170,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     @Override
     public void onPositionDiscontinuity(int reason) {
         if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION && player != null && adPlaybackState != null) {
-            if (adGroupIndex != -1 && adIndexInGroup != -1) {
+            if (isPlayingAdvert()) {
                 notifyAdvertEnd(advertBreaks.get(adGroupIndex));
                 adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
                 updateAdPlaybackState();
@@ -179,10 +179,14 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
 
-            if (adGroupIndex != -1 && adIndexInGroup != -1) {
+            if (isPlayingAdvert()) {
                 notifyAdvertStart(advertBreaks.get(adGroupIndex));
             }
         }
+    }
+
+    private boolean isPlayingAdvert() {
+        return adGroupIndex != -1 && adIndexInGroup != -1;
     }
 
     private void notifyAdvertEnd(AdvertBreak advertBreak) {
