@@ -5,6 +5,7 @@ import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,16 +15,16 @@ final class AdvertPlaybackState {
     private final List<AdvertBreak> advertBreaks;
 
     static AdvertPlaybackState from(List<AdvertBreak> advertBreaks) {
-        Collections.sort(advertBreaks, new AdvertBreakStartTimeComparator());
+        List<AdvertBreak> sortedAdvertBreaks = sortAdvertBreaksByStartTime(advertBreaks);
 
-        long[] advertOffsets = advertBreakOffset(advertBreaks);
+        long[] advertOffsets = advertBreakOffset(sortedAdvertBreaks);
         AdPlaybackState adPlaybackState = new AdPlaybackState(advertOffsets);
 
-        int advertBreaksCount = advertBreaks.size();
+        int advertBreaksCount = sortedAdvertBreaks.size();
         long[][] advertBreaksWithAdvertDurations = new long[advertBreaksCount][];
 
         for (int i = 0; i < advertBreaksCount; i++) {
-            AdvertBreak advertBreak = advertBreaks.get(i);
+            AdvertBreak advertBreak = sortedAdvertBreaks.get(i);
             List<Advert> adverts = advertBreak.adverts();
 
             int advertsCount = adverts.size();
@@ -41,7 +42,7 @@ final class AdvertPlaybackState {
         }
 
         adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
-        return new AdvertPlaybackState(adPlaybackState, advertBreaks);
+        return new AdvertPlaybackState(adPlaybackState, sortedAdvertBreaks);
     }
 
     private AdvertPlaybackState(AdPlaybackState adPlaybackState, List<AdvertBreak> advertBreaks) {
@@ -55,6 +56,12 @@ final class AdvertPlaybackState {
 
     List<AdvertBreak> advertBreaks() {
         return advertBreaks;
+    }
+
+    private static List<AdvertBreak> sortAdvertBreaksByStartTime(List<AdvertBreak> advertBreaks) {
+        List<AdvertBreak> sortedAdvertBreaks = new ArrayList<>(advertBreaks);
+        Collections.sort(sortedAdvertBreaks, new AdvertBreakStartTimeComparator());
+        return sortedAdvertBreaks;
     }
 
     private static long[] advertBreakOffset(List<AdvertBreak> advertBreaks) {

@@ -1,18 +1,16 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertBreakId;
 import com.novoda.noplayer.AdvertId;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -77,6 +75,15 @@ public class AdvertPlaybackStateTest {
         List<AdvertBreak> actualAdvertBreaks = advertPlaybackState.advertBreaks();
 
         assertThat(actualAdvertBreaks).containsExactly(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK);
+    }
+
+    @Test
+    public void doesNotChangeTheOrderOfTheInputParameter() {
+        List<AdvertBreak> advertBreaks = Arrays.asList(THIRD_ADVERT_BREAK, SECOND_ADVERT_BREAK, FIRST_ADVERT_BREAK);
+
+        AdvertPlaybackState.from(advertBreaks);
+
+        assertThat(advertBreaks).containsExactly(THIRD_ADVERT_BREAK, SECOND_ADVERT_BREAK, FIRST_ADVERT_BREAK);
     }
 
     private void assertThatGroupContains(AdPlaybackState.AdGroup adGroup, int numberOfAdverts, long[] advertDurations, Uri[] advertUris) {
