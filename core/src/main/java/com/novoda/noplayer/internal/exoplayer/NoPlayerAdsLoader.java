@@ -164,8 +164,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
 
-            if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED) {
-                notifyAdvertStart();
+            if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && isPlayingAdvert()) {
+                notifyAdvertStart(advertBreaks.get(adGroupIndex));
             }
         }
     }
@@ -173,20 +173,26 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     @Override
     public void onPositionDiscontinuity(int reason) {
         if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION && player != null && adPlaybackState != null) {
-            if (adGroupIndex != -1 && adIndexInGroup != -1) {
-                notifyAdvertEnd();
+            if (isPlayingAdvert()) {
+                notifyAdvertEnd(advertBreaks.get(adGroupIndex));
                 adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
                 updateAdPlaybackState();
             }
 
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-            notifyAdvertStart();
+
+            if (isPlayingAdvert()) {
+                notifyAdvertStart(advertBreaks.get(adGroupIndex));
+            }
         }
     }
 
-    private void notifyAdvertEnd() {
-        AdvertBreak advertBreak = advertBreaks.get(adGroupIndex);
+    private boolean isPlayingAdvert() {
+        return adGroupIndex != -1 && adIndexInGroup != -1;
+    }
+
+    private void notifyAdvertEnd(AdvertBreak advertBreak) {
         List<Advert> adverts = advertBreak.adverts();
         advertListener.onAdvertEnd(adverts.get(adIndexInGroup).advertId());
 
@@ -195,16 +201,13 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
     }
 
-    private void notifyAdvertStart() {
-        if (adGroupIndex != -1 && adIndexInGroup != -1) {
-            AdvertBreak advertBreak = advertBreaks.get(adGroupIndex);
-            if (adIndexInGroup == 0) {
-                advertListener.onAdvertBreakStart(advertBreak.advertBreakId());
-            }
-
-            Advert advert = advertBreak.adverts().get(adIndexInGroup);
-            advertListener.onAdvertStart(advert.advertId());
+    private void notifyAdvertStart(AdvertBreak advertBreak) {
+        if (adIndexInGroup == 0) {
+            advertListener.onAdvertBreakStart(advertBreak.advertBreakId());
         }
+
+        Advert advert = advertBreak.adverts().get(adIndexInGroup);
+        advertListener.onAdvertStart(advert.advertId());
     }
 
     private enum NoOpAdvertListener implements NoPlayer.AdvertListener {
