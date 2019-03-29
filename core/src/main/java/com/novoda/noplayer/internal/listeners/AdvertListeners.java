@@ -1,5 +1,7 @@
 package com.novoda.noplayer.internal.listeners;
 
+import com.novoda.noplayer.AdvertBreakId;
+import com.novoda.noplayer.AdvertId;
 import com.novoda.noplayer.NoPlayer;
 
 import java.util.Set;
@@ -22,10 +24,30 @@ class AdvertListeners implements NoPlayer.AdvertListener {
     }
 
     @Override
-    public void onAdvertEvent(String event) {
+    public void onAdvertBreakStart(AdvertBreakId advertBreakId) {
         for (NoPlayer.AdvertListener listener : listeners) {
-            listener.onAdvertEvent(event);
+            listener.onAdvertBreakStart(advertBreakId);
         }
+    }
 
+    @Override
+    public void onAdvertBreakEnd(AdvertBreakId advertBreakId) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertBreakEnd(advertBreakId);
+        }
+    }
+
+    @Override
+    public void onAdvertStart(AdvertId advertId) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertStart(advertId);
+        }
+    }
+
+    @Override
+    public void onAdvertEnd(AdvertId advertId) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertEnd(advertId);
+        }
     }
 }

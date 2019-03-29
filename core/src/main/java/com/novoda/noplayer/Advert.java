@@ -4,12 +4,18 @@ import android.net.Uri;
 
 public class Advert {
 
+    private final AdvertId advertId;
     private final long durationInMillis;
     private final Uri uri;
 
-    public Advert(long durationInMillis, Uri uri) {
+    public Advert(AdvertId advertId, long durationInMillis, Uri uri) {
+        this.advertId = advertId;
         this.durationInMillis = durationInMillis;
         this.uri = uri;
+    }
+
+    public AdvertId advertId() {
+        return advertId;
     }
 
     public long durationInMillis() {
@@ -34,12 +40,16 @@ public class Advert {
         if (durationInMillis != advert.durationInMillis) {
             return false;
         }
+        if (advertId != null ? !advertId.equals(advert.advertId) : advert.advertId != null) {
+            return false;
+        }
         return uri != null ? uri.equals(advert.uri) : advert.uri == null;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (durationInMillis ^ (durationInMillis >>> 32));
+        int result = advertId != null ? advertId.hashCode() : 0;
+        result = 31 * result + (int) (durationInMillis ^ (durationInMillis >>> 32));
         result = 31 * result + (uri != null ? uri.hashCode() : 0);
         return result;
     }
@@ -47,7 +57,8 @@ public class Advert {
     @Override
     public String toString() {
         return "Advert{"
-                + "durationInMillis=" + durationInMillis
+                + "advertId=" + advertId
+                + ", durationInMillis=" + durationInMillis
                 + ", uri=" + uri
                 + '}';
     }

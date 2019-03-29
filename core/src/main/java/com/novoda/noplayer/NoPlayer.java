@@ -14,6 +14,8 @@ import com.novoda.noplayer.model.Timeout;
 import java.util.List;
 import java.util.Map;
 
+// There are a lot of features for playing and monitoring video.
+@SuppressWarnings("PMD.ExcessivePublicCount")
 public interface NoPlayer extends PlayerState {
 
     /**
@@ -275,7 +277,13 @@ public interface NoPlayer extends PlayerState {
 
     interface AdvertListener {
 
-        void onAdvertEvent(String event); // TODO either pass different data in one method or have separate methods per event
+        void onAdvertBreakStart(AdvertBreakId advertBreakId);
+
+        void onAdvertBreakEnd(AdvertBreakId advertBreakId);
+
+        void onAdvertStart(AdvertId advertId);
+
+        void onAdvertEnd(AdvertId advertId);
     }
 
     /**
