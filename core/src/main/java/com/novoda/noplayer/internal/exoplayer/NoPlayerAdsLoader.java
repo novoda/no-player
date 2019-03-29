@@ -161,10 +161,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
 
-            if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED) {
-                if (adGroupIndex != -1 && adIndexInGroup != -1) {
-                    notifyAdvertStart(advertBreaks.get(adGroupIndex));
-                }
+            if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && adGroupIndex != -1 && adIndexInGroup != -1) {
+                notifyAdvertStart(advertBreaks.get(adGroupIndex));
             }
         }
     }
