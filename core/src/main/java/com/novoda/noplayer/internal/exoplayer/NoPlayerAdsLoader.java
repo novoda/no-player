@@ -51,11 +51,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     }
 
     public void bind(Optional<NoPlayer.AdvertListener> advertListener) {
-        if (advertListener.isPresent()) {
-            this.advertListener = advertListener.get();
-        } else {
-            this.advertListener = NoOpAdvertListener.INSTANCE;
-        }
+        this.advertListener = advertListener.isPresent() ? advertListener.get() : NoOpAdvertListener.INSTANCE;
     }
 
     @Override
