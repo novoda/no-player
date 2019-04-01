@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
@@ -17,7 +18,6 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -78,7 +78,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         public void onAdvertsLoaded(List<AdvertBreak> breaks) {
             loadingAds = null;
             AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks);
-            advertBreaks = new ArrayList<>(advertPlaybackState.advertBreaks());
+            advertBreaks = advertPlaybackState.advertBreaks();
             adPlaybackState = advertPlaybackState.adPlaybackState();
             handler.post(new Runnable() {
                 @Override
