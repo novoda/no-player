@@ -2,7 +2,6 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.content.Context;
 import android.os.Handler;
-
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.novoda.noplayer.AdvertsLoader;
@@ -126,7 +125,7 @@ public class NoPlayerExoPlayerCreator {
         private Optional<NoPlayerAdsLoader> createAdsLoaderFrom(Optional<AdvertsLoader> advertsLoader) {
             if (advertsLoader.isPresent()) {
                 AdvertsLoader loader = advertsLoader.get();
-                NoPlayerAdsLoader adsLoader = new NoPlayerAdsLoader(loader);
+                NoPlayerAdsLoader adsLoader = NoPlayerAdsLoader.create(loader);
                 return Optional.of(adsLoader);
             } else {
                 return Optional.absent();
