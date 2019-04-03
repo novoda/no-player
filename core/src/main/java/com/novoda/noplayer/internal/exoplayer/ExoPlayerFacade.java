@@ -26,9 +26,6 @@ import java.util.List;
 
 class ExoPlayerFacade {
 
-    private static final boolean RESET_POSITION = true;
-    private static final boolean DO_NOT_RESET_STATE = false;
-
     private final BandwidthMeterCreator bandwidthMeterCreator;
     private final AndroidDeviceVersion androidDeviceVersion;
     private final MediaSourceFactory mediaSourceFactory;
@@ -136,7 +133,7 @@ class ExoPlayerFacade {
                 bandwidthMeter
         );
         attachToSurface(playerSurfaceHolder);
-        exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
+        exoPlayer.prepare(mediaSource, options.shouldResetposition(), options.shouldResetState());
     }
 
     private void setMovieAudioAttributes(SimpleExoPlayer exoPlayer) {

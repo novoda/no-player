@@ -67,8 +67,8 @@ public class ExoPlayerFacadeTest {
     private static final boolean IS_PLAYING = true;
     private static final boolean PLAY_WHEN_READY = true;
     private static final boolean DO_NOT_PLAY_WHEN_READY = false;
-    private static final boolean RESET_POSITION = true;
-    private static final boolean DO_NOT_RESET_STATE = false;
+    private static final boolean RESET_POSITION_BY_DEFAULT = true;
+    private static final boolean DO_NOT_RESET_STATE_BY_DEFAULT = false;
 
     private static final Options OPTIONS = new OptionsBuilder().withContentType(ContentType.DASH).build();
 
@@ -148,7 +148,47 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
+            verify(exoPlayer).prepare(mediaSource, RESET_POSITION_BY_DEFAULT, DO_NOT_RESET_STATE_BY_DEFAULT);
+        }
+
+        @Test
+        public void givenResetPositionEnabled_whenLoadingVideos_thenPreparesExoPlayerWithResetPosition() {
+            MediaSource mediaSource = givenMediaSource();
+            Options options = new OptionsBuilder().withResetPosition(true).build();
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(exoPlayer).prepare(mediaSource, true, DO_NOT_RESET_STATE_BY_DEFAULT);
+        }
+
+        @Test
+        public void givenResetPositionDisabled_whenLoadingVideos_thenPreparesExoPlayerWithoutResetPosition() {
+            MediaSource mediaSource = givenMediaSource();
+            Options options = new OptionsBuilder().withResetPosition(false).build();
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(exoPlayer).prepare(mediaSource, false, DO_NOT_RESET_STATE_BY_DEFAULT);
+        }
+
+        @Test
+        public void givenResetStateEnabled_whenLoadingVideos_thenPreparesExoPlayerWithResetState() {
+            MediaSource mediaSource = givenMediaSource();
+            Options options = new OptionsBuilder().withResetState(true).build();
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(exoPlayer).prepare(mediaSource, RESET_POSITION_BY_DEFAULT, true);
+        }
+
+        @Test
+        public void givenResetStateDisabled_whenLoadingVideos_thenPreparesExoPlayerWithoutResetState() {
+            MediaSource mediaSource = givenMediaSource();
+            Options options = new OptionsBuilder().withResetState(false).build();
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(exoPlayer).prepare(mediaSource, RESET_POSITION_BY_DEFAULT, false);
         }
 
         @Test
@@ -514,7 +554,7 @@ public class ExoPlayerFacadeTest {
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
             given(exoPlayerForwarder.mediaSourceEventListener()).willReturn(mediaSourceEventListener);
             given(bandwidthMeterCreator.create(anyLong())).willReturn(defaultBandwidthMeter);
-            given(trackSelectorCreator.create(OPTIONS, defaultBandwidthMeter)).willReturn(trackSelector);
+            given(trackSelectorCreator.create(any(Options.class), eq(defaultBandwidthMeter))).willReturn(trackSelector);
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
@@ -534,10 +574,10 @@ public class ExoPlayerFacadeTest {
             MediaSource mediaSource = mock(MediaSource.class);
             given(
                     mediaSourceFactory.create(
-                            OPTIONS,
-                            uri,
-                            mediaSourceEventListener,
-                            defaultBandwidthMeter
+                            any(Options.class),
+                            eq(uri),
+                            eq(mediaSourceEventListener),
+                            eq(defaultBandwidthMeter)
                     )
             ).willReturn(mediaSource);
 

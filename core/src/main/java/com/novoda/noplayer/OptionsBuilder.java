@@ -9,10 +9,14 @@ public class OptionsBuilder {
 
     private static final int DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS = 10000;
     private static final int DEFAULT_MAX_INITIAL_BITRATE = 800000;
+    private static final boolean RESET_POSITION = true;
+    private static final boolean DO_NOT_RESET_STATE = false;
 
     private ContentType contentType = ContentType.H264;
     private int minDurationBeforeQualityIncreaseInMillis = DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS;
     private int maxInitialBitrate = DEFAULT_MAX_INITIAL_BITRATE;
+    private boolean resetPosition = RESET_POSITION;
+    private boolean resetState = DO_NOT_RESET_STATE;
 
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} with a given {@link ContentType}.
@@ -52,11 +56,34 @@ public class OptionsBuilder {
     }
 
     /**
+     * Sets {@link OptionsBuilder} to build {@link Options} with 'reset position' enabled. This will reset playback to the default
+     * position..
+     * @param resetPosition when false playback will start from the position for the last played video.
+     * @return {@link OptionsBuilder}
+     */
+    public OptionsBuilder withResetPosition(boolean resetPosition) {
+        this.resetPosition = resetPosition;
+        return this;
+    }
+
+    /**
+     * Sets {@link OptionsBuilder} to build {@link Options} with 'reset state' enabled. This will reset the timeline, manifests, tracks and tracks
+     * selections.
+     *
+     * @param resetState should be true unless the player will load the same media that it was playing previously. (e.g if playback is being retried)
+     * @return {@link OptionsBuilder}
+     */
+    public OptionsBuilder withResetState(boolean resetState) {
+        this.resetState = resetState;
+        return this;
+    }
+
+    /**
      * Builds a new {@link Options} instance.
      *
      * @return a {@link Options} instance.
      */
     public Options build() {
-        return new Options(contentType, minDurationBeforeQualityIncreaseInMillis, maxInitialBitrate);
+        return new Options(contentType, minDurationBeforeQualityIncreaseInMillis, maxInitialBitrate, resetPosition, resetState);
     }
 }
