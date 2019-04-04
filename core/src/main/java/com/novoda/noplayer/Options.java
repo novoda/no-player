@@ -2,6 +2,9 @@ package com.novoda.noplayer;
 
 import com.novoda.noplayer.internal.utils.Optional;
 
+/**
+ * Options to customise the underlying player.
+ */
 public class Options {
 
     private final ContentType contentType;
@@ -9,6 +12,11 @@ public class Options {
     private final int maxInitialBitrate;
     private final Optional<Long> initialPositionInMillis;
 
+    /**
+     * Creates a {@link OptionsBuilder} from this Options.
+     *
+     * @return a new instance of {@link OptionsBuilder}.
+     */
     public OptionsBuilder toOptionsBuilder() {
         OptionsBuilder optionsBuilder = new OptionsBuilder()
                 .withContentType(contentType)
