@@ -139,7 +139,7 @@ class ExoPlayerFacade {
         boolean hasInitialPosition = options.getInitialPositionInMillis().isPresent();
         if (hasInitialPosition) {
             Long initialPositionInMillis = options.getInitialPositionInMillis().get();
-            exoPlayer.seekTo(exoPlayer.getCurrentWindowIndex(), initialPositionInMillis);
+            exoPlayer.seekTo(initialPositionInMillis);
         }
 
         exoPlayer.prepare(mediaSource, !hasInitialPosition, DO_NOT_RESET_STATE);
