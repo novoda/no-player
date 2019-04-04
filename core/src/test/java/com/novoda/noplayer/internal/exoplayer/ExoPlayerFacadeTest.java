@@ -44,6 +44,7 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -52,9 +53,12 @@ import utils.ExceptionMatcher;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -64,6 +68,7 @@ public class ExoPlayerFacadeTest {
 
     private static final boolean SELECTED = true;
 
+    private static final long TWENTY_FIVE_SECONDS_IN_MILLIS = 25000;
     private static final long TWO_MINUTES_IN_MILLIS = 120000;
     private static final long TEN_MINUTES_IN_MILLIS = 600000;
     private static final long MICROS = 1000;
@@ -76,9 +81,12 @@ public class ExoPlayerFacadeTest {
     private static final boolean PLAY_WHEN_READY = true;
     private static final boolean DO_NOT_PLAY_WHEN_READY = false;
     private static final boolean RESET_POSITION = true;
+    private static final boolean DO_NOT_RESET_POSITION = false;
     private static final boolean DO_NOT_RESET_STATE = false;
 
-    private static final Options OPTIONS = new OptionsBuilder().withContentType(ContentType.DASH).build();
+    private static final Options OPTIONS = new OptionsBuilder()
+            .withContentType(ContentType.DASH)
+            .build();
 
     public static class GivenVideoNotLoaded extends Base {
 
@@ -228,11 +236,36 @@ public class ExoPlayerFacadeTest {
 
         @Test
         public void givenMediaSource_whenLoadingVideo_thenPreparesInternalExoPlayer() {
-            MediaSource mediaSource = givenMediaSource();
+            MediaSource mediaSource = givenMediaSource(OPTIONS);
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
+        }
+
+        @Test
+        public void givenInitialPosition_whenLoadingVideo_thenPerformsSeekBeforePreparing() {
+            Options options = OPTIONS.toOptionsBuilder()
+                    .withInitialPositionInMillis(TWENTY_FIVE_SECONDS_IN_MILLIS)
+                    .build();
+            MediaSource mediaSource = givenMediaSource(options);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, mediaCodecSelector);
+
+            InOrder inOrder = inOrder(exoPlayer);
+            inOrder.verify(exoPlayer).seekTo(TWENTY_FIVE_SECONDS_IN_MILLIS);
+            inOrder.verify(exoPlayer).prepare(mediaSource, DO_NOT_RESET_POSITION, DO_NOT_RESET_STATE);
+        }
+
+        @Test
+        public void givenNoInitialPosition_whenLoadingVideo_thenDoesNotPerformSeekBeforePreparing() {
+            MediaSource mediaSource = givenMediaSource(OPTIONS);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            InOrder inOrder = inOrder(exoPlayer);
+            inOrder.verify(exoPlayer, never()).seekTo(TWENTY_FIVE_SECONDS_IN_MILLIS);
+            inOrder.verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
         }
 
         @Test
@@ -364,7 +397,7 @@ public class ExoPlayerFacadeTest {
         }
 
         private void givenPlayerIsLoaded() {
-            givenMediaSource();
+            givenMediaSource(OPTIONS);
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
         }
 
@@ -803,8 +836,9 @@ public class ExoPlayerFacadeTest {
             given(exoPlayerForwarder.mediaSourceEventListener()).willReturn(mediaSourceEventListener);
             given(exoPlayerForwarder.advertListener()).willReturn(optionalAdvertListener);
             given(bandwidthMeterCreator.create(anyLong())).willReturn(defaultBandwidthMeter);
-            given(trackSelectorCreator.create(OPTIONS, defaultBandwidthMeter)).willReturn(trackSelector);
+            given(trackSelectorCreator.create(any(Options.class), eq(defaultBandwidthMeter))).willReturn(trackSelector);
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
+            willDoNothing().given(exoPlayer).seekTo(anyInt());
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
                     bandwidthMeterCreator,
@@ -820,11 +854,11 @@ public class ExoPlayerFacadeTest {
             textureViewHolder = PlayerSurfaceHolder.create(textureView);
         }
 
-        MediaSource givenMediaSource() {
+        MediaSource givenMediaSource(Options options) {
             MediaSource mediaSource = mock(MediaSource.class);
             given(
                     mediaSourceFactory.create(
-                            OPTIONS,
+                            options,
                             uri,
                             mediaSourceEventListener,
                             defaultBandwidthMeter,

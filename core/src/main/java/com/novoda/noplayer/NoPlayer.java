@@ -34,12 +34,16 @@ public interface NoPlayer extends PlayerState {
     void play() throws IllegalStateException;
 
     /**
-     * Plays content of a prepared Player at a given position.
+     * Deprecated: This does not perform the way it was originally intended. A seek can, and most likely will,
+     * occur after the content has already started playing. This can lead to some unexpected behaviour.
+     * Plays content of a prepared Player at a given position. Use {@link #loadVideo(Uri, Options)} passing
+     * a initial position to the {@link Options}.
      *
      * @param positionInMillis to start playing content from.
      * @throws IllegalStateException - if called before {@link NoPlayer#loadVideo(Uri, Options)}.
      * @see NoPlayer.PreparedListener
      */
+    @Deprecated
     void playAt(long positionInMillis) throws IllegalStateException;
 
     /**
