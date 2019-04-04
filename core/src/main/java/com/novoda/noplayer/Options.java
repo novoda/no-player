@@ -9,6 +9,18 @@ public class Options {
     private final int maxInitialBitrate;
     private final Optional<Long> initialPositionInMillis;
 
+    public OptionsBuilder toOptionsBuilder() {
+        OptionsBuilder optionsBuilder = new OptionsBuilder()
+                .withContentType(contentType)
+                .withMinDurationBeforeQualityIncreaseInMillis(minDurationBeforeQualityIncreaseInMillis)
+                .withMaxInitialBitrate(maxInitialBitrate);
+
+        if (initialPositionInMillis.isPresent()) {
+            optionsBuilder = optionsBuilder.withInitialPositionInMillis(initialPositionInMillis.get());
+        }
+        return optionsBuilder;
+    }
+
     Options(ContentType contentType,
             int minDurationBeforeQualityIncreaseInMillis,
             int maxInitialBitrate,
