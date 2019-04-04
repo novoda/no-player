@@ -75,7 +75,8 @@ public class Options {
         if (contentType != options.contentType) {
             return false;
         }
-        return initialPositionInMillis != null ? initialPositionInMillis.equals(options.initialPositionInMillis) : options.initialPositionInMillis == null;
+        return initialPositionInMillis != null
+                ? initialPositionInMillis.equals(options.initialPositionInMillis) : options.initialPositionInMillis == null;
     }
 
     @Override
