@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
@@ -156,11 +157,20 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             return;
         }
 
-        if (player != null) {
+        if (player != null && adPlaybackState != null) {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+            long contentPosition = player.getContentPosition();
 
             if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && isPlayingAdvert()) {
+                if (contentPosition > 0) {
+                    for (int i = adGroupIndex; i >= 0; i--) {
+                        adPlaybackState = adPlaybackState.withSkippedAdGroup(i);
+                    }
+                    updateAdPlaybackState();
+                    return;
+                }
+
                 notifyAdvertStart(advertBreaks.get(adGroupIndex));
             }
         }
