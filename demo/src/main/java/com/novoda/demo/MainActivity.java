@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.novoda.noplayer.ContentType;
@@ -17,14 +19,16 @@ import com.novoda.noplayer.internal.utils.NoPlayerLog;
 
 public class MainActivity extends Activity {
 
-    private static final String URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD = "https://storage.googleapis.com/content-samples/multi-audio/manifest.mpd";
+    private static final String URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD = "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd";
     private static final String EXAMPLE_MODULAR_LICENSE_SERVER_PROXY = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
     private static final int HALF_A_SECOND_IN_MILLIS = 500;
     private static final int TWO_MEGABITS = 2000000;
+    private static final int MAX_VIDEO_BITRATE = 800000;
 
     private NoPlayer player;
     private DemoPresenter demoPresenter;
     private DialogCreator dialogCreator;
+    private CheckBox hdSelectionCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +39,13 @@ public class MainActivity extends Activity {
         View videoSelectionButton = findViewById(R.id.button_video_selection);
         View audioSelectionButton = findViewById(R.id.button_audio_selection);
         View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
+        hdSelectionCheckBox = findViewById(R.id.button_hd_selection);
         ControllerView controllerView = findViewById(R.id.controller_view);
 
         videoSelectionButton.setOnClickListener(showVideoSelectionDialog);
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
+        hdSelectionCheckBox.setOnCheckedChangeListener(toggleHdSelection);
 
         DataPostingModularDrm drmHandler = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
 
@@ -70,8 +76,16 @@ public class MainActivity extends Activity {
                 .withContentType(ContentType.DASH)
                 .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
                 .withMaxInitialBitrate(TWO_MEGABITS)
+                .withMaxVideoBitrate(getMaxVideoBitrate())
                 .build();
         demoPresenter.startPresenting(uri, options);
+    }
+
+    private int getMaxVideoBitrate() {
+        if (hdSelectionCheckBox.isChecked()) {
+            return Integer.MAX_VALUE;
+        }
+        return MAX_VIDEO_BITRATE;
     }
 
     private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {
@@ -100,6 +114,17 @@ public class MainActivity extends Activity {
                 Toast.makeText(MainActivity.this, "no subtitles available!", Toast.LENGTH_LONG).show();
             } else {
                 dialogCreator.showSubtitleSelectionDialog();
+            }
+        }
+    };
+
+    private final CompoundButton.OnCheckedChangeListener toggleHdSelection = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                player.clearMaxVideoBitrate();
+            } else {
+                player.setMaxVideoBitrate(MAX_VIDEO_BITRATE);
             }
         }
     };
