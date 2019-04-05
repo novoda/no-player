@@ -156,11 +156,18 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             return;
         }
 
-        if (player != null) {
+        if (player != null && adPlaybackState != null) {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+            long contentPosition = player.getContentPosition();
 
             if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && isPlayingAdvert()) {
+                if (contentPosition > 0) {
+                    adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
+                    updateAdPlaybackState();
+                    return;
+                }
+
                 notifyAdvertStart(advertBreaks.get(adGroupIndex));
             }
         }

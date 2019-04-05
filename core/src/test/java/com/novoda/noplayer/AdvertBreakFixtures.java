@@ -8,7 +8,7 @@ public class AdvertBreakFixtures {
 
     private AdvertBreakId advertBreakId = new AdvertBreakId("advert_break_id");
     private long startTimeInMillis = 1000;
-    private List<Advert> adverts = new ArrayList<>();
+    private final List<Advert> adverts = new ArrayList<>();
 
     public static AdvertBreakFixtures anAdvertBreak() {
         return new AdvertBreakFixtures();
