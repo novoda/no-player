@@ -6,6 +6,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
@@ -328,6 +329,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         buggyVideoDriverPreventer.clear(playerView.getContainerView());
         surfaceRequester = null;
         containerView = null;
+    }
+
+    @Override
+    public void attach(AdvertView advertView) {
+
+    }
+
+    @Override
+    public void detach(AdvertView advertView) {
+
     }
 
     private void clearSurfaceHolderCallbacks() {

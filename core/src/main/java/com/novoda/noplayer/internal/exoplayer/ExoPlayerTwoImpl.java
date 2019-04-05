@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
@@ -260,6 +261,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         removeSubtitleRenderer();
         this.playerView = null;
+    }
+
+    @Override
+    public void attach(AdvertView advertView) {
+
+    }
+
+    @Override
+    public void detach(AdvertView advertView) {
+
     }
 
     @Override
