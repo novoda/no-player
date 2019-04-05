@@ -4,6 +4,7 @@ import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.AdvertBreak;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -38,12 +39,13 @@ public class SkippedAdvertsTest {
             .withStartTimeInMillis(FORTY_SECONDS_IN_MILLIS)
             .withAdvert(anAdvert().build())
             .build();
-
-    private final AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK, FOURTH_ADVERT_BREAK));
+    private static final AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK, FOURTH_ADVERT_BREAK));
+    private static final List<AdvertBreak> ADVERT_BREAKS = advertPlaybackState.advertBreaks();
+    private static final AdPlaybackState AD_PLAYBACK_STATE = advertPlaybackState.adPlaybackState();
 
     @Test
     public void doesNotSkipAdvert_whenCurrentPositionIsAtAdvertPosition() {
-        AdPlaybackState adPlaybackState = SkippedAdverts.from(THIRTY_SECONDS_IN_MILLIS, advertPlaybackState.advertBreaks(), advertPlaybackState.adPlaybackState());
+        AdPlaybackState adPlaybackState = SkippedAdverts.from(THIRTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
@@ -53,7 +55,7 @@ public class SkippedAdvertsTest {
 
     @Test
     public void skipsAdvertsPriorToCurrentPosition() {
-        AdPlaybackState adPlaybackState = SkippedAdverts.from(THIRTY_FIVE_SECONDS_IN_MILLIS, advertPlaybackState.advertBreaks(), advertPlaybackState.adPlaybackState());
+        AdPlaybackState adPlaybackState = SkippedAdverts.from(THIRTY_FIVE_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
@@ -63,7 +65,7 @@ public class SkippedAdvertsTest {
 
     @Test
     public void skipsNoAdverts_whenPositionIsStart() {
-        AdPlaybackState adPlaybackState = SkippedAdverts.from(BEGINNING, advertPlaybackState.advertBreaks(), advertPlaybackState.adPlaybackState());
+        AdPlaybackState adPlaybackState = SkippedAdverts.from(BEGINNING, ADVERT_BREAKS, AD_PLAYBACK_STATE);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_AVAILABLE});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
