@@ -20,7 +20,7 @@ public class SkippedAdvertsTest {
     private static final int TWENTY_SECONDS_IN_MILLIS = 20000;
     private static final int THIRTY_SECONDS_IN_MILLIS = 30000;
     private static final int THIRTY_FIVE_SECONDS_IN_MILLIS = 35000;
-    private static final int FOURTY_SECONDS_IN_MILLIS = 40000;
+    private static final int FORTY_SECONDS_IN_MILLIS = 40000;
 
     private static final AdvertBreak FIRST_ADVERT_BREAK = anAdvertBreak()
             .withStartTimeInMillis(TEN_SECONDS_IN_MILLIS)
@@ -35,7 +35,7 @@ public class SkippedAdvertsTest {
             .withAdvert(anAdvert().build())
             .build();
     private static final AdvertBreak FOURTH_ADVERT_BREAK = anAdvertBreak()
-            .withStartTimeInMillis(FOURTY_SECONDS_IN_MILLIS)
+            .withStartTimeInMillis(FORTY_SECONDS_IN_MILLIS)
             .withAdvert(anAdvert().build())
             .build();
 
