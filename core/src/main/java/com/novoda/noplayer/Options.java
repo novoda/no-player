@@ -10,6 +10,7 @@ public class Options {
     private final ContentType contentType;
     private final int minDurationBeforeQualityIncreaseInMillis;
     private final int maxInitialBitrate;
+    private final int maxVideoBitrate;
     private final Optional<Long> initialPositionInMillis;
 
     /**
@@ -21,7 +22,8 @@ public class Options {
         OptionsBuilder optionsBuilder = new OptionsBuilder()
                 .withContentType(contentType)
                 .withMinDurationBeforeQualityIncreaseInMillis(minDurationBeforeQualityIncreaseInMillis)
-                .withMaxInitialBitrate(maxInitialBitrate);
+                .withMaxInitialBitrate(maxInitialBitrate)
+                .withMaxVideoBitrate(maxVideoBitrate);
 
         if (initialPositionInMillis.isPresent()) {
             optionsBuilder = optionsBuilder.withInitialPositionInMillis(initialPositionInMillis.get());
@@ -32,10 +34,12 @@ public class Options {
     Options(ContentType contentType,
             int minDurationBeforeQualityIncreaseInMillis,
             int maxInitialBitrate,
+            int maxVideoBitrate,
             Optional<Long> initialPositionInMillis) {
         this.contentType = contentType;
         this.minDurationBeforeQualityIncreaseInMillis = minDurationBeforeQualityIncreaseInMillis;
         this.maxInitialBitrate = maxInitialBitrate;
+        this.maxVideoBitrate = maxVideoBitrate;
         this.initialPositionInMillis = initialPositionInMillis;
     }
 
@@ -49,6 +53,10 @@ public class Options {
 
     public int maxInitialBitrate() {
         return maxInitialBitrate;
+    }
+
+    public int maxVideoBitrate() {
+        return maxVideoBitrate;
     }
 
     public Optional<Long> getInitialPositionInMillis() {
@@ -72,6 +80,9 @@ public class Options {
         if (maxInitialBitrate != options.maxInitialBitrate) {
             return false;
         }
+        if (maxVideoBitrate != options.maxVideoBitrate) {
+            return false;
+        }
         if (contentType != options.contentType) {
             return false;
         }
@@ -84,6 +95,7 @@ public class Options {
         int result = contentType != null ? contentType.hashCode() : 0;
         result = 31 * result + minDurationBeforeQualityIncreaseInMillis;
         result = 31 * result + maxInitialBitrate;
+        result = 31 * result + maxVideoBitrate;
         result = 31 * result + (initialPositionInMillis != null ? initialPositionInMillis.hashCode() : 0);
         return result;
     }
@@ -94,6 +106,7 @@ public class Options {
                 + "contentType=" + contentType
                 + ", minDurationBeforeQualityIncreaseInMillis=" + minDurationBeforeQualityIncreaseInMillis
                 + ", maxInitialBitrate=" + maxInitialBitrate
+                + ", maxVideoBitrate=" + maxVideoBitrate
                 + ", initialPositionInMillis=" + initialPositionInMillis
                 + '}';
     }

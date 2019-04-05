@@ -322,4 +322,14 @@ class AndroidMediaPlayerFacade {
         assertIsInPlaybackState();
         return volume;
     }
+
+    void clearMaxVideoBitrate() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to clear max video bitrate but has not been implemented for MediaPlayer.");
+    }
+
+    void setMaxVideoBitrate(int maxVideoBitrate) {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to set max video bitrate but has not been implemented for MediaPlayer.");
+    }
 }
