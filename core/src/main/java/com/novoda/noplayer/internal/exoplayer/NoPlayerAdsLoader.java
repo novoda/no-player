@@ -38,7 +38,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     private NoPlayer.AdvertListener advertListener = NoOpAdvertListener.INSTANCE;
     private List<AdvertBreak> advertBreaks = Collections.emptyList();
-    private int adIndexInGroup = -1;
+    private int adIndexInGroup = -1;     // Our source of truth.
     private int adGroupIndex = -1;
 
     static NoPlayerAdsLoader create(AdvertsLoader loader) {
@@ -151,25 +151,23 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        if (reason == Player.TIMELINE_CHANGE_REASON_RESET) {
+        if (reason == Player.TIMELINE_CHANGE_REASON_RESET || player == null || adPlaybackState == null) {
             // The player is being reset and this source will be released.
             return;
         }
 
-        if (player != null && adPlaybackState != null) {
-            adGroupIndex = player.getCurrentAdGroupIndex();
-            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-            long contentPosition = player.getContentPosition();
+        adGroupIndex = player.getCurrentAdGroupIndex();
+        adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+        long contentPosition = player.getContentPosition();
 
-            if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && isPlayingAdvert()) {
-                if (contentPosition > 0) {
-                    adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
-                    updateAdPlaybackState();
-                    return;
-                }
-
-                notifyAdvertStart(advertBreaks.get(adGroupIndex));
+        if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && isPlayingAdvert()) {
+            if (contentPosition > 0) {
+                adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
+                updateAdPlaybackState();
+                return;
             }
+
+            notifyAdvertStart(advertBreaks.get(adGroupIndex));
         }
     }
 
@@ -201,6 +199,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
         if (adIndexInGroup == adverts.size() - 1) {
             advertListener.onAdvertBreakEnd(advertBreak.advertBreakId());
+            adIndexInGroup = -1;
         }
     }
 
