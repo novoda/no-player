@@ -19,6 +19,7 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -94,6 +95,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
                 @Override
                 public void run() {
                     updateAdPlaybackState();
+                    advertView.setup(new ArrayList<>(advertBreaks));
                 }
             });
         }
