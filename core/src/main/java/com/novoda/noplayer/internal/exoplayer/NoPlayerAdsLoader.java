@@ -180,6 +180,17 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         return player.isPlayingAd() && (adGroupIndex == -1 || adIndexInGroup == -1);
     }
 
+    private void notifyAdvertStart(AdvertBreak advertBreak) {
+        if (adIndexInGroup == 0) {
+            Log.d(TAG, "notifyAdvertBreakStart: ");
+            advertListener.onAdvertBreakStart(advertBreak.advertBreakId());
+        }
+
+        Advert advert = advertBreak.adverts().get(adIndexInGroup);
+        advertListener.onAdvertStart(advert.advertId());
+        Log.d(TAG, "notifyAdvertStart: ");
+    }
+
     @Override
     public void onPositionDiscontinuity(int reason) {
         Log.d(TAG, "onPositionDiscontinuity: " + reason);
@@ -199,11 +210,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
     }
 
-    private void resetAdvertPosition() {
-        adGroupIndex = -1;
-        adIndexInGroup = -1;
-    }
-
     private boolean isPlayingAdvert() {
         return adGroupIndex != -1 && adIndexInGroup != -1;
     }
@@ -219,15 +225,9 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
     }
 
-    private void notifyAdvertStart(AdvertBreak advertBreak) {
-        if (adIndexInGroup == 0) {
-            Log.d(TAG, "notifyAdvertBreakStart: ");
-            advertListener.onAdvertBreakStart(advertBreak.advertBreakId());
-        }
-
-        Advert advert = advertBreak.adverts().get(adIndexInGroup);
-        advertListener.onAdvertStart(advert.advertId());
-        Log.d(TAG, "notifyAdvertStart: ");
+    private void resetAdvertPosition() {
+        adGroupIndex = -1;
+        adIndexInGroup = -1;
     }
 
     private enum NoOpAdvertListener implements NoPlayer.AdvertListener {
