@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+// Not much we can do, controlling advert playback.
+@SuppressWarnings("PMD.GodClass")
 public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, AdvertView.AdvertInteractionListener {
 
     private final AdvertsLoader loader;
