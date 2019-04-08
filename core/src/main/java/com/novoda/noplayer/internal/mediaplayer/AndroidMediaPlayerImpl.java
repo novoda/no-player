@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Not much we can do, wrapping MediaPlayer is a lot of work
-@SuppressWarnings("PMD.GodClass")
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount"})
 class AndroidMediaPlayerImpl implements NoPlayer {
 
     private static final long NO_SEEK_TO_POSITION = -1;
