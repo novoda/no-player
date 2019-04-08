@@ -25,6 +25,10 @@ class CompositeTrackSelectorCreator {
                 Clock.DEFAULT
         );
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
+        DefaultTrackSelector.Parameters trackSelectorParameters = trackSelector.buildUponParameters()
+                .setMaxVideoBitrate(options.maxVideoBitrate())
+                .build();
+        trackSelector.setParameters(trackSelectorParameters);
 
         ExoPlayerTrackSelector exoPlayerTrackSelector = ExoPlayerTrackSelector.newInstance(trackSelector);
         ExoPlayerAudioTrackSelector audioTrackSelector = new ExoPlayerAudioTrackSelector(exoPlayerTrackSelector);

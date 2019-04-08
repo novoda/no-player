@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
+
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
@@ -364,6 +365,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     @Override
     public List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException {
         return mediaPlayer.getSubtitleTracks();
+    }
+
+    @Override
+    public void clearMaxVideoBitrate() {
+        mediaPlayer.clearMaxVideoBitrate();
+    }
+
+    @Override
+    public void setMaxVideoBitrate(int maxVideoBitrate) {
+        mediaPlayer.setMaxVideoBitrate(maxVideoBitrate);
     }
 
     @Override
