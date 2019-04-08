@@ -188,7 +188,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
 
         if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION) {
-            if (isPlayingAdvert() && !advertHasChanged()) {
+            if (isPlayingAdvert()) {
                 notifyAdvertEnd(advertBreaks.get(adGroupIndex));
                 adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
                 updateAdPlaybackState();
