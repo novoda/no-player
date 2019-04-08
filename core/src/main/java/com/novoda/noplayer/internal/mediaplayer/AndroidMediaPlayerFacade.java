@@ -26,6 +26,8 @@ import static com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.Play
 import static com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState.PAUSED;
 import static com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState.PLAYING;
 
+// Not much we can do, wrapping MediaPlayer is a lot of work
+@SuppressWarnings("PMD.GodClass")
 class AndroidMediaPlayerFacade {
 
     private static final Map<String, String> NO_HEADERS = null;
