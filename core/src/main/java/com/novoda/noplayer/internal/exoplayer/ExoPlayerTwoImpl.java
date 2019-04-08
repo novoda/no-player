@@ -158,6 +158,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
+    public void clearMaxVideoBitrate() {
+        exoPlayer.clearMaxVideoBitrate();
+    }
+
+    @Override
+    public void setMaxVideoBitrate(int maxVideoBitrate) {
+        exoPlayer.setMaxVideoBitrate(maxVideoBitrate);
+    }
+
+    @Override
     public Listeners getListeners() {
         return listenersHolder;
     }

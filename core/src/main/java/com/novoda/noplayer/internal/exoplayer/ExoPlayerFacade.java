@@ -313,6 +313,16 @@ class ExoPlayerFacade {
         return exoPlayer.getVolume();
     }
 
+    void clearMaxVideoBitrate() {
+        assertVideoLoaded();
+        compositeTrackSelector.clearMaxVideoBitrate();
+    }
+
+    void setMaxVideoBitrate(int maxVideoBitrate) {
+        assertVideoLoaded();
+        compositeTrackSelector.setMaxVideoBitrate(maxVideoBitrate);
+    }
+
     private void assertVideoLoaded() {
         if (exoPlayer == null) {
             throw new IllegalStateException("Video must be loaded before trying to interact with the player");

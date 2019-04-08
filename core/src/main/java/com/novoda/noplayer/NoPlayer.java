@@ -229,6 +229,18 @@ public interface NoPlayer extends PlayerState {
     @FloatRange(from = 0.0f, to = 1.0f)
     float getVolume() throws IllegalStateException;
 
+    /**
+     * Clears the maximum video bitrate, if set.
+     */
+    void clearMaxVideoBitrate();
+
+    /**
+     * Sets a maximum video bitrate. If the content is playing, the video will switch to a different quality.
+     *
+     * @param maxVideoBitrate The maximum video bitrate in bit per second.
+     */
+    void setMaxVideoBitrate(int maxVideoBitrate);
+
     interface PlayerError {
 
         PlayerErrorType type();
