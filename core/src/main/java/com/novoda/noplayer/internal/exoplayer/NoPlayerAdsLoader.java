@@ -188,15 +188,20 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
                 notifyAdvertEnd(advertBreaks.get(adGroupIndex));
                 adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
                 updateAdPlaybackState();
+                resetAdvertPosition();
             }
 
-            adGroupIndex = player.getCurrentAdGroupIndex();
-            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-
-            if (isPlayingAdvert()) {
+            if (advertHasNotStarted()) {
+                adGroupIndex = player.getCurrentAdGroupIndex();
+                adIndexInGroup = player.getCurrentAdIndexInAdGroup();
                 notifyAdvertStart(advertBreaks.get(adGroupIndex));
             }
         }
+    }
+
+    private void resetAdvertPosition() {
+        adGroupIndex = -1;
+        adIndexInGroup = -1;
     }
 
     private boolean isPlayingAdvert() {
@@ -211,8 +216,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         if (adIndexInGroup == adverts.size() - 1) {
             Log.d(TAG, "notifyAdvertBreakEnd: ");
             advertListener.onAdvertBreakEnd(advertBreak.advertBreakId());
-            adGroupIndex = -1; // Reset on end of advert break.
-            adIndexInGroup = -1;
         }
     }
 
