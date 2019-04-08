@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
+public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, AdvertView.AdvertInteractionListener {
 
     private final AdvertsLoader loader;
     private final Handler handler;
@@ -91,7 +91,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks);
             advertBreaks = advertPlaybackState.advertBreaks();
             adPlaybackState = advertPlaybackState.adPlaybackState();
-            advertView.setup(breaks);
+            advertView.setup(breaks, NoPlayerAdsLoader.this);
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -225,6 +225,14 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         advertListener.onAdvertStart(advert.advertId());
     }
 
+    @Override
+    public void onAdvertClicked() {
+        if (isPlayingAdvert()) {
+            Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
+            advertListener.onAdvertClicked(advert);
+        }
+    }
+
     private enum NoOpAdvertListener implements NoPlayer.AdvertListener {
         INSTANCE;
 
@@ -258,23 +266,13 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         INSTANCE;
 
         @Override
-        public void setup(List<AdvertBreak> advertBreaks) {
+        public void setup(List<AdvertBreak> advertBreaks, AdvertInteractionListener advertInteractionListener) {
             // no-op
         }
 
         @Override
         public void removeMarker(AdvertBreak advertBreak) {
             // no-op
-        }
-
-        @Override
-        public AdvertClickedListener getAdvertClickedListener() {
-            return new AdvertClickedListener() {
-                @Override
-                public void onAdvertClicked() {
-                    // no-op
-                }
-            };
         }
     }
 
@@ -289,11 +287,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
 
         @Override
-        public void setup(final List<AdvertBreak> advertBreaks) {
+        public void setup(final List<AdvertBreak> advertBreaks, final AdvertInteractionListener advertInteractionListener) {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    advertView.setup(new ArrayList<>(advertBreaks));
+                    advertView.setup(new ArrayList<>(advertBreaks), advertInteractionListener);
                 }
             });
         }
@@ -306,11 +304,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
                     advertView.removeMarker(advertBreak); // TODO: Maybe we should create a copy?
                 }
             });
-        }
-
-        @Override
-        public AdvertClickedListener getAdvertClickedListener() {
-            return advertView.getAdvertClickedListener();
         }
     }
 }
