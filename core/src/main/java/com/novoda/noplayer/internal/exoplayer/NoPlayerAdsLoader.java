@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
-    private static final String TAG = "Loader";
     private final AdvertsLoader loader;
     private final Handler handler;
 
@@ -39,7 +38,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     private NoPlayer.AdvertListener advertListener = NoOpAdvertListener.INSTANCE;
     private List<AdvertBreak> advertBreaks = Collections.emptyList();
-    private int adIndexInGroup = -1;     // Our source of truth.
+    private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
 
     static NoPlayerAdsLoader create(AdvertsLoader loader) {
