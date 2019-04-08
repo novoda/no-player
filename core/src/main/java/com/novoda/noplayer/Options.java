@@ -1,15 +1,46 @@
 package com.novoda.noplayer;
 
+import com.novoda.noplayer.internal.utils.Optional;
+
+/**
+ * Options to customise the underlying player.
+ */
 public class Options {
 
     private final ContentType contentType;
     private final int minDurationBeforeQualityIncreaseInMillis;
     private final int maxInitialBitrate;
+    private final int maxVideoBitrate;
+    private final Optional<Long> initialPositionInMillis;
 
-    Options(ContentType contentType, int minDurationBeforeQualityIncreaseInMillis, int maxInitialBitrate) {
+    /**
+     * Creates a {@link OptionsBuilder} from this Options.
+     *
+     * @return a new instance of {@link OptionsBuilder}.
+     */
+    public OptionsBuilder toOptionsBuilder() {
+        OptionsBuilder optionsBuilder = new OptionsBuilder()
+                .withContentType(contentType)
+                .withMinDurationBeforeQualityIncreaseInMillis(minDurationBeforeQualityIncreaseInMillis)
+                .withMaxInitialBitrate(maxInitialBitrate)
+                .withMaxVideoBitrate(maxVideoBitrate);
+
+        if (initialPositionInMillis.isPresent()) {
+            optionsBuilder = optionsBuilder.withInitialPositionInMillis(initialPositionInMillis.get());
+        }
+        return optionsBuilder;
+    }
+
+    Options(ContentType contentType,
+            int minDurationBeforeQualityIncreaseInMillis,
+            int maxInitialBitrate,
+            int maxVideoBitrate,
+            Optional<Long> initialPositionInMillis) {
         this.contentType = contentType;
         this.minDurationBeforeQualityIncreaseInMillis = minDurationBeforeQualityIncreaseInMillis;
         this.maxInitialBitrate = maxInitialBitrate;
+        this.maxVideoBitrate = maxVideoBitrate;
+        this.initialPositionInMillis = initialPositionInMillis;
     }
 
     public ContentType contentType() {
@@ -22,6 +53,14 @@ public class Options {
 
     public int maxInitialBitrate() {
         return maxInitialBitrate;
+    }
+
+    public int maxVideoBitrate() {
+        return maxVideoBitrate;
+    }
+
+    public Optional<Long> getInitialPositionInMillis() {
+        return initialPositionInMillis;
     }
 
     @Override
@@ -41,7 +80,14 @@ public class Options {
         if (maxInitialBitrate != options.maxInitialBitrate) {
             return false;
         }
-        return contentType == options.contentType;
+        if (maxVideoBitrate != options.maxVideoBitrate) {
+            return false;
+        }
+        if (contentType != options.contentType) {
+            return false;
+        }
+        return initialPositionInMillis != null
+                ? initialPositionInMillis.equals(options.initialPositionInMillis) : options.initialPositionInMillis == null;
     }
 
     @Override
@@ -49,6 +95,8 @@ public class Options {
         int result = contentType != null ? contentType.hashCode() : 0;
         result = 31 * result + minDurationBeforeQualityIncreaseInMillis;
         result = 31 * result + maxInitialBitrate;
+        result = 31 * result + maxVideoBitrate;
+        result = 31 * result + (initialPositionInMillis != null ? initialPositionInMillis.hashCode() : 0);
         return result;
     }
 
@@ -58,6 +106,8 @@ public class Options {
                 + "contentType=" + contentType
                 + ", minDurationBeforeQualityIncreaseInMillis=" + minDurationBeforeQualityIncreaseInMillis
                 + ", maxInitialBitrate=" + maxInitialBitrate
+                + ", maxVideoBitrate=" + maxVideoBitrate
+                + ", initialPositionInMillis=" + initialPositionInMillis
                 + '}';
     }
 }

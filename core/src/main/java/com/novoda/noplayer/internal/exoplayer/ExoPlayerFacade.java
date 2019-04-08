@@ -26,7 +26,6 @@ import java.util.List;
 
 class ExoPlayerFacade {
 
-    private static final boolean RESET_POSITION = true;
     private static final boolean DO_NOT_RESET_STATE = false;
 
     private final BandwidthMeterCreator bandwidthMeterCreator;
@@ -136,7 +135,14 @@ class ExoPlayerFacade {
                 bandwidthMeter
         );
         attachToSurface(playerSurfaceHolder);
-        exoPlayer.prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
+
+        boolean hasInitialPosition = options.getInitialPositionInMillis().isPresent();
+        if (hasInitialPosition) {
+            Long initialPositionInMillis = options.getInitialPositionInMillis().get();
+            exoPlayer.seekTo(initialPositionInMillis);
+        }
+
+        exoPlayer.prepare(mediaSource, !hasInitialPosition, DO_NOT_RESET_STATE);
     }
 
     private void setMovieAudioAttributes(SimpleExoPlayer exoPlayer) {
@@ -231,10 +237,19 @@ class ExoPlayerFacade {
         return exoPlayer.getVolume();
     }
 
+    void clearMaxVideoBitrate() {
+        assertVideoLoaded();
+        compositeTrackSelector.clearMaxVideoBitrate();
+    }
+
+    void setMaxVideoBitrate(int maxVideoBitrate) {
+        assertVideoLoaded();
+        compositeTrackSelector.setMaxVideoBitrate(maxVideoBitrate);
+    }
+
     private void assertVideoLoaded() {
         if (exoPlayer == null) {
             throw new IllegalStateException("Video must be loaded before trying to interact with the player");
         }
     }
-
 }
