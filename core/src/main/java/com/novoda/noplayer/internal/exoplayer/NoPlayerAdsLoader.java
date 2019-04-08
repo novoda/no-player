@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
+    private static final String TAG = "Loader";
     private final AdvertsLoader loader;
     private final Handler handler;
 
@@ -151,26 +152,32 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        if (reason == Player.TIMELINE_CHANGE_REASON_RESET) {
+        if (reason == Player.TIMELINE_CHANGE_REASON_RESET || player == null) {
             // The player is being reset and this source will be released.
             return;
         }
 
-        if (player != null && adPlaybackState != null) {
-            adGroupIndex = player.getCurrentAdGroupIndex();
-            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+        if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED) {
             long contentPosition = player.getContentPosition();
 
-            if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && isPlayingAdvert()) {
-                if (contentPosition > 0) {
-                    adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
-                    updateAdPlaybackState();
-                    return;
-                }
-
-                notifyAdvertStart(advertBreaks.get(adGroupIndex));
+            if (contentPosition > 0) {
+                adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
+                updateAdPlaybackState();
+                return;
             }
         }
+
+        if (player.isPlayingAd() && advertHasChanged()) {
+            adGroupIndex = player.getCurrentAdGroupIndex();
+            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+            notifyAdvertStart(advertBreaks.get(adGroupIndex));
+        }
+    }
+
+    private boolean advertHasChanged() {
+        int newAdGroupIndex = player.getCurrentAdGroupIndex();
+        int newAdIndexInAdGroup = player.getCurrentAdIndexInAdGroup();
+        return newAdGroupIndex != adGroupIndex || newAdIndexInAdGroup != adIndexInGroup;
     }
 
     @Override
