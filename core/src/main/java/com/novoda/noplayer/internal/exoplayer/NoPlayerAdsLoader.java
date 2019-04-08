@@ -152,7 +152,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        if (reason == Player.TIMELINE_CHANGE_REASON_RESET || player == null) {
+        if (reason == Player.TIMELINE_CHANGE_REASON_RESET || player == null || adPlaybackState == null) {
             // The player is being reset and this source will be released.
             return;
         }
@@ -182,17 +182,21 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     @Override
     public void onPositionDiscontinuity(int reason) {
-        if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION && player != null && adPlaybackState != null) {
-            if (isPlayingAdvert()) {
+        if (player == null || adPlaybackState == null) {
+            // We can't tell what we are playing without it.
+            return;
+        }
+
+        if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION) {
+            if (isPlayingAdvert() && !advertHasChanged()) {
                 notifyAdvertEnd(advertBreaks.get(adGroupIndex));
                 adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
                 updateAdPlaybackState();
             }
 
-            adGroupIndex = player.getCurrentAdGroupIndex();
-            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-
-            if (isPlayingAdvert()) {
+            if (isPlayingAdvert() && advertHasChanged()) {
+                adGroupIndex = player.getCurrentAdGroupIndex();
+                adIndexInGroup = player.getCurrentAdIndexInAdGroup();
                 notifyAdvertStart(advertBreaks.get(adGroupIndex));
             }
         }
