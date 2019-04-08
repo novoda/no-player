@@ -11,8 +11,6 @@ import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
-import com.novoda.noplayer.AdvertBreakId;
-import com.novoda.noplayer.AdvertId;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
@@ -231,48 +229,4 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             advertListener.onAdvertClicked(advert);
         }
     }
-
-    private enum NoOpAdvertListener implements NoPlayer.AdvertListener {
-        INSTANCE;
-
-        @Override
-        public void onAdvertBreakStart(AdvertBreakId advertBreakId) {
-            // no-op
-        }
-
-        @Override
-        public void onAdvertBreakEnd(AdvertBreakId advertBreakId) {
-            // no-op
-        }
-
-        @Override
-        public void onAdvertStart(AdvertId advertId) {
-            // no-op
-        }
-
-        @Override
-        public void onAdvertEnd(AdvertId advertId) {
-            // no-op
-        }
-
-        @Override
-        public void onAdvertClicked(Advert advert) {
-            // no-op
-        }
-    }
-
-    private enum NoOpAdvertView implements AdvertView {
-        INSTANCE;
-
-        @Override
-        public void setup(List<AdvertBreak> advertBreaks, AdvertInteractionListener advertInteractionListener) {
-            // no-op
-        }
-
-        @Override
-        public void removeMarker(AdvertBreak advertBreak) {
-            // no-op
-        }
-    }
-
 }
