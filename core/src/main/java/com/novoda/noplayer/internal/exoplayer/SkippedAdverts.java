@@ -12,16 +12,16 @@ final class SkippedAdverts {
     }
 
     static AdPlaybackState from(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
-        AdPlaybackState advertPlaybackState = adPlaybackState;
+        AdPlaybackState adPlaybackStateWithSkippedAdGroups = adPlaybackState;
         for (int i = advertBreaks.size() - 1; i >= 0; i--) {
             AdvertBreak advertBreak = advertBreaks.get(i);
             if (advertBreak.startTimeInMillis() >= currentPositionInMillis) {
                 continue;
             }
 
-            advertPlaybackState = advertPlaybackState.withSkippedAdGroup(i);
+            adPlaybackStateWithSkippedAdGroups = adPlaybackStateWithSkippedAdGroups.withSkippedAdGroup(i);
         }
-        return advertPlaybackState;
+        return adPlaybackStateWithSkippedAdGroups;
     }
 
 }
