@@ -194,19 +194,22 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     @Override
     public void onPositionDiscontinuity(int reason) {
         Log.d(TAG, "onPositionDiscontinuity: " + reason);
-        if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION && player != null && adPlaybackState != null) {
-            if (isPlayingAdvert()) {
-                notifyAdvertEnd(advertBreaks.get(adGroupIndex));
-                adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
-                updateAdPlaybackState();
-                resetAdvertPosition();
-            }
+        if (reason != Player.DISCONTINUITY_REASON_AD_INSERTION || player == null || adPlaybackState == null) {
+            // We need all of the above to be able to respond to advert events.
+            return;
+        }
 
-            if (advertHasNotStarted()) {
-                adGroupIndex = player.getCurrentAdGroupIndex();
-                adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-                notifyAdvertStart(advertBreaks.get(adGroupIndex));
-            }
+        if (isPlayingAdvert()) {
+            notifyAdvertEnd(advertBreaks.get(adGroupIndex));
+            adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
+            updateAdPlaybackState();
+            resetAdvertPosition();
+        }
+
+        if (advertHasNotStarted()) {
+            adGroupIndex = player.getCurrentAdGroupIndex();
+            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+            notifyAdvertStart(advertBreaks.get(adGroupIndex));
         }
     }
 
