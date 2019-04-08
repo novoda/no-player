@@ -1,12 +1,12 @@
 package com.novoda.noplayer;
 
-import java.util.List;
-
 public interface AdvertView {
 
-    void setup(List<AdvertBreak> advertBreaks, AdvertInteractionListener advertInteractionListener);
+    NoPlayer.AdvertListener getAdvertListener();
 
-    void removeMarker(AdvertBreak advertBreak);
+    void attach(AdvertInteractionListener advertInteractionListener);
+
+    void detach(AdvertInteractionListener advertInteractionListener);
 
     interface AdvertInteractionListener {
         void onAdvertClicked();

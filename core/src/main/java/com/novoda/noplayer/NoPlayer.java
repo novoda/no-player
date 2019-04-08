@@ -307,6 +307,8 @@ public interface NoPlayer extends PlayerState {
 
     interface AdvertListener {
 
+        void onAdvertsLoaded(List<AdvertBreak> advertBreaks);
+
         void onAdvertBreakStart(AdvertBreakId advertBreakId);
 
         void onAdvertBreakEnd(AdvertBreakId advertBreakId);

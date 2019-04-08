@@ -1,10 +1,12 @@
 package com.novoda.noplayer.internal.listeners;
 
 import com.novoda.noplayer.Advert;
+import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertBreakId;
 import com.novoda.noplayer.AdvertId;
 import com.novoda.noplayer.NoPlayer;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -22,6 +24,13 @@ class AdvertListeners implements NoPlayer.AdvertListener {
 
     public void clear() {
         listeners.clear();
+    }
+
+    @Override
+    public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertsLoaded(advertBreaks);
+        }
     }
 
     @Override

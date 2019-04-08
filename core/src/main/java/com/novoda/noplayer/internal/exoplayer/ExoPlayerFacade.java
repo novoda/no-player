@@ -333,14 +333,14 @@ class ExoPlayerFacade {
     void attach(AdvertView advertView) {
         if (adsLoader.isPresent()) {
             NoPlayerAdsLoader adsLoader = this.adsLoader.get();
-            adsLoader.attach(advertView);
+            advertView.attach(adsLoader);
         }
     }
 
     void detach(AdvertView advertView) {
         if (adsLoader.isPresent()) {
             NoPlayerAdsLoader adsLoader = this.adsLoader.get();
-            adsLoader.detach(advertView);
+            advertView.detach(adsLoader);
         }
     }
 }

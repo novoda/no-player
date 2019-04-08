@@ -17,6 +17,7 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.utils.Optional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +39,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private AdvertsLoader.Cancellable loadingAds;
 
     private NoPlayer.AdvertListener advertListener = NoOpAdvertListener.INSTANCE;
-    private AdvertView advertView = NoOpAdvertView.INSTANCE;
     private List<AdvertBreak> advertBreaks = Collections.emptyList();
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
@@ -54,14 +54,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     public void bind(Optional<NoPlayer.AdvertListener> advertListener) {
         this.advertListener = advertListener.isPresent() ? advertListener.get() : NoOpAdvertListener.INSTANCE;
-    }
-
-    void attach(AdvertView advertView) {
-        this.advertView = advertView == null ? NoOpAdvertView.INSTANCE : new MainThreadAwareAdvertView(advertView, handler);
-    }
-
-    void detach(AdvertView advertView) { // TODO: We probably want to grab a listener from the advert view which means unbinding it here.
-        this.advertView = NoOpAdvertView.INSTANCE;
     }
 
     @Override
@@ -90,10 +82,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks);
             advertBreaks = advertPlaybackState.advertBreaks();
             adPlaybackState = advertPlaybackState.adPlaybackState();
-            advertView.setup(breaks, NoPlayerAdsLoader.this);
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    advertListener.onAdvertsLoaded(new ArrayList<>(advertBreaks));
                     updateAdPlaybackState();
                 }
             });
