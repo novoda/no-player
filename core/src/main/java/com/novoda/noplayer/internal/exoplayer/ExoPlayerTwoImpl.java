@@ -265,12 +265,12 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
     @Override
     public void attach(AdvertView advertView) {
-
+        exoPlayer.attach(advertView);
     }
 
     @Override
     public void detach(AdvertView advertView) {
-
+        exoPlayer.detach(advertView);
     }
 
     @Override

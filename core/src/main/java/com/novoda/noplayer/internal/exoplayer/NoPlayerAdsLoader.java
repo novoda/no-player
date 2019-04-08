@@ -13,6 +13,7 @@ import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertBreakId;
 import com.novoda.noplayer.AdvertId;
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.utils.Optional;
@@ -37,6 +38,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     private AdvertsLoader.Cancellable loadingAds;
 
     private NoPlayer.AdvertListener advertListener = NoOpAdvertListener.INSTANCE;
+    private AdvertView advertView = NoOpAdvertView.INSTANCE;
     private List<AdvertBreak> advertBreaks = Collections.emptyList();
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
@@ -52,6 +54,14 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     public void bind(Optional<NoPlayer.AdvertListener> advertListener) {
         this.advertListener = advertListener.isPresent() ? advertListener.get() : NoOpAdvertListener.INSTANCE;
+    }
+
+    void attach(AdvertView advertView) {
+        this.advertView = advertView == null ? NoOpAdvertView.INSTANCE : advertView;
+    }
+
+    void detach(AdvertView advertView) { // Because we probably want to grab a listener from it.
+        this.advertView = NoOpAdvertView.INSTANCE;
     }
 
     @Override
@@ -233,6 +243,20 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
         @Override
         public void onAdvertEnd(AdvertId advertId) {
+            // no-op
+        }
+    }
+
+    private enum NoOpAdvertView implements AdvertView {
+        INSTANCE;
+
+        @Override
+        public void setup(List<AdvertBreak> advertBreaks) {
+            // no-op
+        }
+
+        @Override
+        public void removeMarker(AdvertBreak advertBreak) {
             // no-op
         }
     }
