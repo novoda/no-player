@@ -61,7 +61,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         this.advertView = advertView == null ? NoOpAdvertView.INSTANCE : new MainThreadAwareAdvertView(advertView, handler);
     }
 
-    void detach(AdvertView advertView) { // Because we probably want to grab a listener from it.
+    void detach(AdvertView advertView) { // TODO: Because we probably want to grab a listener from it.
         this.advertView = NoOpAdvertView.INSTANCE;
     }
 
@@ -247,6 +247,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         public void onAdvertEnd(AdvertId advertId) {
             // no-op
         }
+
+        @Override
+        public void onAdvertClicked(Advert advert) {
+            // no-op
+        }
     }
 
     private enum NoOpAdvertView implements AdvertView {
@@ -260,6 +265,16 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         @Override
         public void removeMarker(AdvertBreak advertBreak) {
             // no-op
+        }
+
+        @Override
+        public AdvertClickedListener getAdvertClickedListener() {
+            return new AdvertClickedListener() {
+                @Override
+                public void onAdvertClicked() {
+                    // no-op
+                }
+            };
         }
     }
 
@@ -284,8 +299,18 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         }
 
         @Override
-        public void removeMarker(AdvertBreak advertBreak) {
+        public void removeMarker(final AdvertBreak advertBreak) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    advertView.removeMarker(advertBreak); // TODO: Maybe we should create a copy?
+                }
+            });
+        }
 
+        @Override
+        public AdvertClickedListener getAdvertClickedListener() {
+            return advertView.getAdvertClickedListener();
         }
     }
 }

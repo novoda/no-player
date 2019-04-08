@@ -8,4 +8,9 @@ public interface AdvertView {
 
     void removeMarker(AdvertBreak advertBreak);
 
+    AdvertClickedListener getAdvertClickedListener();
+
+    interface AdvertClickedListener {
+        void onAdvertClicked();
+    }
 }

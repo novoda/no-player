@@ -1,5 +1,6 @@
 package com.novoda.noplayer.internal.listeners;
 
+import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreakId;
 import com.novoda.noplayer.AdvertId;
 import com.novoda.noplayer.NoPlayer;
@@ -48,6 +49,13 @@ class AdvertListeners implements NoPlayer.AdvertListener {
     public void onAdvertEnd(AdvertId advertId) {
         for (NoPlayer.AdvertListener listener : listeners) {
             listener.onAdvertEnd(advertId);
+        }
+    }
+
+    @Override
+    public void onAdvertClicked(Advert advert) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertClicked(advert);
         }
     }
 }
