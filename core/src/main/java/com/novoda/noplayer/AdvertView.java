@@ -4,13 +4,11 @@ import java.util.List;
 
 public interface AdvertView {
 
-    void setup(List<AdvertBreak> advertBreaks);
+    void setup(List<AdvertBreak> advertBreaks, AdvertInteractionListener advertInteractionListener);
 
     void removeMarker(AdvertBreak advertBreak);
 
-    AdvertClickedListener getAdvertClickedListener();
-
-    interface AdvertClickedListener {
+    interface AdvertInteractionListener {
         void onAdvertClicked();
     }
 }
