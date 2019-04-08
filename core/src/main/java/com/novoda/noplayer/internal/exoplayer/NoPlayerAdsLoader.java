@@ -3,7 +3,6 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
@@ -158,8 +157,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             return;
         }
 
-        Log.d(TAG, "onTimelineChanged: advertIsPlaying: " + player.isPlayingAd());
-        Log.d(TAG, "onTimelineChanged: advertGroup: " + player.getCurrentAdGroupIndex() + " advert: " + player.getCurrentAdIndexInAdGroup());
         if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED) {
             long contentPosition = player.getContentPosition();
             if (contentPosition > 0) {
@@ -182,18 +179,15 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
     private void notifyAdvertStart(AdvertBreak advertBreak) {
         if (adIndexInGroup == 0) {
-            Log.d(TAG, "notifyAdvertBreakStart: ");
             advertListener.onAdvertBreakStart(advertBreak.advertBreakId());
         }
 
         Advert advert = advertBreak.adverts().get(adIndexInGroup);
         advertListener.onAdvertStart(advert.advertId());
-        Log.d(TAG, "notifyAdvertStart: ");
     }
 
     @Override
     public void onPositionDiscontinuity(int reason) {
-        Log.d(TAG, "onPositionDiscontinuity: " + reason);
         if (reason != Player.DISCONTINUITY_REASON_AD_INSERTION || player == null || adPlaybackState == null) {
             // We need all of the above to be able to respond to advert events.
             return;
@@ -218,12 +212,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     }
 
     private void notifyAdvertEnd(AdvertBreak advertBreak) {
-        Log.d(TAG, "notifyAdvertEnd: ");
         List<Advert> adverts = advertBreak.adverts();
         advertListener.onAdvertEnd(adverts.get(adIndexInGroup).advertId());
 
         if (adIndexInGroup == adverts.size() - 1) {
-            Log.d(TAG, "notifyAdvertBreakEnd: ");
             advertListener.onAdvertBreakEnd(advertBreak.advertBreakId());
         }
     }
