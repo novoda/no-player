@@ -58,7 +58,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
     }
 
     void attach(AdvertView advertView) {
-        this.advertView = advertView == null ? NoOpAdvertView.INSTANCE : advertView;
+        this.advertView = advertView == null ? NoOpAdvertView.INSTANCE : new MainThreadAwareAdvertView(advertView, handler);
     }
 
     void detach(AdvertView advertView) { // Because we probably want to grab a listener from it.
@@ -91,11 +91,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
             AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks);
             advertBreaks = advertPlaybackState.advertBreaks();
             adPlaybackState = advertPlaybackState.adPlaybackState();
+            advertView.setup(breaks);
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     updateAdPlaybackState();
-                    advertView.setup(new ArrayList<>(advertBreaks));
                 }
             });
         }
@@ -260,6 +260,32 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
         @Override
         public void removeMarker(AdvertBreak advertBreak) {
             // no-op
+        }
+    }
+
+    private class MainThreadAwareAdvertView implements AdvertView {
+
+        private final AdvertView advertView;
+        private final Handler handler;
+
+        private MainThreadAwareAdvertView(AdvertView advertView, Handler handler) {
+            this.advertView = advertView;
+            this.handler = handler;
+        }
+
+        @Override
+        public void setup(final List<AdvertBreak> advertBreaks) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    advertView.setup(new ArrayList<>(advertBreaks));
+                }
+            });
+        }
+
+        @Override
+        public void removeMarker(AdvertBreak advertBreak) {
+
         }
     }
 }
