@@ -11,9 +11,6 @@ import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,6 +18,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static com.novoda.noplayer.internal.exoplayer.mediasource.VideoFormatFixture.aVideoFormat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -116,6 +116,24 @@ public class ExoPlayerVideoTrackSelectorTest {
         Optional<PlayerVideoTrack> selectedVideoTrack = exoPlayerVideoTrackSelector.getSelectedVideoTrack(exoPlayer, rendererTypeRequester, ContentType.HLS);
 
         assertThat(selectedVideoTrack).isEqualTo(Optional.<PlayerVideoTrack>absent());
+    }
+
+    @Test
+    public void givenTrackSelector_whenClearMaxVideoBitrate_thenClearsMaxVideoBitrate() {
+        givenTrackSelectorContainsTracks();
+
+        exoPlayerVideoTrackSelector.clearMaxVideoBitrate();
+
+        verify(trackSelector).clearMaxVideoBitrate();
+    }
+
+    @Test
+    public void givenTrackSelector_whenSetMaxVideoBitrate1000000_thenSetsMaxVideoBitrate1000000() {
+        givenTrackSelectorContainsTracks();
+
+        exoPlayerVideoTrackSelector.setMaxVideoBitrate(1000000);
+
+        verify(trackSelector).setMaxVideoBitrate(1000000);
     }
 
     private void givenTrackSelectorContainsTracks() {

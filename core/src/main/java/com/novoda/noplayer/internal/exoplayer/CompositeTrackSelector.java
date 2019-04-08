@@ -77,4 +77,12 @@ class CompositeTrackSelector {
     boolean clearSubtitleTrack(RendererTypeRequester rendererTypeRequester) {
         return subtitleTrackSelector.clearSubtitleTrack(rendererTypeRequester);
     }
+
+    void clearMaxVideoBitrate() {
+        videoTrackSelector.clearMaxVideoBitrate();
+    }
+
+    void setMaxVideoBitrate(int maxVideoBitrate) {
+        videoTrackSelector.setMaxVideoBitrate(maxVideoBitrate);
+    }
 }

@@ -80,4 +80,20 @@ public class ExoPlayerTrackSelector {
                 && trackGroups.get(groupIndex).length > 0
                 && trackInfo().getAdaptiveSupport(audioRendererIndex.get(), groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
     }
+
+    void clearMaxVideoBitrate() {
+        setMaxVideoBitrateParameter(Integer.MAX_VALUE);
+    }
+
+    void setMaxVideoBitrate(int maxVideoBitrate) {
+        setMaxVideoBitrateParameter(maxVideoBitrate);
+    }
+
+    private void setMaxVideoBitrateParameter(int maxValue) {
+        trackSelector.setParameters(
+                trackSelector.buildUponParameters()
+                        .setMaxVideoBitrate(maxValue)
+                        .build()
+        );
+    }
 }

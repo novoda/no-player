@@ -399,6 +399,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
+    public void clearMaxVideoBitrate() {
+        mediaPlayer.clearMaxVideoBitrate();
+    }
+
+    @Override
+    public void setMaxVideoBitrate(int maxVideoBitrate) {
+        mediaPlayer.setMaxVideoBitrate(maxVideoBitrate);
+    }
+
+    @Override
     public void stop() {
         reset();
         listenersHolder.getStateChangedListeners().onVideoStopped();

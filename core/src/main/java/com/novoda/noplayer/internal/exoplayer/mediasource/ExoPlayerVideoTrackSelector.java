@@ -87,4 +87,12 @@ public class ExoPlayerVideoTrackSelector {
     public boolean clearVideoTrack(RendererTypeRequester rendererTypeRequester) {
         return trackSelector.clearSelectionOverrideFor(VIDEO, rendererTypeRequester);
     }
+
+    public void clearMaxVideoBitrate() {
+        trackSelector.clearMaxVideoBitrate();
+    }
+
+    public void setMaxVideoBitrate(int maxVideoBitrate) {
+        trackSelector.setMaxVideoBitrate(maxVideoBitrate);
+    }
 }
