@@ -276,7 +276,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         }
     }
 
-    private final class MainThreadAwareAdvertView implements AdvertView {
+    private static final class MainThreadAwareAdvertView implements AdvertView {
 
         private final AdvertView advertView;
         private final Handler handler;
