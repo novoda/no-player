@@ -199,6 +199,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener {
 
         if (adIndexInGroup == adverts.size() - 1) {
             advertListener.onAdvertBreakEnd(advertBreak.advertBreakId());
+            adGroupIndex = -1; // Reset on end of advert break.
             adIndexInGroup = -1;
         }
     }
