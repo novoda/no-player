@@ -1,22 +1,33 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.os.Handler;
+
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.novoda.noplayer.AdvertBreak;
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.AdvertsLoader;
+
+import java.util.Arrays;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
-import utils.ExceptionMatcher;
+import org.mockito.ArgumentMatchers;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
-import java.util.Arrays;
+import utils.ExceptionMatcher;
 
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
 import static com.novoda.noplayer.AdvertFixtures.anAdvert;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class NoPlayerAdsLoaderTest {
@@ -39,6 +50,7 @@ public class NoPlayerAdsLoaderTest {
     private final AdvertsLoader advertsLoader = mock(AdvertsLoader.class);
     private final Handler handler = mock(Handler.class);
 
+    private final AdvertView advertView = mock(AdvertView.class);
     private final AdsLoader.EventListener eventListener = mock(AdsLoader.EventListener.class);
     private final AdsLoader.AdViewProvider adViewProvider = mock(AdsLoader.AdViewProvider.class);
 
@@ -47,6 +59,18 @@ public class NoPlayerAdsLoaderTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    @Before
+    public void setUp() {
+        given(handler.post(any(Runnable.class))).willAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) {
+                Runnable runnable = invocation.getArgument(0);
+                runnable.run();
+                return null;
+            }
+        });
+    }
+
     @Test
     public void notifiesEventListenerWhenAdvertLoadingFails() {
         noPlayerAdsLoader.start(eventListener, adViewProvider);
@@ -54,6 +78,35 @@ public class NoPlayerAdsLoaderTest {
         invokeCallback().onAdvertsError("some error");
 
         then(eventListener).should().onAdLoadError(null, null);
+    }
+
+    @Test
+    public void notifiesAdvertViewWhenAdvertLoadingSucceeds() {
+        noPlayerAdsLoader.attach(advertView);
+
+        noPlayerAdsLoader.start(eventListener, adViewProvider);
+        invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
+
+        then(advertView).should().setup(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK), noPlayerAdsLoader);
+    }
+
+    @Test
+    public void doesNothingWhenAdvertViewIsNotAttachedAndAdvertLoadingSucceeds() {
+        noPlayerAdsLoader.start(eventListener, adViewProvider);
+        invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
+
+        then(advertView).should(never()).setup(ArgumentMatchers.<AdvertBreak>anyList(), any(AdvertView.AdvertInteractionListener.class));
+    }
+
+    @Test
+    public void doesNothingWhenAdvertViewIsDetachedWhenAdvertLoadingSucceeds() {
+        noPlayerAdsLoader.attach(advertView);
+        noPlayerAdsLoader.detach(advertView);
+
+        noPlayerAdsLoader.start(eventListener, adViewProvider);
+        invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
+
+        then(advertView).should(never()).setup(ArgumentMatchers.<AdvertBreak>anyList(), any(AdvertView.AdvertInteractionListener.class));
     }
 
     @Test
