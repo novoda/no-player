@@ -281,8 +281,8 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
     @Override
     public void detach(AdvertView advertView) {
-        listenersHolder.removeAdvertListener(advertView.getAdvertListener());
         exoPlayer.detach(advertView);
+        listenersHolder.removeAdvertListener(advertView.getAdvertListener());
     }
 
     @Override
