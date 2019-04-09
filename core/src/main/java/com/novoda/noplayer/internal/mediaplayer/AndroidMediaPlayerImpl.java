@@ -6,6 +6,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Not much we can do, wrapping MediaPlayer is a lot of work
-@SuppressWarnings("PMD.GodClass")
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount"})
 class AndroidMediaPlayerImpl implements NoPlayer {
 
     private static final long NO_SEEK_TO_POSITION = -1;
@@ -328,6 +329,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         buggyVideoDriverPreventer.clear(playerView.getContainerView());
         surfaceRequester = null;
         containerView = null;
+    }
+
+    @Override
+    public void attach(AdvertView advertView) {
+        mediaPlayer.attach(advertView);
+    }
+
+    @Override
+    public void detach(AdvertView advertView) {
+        mediaPlayer.detach(advertView);
     }
 
     private void clearSurfaceHolderCallbacks() {

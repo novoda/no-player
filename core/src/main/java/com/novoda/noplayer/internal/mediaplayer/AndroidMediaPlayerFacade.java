@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
@@ -333,5 +335,15 @@ class AndroidMediaPlayerFacade {
     void setMaxVideoBitrate(int maxVideoBitrate) {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to set max video bitrate but has not been implemented for MediaPlayer.");
+    }
+
+    void attach(AdvertView advertView) {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to attach advert view but has not been implemented for MediaPlayer.");
+    }
+
+    void detach(AdvertView advertView) {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to detach advert view but has not been implemented for MediaPlayer.");
     }
 }

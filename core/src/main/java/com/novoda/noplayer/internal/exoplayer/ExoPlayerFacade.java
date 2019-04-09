@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ads.SinglePeriodAdTimeline;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
@@ -326,6 +327,20 @@ class ExoPlayerFacade {
     private void assertVideoLoaded() {
         if (exoPlayer == null) {
             throw new IllegalStateException("Video must be loaded before trying to interact with the player");
+        }
+    }
+
+    void attach(AdvertView advertView) {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            advertView.attach(adsLoader);
+        }
+    }
+
+    void detach(AdvertView advertView) {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            advertView.detach(adsLoader);
         }
     }
 }

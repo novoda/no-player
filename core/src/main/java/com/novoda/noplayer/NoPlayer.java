@@ -117,6 +117,20 @@ public interface NoPlayer extends PlayerState {
     void detach(PlayerView playerView);
 
     /**
+     * Attaches a given {@link AdvertView} to the Player.
+     *
+     * @param advertView for displaying advert indicators.
+     */
+    void attach(AdvertView advertView);
+
+    /**
+     * Detaches a given {@link AdvertView} from the Player.
+     *
+     * @param advertView for displaying advert indicators.
+     */
+    void detach(AdvertView advertView);
+
+    /**
      * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.
      *
      * @return a list of available {@link PlayerVideoTrack} of a prepared Player.
@@ -293,13 +307,17 @@ public interface NoPlayer extends PlayerState {
 
     interface AdvertListener {
 
-        void onAdvertBreakStart(AdvertBreakId advertBreakId);
+        void onAdvertsLoaded(List<AdvertBreak> advertBreaks);
 
-        void onAdvertBreakEnd(AdvertBreakId advertBreakId);
+        void onAdvertBreakStart(AdvertBreak advertBreak);
 
-        void onAdvertStart(AdvertId advertId);
+        void onAdvertBreakEnd(AdvertBreak advertBreak);
 
-        void onAdvertEnd(AdvertId advertId);
+        void onAdvertStart(Advert advert);
+
+        void onAdvertEnd(Advert advert);
+
+        void onAdvertClicked(Advert advert);
     }
 
     /**
@@ -340,4 +358,5 @@ public interface NoPlayer extends PlayerState {
 
         void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames);
     }
+
 }

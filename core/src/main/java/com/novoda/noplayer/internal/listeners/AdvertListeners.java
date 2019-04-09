@@ -1,9 +1,10 @@
 package com.novoda.noplayer.internal.listeners;
 
-import com.novoda.noplayer.AdvertBreakId;
-import com.novoda.noplayer.AdvertId;
+import com.novoda.noplayer.Advert;
+import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.NoPlayer;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -24,30 +25,44 @@ class AdvertListeners implements NoPlayer.AdvertListener {
     }
 
     @Override
-    public void onAdvertBreakStart(AdvertBreakId advertBreakId) {
+    public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
         for (NoPlayer.AdvertListener listener : listeners) {
-            listener.onAdvertBreakStart(advertBreakId);
+            listener.onAdvertsLoaded(advertBreaks);
         }
     }
 
     @Override
-    public void onAdvertBreakEnd(AdvertBreakId advertBreakId) {
+    public void onAdvertBreakStart(AdvertBreak advertBreak) {
         for (NoPlayer.AdvertListener listener : listeners) {
-            listener.onAdvertBreakEnd(advertBreakId);
+            listener.onAdvertBreakStart(advertBreak);
         }
     }
 
     @Override
-    public void onAdvertStart(AdvertId advertId) {
+    public void onAdvertBreakEnd(AdvertBreak advertBreak) {
         for (NoPlayer.AdvertListener listener : listeners) {
-            listener.onAdvertStart(advertId);
+            listener.onAdvertBreakEnd(advertBreak);
         }
     }
 
     @Override
-    public void onAdvertEnd(AdvertId advertId) {
+    public void onAdvertStart(Advert advert) {
         for (NoPlayer.AdvertListener listener : listeners) {
-            listener.onAdvertEnd(advertId);
+            listener.onAdvertStart(advert);
+        }
+    }
+
+    @Override
+    public void onAdvertEnd(Advert advert) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertEnd(advert);
+        }
+    }
+
+    @Override
+    public void onAdvertClicked(Advert advert) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertClicked(advert);
         }
     }
 }
