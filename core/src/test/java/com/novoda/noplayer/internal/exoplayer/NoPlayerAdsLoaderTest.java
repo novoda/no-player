@@ -4,8 +4,9 @@ import android.os.Handler;
 
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.novoda.noplayer.AdvertBreak;
-import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.AdvertsLoader;
+import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.Arrays;
 
@@ -50,7 +51,7 @@ public class NoPlayerAdsLoaderTest {
     private final AdvertsLoader advertsLoader = mock(AdvertsLoader.class);
     private final Handler handler = mock(Handler.class);
 
-    private final AdvertView advertView = mock(AdvertView.class);
+    private final NoPlayer.AdvertListener advertListener = mock(NoPlayer.AdvertListener.class);
     private final AdsLoader.EventListener eventListener = mock(AdsLoader.EventListener.class);
     private final AdsLoader.AdViewProvider adViewProvider = mock(AdsLoader.AdViewProvider.class);
 
@@ -81,32 +82,21 @@ public class NoPlayerAdsLoaderTest {
     }
 
     @Test
-    public void notifiesAdvertViewWhenAdvertLoadingSucceeds() {
-        noPlayerAdsLoader.attach(advertView);
+    public void notifiesAdvertListenerWhenAdvertLoadingSucceeds() {
+        noPlayerAdsLoader.bind(Optional.of(advertListener));
 
         noPlayerAdsLoader.start(eventListener, adViewProvider);
         invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
 
-        then(advertView).should().setup(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK), noPlayerAdsLoader);
+        then(advertListener).should().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
     }
 
     @Test
-    public void doesNothingWhenAdvertViewIsNotAttachedAndAdvertLoadingSucceeds() {
+    public void doesNothingWhenAdvertListenerIsNotBoundAndAdvertLoadingSucceeds() {
         noPlayerAdsLoader.start(eventListener, adViewProvider);
         invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
 
-        then(advertView).should(never()).setup(ArgumentMatchers.<AdvertBreak>anyList(), any(AdvertView.AdvertInteractionListener.class));
-    }
-
-    @Test
-    public void doesNothingWhenAdvertViewIsDetachedWhenAdvertLoadingSucceeds() {
-        noPlayerAdsLoader.attach(advertView);
-        noPlayerAdsLoader.detach(advertView);
-
-        noPlayerAdsLoader.start(eventListener, adViewProvider);
-        invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
-
-        then(advertView).should(never()).setup(ArgumentMatchers.<AdvertBreak>anyList(), any(AdvertView.AdvertInteractionListener.class));
+        then(advertListener).should(never()).onAdvertsLoaded(ArgumentMatchers.<AdvertBreak>anyList());
     }
 
     @Test
