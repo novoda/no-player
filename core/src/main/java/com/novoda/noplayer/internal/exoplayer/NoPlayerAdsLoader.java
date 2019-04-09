@@ -3,7 +3,6 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
@@ -191,7 +190,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     @Override
     public void onPositionDiscontinuity(int reason) {
-        Log.d("TAG", "onPositionDiscontinuity: " + reason);
         if (reason != Player.DISCONTINUITY_REASON_AD_INSERTION || player == null || adPlaybackState == null) {
             // We need all of the above to be able to respond to advert events.
             return;
@@ -242,20 +240,26 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        for (int i = 0; i < adPlaybackState.adGroupCount; i++) {
-            adPlaybackState = adPlaybackState.withSkippedAdGroup(i);
-        }
+        adPlaybackState = new AdPlaybackState();
         updateAdPlaybackState();
         advertListener.onAdvertsDisabled();
+        resetAdvertPosition();
     }
 
     void enableAdverts() {
-        if (adPlaybackState == null) {
+        if (adPlaybackState == null || player == null) {
             return;
         }
 
         AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks);
+        advertBreaks = advertPlaybackState.advertBreaks();
         adPlaybackState = advertPlaybackState.adPlaybackState();
+
+        long contentPosition = player.getContentPosition();
+        if (contentPosition > 0) {
+            adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
+        }
+
         updateAdPlaybackState();
         advertListener.onAdvertsEnabled(advertBreaks);
     }
