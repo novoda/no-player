@@ -246,6 +246,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             adPlaybackState = adPlaybackState.withSkippedAdGroup(i);
         }
         updateAdPlaybackState();
+        advertListener.onAdvertsDisabled();
     }
 
     void enableAdverts() {
@@ -256,5 +257,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks);
         adPlaybackState = advertPlaybackState.adPlaybackState();
         updateAdPlaybackState();
+        advertListener.onAdvertsEnabled(advertBreaks);
     }
 }
