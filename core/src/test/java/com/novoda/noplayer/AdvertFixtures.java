@@ -9,6 +9,7 @@ public class AdvertFixtures {
     private AdvertId advertId = new AdvertId("advert_id");
     private long durationInMillis = 1000;
     private Uri uri = mock(Uri.class);
+    private Uri clickThroughUri = mock(Uri.class);
 
     public static AdvertFixtures anAdvert() {
         return new AdvertFixtures();
@@ -33,7 +34,12 @@ public class AdvertFixtures {
         return this;
     }
 
+    public AdvertFixtures withClickThroughUri(Uri uri) {
+        this.uri = uri;
+        return this;
+    }
+
     public Advert build() {
-        return new Advert(advertId, durationInMillis, uri);
+        return new Advert(advertId, durationInMillis, uri, clickThroughUri);
     }
 }
