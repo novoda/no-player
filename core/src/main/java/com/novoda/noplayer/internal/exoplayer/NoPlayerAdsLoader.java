@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-// Not much we can do, controlling advert playback.
+// Not much we can do, orchestrating adverts is a lot of work.
 @SuppressWarnings("PMD.GodClass")
 public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, AdvertView.AdvertInteractionListener {
 
@@ -154,43 +154,58 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        if (reason == Player.TIMELINE_CHANGE_REASON_RESET) {
+        if (reason == Player.TIMELINE_CHANGE_REASON_RESET || player == null || adPlaybackState == null) {
             // The player is being reset and this source will be released.
             return;
         }
 
-        if (player != null && adPlaybackState != null) {
-            adGroupIndex = player.getCurrentAdGroupIndex();
-            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+        if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED) {
             long contentPosition = player.getContentPosition();
-
-            if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED && isPlayingAdvert()) {
-                if (contentPosition > 0) {
-                    adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
-                    updateAdPlaybackState();
-                    return;
-                }
-
-                notifyAdvertStart(advertBreaks.get(adGroupIndex));
+            if (contentPosition > 0) {
+                adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
+                updateAdPlaybackState();
+                return;
             }
         }
+
+        if (advertHasNotStarted()) {
+            adGroupIndex = player.getCurrentAdGroupIndex();
+            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+            notifyAdvertStart(advertBreaks.get(adGroupIndex));
+        }
+    }
+
+    private boolean advertHasNotStarted() {
+        return player.isPlayingAd() && (adGroupIndex == -1 || adIndexInGroup == -1);
+    }
+
+    private void notifyAdvertStart(AdvertBreak advertBreak) {
+        if (adIndexInGroup == 0) {
+            advertListener.onAdvertBreakStart(advertBreak.advertBreakId());
+        }
+
+        Advert advert = advertBreak.adverts().get(adIndexInGroup);
+        advertListener.onAdvertStart(advert.advertId());
     }
 
     @Override
     public void onPositionDiscontinuity(int reason) {
-        if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION && player != null && adPlaybackState != null) {
-            if (isPlayingAdvert()) {
-                notifyAdvertEnd(advertBreaks.get(adGroupIndex));
-                adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
-                updateAdPlaybackState();
-            }
+        if (reason != Player.DISCONTINUITY_REASON_AD_INSERTION || player == null || adPlaybackState == null) {
+            // We need all of the above to be able to respond to advert events.
+            return;
+        }
 
+        if (isPlayingAdvert()) {
+            notifyAdvertEnd(advertBreaks.get(adGroupIndex));
+            adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
+            updateAdPlaybackState();
+            resetAdvertPosition();
+        }
+
+        if (advertHasNotStarted()) {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-
-            if (isPlayingAdvert()) {
-                notifyAdvertStart(advertBreaks.get(adGroupIndex));
-            }
+            notifyAdvertStart(advertBreaks.get(adGroupIndex));
         }
     }
 
@@ -207,13 +222,9 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         }
     }
 
-    private void notifyAdvertStart(AdvertBreak advertBreak) {
-        if (adIndexInGroup == 0) {
-            advertListener.onAdvertBreakStart(advertBreak.advertBreakId());
-        }
-
-        Advert advert = advertBreak.adverts().get(adIndexInGroup);
-        advertListener.onAdvertStart(advert.advertId());
+    private void resetAdvertPosition() {
+        adGroupIndex = -1;
+        adIndexInGroup = -1;
     }
 
     @Override
