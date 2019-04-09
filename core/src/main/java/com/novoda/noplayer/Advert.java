@@ -1,17 +1,21 @@
 package com.novoda.noplayer;
 
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
 public class Advert {
 
     private final AdvertId advertId;
     private final long durationInMillis;
     private final Uri uri;
+    @Nullable
+    private final Uri clickThroughUri;
 
-    public Advert(AdvertId advertId, long durationInMillis, Uri uri) {
+    public Advert(AdvertId advertId, long durationInMillis, Uri uri, @Nullable Uri clickThroughUri) {
         this.advertId = advertId;
         this.durationInMillis = durationInMillis;
         this.uri = uri;
+        this.clickThroughUri = clickThroughUri;
     }
 
     public AdvertId advertId() {
@@ -24,6 +28,11 @@ public class Advert {
 
     public Uri uri() {
         return uri;
+    }
+
+    @Nullable
+    public Uri clickThroughUri() {
+        return clickThroughUri;
     }
 
     @Override
@@ -43,7 +52,10 @@ public class Advert {
         if (advertId != null ? !advertId.equals(advert.advertId) : advert.advertId != null) {
             return false;
         }
-        return uri != null ? uri.equals(advert.uri) : advert.uri == null;
+        if (uri != null ? !uri.equals(advert.uri) : advert.uri != null) {
+            return false;
+        }
+        return clickThroughUri != null ? clickThroughUri.equals(advert.clickThroughUri) : advert.clickThroughUri == null;
     }
 
     @Override
@@ -51,6 +63,7 @@ public class Advert {
         int result = advertId != null ? advertId.hashCode() : 0;
         result = 31 * result + (int) (durationInMillis ^ (durationInMillis >>> 32));
         result = 31 * result + (uri != null ? uri.hashCode() : 0);
+        result = 31 * result + (clickThroughUri != null ? clickThroughUri.hashCode() : 0);
         return result;
     }
 
@@ -60,6 +73,7 @@ public class Advert {
                 + "advertId=" + advertId
                 + ", durationInMillis=" + durationInMillis
                 + ", uri=" + uri
+                + ", clickThroughUri=" + clickThroughUri
                 + '}';
     }
 }
