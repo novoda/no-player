@@ -343,4 +343,18 @@ class ExoPlayerFacade {
             advertView.detach(adsLoader);
         }
     }
+
+    void disableAdverts() {
+        if(adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            adsLoader.disableAdverts();
+        }
+    }
+
+    void enableAdverts() {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            adsLoader.enableAdverts();
+        }
+    }
 }

@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
@@ -190,6 +191,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     @Override
     public void onPositionDiscontinuity(int reason) {
+        Log.d("TAG", "onPositionDiscontinuity: " + reason);
         if (reason != Player.DISCONTINUITY_REASON_AD_INSERTION || player == null || adPlaybackState == null) {
             // We need all of the above to be able to respond to advert events.
             return;
@@ -233,5 +235,26 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
             advertListener.onAdvertClicked(advert);
         }
+    }
+
+    void disableAdverts() {
+        if (adPlaybackState == null) {
+            return;
+        }
+
+        for (int i = 0; i < adPlaybackState.adGroupCount; i++) {
+            adPlaybackState = adPlaybackState.withSkippedAdGroup(i);
+        }
+        updateAdPlaybackState();
+    }
+
+    void enableAdverts() {
+        if (adPlaybackState == null) {
+            return;
+        }
+
+        AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks);
+        adPlaybackState = advertPlaybackState.adPlaybackState();
+        updateAdPlaybackState();
     }
 }

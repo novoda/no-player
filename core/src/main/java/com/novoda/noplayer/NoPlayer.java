@@ -130,6 +130,10 @@ public interface NoPlayer extends PlayerState {
      */
     void detach(AdvertView advertView);
 
+    void disableAdverts();
+
+    void enableAdverts();
+
     /**
      * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.
      *

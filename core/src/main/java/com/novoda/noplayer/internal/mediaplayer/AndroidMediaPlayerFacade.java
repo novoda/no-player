@@ -346,4 +346,14 @@ class AndroidMediaPlayerFacade {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to detach advert view but has not been implemented for MediaPlayer.");
     }
+
+    void disableAdverts() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to disable adverts but has not been implemented for MediaPlayer.");
+    }
+
+    void enableAdverts() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to enable adverts but has not been implemented for MediaPlayer.");
+    }
 }
