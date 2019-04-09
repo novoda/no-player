@@ -309,13 +309,13 @@ public interface NoPlayer extends PlayerState {
 
         void onAdvertsLoaded(List<AdvertBreak> advertBreaks);
 
-        void onAdvertBreakStart(AdvertBreakId advertBreakId);
+        void onAdvertBreakStart(AdvertBreak advertBreak);
 
-        void onAdvertBreakEnd(AdvertBreakId advertBreakId);
+        void onAdvertBreakEnd(AdvertBreak advertBreak);
 
-        void onAdvertStart(AdvertId advertId);
+        void onAdvertStart(Advert advert);
 
-        void onAdvertEnd(AdvertId advertId);
+        void onAdvertEnd(Advert advert);
 
         void onAdvertClicked(Advert advert);
     }

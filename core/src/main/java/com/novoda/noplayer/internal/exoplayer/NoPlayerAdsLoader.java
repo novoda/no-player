@@ -181,11 +181,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     private void notifyAdvertStart(AdvertBreak advertBreak) {
         if (adIndexInGroup == 0) {
-            advertListener.onAdvertBreakStart(advertBreak.advertBreakId());
+            advertListener.onAdvertBreakStart(advertBreak);
         }
 
         Advert advert = advertBreak.adverts().get(adIndexInGroup);
-        advertListener.onAdvertStart(advert.advertId());
+        advertListener.onAdvertStart(advert);
     }
 
     @Override
@@ -215,10 +215,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     private void notifyAdvertEnd(AdvertBreak advertBreak) {
         List<Advert> adverts = advertBreak.adverts();
-        advertListener.onAdvertEnd(adverts.get(adIndexInGroup).advertId());
+        advertListener.onAdvertEnd(adverts.get(adIndexInGroup));
 
         if (adIndexInGroup == adverts.size() - 1) {
-            advertListener.onAdvertBreakEnd(advertBreak.advertBreakId());
+            advertListener.onAdvertBreakEnd(advertBreak);
         }
     }
 

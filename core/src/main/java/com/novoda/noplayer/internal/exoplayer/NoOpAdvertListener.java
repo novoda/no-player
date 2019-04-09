@@ -2,8 +2,6 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
-import com.novoda.noplayer.AdvertBreakId;
-import com.novoda.noplayer.AdvertId;
 import com.novoda.noplayer.NoPlayer;
 
 import java.util.List;
@@ -17,22 +15,22 @@ enum NoOpAdvertListener implements NoPlayer.AdvertListener {
     }
 
     @Override
-    public void onAdvertBreakStart(AdvertBreakId advertBreakId) {
+    public void onAdvertBreakStart(AdvertBreak advertBreak) {
         // no-op
     }
 
     @Override
-    public void onAdvertBreakEnd(AdvertBreakId advertBreakId) {
+    public void onAdvertBreakEnd(AdvertBreak advertBreak) {
         // no-op
     }
 
     @Override
-    public void onAdvertStart(AdvertId advertId) {
+    public void onAdvertStart(Advert advert) {
         // no-op
     }
 
     @Override
-    public void onAdvertEnd(AdvertId advertId) {
+    public void onAdvertEnd(Advert advert) {
         // no-op
     }
 
