@@ -333,12 +333,12 @@ class AndroidMediaPlayerImpl implements NoPlayer {
 
     @Override
     public void attach(AdvertView advertView) {
-        // no-op.
+        mediaPlayer.attach(advertView);
     }
 
     @Override
     public void detach(AdvertView advertView) {
-        // no-op.
+        mediaPlayer.detach(advertView);
     }
 
     private void clearSurfaceHolderCallbacks() {
