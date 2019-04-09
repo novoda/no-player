@@ -1,5 +1,5 @@
 allprojects {
-    version = '4.5.3'
+    version = '4.5.4'
 }
 
 def teamPropsFile(propsFile) {
