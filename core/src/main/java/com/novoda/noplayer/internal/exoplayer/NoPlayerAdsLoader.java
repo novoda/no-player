@@ -162,7 +162,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED) {
             long contentPosition = player.getContentPosition();
             if (contentPosition > 0) {
-                adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
+                adPlaybackState = PlayedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
                 updateAdPlaybackState();
                 return;
             }
@@ -171,12 +171,19 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         if (advertHasNotStarted()) {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-            notifyAdvertStart(advertBreaks.get(adGroupIndex));
+
+            if (hasUnplayedAdverts(adGroupIndex)) {
+                notifyAdvertStart(advertBreaks.get(adGroupIndex));
+            }
         }
     }
 
     private boolean advertHasNotStarted() {
         return player.isPlayingAd() && (adGroupIndex == -1 || adIndexInGroup == -1);
+    }
+
+    private boolean hasUnplayedAdverts(int adGroupIndex) {
+        return isPlayingAdvert() && adPlaybackState.adGroups[adGroupIndex].hasUnplayedAds();
     }
 
     private void notifyAdvertStart(AdvertBreak advertBreak) {
@@ -257,7 +264,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
         long contentPosition = player.getContentPosition();
         if (contentPosition > 0) {
-            adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
+            adPlaybackState = PlayedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
         }
 
         updateAdPlaybackState();
