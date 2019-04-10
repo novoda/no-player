@@ -44,14 +44,13 @@ public class AdvertPlaybackStateByStateTest {
 
     private static final AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK, FOURTH_ADVERT_BREAK));
     private static final List<AdvertBreak> ADVERT_BREAKS = advertPlaybackState.advertBreaks();
-
-    private AdPlaybackState adPlaybackState = advertPlaybackState.adPlaybackState();
+    private static final AdPlaybackState AD_PLAYBACK_STATE = advertPlaybackState.adPlaybackState();
 
     @Test
     public void doesNotAlterAdPlaybackStateWhenAdvertsAreAvailable() {
         List<AdvertPlaybackState.AdvertBreakState> advertBreakStates = Arrays.asList(AVAILABLE, AVAILABLE, AVAILABLE, AVAILABLE);
 
-        AdPlaybackState modifiedAdPlaybackState = AdvertPlaybackStateByState.from(adPlaybackState, ADVERT_BREAKS, advertBreakStates);
+        AdPlaybackState modifiedAdPlaybackState = AdvertPlaybackStateByState.from(AD_PLAYBACK_STATE, ADVERT_BREAKS, advertBreakStates);
 
         assertThatGroupContains(modifiedAdPlaybackState.adGroups[0], new int[]{AD_STATE_AVAILABLE});
         assertThatGroupContains(modifiedAdPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
@@ -63,7 +62,7 @@ public class AdvertPlaybackStateByStateTest {
     public void marksPlayedAdverts() {
         List<AdvertPlaybackState.AdvertBreakState> advertBreakStates = Arrays.asList(AVAILABLE, PLAYED, PLAYED, AVAILABLE);
 
-        AdPlaybackState modifiedAdPlaybackState = AdvertPlaybackStateByState.from(adPlaybackState, ADVERT_BREAKS, advertBreakStates);
+        AdPlaybackState modifiedAdPlaybackState = AdvertPlaybackStateByState.from(AD_PLAYBACK_STATE, ADVERT_BREAKS, advertBreakStates);
 
         assertThatGroupContains(modifiedAdPlaybackState.adGroups[0], new int[]{AD_STATE_AVAILABLE});
         assertThatGroupContains(modifiedAdPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
@@ -75,7 +74,7 @@ public class AdvertPlaybackStateByStateTest {
     public void marksSkippedAdverts() {
         List<AdvertPlaybackState.AdvertBreakState> advertBreakStates = Arrays.asList(AVAILABLE, SKIPPED, AVAILABLE, SKIPPED);
 
-        AdPlaybackState modifiedAdPlaybackState = AdvertPlaybackStateByState.from(adPlaybackState, ADVERT_BREAKS, advertBreakStates);
+        AdPlaybackState modifiedAdPlaybackState = AdvertPlaybackStateByState.from(AD_PLAYBACK_STATE, ADVERT_BREAKS, advertBreakStates);
 
         assertThatGroupContains(modifiedAdPlaybackState.adGroups[0], new int[]{AD_STATE_AVAILABLE});
         assertThatGroupContains(modifiedAdPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
