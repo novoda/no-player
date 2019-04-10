@@ -7,18 +7,17 @@ import com.novoda.noplayer.AdvertBreak;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 final class AdvertPlaybackState {
 
     private final AdPlaybackState adPlaybackState;
-    private final Map<AdvertBreak, State> advertBreaksByState;
+    private final List<AdvertBreak> advertBreaks;
+    private final List<AdvertBreakState> advertBreakStates;
 
     static AdvertPlaybackState from(List<AdvertBreak> advertBreaks) {
         List<AdvertBreak> sortedAdvertBreaks = sortAdvertBreaksByStartTime(advertBreaks);
-        Map<AdvertBreak, State> advertBreaksByState = new LinkedHashMap<>();
+        List<AdvertBreakState> advertBreakStates = new ArrayList<>(sortedAdvertBreaks.size());
 
         long[] advertOffsets = advertBreakOffset(sortedAdvertBreaks);
         AdPlaybackState adPlaybackState = new AdPlaybackState(advertOffsets);
@@ -29,7 +28,7 @@ final class AdvertPlaybackState {
         for (int i = 0; i < advertBreaksCount; i++) {
             AdvertBreak advertBreak = sortedAdvertBreaks.get(i);
             List<Advert> adverts = advertBreak.adverts();
-            advertBreaksByState.put(advertBreak, State.AVAILABLE);
+            advertBreakStates.add(AdvertBreakState.AVAILABLE);
 
             int advertsCount = adverts.size();
             adPlaybackState = adPlaybackState.withAdCount(i, advertsCount);
@@ -46,24 +45,25 @@ final class AdvertPlaybackState {
         }
 
         adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
-        return new AdvertPlaybackState(adPlaybackState, advertBreaksByState);
+        return new AdvertPlaybackState(adPlaybackState, sortedAdvertBreaks, advertBreakStates);
     }
 
-    private AdvertPlaybackState(AdPlaybackState adPlaybackState, Map<AdvertBreak, State> advertBreaksByState) {
+    private AdvertPlaybackState(AdPlaybackState adPlaybackState, List<AdvertBreak> advertBreaks, List<AdvertBreakState> advertBreakStates) {
         this.adPlaybackState = adPlaybackState;
-        this.advertBreaksByState = advertBreaksByState;
+        this.advertBreaks = advertBreaks;
+        this.advertBreakStates = advertBreakStates;
     }
 
     AdPlaybackState adPlaybackState() {
         return adPlaybackState;
     }
 
-    Map<AdvertBreak, State> advertBreaksByState() {
-        return advertBreaksByState;
+    List<AdvertBreakState> advertBreakStates() {
+        return advertBreakStates;
     }
 
     List<AdvertBreak> advertBreaks() {
-        return new ArrayList<>(advertBreaksByState.keySet());
+        return advertBreaks;
     }
 
     private static List<AdvertBreak> sortAdvertBreaksByStartTime(List<AdvertBreak> advertBreaks) {
@@ -80,7 +80,7 @@ final class AdvertPlaybackState {
         return advertOffsets;
     }
 
-    enum State {
+    enum AdvertBreakState {
         AVAILABLE,
         PLAYED,
         SKIPPED
