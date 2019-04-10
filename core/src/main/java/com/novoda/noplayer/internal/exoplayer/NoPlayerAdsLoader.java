@@ -172,8 +172,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
 
-            if (hasUnplayedAdverts(adGroupIndex)) {
+            if (canPlayAdverts(adGroupIndex)) {
                 notifyAdvertStart(advertBreaks.get(adGroupIndex));
+            } else {
+                resetAdvertPosition();
             }
         }
     }
@@ -182,7 +184,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         return player.isPlayingAd() && (adGroupIndex == -1 || adIndexInGroup == -1);
     }
 
-    private boolean hasUnplayedAdverts(int adGroupIndex) {
+    private boolean canPlayAdverts(int adGroupIndex) {
         return isPlayingAdvert() && adPlaybackState.adGroups[adGroupIndex].hasUnplayedAds();
     }
 
