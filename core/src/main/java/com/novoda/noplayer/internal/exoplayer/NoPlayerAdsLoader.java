@@ -214,7 +214,12 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         if (advertHasNotStarted()) {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-            notifyAdvertStart(advertBreaks.get(adGroupIndex));
+
+            if (canPlayAdverts(adGroupIndex)) {
+                notifyAdvertStart(advertBreaks.get(adGroupIndex));
+            } else {
+                resetAdvertPosition();
+            }
         }
     }
 
