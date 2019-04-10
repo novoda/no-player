@@ -5,21 +5,25 @@ import com.novoda.noplayer.AdvertBreak;
 
 import java.util.List;
 
-final class SkippedAdverts {
+final class PlayedAdverts {
 
-    private SkippedAdverts() {
+    private PlayedAdverts() {
         // Utility class.
     }
 
     static AdPlaybackState from(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         AdPlaybackState adPlaybackStateWithSkippedAdGroups = adPlaybackState;
-        for (int i = advertBreaks.size() - 1; i >= 0; i--) {
-            AdvertBreak advertBreak = advertBreaks.get(i);
+        int numberOfAdvertBreaks = advertBreaks.size() - 1;
+        for (int advertBreakIndex = numberOfAdvertBreaks; advertBreakIndex >= 0; advertBreakIndex--) {
+            AdvertBreak advertBreak = advertBreaks.get(advertBreakIndex);
             if (advertBreak.startTimeInMillis() >= currentPositionInMillis) {
                 continue;
             }
 
-            adPlaybackStateWithSkippedAdGroups = adPlaybackStateWithSkippedAdGroups.withSkippedAdGroup(i);
+            int numberOfAdverts = advertBreak.adverts().size();
+            for (int advertIndex = 0; advertIndex < numberOfAdverts; advertIndex++) {
+                adPlaybackStateWithSkippedAdGroups = adPlaybackStateWithSkippedAdGroups.withPlayedAd(advertBreakIndex, advertIndex);
+            }
         }
         return adPlaybackStateWithSkippedAdGroups;
     }
