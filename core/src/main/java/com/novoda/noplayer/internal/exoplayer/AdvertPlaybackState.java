@@ -7,7 +7,7 @@ import com.novoda.noplayer.AdvertBreak;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +18,7 @@ final class AdvertPlaybackState {
 
     static AdvertPlaybackState from(List<AdvertBreak> advertBreaks) {
         List<AdvertBreak> sortedAdvertBreaks = sortAdvertBreaksByStartTime(advertBreaks);
-        Map<AdvertBreak, State> advertBreaksByState = new HashMap<>();
+        Map<AdvertBreak, State> advertBreaksByState = new LinkedHashMap<>();
 
         long[] advertOffsets = advertBreakOffset(sortedAdvertBreaks);
         AdPlaybackState adPlaybackState = new AdPlaybackState(advertOffsets);
