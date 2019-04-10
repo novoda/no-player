@@ -82,6 +82,15 @@ public class AdvertPlaybackStateByStateTest {
         assertThatGroupContains(modifiedAdPlaybackState.adGroups[3], new int[]{AD_STATE_SKIPPED});
     }
 
+    @Test
+    public void marksAllAdvertsBeforePositionAsSkipped() {
+        List<AdvertPlaybackState.AdvertBreakState> advertBreakStates = Arrays.asList(AVAILABLE, AVAILABLE, AVAILABLE, AVAILABLE);
+
+        List<AdvertPlaybackState.AdvertBreakState> modifiedAdvertBreakStates = AdvertPlaybackStateByState.from(THIRTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, advertBreakStates);
+
+        assertThat(modifiedAdvertBreakStates).containsExactly(SKIPPED, SKIPPED, AVAILABLE, AVAILABLE);
+    }
+
     private void assertThatGroupContains(AdPlaybackState.AdGroup adGroup, int[] states) {
         assertThat(adGroup.states).containsOnly(states);
     }

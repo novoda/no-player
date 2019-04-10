@@ -5,6 +5,7 @@ import com.novoda.noplayer.AdvertBreak;
 
 import java.util.List;
 
+// TODO: This should be played not skipped. Although they are probably the same really.
 final class SkippedAdverts {
 
     private SkippedAdverts() {
@@ -19,7 +20,7 @@ final class SkippedAdverts {
                 continue;
             }
 
-            adPlaybackStateWithSkippedAdGroups = adPlaybackStateWithSkippedAdGroups.withSkippedAdGroup(i);
+            adPlaybackStateWithSkippedAdGroups = adPlaybackStateWithSkippedAdGroups.withSkippedAdGroup(i); // TODO: This should be played. 
         }
         return adPlaybackStateWithSkippedAdGroups;
     }
