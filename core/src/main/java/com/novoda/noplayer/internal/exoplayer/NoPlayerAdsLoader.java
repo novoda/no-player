@@ -168,15 +168,28 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             }
         }
 
+        handleAdvertStart();
+    }
+
+    private void handleAdvertStart() {
         if (advertHasNotStarted()) {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-            notifyAdvertStart(advertBreaks.get(adGroupIndex));
+
+            if (canPlayAdverts(adGroupIndex)) {
+                notifyAdvertStart(advertBreaks.get(adGroupIndex));
+            } else {
+                resetAdvertPosition();
+            }
         }
     }
 
     private boolean advertHasNotStarted() {
         return player.isPlayingAd() && (adGroupIndex == -1 || adIndexInGroup == -1);
+    }
+
+    private boolean canPlayAdverts(int adGroupIndex) {
+        return isPlayingAdvert() && adPlaybackState.adGroups[adGroupIndex].hasUnplayedAds();
     }
 
     private void notifyAdvertStart(AdvertBreak advertBreak) {
@@ -202,11 +215,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             resetAdvertPosition();
         }
 
-        if (advertHasNotStarted()) {
-            adGroupIndex = player.getCurrentAdGroupIndex();
-            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-            notifyAdvertStart(advertBreaks.get(adGroupIndex));
-        }
+        handleAdvertStart();
     }
 
     private boolean isPlayingAdvert() {
