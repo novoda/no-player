@@ -21,7 +21,7 @@ final class PlayedAdverts {
      * @param adPlaybackState         The {@link AdPlaybackState} to alter advert state on.
      * @return The {@link AdPlaybackState} with the newly played states.
      */
-    static AdPlaybackState from(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
+    static AdPlaybackState markAllPastAdvertsAsPlayed(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         AdPlaybackState adPlaybackStateWithPlayedAdGroups = adPlaybackState;
         for (int advertBreakIndex = advertBreaks.size() - 1; advertBreakIndex >= 0; advertBreakIndex--) {
             AdvertBreak advertBreak = advertBreaks.get(advertBreakIndex);

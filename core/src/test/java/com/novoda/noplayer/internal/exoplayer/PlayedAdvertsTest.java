@@ -44,7 +44,7 @@ public class PlayedAdvertsTest {
 
     @Test
     public void doesNotMarkAsPlayed_whenCurrentPositionIsAtAdvertStartPosition() {
-        AdPlaybackState adPlaybackState = PlayedAdverts.from(THIRTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        AdPlaybackState adPlaybackState = PlayedAdverts.markAllPastAdvertsAsPlayed(THIRTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
@@ -54,7 +54,7 @@ public class PlayedAdvertsTest {
 
     @Test
     public void marksAdvertsPriorToCurrentPositionAsPlayed() {
-        AdPlaybackState adPlaybackState = PlayedAdverts.from(THIRTY_FIVE_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        AdPlaybackState adPlaybackState = PlayedAdverts.markAllPastAdvertsAsPlayed(THIRTY_FIVE_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
@@ -64,7 +64,7 @@ public class PlayedAdvertsTest {
 
     @Test
     public void marksNoAdvertsAsPlayed_whenPositionIsStart() {
-        AdPlaybackState adPlaybackState = PlayedAdverts.from(BEGINNING, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        AdPlaybackState adPlaybackState = PlayedAdverts.markAllPastAdvertsAsPlayed(BEGINNING, ADVERT_BREAKS, AD_PLAYBACK_STATE);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_AVAILABLE});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
