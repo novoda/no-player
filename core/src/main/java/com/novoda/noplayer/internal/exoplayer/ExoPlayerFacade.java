@@ -345,7 +345,7 @@ class ExoPlayerFacade {
     }
 
     void disableAdverts() {
-        if(adsLoader.isPresent()) {
+        if (adsLoader.isPresent()) {
             NoPlayerAdsLoader adsLoader = this.adsLoader.get();
             adsLoader.disableAdverts();
         }
