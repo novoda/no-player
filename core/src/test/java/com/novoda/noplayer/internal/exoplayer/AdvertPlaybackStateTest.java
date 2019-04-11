@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
 import static com.novoda.noplayer.AdvertFixtures.anAdvert;
-import static com.novoda.noplayer.internal.exoplayer.AdvertPlaybackState.AdvertBreakState;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class AdvertPlaybackStateTest {
@@ -61,16 +60,6 @@ public class AdvertPlaybackStateTest {
         assertThatGroupContains(adPlaybackState.adGroups[0], 1, new long[]{ONE_SECOND_IN_MICROS}, new Uri[]{FIRST_ADVERT.uri()});
         assertThatGroupContains(adPlaybackState.adGroups[1], 2, new long[]{ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS}, new Uri[]{FIRST_ADVERT.uri(), SECOND_ADVERT.uri()});
         assertThatGroupContains(adPlaybackState.adGroups[2], 3, new long[]{ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS, THREE_SECONDS_IN_MICROS}, new Uri[]{FIRST_ADVERT.uri(), SECOND_ADVERT.uri(), THIRD_ADVERT.uri()});
-    }
-
-    @Test
-    public void advertBreaksAreAvailable() {
-        List<AdvertBreak> advertBreaks = Arrays.asList(THIRD_ADVERT_BREAK, SECOND_ADVERT_BREAK, FIRST_ADVERT_BREAK);
-
-        AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks);
-        List<AdvertBreakState> advertBreakStates = advertPlaybackState.advertBreakStates();
-
-        assertThat(advertBreakStates).containsExactly(AdvertBreakState.AVAILABLE, AdvertBreakState.AVAILABLE, AdvertBreakState.AVAILABLE);
     }
 
     @Test

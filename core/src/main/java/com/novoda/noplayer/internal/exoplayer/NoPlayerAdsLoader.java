@@ -211,7 +211,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
         if (reason == Player.DISCONTINUITY_REASON_SEEK) {
             long contentPosition = player.getContentPosition();
-            adPlaybackState = AvailableAdverts.from(contentPosition, advertBreaks, this.adPlaybackState);
+            AvailableAdverts.markAllFutureAdvertsAsAvailable(contentPosition, advertBreaks, adPlaybackState);
             updateAdPlaybackState();
             return;
         }
@@ -272,7 +272,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         }
 
         long contentPosition = player.getContentPosition();
-        adPlaybackState = AvailableAdverts.from(contentPosition, advertBreaks, adPlaybackState);
+        AvailableAdverts.markAllFutureAdvertsAsAvailable(contentPosition, advertBreaks, adPlaybackState);
 
         updateAdPlaybackState();
         advertListener.onAdvertsEnabled(advertBreaks);

@@ -45,45 +45,45 @@ public class AvailableAdvertsTest {
     @Test
     public void makesSkippedAdvertsAfterCurrentOrAtCurrentPositionAvailable() {
         AdPlaybackState adPlaybackState = adPlaybackStateWithSkippedAdverts();
-        AdPlaybackState modifiedAdPlaybackState = AvailableAdverts.from(THIRTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, adPlaybackState);
+        AvailableAdverts.markAllFutureAdvertsAsAvailable(THIRTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, adPlaybackState);
 
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
     }
 
     @Test
     public void marksAllAsAvailableWhenPositionIsBeginning() {
         AdPlaybackState adPlaybackState = adPlaybackStateWithSkippedAdverts();
-        AdPlaybackState modifiedAdPlaybackState = AvailableAdverts.from(BEGINNING, ADVERT_BREAKS, adPlaybackState);
+        AvailableAdverts.markAllFutureAdvertsAsAvailable(BEGINNING, ADVERT_BREAKS, adPlaybackState);
 
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[0], new int[]{AD_STATE_AVAILABLE});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
     }
 
     @Test
     public void leavesAsCurrentStateWhenNotPreviouslySkipped() {
         AdPlaybackState adPlaybackState = adPlaybackStateWithPlayedAdverts();
-        AdPlaybackState modifiedAdPlaybackState = AvailableAdverts.from(BEGINNING, ADVERT_BREAKS, adPlaybackState);
+        AvailableAdverts.markAllFutureAdvertsAsAvailable(BEGINNING, ADVERT_BREAKS, adPlaybackState);
 
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[2], new int[]{AD_STATE_PLAYED});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[3], new int[]{AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_PLAYED});
     }
 
     @Test
     public void leavesAsSkippedWhenPositionIsAfterAllAdvertStartPositions() {
         AdPlaybackState adPlaybackState = adPlaybackStateWithSkippedAdverts();
-        AdPlaybackState modifiedAdPlaybackState = AvailableAdverts.from(END, ADVERT_BREAKS, adPlaybackState);
+        AvailableAdverts.markAllFutureAdvertsAsAvailable(END, ADVERT_BREAKS, adPlaybackState);
 
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[2], new int[]{AD_STATE_SKIPPED});
-        assertThatGroupContains(modifiedAdPlaybackState.adGroups[3], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_SKIPPED});
     }
 
     private AdPlaybackState adPlaybackStateWithSkippedAdverts() {
