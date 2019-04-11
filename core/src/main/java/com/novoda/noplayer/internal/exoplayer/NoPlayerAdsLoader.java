@@ -42,6 +42,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private List<AdvertBreak> advertBreaks = Collections.emptyList();
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
+    private boolean advertsDisabled;
 
     static NoPlayerAdsLoader create(AdvertsLoader loader) {
         return new NoPlayerAdsLoader(loader, new Handler(Looper.getMainLooper()));
@@ -154,7 +155,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        if (reason == Player.TIMELINE_CHANGE_REASON_RESET || player == null || adPlaybackState == null) {
+        if (reason == Player.TIMELINE_CHANGE_REASON_RESET || player == null || adPlaybackState == null || advertsDisabled) {
             // The player is being reset and this source will be released.
             return;
         }
@@ -207,26 +208,35 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
      */
     @Override
     public void onPositionDiscontinuity(int reason) {
-        if (reason != Player.DISCONTINUITY_REASON_AD_INSERTION || player == null || adPlaybackState == null) {
+        if (player == null || adPlaybackState == null || advertsDisabled) {
             // We need all of the above to be able to respond to advert events.
             return;
         }
 
-        if (isPlayingAdvert()) {
-            notifyAdvertEnd(advertBreaks.get(adGroupIndex));
-            adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
+        if (reason == Player.DISCONTINUITY_REASON_SEEK) {
+            long contentPosition = player.getContentPosition();
+            adPlaybackState = AvailableAdverts.fromSkipped(contentPosition, advertBreaks, this.adPlaybackState);
             updateAdPlaybackState();
-            resetAdvertPosition();
+            return;
         }
 
-        if (advertHasNotStarted()) {
-            adGroupIndex = player.getCurrentAdGroupIndex();
-            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-
-            if (canPlayAdverts(adGroupIndex)) {
-                notifyAdvertStart(advertBreaks.get(adGroupIndex));
-            } else {
+        if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION) {
+            if (isPlayingAdvert()) {
+                notifyAdvertEnd(advertBreaks.get(adGroupIndex));
+                adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
+                updateAdPlaybackState();
                 resetAdvertPosition();
+            }
+
+            if (advertHasNotStarted()) {
+                adGroupIndex = player.getCurrentAdGroupIndex();
+                adIndexInGroup = player.getCurrentAdIndexInAdGroup();
+
+                if (canPlayAdverts(adGroupIndex)) {
+                    notifyAdvertStart(advertBreaks.get(adGroupIndex));
+                } else {
+                    resetAdvertPosition();
+                }
             }
         }
     }
@@ -262,11 +272,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        long contentPosition = player.getContentPosition();
-        adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
+        adPlaybackState = SkippedAdverts.skipAll(advertBreaks, adPlaybackState);
         updateAdPlaybackState();
         advertListener.onAdvertsDisabled();
         resetAdvertPosition();
+        advertsDisabled = true;
     }
 
     void enableAdverts() {
@@ -279,5 +289,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
         updateAdPlaybackState();
         advertListener.onAdvertsEnabled(advertBreaks);
+        advertsDisabled = false;
     }
 }

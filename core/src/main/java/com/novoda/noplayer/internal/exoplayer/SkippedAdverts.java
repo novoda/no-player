@@ -24,4 +24,12 @@ final class SkippedAdverts {
         return adPlaybackStateWithSkippedAdGroups;
     }
 
+    static AdPlaybackState skipAll(List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
+        AdPlaybackState adPlaybackStateWithSkippedAdGroups = adPlaybackState;
+        for (int i = advertBreaks.size() - 1; i >= 0; i--) {
+            adPlaybackStateWithSkippedAdGroups = adPlaybackStateWithSkippedAdGroups.withSkippedAdGroup(i);
+        }
+        return adPlaybackStateWithSkippedAdGroups;
+    }
+
 }
