@@ -5,6 +5,12 @@ import com.novoda.noplayer.AdvertBreak;
 
 import java.util.List;
 
+/**
+ * This is not the traditional usage of skipped. This handles the scenario where the client
+ * wants to hide adverts without forcing the whole advert load process again.
+ * <p>
+ * If and when we tackle skipping of adverts we will need to revisit this flow.
+ */
 final class SkippedAdverts {
 
     private SkippedAdverts() {
