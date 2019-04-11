@@ -23,7 +23,7 @@ final class AvailableAdverts {
      * @param adPlaybackState         The {@link AdPlaybackState} to mutate with the new states.
      * @return The {@link AdPlaybackState} with the new available states.
      */
-    static AdPlaybackState fromSkipped(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
+    static AdPlaybackState from(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         for (int i = advertBreaks.size() - 1; i >= 0; i--) {
             AdvertBreak advertBreak = advertBreaks.get(i);
             AdPlaybackState.AdGroup adGroup = adPlaybackState.adGroups[i];
