@@ -259,7 +259,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        adPlaybackState = SkippedAdverts.from(advertBreaks, adPlaybackState);
+        adPlaybackState = SkippedAdverts.markAllNonPlayedAdvertsAsSkipped(advertBreaks, adPlaybackState);
         updateAdPlaybackState();
         advertListener.onAdvertsDisabled();
         resetAdvertPosition();

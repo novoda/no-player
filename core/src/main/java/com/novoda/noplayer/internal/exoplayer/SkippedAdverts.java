@@ -18,7 +18,7 @@ final class SkippedAdverts {
      * @param adPlaybackState The {@link AdPlaybackState} to modify with the new states.
      * @return The {@link AdPlaybackState} with the new Skipped states.
      */
-    static AdPlaybackState from(List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
+    static AdPlaybackState markAllNonPlayedAdvertsAsSkipped(List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         AdPlaybackState adPlaybackStateWithSkippedAdGroups = adPlaybackState;
         for (int i = advertBreaks.size() - 1; i >= 0; i--) {
             adPlaybackStateWithSkippedAdGroups = adPlaybackStateWithSkippedAdGroups.withSkippedAdGroup(i);

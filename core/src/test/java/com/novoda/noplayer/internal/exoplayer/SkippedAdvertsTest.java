@@ -42,7 +42,7 @@ public class SkippedAdvertsTest {
     @Test
     public void skipsAllAdverts() {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
-        AdPlaybackState adPlaybackState = SkippedAdverts.from(ADVERT_BREAKS, initialAvailableAdPlaybackState);
+        AdPlaybackState adPlaybackState = SkippedAdverts.markAllNonPlayedAdvertsAsSkipped(ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
@@ -54,7 +54,7 @@ public class SkippedAdvertsTest {
     public void doesNotSkipAdvertThatHasAlreadyPlayed() {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
         initialAvailableAdPlaybackState = initialAvailableAdPlaybackState.withPlayedAd(1, 0);
-        AdPlaybackState adPlaybackState = SkippedAdverts.from(ADVERT_BREAKS, initialAvailableAdPlaybackState);
+        AdPlaybackState adPlaybackState = SkippedAdverts.markAllNonPlayedAdvertsAsSkipped(ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
