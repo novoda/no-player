@@ -198,14 +198,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         advertListener.onAdvertStart(advert);
     }
 
-    /**
-     * TODO: Seek is causing all of the problems. If an advert occurs before the current time and is available then we need to map it to skipped.
-     * When the advert is after the current time and it is marked as Skipped we need to make it available.
-     * <p>
-     * This conflicts with the `Skipped` from the initial position.
-     *
-     * @param reason
-     */
     @Override
     public void onPositionDiscontinuity(int reason) {
         if (player == null || adPlaybackState == null || advertsDisabled) {
