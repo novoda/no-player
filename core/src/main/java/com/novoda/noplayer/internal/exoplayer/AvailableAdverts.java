@@ -21,7 +21,7 @@ final class AvailableAdverts {
      * @param currentPositionInMillis The position after which all adverts will transition from Skipped to Available.
      * @param advertBreaks            The client representation of the adverts, our source of truth.
      * @param adPlaybackState         The {@link AdPlaybackState} to mutate with the new states.
-     * @return {@link AdPlaybackState} with the new available states.
+     * @return The {@link AdPlaybackState} with the new available states.
      */
     static AdPlaybackState fromSkipped(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         for (int i = advertBreaks.size() - 1; i >= 0; i--) {

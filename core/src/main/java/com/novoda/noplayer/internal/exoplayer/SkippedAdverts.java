@@ -11,6 +11,13 @@ final class SkippedAdverts {
         // Utility class.
     }
 
+    /**
+     * Transforms all adverts that are not currently Played to Skipped.
+     *
+     * @param advertBreaks    The client representation of the adverts, our source of truth.
+     * @param adPlaybackState The {@link AdPlaybackState} to mutate with the new states.
+     * @return The {@link AdPlaybackState} with the new Skipped states.
+     */
     static AdPlaybackState from(List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         AdPlaybackState adPlaybackStateWithSkippedAdGroups = adPlaybackState;
         for (int i = advertBreaks.size() - 1; i >= 0; i--) {

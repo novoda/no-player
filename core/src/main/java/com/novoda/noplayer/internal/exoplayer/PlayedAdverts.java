@@ -11,6 +11,16 @@ final class PlayedAdverts {
         // Utility class.
     }
 
+    /**
+     * Transforms all adverts before the current player position to the Played state.
+     * This is used to represent a resume position, in which a user would already seen the
+     * preceding adverts.
+     *
+     * @param currentPositionInMillis The position before which all adverts will transition from their current state to Played.
+     * @param advertBreaks            The client representation of the adverts, our source of truth.
+     * @param adPlaybackState         The {@link AdPlaybackState} to alter advert state on.
+     * @return The {@link AdPlaybackState} with the newly played states.
+     */
     static AdPlaybackState from(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         AdPlaybackState adPlaybackStateWithPlayedAdGroups = adPlaybackState;
         for (int advertBreakIndex = advertBreaks.size() - 1; advertBreakIndex >= 0; advertBreakIndex--) {
