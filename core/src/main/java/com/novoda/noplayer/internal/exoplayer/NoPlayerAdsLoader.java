@@ -168,6 +168,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             }
         }
 
+        handleAdvertStart();
+    }
+
+    private void handleAdvertStart() {
         if (advertHasNotStarted()) {
             adGroupIndex = player.getCurrentAdGroupIndex();
             adIndexInGroup = player.getCurrentAdIndexInAdGroup();
@@ -211,16 +215,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             resetAdvertPosition();
         }
 
-        if (advertHasNotStarted()) {
-            adGroupIndex = player.getCurrentAdGroupIndex();
-            adIndexInGroup = player.getCurrentAdIndexInAdGroup();
-
-            if (canPlayAdverts(adGroupIndex)) {
-                notifyAdvertStart(advertBreaks.get(adGroupIndex));
-            } else {
-                resetAdvertPosition();
-            }
-        }
+        handleAdvertStart();
     }
 
     private boolean isPlayingAdvert() {
