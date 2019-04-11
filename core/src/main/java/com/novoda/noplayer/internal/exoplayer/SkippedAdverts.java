@@ -11,20 +11,7 @@ final class SkippedAdverts {
         // Utility class.
     }
 
-    static AdPlaybackState from(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
-        AdPlaybackState adPlaybackStateWithSkippedAdGroups = adPlaybackState;
-        for (int i = advertBreaks.size() - 1; i >= 0; i--) {
-            AdvertBreak advertBreak = advertBreaks.get(i);
-            if (advertBreak.startTimeInMillis() >= currentPositionInMillis) {
-                continue;
-            }
-
-            adPlaybackStateWithSkippedAdGroups = adPlaybackStateWithSkippedAdGroups.withSkippedAdGroup(i);
-        }
-        return adPlaybackStateWithSkippedAdGroups;
-    }
-
-    static AdPlaybackState skipAll(List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
+    static AdPlaybackState from(List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         AdPlaybackState adPlaybackStateWithSkippedAdGroups = adPlaybackState;
         for (int i = advertBreaks.size() - 1; i >= 0; i--) {
             adPlaybackStateWithSkippedAdGroups = adPlaybackStateWithSkippedAdGroups.withSkippedAdGroup(i);
