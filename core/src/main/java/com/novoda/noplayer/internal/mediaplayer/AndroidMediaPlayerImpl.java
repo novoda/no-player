@@ -341,6 +341,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         mediaPlayer.detach(advertView);
     }
 
+    @Override
+    public void disableAdverts() {
+        mediaPlayer.disableAdverts();
+    }
+
+    @Override
+    public void enableAdverts() {
+        mediaPlayer.enableAdverts();
+    }
+
     private void clearSurfaceHolderCallbacks() {
         for (SurfaceRequester.Callback callback : surfaceHolderRequesterCallbacks) {
             surfaceRequester.removeCallback(callback);

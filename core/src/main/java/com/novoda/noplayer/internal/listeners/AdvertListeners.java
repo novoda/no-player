@@ -65,4 +65,18 @@ class AdvertListeners implements NoPlayer.AdvertListener {
             listener.onAdvertClicked(advert);
         }
     }
+
+    @Override
+    public void onAdvertsDisabled() {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertsDisabled();
+        }
+    }
+
+    @Override
+    public void onAdvertsEnabled(List<AdvertBreak> advertBreaks) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertsEnabled(advertBreaks);
+        }
+    }
 }

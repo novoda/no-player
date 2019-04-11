@@ -286,6 +286,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
+    public void disableAdverts() {
+        exoPlayer.disableAdverts();
+    }
+
+    @Override
+    public void enableAdverts() {
+        exoPlayer.enableAdverts();
+    }
+
+    @Override
     public boolean selectAudioTrack(PlayerAudioTrack audioTrack) throws IllegalStateException {
         return exoPlayer.selectAudioTrack(audioTrack);
     }

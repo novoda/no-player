@@ -1,13 +1,15 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
+
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
-import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.junit.Test;
 
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
 import static com.novoda.noplayer.AdvertFixtures.anAdvert;

@@ -42,6 +42,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private List<AdvertBreak> advertBreaks = Collections.emptyList();
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
+    private boolean advertsDisabled;
 
     static NoPlayerAdsLoader create(AdvertsLoader loader) {
         return new NoPlayerAdsLoader(loader, new Handler(Looper.getMainLooper()));
@@ -154,7 +155,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        if (reason == Player.TIMELINE_CHANGE_REASON_RESET || player == null || adPlaybackState == null) {
+        if (reason == Player.TIMELINE_CHANGE_REASON_RESET || player == null || adPlaybackState == null || advertsDisabled) {
             // The player is being reset and this source will be released.
             return;
         }
@@ -162,7 +163,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED) {
             long contentPosition = player.getContentPosition();
             if (contentPosition > 0) {
-                adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
+                adPlaybackState = PlayedAdverts.markAllPastAdvertsAsPlayed(contentPosition, advertBreaks, adPlaybackState);
                 updateAdPlaybackState();
                 return;
             }
@@ -203,19 +204,28 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     @Override
     public void onPositionDiscontinuity(int reason) {
-        if (reason != Player.DISCONTINUITY_REASON_AD_INSERTION || player == null || adPlaybackState == null) {
+        if (player == null || adPlaybackState == null || advertsDisabled) {
             // We need all of the above to be able to respond to advert events.
             return;
         }
 
-        if (isPlayingAdvert()) {
-            notifyAdvertEnd(advertBreaks.get(adGroupIndex));
-            adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
+        if (reason == Player.DISCONTINUITY_REASON_SEEK) {
+            long contentPosition = player.getContentPosition();
+            AvailableAdverts.markAllFutureAdvertsAsAvailable(contentPosition, advertBreaks, adPlaybackState);
             updateAdPlaybackState();
-            resetAdvertPosition();
+            return;
         }
 
-        handleAdvertStart();
+        if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION) {
+            if (isPlayingAdvert()) {
+                notifyAdvertEnd(advertBreaks.get(adGroupIndex));
+                adPlaybackState = adPlaybackState.withPlayedAd(adGroupIndex, adIndexInGroup);
+                updateAdPlaybackState();
+                resetAdvertPosition();
+            }
+
+            handleAdvertStart();
+        }
     }
 
     private boolean isPlayingAdvert() {
@@ -242,5 +252,30 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             Advert advert = advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup);
             advertListener.onAdvertClicked(advert);
         }
+    }
+
+    void disableAdverts() {
+        if (adPlaybackState == null || player == null) {
+            return;
+        }
+
+        adPlaybackState = SkippedAdverts.markAllNonPlayedAdvertsAsSkipped(advertBreaks, adPlaybackState);
+        updateAdPlaybackState();
+        advertListener.onAdvertsDisabled();
+        resetAdvertPosition();
+        advertsDisabled = true;
+    }
+
+    void enableAdverts() {
+        if (adPlaybackState == null || player == null) {
+            return;
+        }
+
+        long contentPosition = player.getContentPosition();
+        AvailableAdverts.markAllFutureAdvertsAsAvailable(contentPosition, advertBreaks, adPlaybackState);
+
+        updateAdPlaybackState();
+        advertListener.onAdvertsEnabled(advertBreaks);
+        advertsDisabled = false;
     }
 }
