@@ -13,11 +13,9 @@ final class AdvertPlaybackState {
 
     private final AdPlaybackState adPlaybackState;
     private final List<AdvertBreak> advertBreaks;
-    private final List<AdvertBreakState> advertBreakStates;
 
     static AdvertPlaybackState from(List<AdvertBreak> advertBreaks) {
         List<AdvertBreak> sortedAdvertBreaks = sortAdvertBreaksByStartTime(advertBreaks);
-        List<AdvertBreakState> advertBreakStates = new ArrayList<>(sortedAdvertBreaks.size());
 
         long[] advertOffsets = advertBreakOffset(sortedAdvertBreaks);
         AdPlaybackState adPlaybackState = new AdPlaybackState(advertOffsets);
@@ -28,7 +26,6 @@ final class AdvertPlaybackState {
         for (int i = 0; i < advertBreaksCount; i++) {
             AdvertBreak advertBreak = sortedAdvertBreaks.get(i);
             List<Advert> adverts = advertBreak.adverts();
-            advertBreakStates.add(AdvertBreakState.AVAILABLE);
 
             int advertsCount = adverts.size();
             adPlaybackState = adPlaybackState.withAdCount(i, advertsCount);
@@ -45,21 +42,16 @@ final class AdvertPlaybackState {
         }
 
         adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
-        return new AdvertPlaybackState(adPlaybackState, sortedAdvertBreaks, advertBreakStates);
+        return new AdvertPlaybackState(adPlaybackState, sortedAdvertBreaks);
     }
 
-    private AdvertPlaybackState(AdPlaybackState adPlaybackState, List<AdvertBreak> advertBreaks, List<AdvertBreakState> advertBreakStates) {
+    private AdvertPlaybackState(AdPlaybackState adPlaybackState, List<AdvertBreak> advertBreaks) {
         this.adPlaybackState = adPlaybackState;
         this.advertBreaks = advertBreaks;
-        this.advertBreakStates = advertBreakStates;
     }
 
     AdPlaybackState adPlaybackState() {
         return adPlaybackState;
-    }
-
-    List<AdvertBreakState> advertBreakStates() {
-        return advertBreakStates;
     }
 
     List<AdvertBreak> advertBreaks() {
@@ -78,12 +70,6 @@ final class AdvertPlaybackState {
             advertOffsets[i] = C.msToUs(advertBreaks.get(i).startTimeInMillis());
         }
         return advertOffsets;
-    }
-
-    enum AdvertBreakState {
-        AVAILABLE,
-        PLAYED,
-        SKIPPED
     }
 
 }
