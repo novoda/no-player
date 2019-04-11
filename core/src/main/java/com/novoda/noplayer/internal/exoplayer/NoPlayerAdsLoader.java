@@ -197,6 +197,14 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         advertListener.onAdvertStart(advert);
     }
 
+    /**
+     * TODO: Seek is causing all of the problems. If an advert occurs before the current time and is available then we need to map it to skipped.
+     * When the advert is after the current time and it is marked as Skipped we need to make it available.
+     * <p>
+     * This conflicts with the `Skipped` from the initial position.
+     *
+     * @param reason
+     */
     @Override
     public void onPositionDiscontinuity(int reason) {
         if (reason != Player.DISCONTINUITY_REASON_AD_INSERTION || player == null || adPlaybackState == null) {
@@ -250,11 +258,12 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     }
 
     void disableAdverts() {
-        if (adPlaybackState == null) {
+        if (adPlaybackState == null || player == null) {
             return;
         }
 
-        adPlaybackState = new AdPlaybackState();
+        long contentPosition = player.getContentPosition();
+        adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
         updateAdPlaybackState();
         advertListener.onAdvertsDisabled();
         resetAdvertPosition();
@@ -265,14 +274,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks);
-        advertBreaks = advertPlaybackState.advertBreaks();
-        adPlaybackState = advertPlaybackState.adPlaybackState();
-
         long contentPosition = player.getContentPosition();
-        if (contentPosition > 0) {
-            adPlaybackState = SkippedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
-        }
+        adPlaybackState = AvailableAdverts.fromSkipped(contentPosition, advertBreaks, adPlaybackState);
 
         updateAdPlaybackState();
         advertListener.onAdvertsEnabled(advertBreaks);
