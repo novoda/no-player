@@ -326,6 +326,8 @@ public interface NoPlayer extends PlayerState {
         void onAdvertsDisabled();
 
         void onAdvertsEnabled(List<AdvertBreak> advertBreaks);
+
+        void onAdvertsSkipped(List<AdvertBreak> advertBreaks);
     }
 
     /**

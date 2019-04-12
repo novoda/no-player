@@ -3,10 +3,10 @@ package com.novoda.noplayer.internal.exoplayer;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.AdvertBreak;
 
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.List;
-
-import org.junit.Test;
 
 import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_AVAILABLE;
 import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_PLAYED;
@@ -44,7 +44,8 @@ public class PlayedAdvertsTest {
 
     @Test
     public void doesNotMarkAsPlayed_whenCurrentPositionIsAtAdvertStartPosition() {
-        AdPlaybackState adPlaybackState = PlayedAdverts.markAllPastAdvertsAsPlayed(THIRTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        PlayedAdverts playedAdverts = PlayedAdverts.from(THIRTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        AdPlaybackState adPlaybackState = playedAdverts.adPlaybackState();
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
@@ -53,8 +54,17 @@ public class PlayedAdvertsTest {
     }
 
     @Test
+    public void doesNotAddToPlayedAdvertBreaks_whenCurrentPositionIsAtAdvertStartPosition() {
+        PlayedAdverts playedAdverts = PlayedAdverts.from(THIRTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        List<AdvertBreak> playedAdvertBreaks = playedAdverts.playedAdvertBreaks();
+
+        assertThat(playedAdvertBreaks).containsExactly(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK);
+    }
+
+    @Test
     public void marksAdvertsPriorToCurrentPositionAsPlayed() {
-        AdPlaybackState adPlaybackState = PlayedAdverts.markAllPastAdvertsAsPlayed(THIRTY_FIVE_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        PlayedAdverts playedAdverts = PlayedAdverts.from(THIRTY_FIVE_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        AdPlaybackState adPlaybackState = playedAdverts.adPlaybackState();
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
@@ -63,13 +73,30 @@ public class PlayedAdvertsTest {
     }
 
     @Test
+    public void addsAdvertBreaksPriorToCurrentPositionToPlayedAdvertBreaks() {
+        PlayedAdverts playedAdverts = PlayedAdverts.from(THIRTY_FIVE_SECONDS_IN_MILLIS, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        List<AdvertBreak> playedAdvertBreaks = playedAdverts.playedAdvertBreaks();
+
+        assertThat(playedAdvertBreaks).containsExactly(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK);
+    }
+
+    @Test
     public void marksNoAdvertsAsPlayed_whenPositionIsStart() {
-        AdPlaybackState adPlaybackState = PlayedAdverts.markAllPastAdvertsAsPlayed(BEGINNING, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        PlayedAdverts playedAdverts = PlayedAdverts.from(BEGINNING, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        AdPlaybackState adPlaybackState = playedAdverts.adPlaybackState();
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_AVAILABLE});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
         assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
         assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
+    }
+
+    @Test
+    public void addsNoAdvertBreaksToPlayedAdvertBreaks_whenPositionIsStart() {
+        PlayedAdverts playedAdverts = PlayedAdverts.from(BEGINNING, ADVERT_BREAKS, AD_PLAYBACK_STATE);
+        List<AdvertBreak> playedAdvertBreaks = playedAdverts.playedAdvertBreaks();
+
+        assertThat(playedAdvertBreaks).isEmpty();
     }
 
     private void assertThatGroupContains(AdPlaybackState.AdGroup adGroup, int[] states) {

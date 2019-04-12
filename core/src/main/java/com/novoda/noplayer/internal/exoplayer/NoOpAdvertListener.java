@@ -48,4 +48,9 @@ enum NoOpAdvertListener implements NoPlayer.AdvertListener {
     public void onAdvertsEnabled(List<AdvertBreak> advertBreaks) {
         // no-op
     }
+
+    @Override
+    public void onAdvertsSkipped(List<AdvertBreak> advertBreaks) {
+        // no op
+    }
 }
