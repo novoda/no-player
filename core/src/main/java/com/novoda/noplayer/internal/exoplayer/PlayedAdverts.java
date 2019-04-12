@@ -20,9 +20,9 @@ class PlayedAdverts {
      * @param currentPositionInMillis The position before which all adverts will transition from their current state to Played.
      * @param advertBreaks            The client representation of the adverts, our source of truth.
      * @param adPlaybackState         The {@link AdPlaybackState} to alter advert state on.
-     * @return The {@link AdPlaybackState} with the newly played states.
+     * @return The {@link PlayedAdverts} instance with the newly played states.
      */
-    static PlayedAdverts markAllPastAdvertsAsPlayed(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
+    static PlayedAdverts from(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         AdPlaybackState adPlaybackStateWithPlayedAdGroups = adPlaybackState;
         List<AdvertBreak> playedAdvertBreaks = new ArrayList<>(advertBreaks.size());
         for (int advertBreakIndex = advertBreaks.size() - 1; advertBreakIndex >= 0; advertBreakIndex--) {
