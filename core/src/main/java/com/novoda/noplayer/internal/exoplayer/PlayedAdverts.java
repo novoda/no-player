@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class PlayedAdverts {
+final class PlayedAdverts {
 
     private final AdPlaybackState adPlaybackState;
     private final List<AdvertBreak> playedAdvertBreaks;
