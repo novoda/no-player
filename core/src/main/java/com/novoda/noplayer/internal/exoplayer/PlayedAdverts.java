@@ -31,7 +31,8 @@ class PlayedAdverts {
                 continue;
             }
             playedAdvertBreaks.add(advertBreak);
-            for (int advertIndex = 0; advertIndex < advertBreak.adverts().size(); advertIndex++) {
+            int advertCount = advertBreak.adverts().size();
+            for (int advertIndex = 0; advertIndex < advertCount; advertIndex++) {
                 adPlaybackStateWithPlayedAdGroups = adPlaybackStateWithPlayedAdGroups.withPlayedAd(advertBreakIndex, advertIndex);
             }
         }
