@@ -166,6 +166,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
                 PlayedAdverts playedAdverts = PlayedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
                 this.adPlaybackState = playedAdverts.adPlaybackState();
                 updateAdPlaybackState();
+                advertListener.onAdvertsSkipped(playedAdverts.playedAdvertBreaks());
                 return;
             }
         }
