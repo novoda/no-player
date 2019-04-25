@@ -69,7 +69,7 @@ dependencies {
 }
 
 publish {
-    userOrg = 'novoda'
+    userOrg = 'novodaoss'
     repoName = buildProperties.publish['bintrayRepo'].string
     groupId = 'com.novoda'
     artifactId = 'no-player'
