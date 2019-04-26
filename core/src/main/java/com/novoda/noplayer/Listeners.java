@@ -144,4 +144,8 @@ public interface Listeners {
      * @param droppedVideoFramesListener to remove.
      */
     void removeDroppedVideoFrames(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListener);
+
+    void addDrmSecurityLevelCallback(NoPlayer.DrmSecurityLevelCallback drmSecurityLevelCallback);
+
+    void removeDrmSecurityLevelCallback(NoPlayer.DrmSecurityLevelCallback drmSecurityLevelCallback);
 }

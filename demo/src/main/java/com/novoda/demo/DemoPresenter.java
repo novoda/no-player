@@ -1,6 +1,7 @@
 package com.novoda.demo;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
@@ -26,6 +27,12 @@ class DemoPresenter {
         listeners.addPreparedListener(playOnPrepared);
         listeners.addStateChangedListener(updatePlayPause);
         listeners.addHeartbeatCallback(updateProgress);
+        listeners.addDrmSecurityLevelCallback(new NoPlayer.DrmSecurityLevelCallback() {
+            @Override
+            public void onSecurityLevelDetermined(String securityLevel) {
+                Log.e("SecurityLevel", securityLevel);
+            }
+        });
 
         controllerView.setTogglePlayPauseAction(onTogglePlayPause);
         controllerView.setSeekAction(onSeekPerformed);

@@ -15,6 +15,7 @@ public class PlayerListenersHolder implements Listeners {
     private final VideoSizeChangedListeners videoSizeChangedListeners;
     private final BitrateChangedListeners bitrateChangedListeners;
     private final DroppedFramesListeners droppedFramesListeners;
+    private final DrmSecurityLevelCallbacks drmSecurityLevelCallbacks;
 
     private final HeartbeatCallbacks heartbeatCallbacks;
 
@@ -29,6 +30,7 @@ public class PlayerListenersHolder implements Listeners {
         bitrateChangedListeners = new BitrateChangedListeners();
         heartbeatCallbacks = new HeartbeatCallbacks();
         droppedFramesListeners = new DroppedFramesListeners();
+        drmSecurityLevelCallbacks = new DrmSecurityLevelCallbacks();
     }
 
     @Override
@@ -131,6 +133,16 @@ public class PlayerListenersHolder implements Listeners {
         droppedFramesListeners.remove(droppedVideoFramesListener);
     }
 
+    @Override
+    public void addDrmSecurityLevelCallback(NoPlayer.DrmSecurityLevelCallback drmSecurityLevelCallback) {
+        drmSecurityLevelCallbacks.add(drmSecurityLevelCallback);
+    }
+
+    @Override
+    public void removeDrmSecurityLevelCallback(NoPlayer.DrmSecurityLevelCallback drmSecurityLevelCallback) {
+        drmSecurityLevelCallbacks.remove(drmSecurityLevelCallback);
+    }
+
     public NoPlayer.ErrorListener getErrorListeners() {
         return errorListeners;
     }
@@ -169,6 +181,10 @@ public class PlayerListenersHolder implements Listeners {
 
     public NoPlayer.DroppedVideoFramesListener getDroppedVideoFramesListeners() {
         return droppedFramesListeners;
+    }
+
+    public NoPlayer.DrmSecurityLevelCallback getDrmSecurityLevelCallbacks() {
+        return drmSecurityLevelCallbacks;
     }
 
     public void resetState() {

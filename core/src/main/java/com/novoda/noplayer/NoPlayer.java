@@ -306,6 +306,12 @@ public interface NoPlayer extends PlayerState {
         void onNewInfo(String callingMethod, Map<String, String> callingMethodParams);
     }
 
+    interface DrmSecurityLevelCallback {
+
+        void onSecurityLevelDetermined(String securityLevel);
+
+    }
+
     interface LoadTimeoutCallback {
 
         LoadTimeoutCallback NULL_IMPL = new LoadTimeoutCallback() {

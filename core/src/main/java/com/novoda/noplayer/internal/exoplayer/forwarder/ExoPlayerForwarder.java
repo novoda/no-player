@@ -81,6 +81,10 @@ public class ExoPlayerForwarder {
         analyticsListener.add(new AnalyticsListenerForwarder(infoListeners));
     }
 
+    public void bind(NoPlayer.DrmSecurityLevelCallback drmSecurityLevelCallback) {
+        drmSessionEventListener.add(new DrmSecurityLevelForwarder(drmSecurityLevelCallback));
+    }
+
     public void bind(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListeners) {
         analyticsListener.add(droppedVideoFramesListeners);
     }
