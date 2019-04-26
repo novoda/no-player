@@ -44,6 +44,10 @@ public class ExoPlayerForwarder {
         return analyticsListener;
     }
 
+    public DrmSecurityLevelEventListener drmSecurityLevelEventListener() {
+        return drmSessionEventListener;
+    }
+
     public void bind(NoPlayer.PreparedListener preparedListener, PlayerState playerState) {
         exoPlayerEventListener.add(new OnPrepareForwarder(preparedListener, playerState));
     }
@@ -73,14 +77,11 @@ public class ExoPlayerForwarder {
         exoPlayerEventListener.add(new EventInfoForwarder(infoListeners));
         mediaSourceEventListener.add(new MediaSourceEventForwarder(infoListeners));
         drmSessionEventListener.add(new DrmSessionInfoForwarder(infoListeners));
+        drmSessionEventListener.add(new DrmSecurityLevelInfoForwarder(infoListeners));
         analyticsListener.add(new AnalyticsListenerForwarder(infoListeners));
     }
 
     public void bind(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListeners) {
         analyticsListener.add(droppedVideoFramesListeners);
-    }
-
-    public DrmSecurityLevelEventListener drmSecurityLevelEventListener() {
-        return null;
     }
 }

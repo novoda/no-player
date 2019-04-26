@@ -41,4 +41,5 @@ class DrmSessionInfoForwarder implements DefaultDrmSessionEventListener {
     public void onDrmKeysRemoved() {
         infoListener.onNewInfo(Methods.ON_DRM_KEYS_REMOVED, Collections.<String, String>emptyMap());
     }
+
 }

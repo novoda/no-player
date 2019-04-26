@@ -46,6 +46,7 @@ class ForwarderInformation {
         static final String MANIFEST = "manifest";
         static final String WINDOW_INDEX = "windowIndex";
         static final String MEDIA_PERIOD_ID = "mediaPeriodId";
+        static final String SECURITY_LEVEL = "securityLevel";
 
     }
 
@@ -92,5 +93,6 @@ class ForwarderInformation {
         static final String ON_DRM_KEYS_REMOVED = "onDrmKeysRemoved";
         static final String ON_LOADING_CHANGED = "onLoadingChanged";
         static final String ON_SHUFFLE_MODE_ENABLED_CHANGED = "onShuffleModeEnabledChanged";
+        static final String CONTENT_SECURITY_LEVEL = "contentSecurityLevel";
     }
 }
