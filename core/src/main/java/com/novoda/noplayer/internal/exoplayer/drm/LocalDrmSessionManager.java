@@ -22,17 +22,20 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
     private final DefaultDrmSessionEventListener eventListener;
     private final UUID drmScheme;
     private final Handler handler;
+    private final DrmSecurityLevelNotifier drmSecurityLevelNotifier;
 
     LocalDrmSessionManager(KeySetId keySetIdToRestore,
                            ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
                            UUID drmScheme,
                            Handler handler,
-                           DefaultDrmSessionEventListener eventListener) {
+                           DefaultDrmSessionEventListener eventListener,
+                           DrmSecurityLevelNotifier drmSecurityLevelNotifier) {
         this.keySetIdToRestore = keySetIdToRestore;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;
         this.drmScheme = drmScheme;
         this.handler = handler;
+        this.drmSecurityLevelNotifier = drmSecurityLevelNotifier;
     }
 
     @Override
@@ -52,6 +55,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
             FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(sessionId.asBytes());
 
             mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore.asBytes());
+            notifyDrmSecurityLevel(mediaDrm);
 
             drmSession = new LocalDrmSession(mediaCrypto, keySetIdToRestore, sessionId);
         } catch (Exception exception) {
@@ -67,6 +71,17 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
             @Override
             public void run() {
                 eventListener.onDrmSessionManagerError(error);
+            }
+        });
+    }
+
+    private void notifyDrmSecurityLevel(ExoMediaDrm<FrameworkMediaCrypto> mediaDrm) {
+        final String securityLevel = mediaDrm.getPropertyString("securityLevel");
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                drmSecurityLevelNotifier.contentSecurityLevel(securityLevel);
             }
         });
     }

@@ -12,7 +12,8 @@ class NoDrmSessionCreator implements DrmSessionCreator {
 
     @Nullable
     @Override
-    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener) {
+    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener,
+                                                          DrmSecurityLevelNotifier drmSecurityLevelNotifier) {
         return NO_DRM_SESSION;
     }
 }

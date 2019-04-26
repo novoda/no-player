@@ -20,13 +20,16 @@ class DownloadDrmSessionCreator implements DrmSessionCreator {
     }
 
     @Override
-    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener) {
+    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener,
+                                                          DrmSecurityLevelNotifier drmSecurityLevelNotifier) {
+
         return new LocalDrmSessionManager(
                 downloadedModularDrm.getKeySetId(),
                 mediaDrmCreator.create(WIDEVINE_MODULAR_UUID),
                 WIDEVINE_MODULAR_UUID,
                 handler,
-                eventListener
+                eventListener,
+                drmSecurityLevelNotifier
         );
     }
 }

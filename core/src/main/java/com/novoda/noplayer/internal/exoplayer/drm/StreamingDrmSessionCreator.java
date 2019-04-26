@@ -27,9 +27,9 @@ class StreamingDrmSessionCreator implements DrmSessionCreator {
     }
 
     @Override
-    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener) {
+    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener,
+                                                          final DrmSecurityLevelNotifier drmSecurityLevelNotifier) {
         FrameworkMediaDrm frameworkMediaDrm = frameworkMediaDrmCreator.create(WIDEVINE_MODULAR_UUID);
-
         DefaultDrmSessionManager<FrameworkMediaCrypto> defaultDrmSessionManager = new DefaultDrmSessionManager<>(
                 WIDEVINE_MODULAR_UUID,
                 frameworkMediaDrm,
@@ -38,7 +38,15 @@ class StreamingDrmSessionCreator implements DrmSessionCreator {
         );
         defaultDrmSessionManager.removeListener(eventListener);
         defaultDrmSessionManager.addListener(handler, eventListener);
+        final String securityLevel = defaultDrmSessionManager.getPropertyString("securityLevel");
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                drmSecurityLevelNotifier.contentSecurityLevel(securityLevel);
+            }
+        });
 
         return defaultDrmSessionManager;
     }
+
 }
