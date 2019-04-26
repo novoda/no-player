@@ -1,6 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer.drm;
 
-public interface DrmSecurityLevelNotifier {
+public interface DrmSecurityLevelEventListener {
 
     void contentSecurityLevel(String securityLevel);
 

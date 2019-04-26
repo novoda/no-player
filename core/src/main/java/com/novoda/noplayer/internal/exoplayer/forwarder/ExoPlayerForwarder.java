@@ -6,6 +6,7 @@ import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevelEventListener;
 
 public class ExoPlayerForwarder {
 
@@ -77,5 +78,9 @@ public class ExoPlayerForwarder {
 
     public void bind(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListeners) {
         analyticsListener.add(droppedVideoFramesListeners);
+    }
+
+    public DrmSecurityLevelEventListener drmSecurityLevelEventListener() {
+        return null;
     }
 }

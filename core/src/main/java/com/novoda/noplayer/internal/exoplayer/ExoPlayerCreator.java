@@ -13,7 +13,7 @@ import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.text.SubtitleDecoderFactory;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevelNotifier;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevelEventListener;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.text.NoPlayerSubtitleDecoderFactory;
 
@@ -32,14 +32,10 @@ class ExoPlayerCreator {
     @NonNull
     public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator,
                                   DefaultDrmSessionEventListener drmSessionEventListener,
+                                  DrmSecurityLevelEventListener drmSecurityLevelEventListener,
                                   MediaCodecSelector mediaCodecSelector,
                                   TrackSelector trackSelector) {
-        DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener, new DrmSecurityLevelNotifier() {
-            @Override
-            public void contentSecurityLevel(String securityLevel) {
-
-            }
-        });
+        DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener, drmSecurityLevelEventListener);
         SubtitleDecoderFactory subtitleDecoderFactory = new NoPlayerSubtitleDecoderFactory();
         RenderersFactory renderersFactory = new SimpleRenderersFactory(
                 context,

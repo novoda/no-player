@@ -13,5 +13,5 @@ public interface DrmSessionCreator {
     UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
 
     @Nullable
-    DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener, DrmSecurityLevelNotifier drmSecurityLevelNotifier);
+    DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener, DrmSecurityLevelEventListener drmSecurityLevelEventListener);
 }

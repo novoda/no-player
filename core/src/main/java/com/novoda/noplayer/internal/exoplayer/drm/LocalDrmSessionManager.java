@@ -22,20 +22,20 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
     private final DefaultDrmSessionEventListener eventListener;
     private final UUID drmScheme;
     private final Handler handler;
-    private final DrmSecurityLevelNotifier drmSecurityLevelNotifier;
+    private final DrmSecurityLevelEventListener drmSecurityLevelEventListener;
 
     LocalDrmSessionManager(KeySetId keySetIdToRestore,
                            ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
                            UUID drmScheme,
                            Handler handler,
                            DefaultDrmSessionEventListener eventListener,
-                           DrmSecurityLevelNotifier drmSecurityLevelNotifier) {
+                           DrmSecurityLevelEventListener drmSecurityLevelEventListener) {
         this.keySetIdToRestore = keySetIdToRestore;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;
         this.drmScheme = drmScheme;
         this.handler = handler;
-        this.drmSecurityLevelNotifier = drmSecurityLevelNotifier;
+        this.drmSecurityLevelEventListener = drmSecurityLevelEventListener;
     }
 
     @Override
@@ -81,7 +81,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
         handler.post(new Runnable() {
             @Override
             public void run() {
-                drmSecurityLevelNotifier.contentSecurityLevel(securityLevel);
+                drmSecurityLevelEventListener.contentSecurityLevel(securityLevel);
             }
         });
     }

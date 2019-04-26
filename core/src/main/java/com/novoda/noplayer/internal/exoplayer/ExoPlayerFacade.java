@@ -118,6 +118,7 @@ class ExoPlayerFacade {
         exoPlayer = exoPlayerCreator.create(
                 drmSessionCreator,
                 forwarder.drmSessionEventListener(),
+                forwarder.drmSecurityLevelEventListener(),
                 mediaCodecSelector,
                 compositeTrackSelector.trackSelector()
         );
