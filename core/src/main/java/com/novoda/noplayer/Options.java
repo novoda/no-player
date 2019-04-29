@@ -12,6 +12,7 @@ public class Options {
     private final int maxInitialBitrate;
     private final int maxVideoBitrate;
     private final Optional<Long> initialPositionInMillis;
+    private final Optional<DrmSecurityLevel> forcedDrmSecurityLevel;
 
     /**
      * Creates a {@link OptionsBuilder} from this Options.
@@ -35,12 +36,14 @@ public class Options {
             int minDurationBeforeQualityIncreaseInMillis,
             int maxInitialBitrate,
             int maxVideoBitrate,
-            Optional<Long> initialPositionInMillis) {
+            Optional<Long> initialPositionInMillis,
+            Optional<DrmSecurityLevel> forcedDrmSecurityLevel) {
         this.contentType = contentType;
         this.minDurationBeforeQualityIncreaseInMillis = minDurationBeforeQualityIncreaseInMillis;
         this.maxInitialBitrate = maxInitialBitrate;
         this.maxVideoBitrate = maxVideoBitrate;
         this.initialPositionInMillis = initialPositionInMillis;
+        this.forcedDrmSecurityLevel = forcedDrmSecurityLevel;
     }
 
     public ContentType contentType() {
@@ -61,6 +64,10 @@ public class Options {
 
     public Optional<Long> getInitialPositionInMillis() {
         return initialPositionInMillis;
+    }
+
+    public Optional<DrmSecurityLevel> forcedDrmSecurityLevel() {
+        return forcedDrmSecurityLevel;
     }
 
     @Override
@@ -86,8 +93,10 @@ public class Options {
         if (contentType != options.contentType) {
             return false;
         }
-        return initialPositionInMillis != null
-                ? initialPositionInMillis.equals(options.initialPositionInMillis) : options.initialPositionInMillis == null;
+        if (initialPositionInMillis != null ? !initialPositionInMillis.equals(options.initialPositionInMillis) : options.initialPositionInMillis != null) {
+            return false;
+        }
+        return forcedDrmSecurityLevel != null ? forcedDrmSecurityLevel.equals(options.forcedDrmSecurityLevel) : options.forcedDrmSecurityLevel == null;
     }
 
     @Override
@@ -97,6 +106,7 @@ public class Options {
         result = 31 * result + maxInitialBitrate;
         result = 31 * result + maxVideoBitrate;
         result = 31 * result + (initialPositionInMillis != null ? initialPositionInMillis.hashCode() : 0);
+        result = 31 * result + (forcedDrmSecurityLevel != null ? forcedDrmSecurityLevel.hashCode() : 0);
         return result;
     }
 
@@ -108,6 +118,7 @@ public class Options {
                 + ", maxInitialBitrate=" + maxInitialBitrate
                 + ", maxVideoBitrate=" + maxVideoBitrate
                 + ", initialPositionInMillis=" + initialPositionInMillis
+                + ", forcedDrmSecurityLevel=" + forcedDrmSecurityLevel
                 + '}';
     }
 }

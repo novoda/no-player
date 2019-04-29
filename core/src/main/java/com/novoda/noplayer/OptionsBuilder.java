@@ -18,6 +18,7 @@ public class OptionsBuilder {
     private int maxInitialBitrate = DEFAULT_MAX_INITIAL_BITRATE;
     private int maxVideoBitrate = DEFAULT_MAX_VIDEO_BITRATE;
     private Optional<Long> initialPositionInMillis = Optional.absent();
+    private Optional<DrmSecurityLevel> forcedDrmSecurityLevel = Optional.absent();
 
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} with a given {@link ContentType}.
@@ -83,6 +84,21 @@ public class OptionsBuilder {
     }
 
     /**
+     * Sets {@link OptionsBuilder} to build {@link Options} with the given forced DRM security level
+     * to control what DRM security level is forced at the time a DRM session is created. The underlying
+     * DRM session cannot be forced to a higher level that the device is capable of.
+     * <p>
+     * e.g. If device is L2 it is not possible to force L1.
+     *
+     * @param forcedDrmSecurityLevel that the underlying DrmSession should force.
+     * @return {@link OptionsBuilder}.
+     */
+    public OptionsBuilder withForcedDrmSecurityLevel(DrmSecurityLevel forcedDrmSecurityLevel) {
+        this.forcedDrmSecurityLevel = Optional.of(forcedDrmSecurityLevel);
+        return this;
+    }
+
+    /**
      * Builds a new {@link Options} instance.
      *
      * @return a {@link Options} instance.
@@ -93,7 +109,8 @@ public class OptionsBuilder {
                 minDurationBeforeQualityIncreaseInMillis,
                 maxInitialBitrate,
                 maxVideoBitrate,
-                initialPositionInMillis
+                initialPositionInMillis,
+                forcedDrmSecurityLevel
         );
     }
 }
