@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer.drm;
 import android.os.Build;
 
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
+import com.novoda.noplayer.DrmSecurityLevel;
 import com.novoda.noplayer.internal.utils.Optional;
 
 class DrmSecurityLevelFinder {

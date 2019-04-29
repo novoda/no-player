@@ -6,6 +6,7 @@ import android.media.MediaDrmResetException;
 import android.os.Build;
 
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
+import com.novoda.noplayer.DrmSecurityLevel;
 
 @TargetApi(Build.VERSION_CODES.M)
 class MarshmallowSecurityLevelFinder {

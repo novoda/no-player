@@ -1,7 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
-import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevel;
+import com.novoda.noplayer.DrmSecurityLevel;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevelEventListener;
 
 import java.util.List;

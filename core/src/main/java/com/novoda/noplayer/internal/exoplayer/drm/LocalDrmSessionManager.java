@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.novoda.noplayer.DrmSecurityLevel;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.KeySetId;
 

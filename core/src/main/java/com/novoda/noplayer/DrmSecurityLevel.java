@@ -1,4 +1,4 @@
-package com.novoda.noplayer.internal.exoplayer.drm;
+package com.novoda.noplayer;
 
 public enum DrmSecurityLevel {
 

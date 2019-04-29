@@ -9,6 +9,7 @@ import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.MediaDrmCallback;
+import com.novoda.noplayer.DrmSecurityLevel;
 import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.HashMap;

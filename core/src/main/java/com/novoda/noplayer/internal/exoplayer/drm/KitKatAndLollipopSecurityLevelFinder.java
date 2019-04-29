@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer.drm;
 import android.annotation.SuppressLint;
 
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
+import com.novoda.noplayer.DrmSecurityLevel;
 
 class KitKatAndLollipopSecurityLevelFinder {
 
