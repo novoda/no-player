@@ -18,6 +18,7 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerSurfaceHolder;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevelEventListener;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
@@ -529,6 +530,8 @@ public class ExoPlayerFacadeTest {
         @Mock
         DefaultDrmSessionEventListener drmSessionEventListener;
         @Mock
+        DrmSecurityLevelEventListener drmSecurityLevelEventListener;
+        @Mock
         MediaSourceEventListener mediaSourceEventListener;
         @Mock
         MediaCodecSelector mediaCodecSelector;
@@ -548,7 +551,7 @@ public class ExoPlayerFacadeTest {
             given(exoPlayerForwarder.mediaSourceEventListener()).willReturn(mediaSourceEventListener);
             given(bandwidthMeterCreator.create(anyLong())).willReturn(defaultBandwidthMeter);
             given(trackSelectorCreator.create(any(Options.class), eq(defaultBandwidthMeter))).willReturn(trackSelector);
-            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, , mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
+            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, drmSecurityLevelEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
             willDoNothing().given(exoPlayer).seekTo(anyInt());
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(

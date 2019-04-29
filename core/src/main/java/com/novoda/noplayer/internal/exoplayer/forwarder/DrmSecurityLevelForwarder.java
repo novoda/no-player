@@ -7,7 +7,7 @@ class DrmSecurityLevelForwarder implements DrmSecurityLevelEventListener {
 
     private final NoPlayer.DrmSecurityLevelCallback drmSecurityLevelCallback;
 
-    public DrmSecurityLevelForwarder(NoPlayer.DrmSecurityLevelCallback drmSecurityLevelCallback) {
+    DrmSecurityLevelForwarder(NoPlayer.DrmSecurityLevelCallback drmSecurityLevelCallback) {
         this.drmSecurityLevelCallback = drmSecurityLevelCallback;
     }
 

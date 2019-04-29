@@ -53,6 +53,8 @@ public class LocalDrmSessionManagerTest {
     private Handler handler;
     @Mock
     private DefaultDrmSessionManager.EventListener eventListener;
+    @Mock
+    private DrmSecurityLevelEventListener drmSecurityLevelEventListener;
 
     private LocalDrmSessionManager localDrmSessionManager;
     private FrameworkMediaCrypto frameworkMediaCrypto;
@@ -68,7 +70,7 @@ public class LocalDrmSessionManagerTest {
                 DRM_SCHEME,
                 handler,
                 eventListener,
-                drmSecurityLevelNotifier
+                drmSecurityLevelEventListener
         );
     }
 

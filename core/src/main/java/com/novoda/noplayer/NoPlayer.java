@@ -14,6 +14,7 @@ import com.novoda.noplayer.model.Timeout;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings({"PMD.ExcessivePublicCount"})
 public interface NoPlayer extends PlayerState {
 
     /**
