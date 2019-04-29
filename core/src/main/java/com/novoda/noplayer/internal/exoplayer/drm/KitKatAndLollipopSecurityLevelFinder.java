@@ -1,7 +1,8 @@
 package com.novoda.noplayer.internal.exoplayer.drm;
 
 import android.annotation.SuppressLint;
-import android.media.MediaDrm;
+
+import com.google.android.exoplayer2.drm.ExoMediaDrm;
 
 class KitKatAndLollipopSecurityLevelFinder {
 
@@ -9,7 +10,7 @@ class KitKatAndLollipopSecurityLevelFinder {
 
     // KEY_SECURITY_LEVEL is an undocumented but valid property for MediaDrm
     @SuppressLint("WrongConstant")
-    DrmSecurityLevel findSecurityLevel(MediaDrm mediaDrm) {
+    DrmSecurityLevel findSecurityLevel(ExoMediaDrm mediaDrm) {
         String deviceLevel = mediaDrm.getPropertyString(KEY_SECURITY_LEVEL);
         return DrmSecurityLevel.fromString(deviceLevel);
     }

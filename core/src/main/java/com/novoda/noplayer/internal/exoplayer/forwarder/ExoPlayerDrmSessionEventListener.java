@@ -1,6 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevel;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevelEventListener;
 
 import java.util.List;
@@ -48,7 +49,7 @@ class ExoPlayerDrmSessionEventListener implements DefaultDrmSessionEventListener
     }
 
     @Override
-    public void contentSecurityLevel(String securityLevel) {
+    public void contentSecurityLevel(DrmSecurityLevel securityLevel) {
         for (DrmSecurityLevelEventListener listener : securityLevelEventListeners) {
             listener.contentSecurityLevel(securityLevel);
         }

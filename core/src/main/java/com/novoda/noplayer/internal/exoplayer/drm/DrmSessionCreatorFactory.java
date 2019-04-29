@@ -59,11 +59,13 @@ public class DrmSessionCreatorFactory {
                 provisionExecutor
         );
         FrameworkMediaDrmCreator mediaDrmCreator = new FrameworkMediaDrmCreator();
-        return new StreamingDrmSessionCreator(mediaDrmCallback, mediaDrmCreator, handler);
+        DrmSecurityLevelFinder drmSecurityLevelFinder = new DrmSecurityLevelFinder();
+        return new StreamingDrmSessionCreator(mediaDrmCallback, mediaDrmCreator, handler, drmSecurityLevelFinder);
     }
 
     private DownloadDrmSessionCreator createModularDownload(DownloadedModularDrm drmHandler) {
         FrameworkMediaDrmCreator mediaDrmCreator = new FrameworkMediaDrmCreator();
-        return new DownloadDrmSessionCreator(drmHandler, mediaDrmCreator, handler);
+        DrmSecurityLevelFinder drmSecurityLevelFinder = new DrmSecurityLevelFinder();
+        return new DownloadDrmSessionCreator(drmHandler, mediaDrmCreator, handler, drmSecurityLevelFinder);
     }
 }

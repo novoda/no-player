@@ -12,11 +12,16 @@ class DownloadDrmSessionCreator implements DrmSessionCreator {
     private final DownloadedModularDrm downloadedModularDrm;
     private final FrameworkMediaDrmCreator mediaDrmCreator;
     private final Handler handler;
+    private DrmSecurityLevelFinder drmSecurityLevelFinder;
 
-    DownloadDrmSessionCreator(DownloadedModularDrm downloadedModularDrm, FrameworkMediaDrmCreator mediaDrmCreator, Handler handler) {
+    DownloadDrmSessionCreator(DownloadedModularDrm downloadedModularDrm,
+                              FrameworkMediaDrmCreator mediaDrmCreator,
+                              Handler handler,
+                              DrmSecurityLevelFinder drmSecurityLevelFinder) {
         this.downloadedModularDrm = downloadedModularDrm;
         this.mediaDrmCreator = mediaDrmCreator;
         this.handler = handler;
+        this.drmSecurityLevelFinder = drmSecurityLevelFinder;
     }
 
     @Override
@@ -29,7 +34,8 @@ class DownloadDrmSessionCreator implements DrmSessionCreator {
                 WIDEVINE_MODULAR_UUID,
                 handler,
                 eventListener,
-                drmSecurityLevelEventListener
+                drmSecurityLevelEventListener,
+                drmSecurityLevelFinder
         );
     }
 }

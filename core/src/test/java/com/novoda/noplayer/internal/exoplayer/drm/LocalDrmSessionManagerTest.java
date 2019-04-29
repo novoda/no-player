@@ -70,7 +70,8 @@ public class LocalDrmSessionManagerTest {
                 DRM_SCHEME,
                 handler,
                 eventListener,
-                drmSecurityLevelEventListener
+                drmSecurityLevelEventListener,
+                drmSecurityLevelFinder
         );
     }
 

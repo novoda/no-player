@@ -1,6 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
 import com.novoda.noplayer.NoPlayer;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevel;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevelEventListener;
 
 import java.util.Collections;
@@ -17,7 +18,7 @@ class DrmSecurityLevelInfoForwarder implements DrmSecurityLevelEventListener {
     }
 
     @Override
-    public void contentSecurityLevel(String securityLevel) {
+    public void contentSecurityLevel(DrmSecurityLevel securityLevel) {
         infoListener.onNewInfo(Methods.CONTENT_SECURITY_LEVEL, Collections.singletonMap(Parameters.SECURITY_LEVEL, securityLevel));
     }
 

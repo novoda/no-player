@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.KeySetId;
 
 import java.util.UUID;
@@ -23,19 +24,22 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
     private final UUID drmScheme;
     private final Handler handler;
     private final DrmSecurityLevelEventListener drmSecurityLevelEventListener;
+    private final DrmSecurityLevelFinder drmSecurityLevelFinder;
 
     LocalDrmSessionManager(KeySetId keySetIdToRestore,
                            ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
                            UUID drmScheme,
                            Handler handler,
                            DefaultDrmSessionEventListener eventListener,
-                           DrmSecurityLevelEventListener drmSecurityLevelEventListener) {
+                           DrmSecurityLevelEventListener drmSecurityLevelEventListener,
+                           DrmSecurityLevelFinder drmSecurityLevelFinder) {
         this.keySetIdToRestore = keySetIdToRestore;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;
         this.drmScheme = drmScheme;
         this.handler = handler;
         this.drmSecurityLevelEventListener = drmSecurityLevelEventListener;
+        this.drmSecurityLevelFinder = drmSecurityLevelFinder;
     }
 
     @Override
@@ -76,7 +80,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
     }
 
     private void notifyDrmSecurityLevel(ExoMediaDrm<FrameworkMediaCrypto> mediaDrm) {
-        final String securityLevel = mediaDrm.getPropertyString("securityLevel");
+        final DrmSecurityLevel securityLevel = drmSecurityLevelFinder.findSecurityLevel(Optional.<ExoMediaDrm>of(mediaDrm));
 
         handler.post(new Runnable() {
             @Override
