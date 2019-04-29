@@ -11,11 +11,14 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven {
+            url 'https://dl.bintray.com/novoda-oss/snapshots'
+        }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.1'
-        classpath 'com.novoda:bintray-release:0.9'
+        classpath 'com.novoda:bintray-release:develop-37'
         classpath 'com.novoda:gradle-static-analysis-plugin:0.8.1'
         classpath 'com.novoda:gradle-build-properties-plugin:0.4.1'
         classpath "com.github.ben-manes:gradle-versions-plugin:0.21.0"
