@@ -29,6 +29,19 @@ public class PlayerBuilder {
     private boolean downgradeSecureDecoder; /* initialised to false by default */
     private boolean allowCrossProtocolRedirects; /* initialised to false by default */
     private String userAgent = "user-agent";
+    private AdvertsLoader advertsLoader;
+
+    /**
+     * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will play adverts provided by the passed in loader
+     *
+     * @param advertsLoader The loader used by NoPlayer to fetch what adverts to play.
+     * @return {@link PlayerBuilder}
+     * @see NoPlayer
+     */
+    public PlayerBuilder withAdverts(AdvertsLoader advertsLoader) {
+        this.advertsLoader = advertsLoader;
+        return this;
+    }
 
     /**
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine classic DRM.
@@ -80,7 +93,7 @@ public class PlayerBuilder {
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will prioritise the underlying player when
      * multiple underlying players share the same features.
      *
-     * @param playerType First {@link PlayerType} with the highest priority.
+     * @param playerType  First {@link PlayerType} with the highest priority.
      * @param playerTypes Remaining {@link PlayerType} in order of priority.
      * @return {@link PlayerBuilder}
      * @see NoPlayer
@@ -115,6 +128,7 @@ public class PlayerBuilder {
 
     /**
      * Network connections will be allowed to perform redirects between HTTP and HTTPS protocols
+     *
      * @return {@link PlayerBuilder}
      */
     public PlayerBuilder allowCrossProtocolRedirects() {
@@ -139,14 +153,25 @@ public class PlayerBuilder {
                 provisionExecutorCreator,
                 handler
         );
+
+        NoPlayerExoPlayerCreator noPlayerExoPlayerCreator = createExoPlayerCreator(handler);
+
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
                 applicationContext,
                 prioritizedPlayerTypes,
-                NoPlayerExoPlayerCreator.newInstance(userAgent, handler),
+                noPlayerExoPlayerCreator,
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
         return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects);
+    }
+
+    private NoPlayerExoPlayerCreator createExoPlayerCreator(Handler handler) {
+        if (advertsLoader == null) {
+            return NoPlayerExoPlayerCreator.newInstance(userAgent, handler);
+        } else {
+            return NoPlayerExoPlayerCreator.newInstance(userAgent, handler, advertsLoader);
+        }
     }
 
 }
