@@ -1,6 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer.drm;
 
-public enum WidevineSecurityLevel {
+public enum DrmSecurityLevel {
 
     L1,
     L2,
@@ -11,10 +11,10 @@ public enum WidevineSecurityLevel {
         return name();
     }
 
-    public static WidevineSecurityLevel fromString(String level) {
-        for (WidevineSecurityLevel widevineSecurityLevel : values()) {
-            if (widevineSecurityLevel.name().equalsIgnoreCase(level)) {
-                return widevineSecurityLevel;
+    public static DrmSecurityLevel fromString(String level) {
+        for (DrmSecurityLevel drmSecurityLevel : values()) {
+            if (drmSecurityLevel.name().equalsIgnoreCase(level)) {
+                return drmSecurityLevel;
             }
         }
         return UNKNOWN;

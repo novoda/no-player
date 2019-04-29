@@ -9,8 +9,8 @@ class KitKatAndLollipopSecurityLevelFinder {
 
     // KEY_SECURITY_LEVEL is an undocumented but valid property for MediaDrm
     @SuppressLint("WrongConstant")
-    WidevineSecurityLevel findWidevineSecurityLevel(MediaDrm mediaDrm) {
+    DrmSecurityLevel findSecurityLevel(MediaDrm mediaDrm) {
         String deviceLevel = mediaDrm.getPropertyString(KEY_SECURITY_LEVEL);
-        return WidevineSecurityLevel.fromString(deviceLevel);
+        return DrmSecurityLevel.fromString(deviceLevel);
     }
 }

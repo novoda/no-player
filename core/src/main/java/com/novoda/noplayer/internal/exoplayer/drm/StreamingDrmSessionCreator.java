@@ -38,6 +38,7 @@ class StreamingDrmSessionCreator implements DrmSessionCreator {
         );
         defaultDrmSessionManager.removeListener(eventListener);
         defaultDrmSessionManager.addListener(handler, eventListener);
+
         final String securityLevel = defaultDrmSessionManager.getPropertyString("securityLevel");
         handler.post(new Runnable() {
             @Override
