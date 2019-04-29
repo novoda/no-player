@@ -14,6 +14,8 @@ import com.novoda.noplayer.model.Timeout;
 import java.util.List;
 import java.util.Map;
 
+// There are a lot of features for playing and monitoring video.
+@SuppressWarnings("PMD.ExcessivePublicCount")
 public interface NoPlayer extends PlayerState {
 
     /**
@@ -113,6 +115,24 @@ public interface NoPlayer extends PlayerState {
      * @param playerView for displaying video content.
      */
     void detach(PlayerView playerView);
+
+    /**
+     * Attaches a given {@link AdvertView} to the Player.
+     *
+     * @param advertView for displaying advert indicators.
+     */
+    void attach(AdvertView advertView);
+
+    /**
+     * Detaches a given {@link AdvertView} from the Player.
+     *
+     * @param advertView for displaying advert indicators.
+     */
+    void detach(AdvertView advertView);
+
+    void disableAdverts();
+
+    void enableAdverts();
 
     /**
      * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.
@@ -289,6 +309,27 @@ public interface NoPlayer extends PlayerState {
         void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
     }
 
+    interface AdvertListener {
+
+        void onAdvertsLoaded(List<AdvertBreak> advertBreaks);
+
+        void onAdvertBreakStart(AdvertBreak advertBreak);
+
+        void onAdvertBreakEnd(AdvertBreak advertBreak);
+
+        void onAdvertStart(Advert advert);
+
+        void onAdvertEnd(Advert advert);
+
+        void onAdvertClicked(Advert advert);
+
+        void onAdvertsDisabled();
+
+        void onAdvertsEnabled(List<AdvertBreak> advertBreaks);
+
+        void onAdvertsSkipped(List<AdvertBreak> advertBreaks);
+    }
+
     /**
      * A listener for debugging information.
      */
@@ -327,4 +368,5 @@ public interface NoPlayer extends PlayerState {
 
         void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames);
     }
+
 }

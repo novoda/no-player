@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
@@ -70,6 +71,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
         forwarder.bind(listenersHolder.getBitrateChangedListeners());
         forwarder.bind(listenersHolder.getInfoListeners());
         forwarder.bind(listenersHolder.getDroppedVideoFramesListeners());
+        forwarder.bind(listenersHolder.getAdvertListeners());
         listenersHolder.addPreparedListener(new PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
@@ -97,6 +99,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
+    public boolean isPlayingAdvert() {
+        return exoPlayer.isPlayingAdvert();
+    }
+
+    @Override
+    public boolean isPlayingContent() {
+        return exoPlayer.isPlayingContent();
+    }
+
+    @Override
     public int videoWidth() {
         return videoWidth;
     }
@@ -109,6 +121,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public long playheadPositionInMillis() throws IllegalStateException {
         return exoPlayer.playheadPositionInMillis();
+    }
+
+    @Override
+    public long advertBreakDurationInMillis() {
+        return exoPlayer.advertBreakDurationInMillis();
+    }
+
+    @Override
+    public long positionInAdvertBreakInMillis() {
+        return exoPlayer.positionInAdvertBreakInMillis();
     }
 
     @Override
@@ -249,6 +271,28 @@ class ExoPlayerTwoImpl implements NoPlayer {
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         removeSubtitleRenderer();
         this.playerView = null;
+    }
+
+    @Override
+    public void attach(AdvertView advertView) {
+        listenersHolder.addAdvertListener(advertView.getAdvertListener());
+        exoPlayer.attach(advertView);
+    }
+
+    @Override
+    public void detach(AdvertView advertView) {
+        exoPlayer.detach(advertView);
+        listenersHolder.removeAdvertListener(advertView.getAdvertListener());
+    }
+
+    @Override
+    public void disableAdverts() {
+        exoPlayer.disableAdverts();
+    }
+
+    @Override
+    public void enableAdverts() {
+        exoPlayer.enableAdverts();
     }
 
     @Override
