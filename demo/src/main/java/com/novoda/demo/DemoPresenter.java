@@ -3,6 +3,7 @@ package com.novoda.demo;
 import android.net.Uri;
 import android.util.Log;
 
+import com.novoda.noplayer.DrmSecurityLevel;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
@@ -29,8 +30,8 @@ class DemoPresenter {
         listeners.addHeartbeatCallback(updateProgress);
         listeners.addDrmSecurityLevelCallback(new NoPlayer.DrmSecurityLevelCallback() {
             @Override
-            public void onSecurityLevelDetermined(String securityLevel) {
-                Log.e("SecurityLevel", securityLevel);
+            public void onSecurityLevelDetermined(DrmSecurityLevel securityLevel) {
+                Log.e("SecurityLevel", securityLevel.toRawValue());
             }
         });
 

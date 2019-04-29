@@ -26,6 +26,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
     private final Handler handler;
     private final DrmSecurityLevelEventListener drmSecurityLevelEventListener;
     private final DrmSecurityLevelFinder drmSecurityLevelFinder;
+    private final Optional<DrmSecurityLevel> forcedDrmSecurityLevel;
 
     LocalDrmSessionManager(KeySetId keySetIdToRestore,
                            ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
@@ -33,7 +34,8 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
                            Handler handler,
                            DefaultDrmSessionEventListener eventListener,
                            DrmSecurityLevelEventListener drmSecurityLevelEventListener,
-                           DrmSecurityLevelFinder drmSecurityLevelFinder) {
+                           DrmSecurityLevelFinder drmSecurityLevelFinder,
+                           Optional<DrmSecurityLevel> forcedDrmSecurityLevel) {
         this.keySetIdToRestore = keySetIdToRestore;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;
@@ -41,6 +43,7 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
         this.handler = handler;
         this.drmSecurityLevelEventListener = drmSecurityLevelEventListener;
         this.drmSecurityLevelFinder = drmSecurityLevelFinder;
+        this.forcedDrmSecurityLevel = forcedDrmSecurityLevel;
     }
 
     @Override
@@ -60,6 +63,11 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
             FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(sessionId.asBytes());
 
             mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore.asBytes());
+
+            if (forcedDrmSecurityLevel.isPresent()) {
+                mediaDrm.setPropertyString("securityLevel", forcedDrmSecurityLevel.get().toRawValue());
+            }
+
             notifyDrmSecurityLevel(mediaDrm);
 
             drmSession = new LocalDrmSession(mediaCrypto, keySetIdToRestore, sessionId);

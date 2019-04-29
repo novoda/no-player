@@ -841,7 +841,7 @@ public class ExoPlayerFacadeTest {
             given(exoPlayerForwarder.advertListener()).willReturn(optionalAdvertListener);
             given(bandwidthMeterCreator.create(anyLong())).willReturn(defaultBandwidthMeter);
             given(trackSelectorCreator.create(any(Options.class), eq(defaultBandwidthMeter))).willReturn(trackSelector);
-            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, drmSecurityLevelEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
+            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, drmSecurityLevelEventListener, mediaCodecSelector, trackSelector.trackSelector(), options.forcedDrmSecurityLevel())).willReturn(exoPlayer);
             willDoNothing().given(exoPlayer).seekTo(anyInt());
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(

@@ -1,5 +1,6 @@
 package com.novoda.noplayer.internal.listeners;
 
+import com.novoda.noplayer.DrmSecurityLevel;
 import com.novoda.noplayer.NoPlayer;
 
 import java.util.Set;
@@ -22,7 +23,7 @@ class DrmSecurityLevelCallbacks implements NoPlayer.DrmSecurityLevelCallback {
     }
 
     @Override
-    public void onSecurityLevelDetermined(String securityLevel) {
+    public void onSecurityLevelDetermined(DrmSecurityLevel securityLevel) {
         for (NoPlayer.DrmSecurityLevelCallback callback : callbacks) {
             callback.onSecurityLevelDetermined(securityLevel);
         }

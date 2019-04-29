@@ -349,7 +349,7 @@ public interface NoPlayer extends PlayerState {
 
     interface DrmSecurityLevelCallback {
 
-        void onSecurityLevelDetermined(String securityLevel);
+        void onSecurityLevelDetermined(DrmSecurityLevel securityLevel);
 
     }
 

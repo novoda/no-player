@@ -71,7 +71,8 @@ public class LocalDrmSessionManagerTest {
                 handler,
                 eventListener,
                 drmSecurityLevelEventListener,
-                drmSecurityLevelFinder
+                drmSecurityLevelFinder,
+                forcedDrmSecurityLevel
         );
     }
 

@@ -13,8 +13,10 @@ import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.text.SubtitleDecoderFactory;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.novoda.noplayer.DrmSecurityLevel;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevelEventListener;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.text.NoPlayerSubtitleDecoderFactory;
 
 import static com.novoda.noplayer.internal.exoplayer.SimpleRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
@@ -34,8 +36,11 @@ class ExoPlayerCreator {
                                   DefaultDrmSessionEventListener drmSessionEventListener,
                                   DrmSecurityLevelEventListener drmSecurityLevelEventListener,
                                   MediaCodecSelector mediaCodecSelector,
-                                  TrackSelector trackSelector) {
-        DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener, drmSecurityLevelEventListener);
+                                  TrackSelector trackSelector,
+                                  Optional<DrmSecurityLevel> forcedDrmSecurityLevel) {
+        DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener,
+                                                                                             drmSecurityLevelEventListener,
+                                                                                             forcedDrmSecurityLevel);
         SubtitleDecoderFactory subtitleDecoderFactory = new NoPlayerSubtitleDecoderFactory();
         RenderersFactory renderersFactory = new SimpleRenderersFactory(
                 context,

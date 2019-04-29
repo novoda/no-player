@@ -5,7 +5,9 @@ import android.os.Handler;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.novoda.noplayer.DrmSecurityLevel;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
+import com.novoda.noplayer.internal.utils.Optional;
 
 class DownloadDrmSessionCreator implements DrmSessionCreator {
 
@@ -26,7 +28,8 @@ class DownloadDrmSessionCreator implements DrmSessionCreator {
 
     @Override
     public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener,
-                                                          DrmSecurityLevelEventListener drmSecurityLevelEventListener) {
+                                                          DrmSecurityLevelEventListener drmSecurityLevelEventListener,
+                                                          Optional<DrmSecurityLevel> forcedDrmSecurityLevel) {
 
         return new LocalDrmSessionManager(
                 downloadedModularDrm.getKeySetId(),
@@ -35,7 +38,8 @@ class DownloadDrmSessionCreator implements DrmSessionCreator {
                 handler,
                 eventListener,
                 drmSecurityLevelEventListener,
-                drmSecurityLevelFinder
+                drmSecurityLevelFinder,
+                forcedDrmSecurityLevel
         );
     }
 }
