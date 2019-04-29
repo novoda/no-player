@@ -26,11 +26,11 @@ buildProperties {
         def generateVersion = {
             boolean isSnapshot = cli['bintraySnapshot'].or(false).boolean
             if (isSnapshot) {
-                return "SNAPSHOT-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}";
+                return "DEVELOP-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
             }
             boolean isExperimental = cli['bintrayExperimental'].or(false).boolean
             if (isExperimental) {
-                return "EXPERIMENTAL-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}";
+                return "EXPERIMENTAL-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
             }
             return version
         }
