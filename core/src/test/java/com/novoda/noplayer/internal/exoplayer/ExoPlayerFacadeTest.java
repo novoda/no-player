@@ -549,6 +549,7 @@ public class ExoPlayerFacadeTest {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
             given(exoPlayerForwarder.mediaSourceEventListener()).willReturn(mediaSourceEventListener);
+            given(exoPlayerForwarder.drmSecurityLevelEventListener()).willReturn(drmSecurityLevelEventListener);
             given(bandwidthMeterCreator.create(anyLong())).willReturn(defaultBandwidthMeter);
             given(trackSelectorCreator.create(any(Options.class), eq(defaultBandwidthMeter))).willReturn(trackSelector);
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, drmSecurityLevelEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
