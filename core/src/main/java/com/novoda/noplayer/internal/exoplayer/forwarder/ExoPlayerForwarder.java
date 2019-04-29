@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.video.VideoListener;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSecurityLevelEventListener;
+import com.novoda.noplayer.internal.utils.Optional;
 
 public class ExoPlayerForwarder {
 
@@ -15,6 +16,7 @@ public class ExoPlayerForwarder {
     private final NoPlayerAnalyticsListener analyticsListener;
     private final ExoPlayerVideoListener videoListener;
     private final ExoPlayerDrmSessionEventListener drmSessionEventListener;
+    private Optional<NoPlayer.AdvertListener> advertListeners = Optional.absent();
 
     public ExoPlayerForwarder() {
         exoPlayerEventListener = new EventListener();
@@ -42,6 +44,10 @@ public class ExoPlayerForwarder {
 
     public AnalyticsListener analyticsListener() {
         return analyticsListener;
+    }
+
+    public Optional<NoPlayer.AdvertListener> advertListener() {
+        return advertListeners;
     }
 
     public DrmSecurityLevelEventListener drmSecurityLevelEventListener() {
@@ -79,6 +85,10 @@ public class ExoPlayerForwarder {
         drmSessionEventListener.add(new DrmSessionInfoForwarder(infoListeners));
         drmSessionEventListener.add(new DrmSecurityLevelInfoForwarder(infoListeners));
         analyticsListener.add(new AnalyticsListenerForwarder(infoListeners));
+    }
+
+    public void bind(NoPlayer.AdvertListener advertListeners) {
+        this.advertListeners = Optional.of(advertListeners);
     }
 
     public void bind(NoPlayer.DrmSecurityLevelCallback drmSecurityLevelCallback) {

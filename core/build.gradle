@@ -11,25 +11,26 @@ buildProperties {
         def bintrayCredentials = {
             boolean isDryRun = cli['dryRun'].or(true).boolean
             return isDryRun ?
-                    ['bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
+                    ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
                     new File("${System.getenv('BINTRAY_PROPERTIES')}")
         }
         using(bintrayCredentials()).or(cli)
         description = '''This should contain the following properties:
-                       | - bintrayRepo: name of the repo of the organisation to deploy the artifacts to
-                       | - bintrayUser: name of the account used to deploy the artifacts
-                       | - bintrayKey: API key of the account used to deploy the artifacts
-        '''.stripMargin()
+                        - bintrayOrg: name of the Bintray organisation to deploy the artifacts to
+                        - bintrayRepo: name of the repo of the organisation to deploy the artifacts to
+                        - bintrayUser: name of the account used to deploy the artifacts
+                        - bintrayKey: API key of the account used to deploy the artifacts
+        '''.stripIndent()
     }
     publish {
         def generateVersion = {
             boolean isSnapshot = cli['bintraySnapshot'].or(false).boolean
             if (isSnapshot) {
-                return "SNAPSHOT-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}";
+                return "DEVELOP-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
             }
             boolean isExperimental = cli['bintrayExperimental'].or(false).boolean
             if (isExperimental) {
-                return "EXPERIMENTAL-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}";
+                return "EXPERIMENTAL-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
             }
             return version
         }
@@ -69,7 +70,7 @@ dependencies {
 }
 
 publish {
-    userOrg = 'novoda-oss'
+    userOrg = buildProperties.publish['bintrayOrg'].string
     repoName = buildProperties.publish['bintrayRepo'].string
     groupId = 'com.novoda'
     artifactId = 'no-player'

@@ -145,7 +145,22 @@ public interface Listeners {
      */
     void removeDroppedVideoFrames(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListener);
 
+
     void addDrmSecurityLevelCallback(NoPlayer.DrmSecurityLevelCallback drmSecurityLevelCallback);
 
     void removeDrmSecurityLevelCallback(NoPlayer.DrmSecurityLevelCallback drmSecurityLevelCallback);
+
+    /**
+     * Add a given {@link com.novoda.noplayer.NoPlayer.AdvertListener} to be notified about advert events.
+     *
+     * @param advertListener to notify.
+     */
+    void addAdvertListener(NoPlayer.AdvertListener advertListener);
+
+    /**
+     * Remove a given {@link com.novoda.noplayer.NoPlayer.AdvertListener}.
+     *
+     * @param advertListener to remove.
+     */
+    void removeAdvertListener(NoPlayer.AdvertListener advertListener);
 }
