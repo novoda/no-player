@@ -26,6 +26,6 @@ class ProvisioningModularDrmCallback implements MediaDrmCallback {
 
     @Override
     public byte[] executeKeyRequest(UUID uuid, ExoMediaDrm.KeyRequest request) throws Exception {
-        return streamingModularDrm.executeKeyRequest(new ModularDrmKeyRequest(request.getDefaultUrl(), request.getData()));
+        return streamingModularDrm.executeKeyRequest(new ModularDrmKeyRequest(request.getLicenseServerUrl(), request.getData()));
     }
 }

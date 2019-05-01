@@ -14,6 +14,8 @@ public class PlayerListenersHolder implements Listeners {
     private final InfoListeners infoListeners;
     private final VideoSizeChangedListeners videoSizeChangedListeners;
     private final BitrateChangedListeners bitrateChangedListeners;
+    private final DroppedFramesListeners droppedFramesListeners;
+    private final AdvertListeners advertListeners;
 
     private final HeartbeatCallbacks heartbeatCallbacks;
 
@@ -27,6 +29,8 @@ public class PlayerListenersHolder implements Listeners {
         videoSizeChangedListeners = new VideoSizeChangedListeners();
         bitrateChangedListeners = new BitrateChangedListeners();
         heartbeatCallbacks = new HeartbeatCallbacks();
+        droppedFramesListeners = new DroppedFramesListeners();
+        advertListeners = new AdvertListeners();
     }
 
     @Override
@@ -119,6 +123,26 @@ public class PlayerListenersHolder implements Listeners {
         videoSizeChangedListeners.remove(videoSizeChangedListener);
     }
 
+    @Override
+    public void addDroppedVideoFrames(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListener) {
+        droppedFramesListeners.add(droppedVideoFramesListener);
+    }
+
+    @Override
+    public void removeDroppedVideoFrames(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListener) {
+        droppedFramesListeners.remove(droppedVideoFramesListener);
+    }
+
+    @Override
+    public void addAdvertListener(NoPlayer.AdvertListener advertListener) {
+        advertListeners.add(advertListener);
+    }
+
+    @Override
+    public void removeAdvertListener(NoPlayer.AdvertListener advertListener) {
+        advertListeners.remove(advertListener);
+    }
+
     public NoPlayer.ErrorListener getErrorListeners() {
         return errorListeners;
     }
@@ -155,6 +179,14 @@ public class PlayerListenersHolder implements Listeners {
         return bitrateChangedListeners;
     }
 
+    public NoPlayer.DroppedVideoFramesListener getDroppedVideoFramesListeners() {
+        return droppedFramesListeners;
+    }
+
+    public NoPlayer.AdvertListener getAdvertListeners() {
+        return advertListeners;
+    }
+
     public void resetState() {
         preparedListeners.resetPreparedState();
         completionListeners.resetCompletedState();
@@ -170,5 +202,7 @@ public class PlayerListenersHolder implements Listeners {
         videoSizeChangedListeners.clear();
         bitrateChangedListeners.clear();
         heartbeatCallbacks.clear();
+        droppedFramesListeners.clear();
+        advertListeners.clear();
     }
 }

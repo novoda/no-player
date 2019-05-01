@@ -3,13 +3,14 @@ package com.novoda.noplayer.internal.mediaplayer;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.View;
-
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.Heart;
@@ -17,13 +18,11 @@ import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Either;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.Timeout;
-
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,6 +36,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
+
+import java.util.Collections;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -278,7 +279,6 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenAttachingPlayerView_thenAddsVideoSizeChangedListener() {
-            PlayerView playerView = mock(PlayerView.class);
             NoPlayer.VideoSizeChangedListener videoSizeChangedListener = mock(NoPlayer.VideoSizeChangedListener.class);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             player.attach(playerView);
@@ -288,7 +288,6 @@ public class AndroidMediaPlayerImplTest {
 
         @Test
         public void whenAttachingPlayerView_thenAddsStateChangedListener() {
-            PlayerView playerView = mock(PlayerView.class);
             NoPlayer.StateChangedListener stateChangedListener = mock(NoPlayer.StateChangedListener.class);
             given(playerView.getStateChangedListener()).willReturn(stateChangedListener);
             player.attach(playerView);
@@ -689,7 +688,7 @@ public class AndroidMediaPlayerImplTest {
         @Mock
         NoPlayer.StateChangedListener stateChangedListener;
         @Mock
-        Surface surface;
+        Either<Surface, SurfaceHolder> surface;
         @Mock
         PlayerView playerView;
         @Mock
@@ -706,6 +705,8 @@ public class AndroidMediaPlayerImplTest {
         CheckBufferHeartbeatCallback.BufferListener bufferListener;
         @Mock
         View containerView;
+        @Mock
+        PlayerSurfaceHolder playerSurfaceHolder;
 
         AndroidMediaPlayerImpl player;
 
@@ -713,7 +714,8 @@ public class AndroidMediaPlayerImplTest {
         public void setUp() {
             NoPlayerLog.setLoggingEnabled(false);
             SurfaceRequester surfaceRequester = mock(SurfaceRequester.class);
-            given(playerView.getSurfaceRequester()).willReturn(surfaceRequester);
+            given(playerView.getPlayerSurfaceHolder()).willReturn(playerSurfaceHolder);
+            given(playerSurfaceHolder.getSurfaceRequester()).willReturn(surfaceRequester);
             given(playerView.getStateChangedListener()).willReturn(stateChangeListener);
             given(playerView.getVideoSizeChangedListener()).willReturn(videoSizeChangedListener);
             given(playerView.getContainerView()).willReturn(containerView);

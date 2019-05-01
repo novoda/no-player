@@ -3,13 +3,16 @@ package com.novoda.noplayer.internal.mediaplayer;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.View;
 
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.Heart;
@@ -17,6 +20,7 @@ import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Either;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
@@ -26,13 +30,14 @@ import com.novoda.noplayer.model.Timeout;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("PMD.GodClass")   // Not much we can do, wrapping MediaPlayer is a lot of work
+// Not much we can do, wrapping MediaPlayer is a lot of work
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount"})
 class AndroidMediaPlayerImpl implements NoPlayer {
 
     private static final long NO_SEEK_TO_POSITION = -1;
     private static final long INITIAL_PLAY_SEEK_DELAY_IN_MILLIS = 500;
 
-    private final List<SurfaceRequester.Callback> surfaceTextureRequesterCallbacks = new ArrayList<>();
+    private final List<SurfaceRequester.Callback> surfaceHolderRequesterCallbacks = new ArrayList<>();
 
     private final MediaPlayerInformation mediaPlayerInformation;
     private final AndroidMediaPlayerFacade mediaPlayer;
@@ -52,8 +57,8 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     private SurfaceRequester surfaceRequester;
     private View containerView;
 
-    // We cannot really group these any further
     @SuppressWarnings("checkstyle:ParameterNumber")
+        // We cannot really group these any further
     AndroidMediaPlayerImpl(MediaPlayerInformation mediaPlayerInformation,
                            AndroidMediaPlayerFacade mediaPlayer,
                            MediaPlayerForwarder forwarder,
@@ -145,7 +150,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         heart.startBeatingHeart();
         requestSurface(new SurfaceRequester.Callback() {
             @Override
-            public void onSurfaceReady(Surface surface) {
+            public void onSurfaceReady(Either<Surface, SurfaceHolder> surface) {
                 mediaPlayer.start(surface);
                 listenersHolder.getStateChangedListeners().onVideoPlaying();
             }
@@ -159,7 +164,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         } else {
             requestSurface(new SurfaceRequester.Callback() {
                 @Override
-                public void onSurfaceReady(Surface surface) {
+                public void onSurfaceReady(Either<Surface, SurfaceHolder> surface) {
                     initialSeekWorkaround(surface, positionInMillis);
                 }
             });
@@ -170,7 +175,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
      * Workaround to fix some devices (nexus 7 2013 in particular) from natively crashing the mediaplayer
      * by starting the mediaplayer before seeking it.
      */
-    private void initialSeekWorkaround(Surface surface, final long initialPlayPositionInMillis) throws IllegalStateException {
+    private void initialSeekWorkaround(Either<Surface, SurfaceHolder> surface, final long initialPlayPositionInMillis) throws IllegalStateException {
         listenersHolder.getBufferStateListeners().onBufferStarted();
         initialisePlaybackForSeeking(surface);
         delayedActionExecutor.performAfterDelay(new DelayedActionExecutor.Action() {
@@ -181,7 +186,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         }, INITIAL_PLAY_SEEK_DELAY_IN_MILLIS);
     }
 
-    private void initialisePlaybackForSeeking(Surface surface) {
+    private void initialisePlaybackForSeeking(Either<Surface, SurfaceHolder> surface) {
         mediaPlayer.start(surface);
         mediaPlayer.pause();
     }
@@ -190,7 +195,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         if (surfaceRequester == null) {
             throw new IllegalStateException("Must attach a PlayerView before interacting with Player");
         }
-        surfaceTextureRequesterCallbacks.add(callback);
+        surfaceHolderRequesterCallbacks.add(callback);
         surfaceRequester.requestSurface(callback);
     }
 
@@ -201,6 +206,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
 
     @Override
     public boolean isPlaying() {
+        return mediaPlayer.isPlaying();
+    }
+
+    @Override
+    public boolean isPlayingAdvert() {
+        return false;
+    }
+
+    @Override
+    public boolean isPlayingContent() {
         return mediaPlayer.isPlaying();
     }
 
@@ -230,7 +245,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         listenersHolder.getBufferStateListeners().onBufferStarted();
         requestSurface(new SurfaceRequester.Callback() {
             @Override
-            public void onSurfaceReady(Surface surface) {
+            public void onSurfaceReady(Either<Surface, SurfaceHolder> surface) {
                 mediaPlayer.prepareVideo(uri, surface);
             }
         });
@@ -250,6 +265,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     public void loadVideoWithTimeout(Uri uri, Options options, Timeout timeout, LoadTimeoutCallback loadTimeoutCallback) {
         loadTimeout.start(timeout, loadTimeoutCallback);
         loadVideo(uri, options);
+    }
+
+    @Override
+    public long advertBreakDurationInMillis() {
+        return 0;
+    }
+
+    @Override
+    public long positionInAdvertBreakInMillis() {
+        return 0;
     }
 
     @Override
@@ -292,7 +317,8 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         buggyVideoDriverPreventer.preventVideoDriverBug(this, containerView);
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
-        surfaceRequester = playerView.getSurfaceRequester();
+        PlayerSurfaceHolder playerSurfaceHolder = playerView.getPlayerSurfaceHolder();
+        surfaceRequester = playerSurfaceHolder.getSurfaceRequester();
     }
 
     @Override
@@ -305,11 +331,31 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         containerView = null;
     }
 
+    @Override
+    public void attach(AdvertView advertView) {
+        mediaPlayer.attach(advertView);
+    }
+
+    @Override
+    public void detach(AdvertView advertView) {
+        mediaPlayer.detach(advertView);
+    }
+
+    @Override
+    public void disableAdverts() {
+        mediaPlayer.disableAdverts();
+    }
+
+    @Override
+    public void enableAdverts() {
+        mediaPlayer.enableAdverts();
+    }
+
     private void clearSurfaceHolderCallbacks() {
-        for (SurfaceRequester.Callback callback : surfaceTextureRequesterCallbacks) {
+        for (SurfaceRequester.Callback callback : surfaceHolderRequesterCallbacks) {
             surfaceRequester.removeCallback(callback);
         }
-        surfaceTextureRequesterCallbacks.clear();
+        surfaceHolderRequesterCallbacks.clear();
     }
 
     @Override
@@ -360,6 +406,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     @Override
     public List<PlayerSubtitleTrack> getSubtitleTracks() throws IllegalStateException {
         return mediaPlayer.getSubtitleTracks();
+    }
+
+    @Override
+    public void clearMaxVideoBitrate() {
+        mediaPlayer.clearMaxVideoBitrate();
+    }
+
+    @Override
+    public void setMaxVideoBitrate(int maxVideoBitrate) {
+        mediaPlayer.setMaxVideoBitrate(maxVideoBitrate);
     }
 
     @Override

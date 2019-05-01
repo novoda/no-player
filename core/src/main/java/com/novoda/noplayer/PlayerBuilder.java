@@ -26,7 +26,22 @@ public class PlayerBuilder {
     private DrmType drmType = DrmType.NONE;
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
-    private boolean downgradeSecureDecoder;
+    private boolean downgradeSecureDecoder; /* initialised to false by default */
+    private boolean allowCrossProtocolRedirects; /* initialised to false by default */
+    private String userAgent = "user-agent";
+    private AdvertsLoader advertsLoader;
+
+    /**
+     * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will play adverts provided by the passed in loader
+     *
+     * @param advertsLoader The loader used by NoPlayer to fetch what adverts to play.
+     * @return {@link PlayerBuilder}
+     * @see NoPlayer
+     */
+    public PlayerBuilder withAdverts(AdvertsLoader advertsLoader) {
+        this.advertsLoader = advertsLoader;
+        return this;
+    }
 
     /**
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine classic DRM.
@@ -78,7 +93,7 @@ public class PlayerBuilder {
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which will prioritise the underlying player when
      * multiple underlying players share the same features.
      *
-     * @param playerType First {@link PlayerType} with the highest priority.
+     * @param playerType  First {@link PlayerType} with the highest priority.
      * @param playerTypes Remaining {@link PlayerType} in order of priority.
      * @return {@link PlayerBuilder}
      * @see NoPlayer
@@ -93,12 +108,31 @@ public class PlayerBuilder {
 
     /**
      * Forces secure decoder selection to be ignored in favour of using an insecure decoder.
-     * e.g. Forcing an L3 stream to play with an insecure decoder instead of a secure decoder by default.
+     * e.g. Forcing an L3 stream to play with an L3 decoder instead of an L1 secure decoder by default.
      *
      * @return {@link PlayerBuilder}
      */
     public PlayerBuilder withDowngradedSecureDecoder() {
         downgradeSecureDecoder = true;
+        return this;
+    }
+
+    /**
+     * @param userAgent The application's user-agent value
+     * @return {@link PlayerBuilder}
+     */
+    public PlayerBuilder withUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+        return this;
+    }
+
+    /**
+     * Network connections will be allowed to perform redirects between HTTP and HTTPS protocols
+     *
+     * @return {@link PlayerBuilder}
+     */
+    public PlayerBuilder allowCrossProtocolRedirects() {
+        allowCrossProtocolRedirects = true;
         return this;
     }
 
@@ -111,6 +145,7 @@ public class PlayerBuilder {
      * @see NoPlayer
      */
     public NoPlayer build(Context context) throws UnableToCreatePlayerException {
+        Context applicationContext = context.getApplicationContext();
         Handler handler = new Handler(Looper.getMainLooper());
         ProvisionExecutorCreator provisionExecutorCreator = new ProvisionExecutorCreator();
         DrmSessionCreatorFactory drmSessionCreatorFactory = new DrmSessionCreatorFactory(
@@ -118,13 +153,25 @@ public class PlayerBuilder {
                 provisionExecutorCreator,
                 handler
         );
+
+        NoPlayerExoPlayerCreator noPlayerExoPlayerCreator = createExoPlayerCreator(handler);
+
         NoPlayerCreator noPlayerCreator = new NoPlayerCreator(
-                context,
+                applicationContext,
                 prioritizedPlayerTypes,
-                NoPlayerExoPlayerCreator.newInstance(handler),
+                noPlayerExoPlayerCreator,
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
-        return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder);
+        return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects);
     }
+
+    private NoPlayerExoPlayerCreator createExoPlayerCreator(Handler handler) {
+        if (advertsLoader == null) {
+            return NoPlayerExoPlayerCreator.newInstance(userAgent, handler);
+        } else {
+            return NoPlayerExoPlayerCreator.newInstance(userAgent, handler, advertsLoader);
+        }
+    }
+
 }

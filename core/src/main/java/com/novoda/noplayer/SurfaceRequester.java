@@ -1,6 +1,8 @@
 package com.novoda.noplayer;
 
 import android.view.Surface;
+import android.view.SurfaceHolder;
+import com.novoda.noplayer.model.Either;
 
 public interface SurfaceRequester {
 
@@ -10,8 +12,7 @@ public interface SurfaceRequester {
 
     interface Callback {
 
-        void onSurfaceReady(Surface surface);
-
+        void onSurfaceReady(Either<Surface, SurfaceHolder> surface);
     }
 
 }

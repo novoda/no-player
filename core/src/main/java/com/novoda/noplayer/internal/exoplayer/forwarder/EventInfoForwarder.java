@@ -11,6 +11,9 @@ import com.novoda.noplayer.NoPlayer;
 import java.util.Collections;
 import java.util.HashMap;
 
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ForwarderInformation.Methods;
+import static com.novoda.noplayer.internal.exoplayer.forwarder.ForwarderInformation.Parameters;
+
 class EventInfoForwarder implements Player.EventListener {
 
     private final NoPlayer.InfoListener infoListener;
@@ -23,89 +26,89 @@ class EventInfoForwarder implements Player.EventListener {
     public void onTimelineChanged(Timeline timeline, Object manifest, @Player.TimelineChangeReason int reason) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("timeline", String.valueOf(timeline));
-        callingMethodParameters.put("manifest", String.valueOf(manifest));
-        callingMethodParameters.put("reason", String.valueOf(reason));
+        callingMethodParameters.put(Parameters.TIMELINE, String.valueOf(timeline));
+        callingMethodParameters.put(Parameters.MANIFEST, String.valueOf(manifest));
+        callingMethodParameters.put(Parameters.REASON, String.valueOf(reason));
 
-        infoListener.onNewInfo("onTimelineChanged", callingMethodParameters);
+        infoListener.onNewInfo(Methods.ON_TIMELINE_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("trackGroups", String.valueOf(trackGroups));
-        callingMethodParameters.put("trackSelections", String.valueOf(trackSelections));
+        callingMethodParameters.put(Parameters.TRACK_GROUPS, String.valueOf(trackGroups));
+        callingMethodParameters.put(Parameters.TRACK_SELECTIONS, String.valueOf(trackSelections));
 
-        infoListener.onNewInfo("onTracksChanged", callingMethodParameters);
+        infoListener.onNewInfo(Methods.ON_TRACKS_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("isLoading", String.valueOf(isLoading));
+        callingMethodParameters.put(Parameters.IS_LOADING, String.valueOf(isLoading));
 
-        infoListener.onNewInfo("onLoadingChanged", callingMethodParameters);
+        infoListener.onNewInfo(Methods.ON_LOADING_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("playWhenReady", String.valueOf(playWhenReady));
-        callingMethodParameters.put("playbackState", String.valueOf(playbackState));
+        callingMethodParameters.put(Parameters.PLAY_WHEN_READY, String.valueOf(playWhenReady));
+        callingMethodParameters.put(Parameters.PLAYBACK_STATE, String.valueOf(playbackState));
 
-        infoListener.onNewInfo("onPlayerStateChanged", callingMethodParameters);
+        infoListener.onNewInfo(Methods.ON_PLAYER_STATE_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onRepeatModeChanged(@Player.RepeatMode int repeatMode) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("repeatMode", String.valueOf(repeatMode));
+        callingMethodParameters.put(Parameters.REPEAT_MODE, String.valueOf(repeatMode));
 
-        infoListener.onNewInfo("onRepeatModeChanged", callingMethodParameters);
+        infoListener.onNewInfo(Methods.ON_REPEAT_MODE_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("shuffleModeEnabled", String.valueOf(shuffleModeEnabled));
+        callingMethodParameters.put(Parameters.SHUFFLE_MODE_ENABLED, String.valueOf(shuffleModeEnabled));
 
-        infoListener.onNewInfo("onShuffleModeEnabledChanged", callingMethodParameters);
+        infoListener.onNewInfo(Methods.ON_SHUFFLE_MODE_ENABLED_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("error", String.valueOf(error));
+        callingMethodParameters.put(Parameters.ERROR, String.valueOf(error));
 
-        infoListener.onNewInfo("onPlayerError", callingMethodParameters);
+        infoListener.onNewInfo(Methods.ON_PLAYER_ERROR, callingMethodParameters);
     }
 
     @Override
     public void onPositionDiscontinuity(int reason) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("reason", String.valueOf(reason));
+        callingMethodParameters.put(Parameters.REASON, String.valueOf(reason));
 
-        infoListener.onNewInfo("onPositionDiscontinuity", callingMethodParameters);
+        infoListener.onNewInfo(Methods.ON_POSITION_DISCONTINUITY, callingMethodParameters);
     }
 
     @Override
     public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
         HashMap<String, String> callingMethodParameters = new HashMap<>();
 
-        callingMethodParameters.put("playbackParameters", String.valueOf(playbackParameters));
+        callingMethodParameters.put(Parameters.PLAYBACK_PARAMETERS, String.valueOf(playbackParameters));
 
-        infoListener.onNewInfo("onPlaybackParametersChanged", callingMethodParameters);
+        infoListener.onNewInfo(Methods.ON_PLAYBACK_PARAMETERS_CHANGED, callingMethodParameters);
     }
 
     @Override
     public void onSeekProcessed() {
-        infoListener.onNewInfo("onPositionDiscontinuity", Collections.<String, String>emptyMap());
+        infoListener.onNewInfo(Methods.ON_POSITION_DISCONTINUITY, Collections.<String, String>emptyMap());
     }
 }

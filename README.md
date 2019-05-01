@@ -1,6 +1,6 @@
 ![noplayer](art/noplayer-header.png)
 
-[![CI status](https://ci.novoda.com/buildStatus/icon?job=no-player)](https://ci.novoda.com/job/no-player/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda/maven/no-player/images/download.svg)](https://bintray.com/novoda/maven/no-player/_latestVersion) [![Apache 2.0 Licence](https://img.shields.io/github/license/novoda/no-player.svg)](https://github.com/novoda/no-player/blob/master/LICENSE)
+[![CI status](https://ci.novoda.com/buildStatus/icon?job=no-player)](https://ci.novoda.com/job/no-player/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda/maven/no-player/images/download.svg)](https://bintray.com/novoda/maven/no-player/_latestVersion) ![Tests](https://img.shields.io/jenkins/t/https/ci.novoda.com/view/Open%20source/job/no-player.svg) ![Coverage](https://img.shields.io/jenkins/j/https/ci.novoda.com/view/Open%20source/job/no-player.svg) [![Apache 2.0 Licence](https://img.shields.io/github/license/novoda/no-player.svg)](https://github.com/novoda/no-player/blob/master/LICENSE)
 
 A simplified Android `Player` wrapper for [MediaPlayer](https://developer.android.com/reference/android/media/MediaPlayer.html) and [ExoPlayer](https://google.github.io/ExoPlayer/).
 
@@ -14,6 +14,9 @@ Some of the benefits are:
 - Maintains video Aspect Ratio by default
 - Player selection based on `ContentType` and DRM
 
+Experimental Features, use with caution:
+- Support for TextureView
+
 ## Adding to your project
 
 To start using this library, add these lines to the `build.gradle` of your project:
@@ -24,9 +27,18 @@ repositories {
 }
 
 dependencies {
-    compile 'com.novoda:no-player:<latest-version>'
+    implementation 'com.novoda:no-player:<latest-version>'
 }
 ```
+
+From no-player 4.5.0 this is also needed in the android section of your `build.gradle`
+
+```groovy
+compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+}
+```
+
 ### Simple usage
 
  1. Create a `Player`:
@@ -67,19 +79,19 @@ dependencies {
 
 ## Snapshots
 
-[![CI status](https://ci.novoda.com/buildStatus/icon?job=no-player-snapshot)](https://ci.novoda.com/job/no-player-snapshot/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda/snapshots/no-player/images/download.svg)](https://bintray.com/novoda/snapshots/no-player/_latestVersion)
+[![CI status](https://ci.novoda.com/buildStatus/icon?job=no-player-snapshot)](https://ci.novoda.com/job/no-player-snapshot/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda-oss/snapshots/no-player/images/download.svg)](https://bintray.com/novoda-oss/snapshots/no-player/_latestVersion)
 
-Snapshot builds from [`develop`](https://github.com/novoda/no-player/compare/master...develop) are automatically deployed to a [repository](https://bintray.com/novoda/snapshots/no-player/_latestVersion) that is not synced with JCenter.
+Snapshot builds from [`develop`](https://github.com/novoda/no-player/compare/master...develop) are automatically deployed to a [repository](https://bintray.com/novoda-oss/snapshots/no-player/_latestVersion) that is not synced with JCenter.
 To consume a snapshot build add an additional maven repo as follows:
 ```
 repositories {
     maven {
-        url 'https://novoda.bintray.com/snapshots'
+        url 'https://dl.bintray.com/novoda-oss/snapshots'
     }
 }
 ```
 
-You can find the latest snapshot version following this [link](https://bintray.com/novoda/snapshots/no-player/_latestVersion).
+You can find the latest snapshot version following this [link](https://bintray.com/novoda-oss/snapshots/no-player/_latestVersion).
 
 ## Contributing
 

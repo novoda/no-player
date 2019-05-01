@@ -2,17 +2,16 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.view.Surface;
 import android.view.View;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerInformation;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.SurfaceRequester;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
@@ -41,12 +40,9 @@ class ExoPlayerTwoImpl implements NoPlayer {
 
     @Nullable
     private PlayerView playerView;
-    @Nullable
-    private SurfaceRequester surfaceRequester;
 
     private int videoWidth;
     private int videoHeight;
-    private SurfaceRequester.Callback onSurfaceTextureReadyCallback;
     private TextRendererOutput textRendererOutput;
 
     ExoPlayerTwoImpl(ExoPlayerFacade exoPlayer,
@@ -74,6 +70,8 @@ class ExoPlayerTwoImpl implements NoPlayer {
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
         forwarder.bind(listenersHolder.getBitrateChangedListeners());
         forwarder.bind(listenersHolder.getInfoListeners());
+        forwarder.bind(listenersHolder.getDroppedVideoFramesListeners());
+        forwarder.bind(listenersHolder.getAdvertListeners());
         listenersHolder.addPreparedListener(new PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
@@ -101,6 +99,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
+    public boolean isPlayingAdvert() {
+        return exoPlayer.isPlayingAdvert();
+    }
+
+    @Override
+    public boolean isPlayingContent() {
+        return exoPlayer.isPlayingContent();
+    }
+
+    @Override
     public int videoWidth() {
         return videoWidth;
     }
@@ -113,6 +121,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public long playheadPositionInMillis() throws IllegalStateException {
         return exoPlayer.playheadPositionInMillis();
+    }
+
+    @Override
+    public long advertBreakDurationInMillis() {
+        return exoPlayer.advertBreakDurationInMillis();
+    }
+
+    @Override
+    public long positionInAdvertBreakInMillis() {
+        return exoPlayer.positionInAdvertBreakInMillis();
     }
 
     @Override
@@ -138,6 +156,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public float getVolume() {
         return exoPlayer.getVolume();
+    }
+
+    @Override
+    public void clearMaxVideoBitrate() {
+        exoPlayer.clearMaxVideoBitrate();
+    }
+
+    @Override
+    public void setMaxVideoBitrate(int maxVideoBitrate) {
+        exoPlayer.setMaxVideoBitrate(maxVideoBitrate);
     }
 
     @Override
@@ -204,17 +232,9 @@ class ExoPlayerTwoImpl implements NoPlayer {
         if (exoPlayer.hasPlayedContent()) {
             stop();
         }
-        surfaceRequester.removeCallback(onSurfaceTextureReadyCallback);
-        onSurfaceTextureReadyCallback = new SurfaceRequester.Callback() {
-            @Override
-            public void onSurfaceReady(Surface surface) {
-                exoPlayer.loadVideo(surface, drmSessionCreator, uri, options, forwarder, mediaCodecSelector);
-            }
-        };
-
         assertPlayerViewIsAttached();
+        exoPlayer.loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, options, forwarder, mediaCodecSelector);
         createSurfaceByShowingVideoContainer();
-        surfaceRequester.requestSurface(onSurfaceTextureReadyCallback);
     }
 
     private void assertPlayerViewIsAttached() {
@@ -241,7 +261,6 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public void attach(PlayerView playerView) {
         this.playerView = playerView;
-        surfaceRequester = playerView.getSurfaceRequester();
         listenersHolder.addStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.addVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
     }
@@ -251,9 +270,29 @@ class ExoPlayerTwoImpl implements NoPlayer {
         listenersHolder.removeStateChangedListener(playerView.getStateChangedListener());
         listenersHolder.removeVideoSizeChangedListener(playerView.getVideoSizeChangedListener());
         removeSubtitleRenderer();
-        surfaceRequester.removeCallback(onSurfaceTextureReadyCallback);
-        surfaceRequester = null;
         this.playerView = null;
+    }
+
+    @Override
+    public void attach(AdvertView advertView) {
+        listenersHolder.addAdvertListener(advertView.getAdvertListener());
+        exoPlayer.attach(advertView);
+    }
+
+    @Override
+    public void detach(AdvertView advertView) {
+        exoPlayer.detach(advertView);
+        listenersHolder.removeAdvertListener(advertView.getAdvertListener());
+    }
+
+    @Override
+    public void disableAdverts() {
+        exoPlayer.disableAdverts();
+    }
+
+    @Override
+    public void enableAdverts() {
+        exoPlayer.enableAdverts();
     }
 
     @Override

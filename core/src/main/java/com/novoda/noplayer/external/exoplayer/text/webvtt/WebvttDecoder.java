@@ -17,6 +17,7 @@ package com.novoda.noplayer.external.exoplayer.text.webvtt;
 
 import android.text.TextUtils;
 
+import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.text.SimpleSubtitleDecoder;
 import com.google.android.exoplayer2.text.SubtitleDecoderException;
 import com.google.android.exoplayer2.text.webvtt.WebvttCssStyle;
@@ -67,8 +68,13 @@ public final class WebvttDecoder extends SimpleSubtitleDecoder {
     definedStyles.clear();
 
     // Validate the first line of the header, and skip the remainder.
-    WebvttParserUtil.validateWebvttHeaderLine(parsableWebvttData);
-    while (!TextUtils.isEmpty(parsableWebvttData.readLine())) {}
+    try {
+      WebvttParserUtil.validateWebvttHeaderLine(parsableWebvttData);
+    } catch (ParserException e) {
+      throw new SubtitleDecoderException(e);
+    }
+    while (!TextUtils.isEmpty(parsableWebvttData.readLine())) {
+    }
 
     int event;
     ArrayList<WebvttCue> subtitles = new ArrayList<>();

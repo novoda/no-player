@@ -32,7 +32,10 @@ public class ExoPlayerTrackSelector {
     boolean clearSelectionOverrideFor(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
         Optional<Integer> rendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
         if (rendererIndex.isPresent()) {
-            trackSelector.clearSelectionOverrides(rendererIndex.get());
+            trackSelector.setParameters(trackSelector
+                    .buildUponParameters()
+                    .clearSelectionOverrides(rendererIndex.get())
+            );
             return true;
         } else {
             return false;
@@ -55,10 +58,13 @@ public class ExoPlayerTrackSelector {
     boolean setSelectionOverride(TrackType trackType,
                                  RendererTypeRequester rendererTypeRequester,
                                  TrackGroupArray trackGroups,
-                                 MappingTrackSelector.SelectionOverride selectionOverride) {
+                                 DefaultTrackSelector.SelectionOverride selectionOverride) {
         Optional<Integer> rendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
         if (rendererIndex.isPresent()) {
-            trackSelector.setSelectionOverride(rendererIndex.get(), trackGroups, selectionOverride);
+            trackSelector.setParameters(trackSelector
+                    .buildUponParameters()
+                    .setSelectionOverride(rendererIndex.get(), trackGroups, selectionOverride)
+            );
             return true;
         } else {
             return false;
@@ -73,5 +79,21 @@ public class ExoPlayerTrackSelector {
         return audioRendererIndex.isPresent()
                 && trackGroups.get(groupIndex).length > 0
                 && trackInfo().getAdaptiveSupport(audioRendererIndex.get(), groupIndex, false) != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED;
+    }
+
+    void clearMaxVideoBitrate() {
+        setMaxVideoBitrateParameter(Integer.MAX_VALUE);
+    }
+
+    void setMaxVideoBitrate(int maxVideoBitrate) {
+        setMaxVideoBitrateParameter(maxVideoBitrate);
+    }
+
+    private void setMaxVideoBitrateParameter(int maxValue) {
+        trackSelector.setParameters(
+                trackSelector.buildUponParameters()
+                        .setMaxVideoBitrate(maxValue)
+                        .build()
+        );
     }
 }

@@ -1,42 +1,42 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-class ExoPlayerDrmSessionEventListener implements DefaultDrmSessionManager.EventListener {
+class ExoPlayerDrmSessionEventListener implements DefaultDrmSessionEventListener {
 
-    private final List<DefaultDrmSessionManager.EventListener> listeners = new CopyOnWriteArrayList<>();
+    private final List<DefaultDrmSessionEventListener> listeners = new CopyOnWriteArrayList<>();
 
-    void add(DefaultDrmSessionManager.EventListener listener) {
+    void add(DefaultDrmSessionEventListener listener) {
         listeners.add(listener);
     }
 
     @Override
     public void onDrmKeysLoaded() {
-        for (DefaultDrmSessionManager.EventListener listener : listeners) {
+        for (DefaultDrmSessionEventListener listener : listeners) {
             listener.onDrmKeysLoaded();
         }
     }
 
     @Override
     public void onDrmSessionManagerError(Exception e) {
-        for (DefaultDrmSessionManager.EventListener listener : listeners) {
+        for (DefaultDrmSessionEventListener listener : listeners) {
             listener.onDrmSessionManagerError(e);
         }
     }
 
     @Override
     public void onDrmKeysRestored() {
-        for (DefaultDrmSessionManager.EventListener listener : listeners) {
+        for (DefaultDrmSessionEventListener listener : listeners) {
             listener.onDrmKeysRestored();
         }
     }
 
     @Override
     public void onDrmKeysRemoved() {
-        for (DefaultDrmSessionManager.EventListener listener : listeners) {
+        for (DefaultDrmSessionEventListener listener : listeners) {
             listener.onDrmKeysRemoved();
         }
     }

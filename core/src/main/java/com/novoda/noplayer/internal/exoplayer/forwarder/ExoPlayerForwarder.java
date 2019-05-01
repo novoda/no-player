@@ -1,25 +1,27 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
-import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.android.exoplayer2.analytics.AnalyticsListener;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
+import com.google.android.exoplayer2.source.MediaSourceEventListener;
+import com.google.android.exoplayer2.video.VideoListener;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
+import com.novoda.noplayer.internal.utils.Optional;
 
 public class ExoPlayerForwarder {
 
     private final EventListener exoPlayerEventListener;
-    private final MediaSourceEventListener mediaSourceEventListener;
-    private final ExoPlayerVideoRendererEventListener videoRendererEventListener;
-    private final ExoPlayerExtractorMediaSourceListener extractorMediaSourceListener;
+    private final NoPlayerMediaSourceEventListener mediaSourceEventListener;
+    private final NoPlayerAnalyticsListener analyticsListener;
+    private final ExoPlayerVideoListener videoListener;
     private final ExoPlayerDrmSessionEventListener drmSessionEventListener;
+    private Optional<NoPlayer.AdvertListener> advertListeners = Optional.absent();
 
     public ExoPlayerForwarder() {
         exoPlayerEventListener = new EventListener();
-        mediaSourceEventListener = new MediaSourceEventListener();
-        videoRendererEventListener = new ExoPlayerVideoRendererEventListener();
-        extractorMediaSourceListener = new ExoPlayerExtractorMediaSourceListener();
+        mediaSourceEventListener = new NoPlayerMediaSourceEventListener();
+        videoListener = new ExoPlayerVideoListener();
+        analyticsListener = new NoPlayerAnalyticsListener();
         drmSessionEventListener = new ExoPlayerDrmSessionEventListener();
     }
 
@@ -27,20 +29,24 @@ public class ExoPlayerForwarder {
         return exoPlayerEventListener;
     }
 
-    public AdaptiveMediaSourceEventListener mediaSourceEventListener() {
+    public MediaSourceEventListener mediaSourceEventListener() {
         return mediaSourceEventListener;
     }
 
-    public VideoRendererEventListener videoRendererEventListener() {
-        return videoRendererEventListener;
+    public VideoListener videoListener() {
+        return videoListener;
     }
 
-    public ExtractorMediaSource.EventListener extractorMediaSourceListener() {
-        return extractorMediaSourceListener;
-    }
-
-    public DefaultDrmSessionManager.EventListener drmSessionEventListener() {
+    public DefaultDrmSessionEventListener drmSessionEventListener() {
         return drmSessionEventListener;
+    }
+
+    public AnalyticsListener analyticsListener() {
+        return analyticsListener;
+    }
+
+    public Optional<NoPlayer.AdvertListener> advertListener() {
+        return advertListeners;
     }
 
     public void bind(NoPlayer.PreparedListener preparedListener, PlayerState playerState) {
@@ -61,7 +67,7 @@ public class ExoPlayerForwarder {
     }
 
     public void bind(NoPlayer.VideoSizeChangedListener videoSizeChangedListener) {
-        videoRendererEventListener.add(new VideoSizeChangedForwarder(videoSizeChangedListener));
+        videoListener.add(new VideoSizeChangedForwarder(videoSizeChangedListener));
     }
 
     public void bind(NoPlayer.BitrateChangedListener bitrateChangedListener) {
@@ -70,9 +76,16 @@ public class ExoPlayerForwarder {
 
     public void bind(NoPlayer.InfoListener infoListeners) {
         exoPlayerEventListener.add(new EventInfoForwarder(infoListeners));
-        mediaSourceEventListener.add(new MediaSourceInfoForwarder(infoListeners));
-        videoRendererEventListener.add(new VideoRendererInfoForwarder(infoListeners));
-        extractorMediaSourceListener.add(new ExtractorInfoForwarder(infoListeners));
+        mediaSourceEventListener.add(new MediaSourceEventForwarder(infoListeners));
         drmSessionEventListener.add(new DrmSessionInfoForwarder(infoListeners));
+        analyticsListener.add(new AnalyticsListenerForwarder(infoListeners));
+    }
+
+    public void bind(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListeners) {
+        analyticsListener.add(droppedVideoFramesListeners);
+    }
+
+    public void bind(NoPlayer.AdvertListener advertListeners) {
+        this.advertListeners = Optional.of(advertListeners);
     }
 }

@@ -1,18 +1,28 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.TextureView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MediaSourceEventListener;
+import com.google.android.exoplayer2.source.SinglePeriodTimeline;
+import com.google.android.exoplayer2.source.ads.AdPlaybackState;
+import com.google.android.exoplayer2.source.ads.SinglePeriodAdTimeline;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.ContentType;
+import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
+import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
@@ -34,6 +44,7 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -42,8 +53,12 @@ import utils.ExceptionMatcher;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -53,18 +68,25 @@ public class ExoPlayerFacadeTest {
 
     private static final boolean SELECTED = true;
 
+    private static final long TWENTY_FIVE_SECONDS_IN_MILLIS = 25000;
     private static final long TWO_MINUTES_IN_MILLIS = 120000;
     private static final long TEN_MINUTES_IN_MILLIS = 600000;
+    private static final long MICROS = 1000;
+    private static final long[] ADVERT_DURATIONS = {10 * MICROS, 20 * MICROS, 30 * MICROS, 40 * MICROS};
 
     private static final int TEN_PERCENT = 10;
 
     private static final boolean IS_PLAYING = true;
+    private static final boolean IS_NOT_PLAYING = false;
     private static final boolean PLAY_WHEN_READY = true;
     private static final boolean DO_NOT_PLAY_WHEN_READY = false;
     private static final boolean RESET_POSITION = true;
+    private static final boolean DO_NOT_RESET_POSITION = false;
     private static final boolean DO_NOT_RESET_STATE = false;
 
-    private static final Options OPTIONS = new OptionsBuilder().withContentType(ContentType.DASH).build();
+    private static final Options OPTIONS = new OptionsBuilder()
+            .withContentType(ContentType.DASH)
+            .build();
 
     public static class GivenVideoNotLoaded extends Base {
 
@@ -86,32 +108,116 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenAddsPlayerEventListener() {
 
-            facade.loadVideo(surface, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).addListener(exoPlayerForwarder.exoPlayerEventListener());
         }
 
         @Test
-        public void whenLoadingVideo_thenSetsVideoDebugListener() {
+        public void whenLoadingVideo_thenSetsAnalyticsListener() {
 
-            facade.loadVideo(surface, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(exoPlayer).setVideoDebugListener(exoPlayerForwarder.videoRendererEventListener());
+            verify(exoPlayer).addAnalyticsListener(exoPlayerForwarder.analyticsListener());
         }
 
         @Test
-        public void whenLoadingVideo_thenSetsSurfaceHolderOnExoPlayer() {
+        public void givenAdsLoader_andListener_whenLoadingVideo_thenBindsAdvertListener() {
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+            given(optionalAdvertListener.isPresent()).willReturn(true);
+            given(optionalAdvertListener.get()).willReturn(advertListener);
 
-            facade.loadVideo(surface, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(exoPlayer).setVideoSurface(any(Surface.class));
+            verify(adsLoader).bind(optionalAdvertListener);
+        }
+
+        @Test
+        public void givenAdsLoader_butAbsentListener_whenLoadingVideo_thenBindsAdvertListener() {
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+            given(optionalAdvertListener.isPresent()).willReturn(false);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener());
+        }
+
+        @Test
+        public void givenAdsLoader_whenLoadingVideo_thenSetsPlayerOnAdLoader() {
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(adsLoader).setPlayer(exoPlayer);
+        }
+
+        @Test
+        public void givenAdsLoader_whenReleasing_thenReleasesAdsLoader() {
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+
+            facade.release();
+
+            verify(adsLoader).release();
+        }
+
+        @Test
+        public void givenAbsentAdsLoader_butPresentListener_whenLoadingVideo_thenDoesNotBindAdvertListener() {
+            given(optionalAdvertListener.isPresent()).willReturn(true);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener());
+        }
+
+        @Test
+        public void givenAbsentAdsLoader_whenLoadingVideo_thenDoesNotBindAdvertListener() {
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener());
+        }
+
+        @Test
+        public void givenAbsentAdsLoader_whenLoadingVideo_thenDoesNotSetPlayerOnAdLoader() {
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(adsLoader, never()).setPlayer(exoPlayer);
+        }
+
+        @Test
+        public void givenAbsentAdsLoader_whenReleasing_thenDoesNotReleaseAdsLoader() {
+
+            facade.release();
+
+            verify(adsLoader, never()).release();
+        }
+
+        @Test
+        public void givenSurfaceContainerContainsSurfaceView_whenLoadingVideo_thenSetsSurfaceViewOnExoPlayer() {
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(exoPlayer).setVideoSurfaceView(surfaceView);
+        }
+
+        @Test
+        public void givenSurfaceContainerContainsTextureView_whenLoadingVideo_thenSetsTextureViewOnExoPlayer() {
+
+            facade.loadVideo(textureViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(exoPlayer).setVideoTextureView(textureView);
         }
 
         @Test
         public void givenLollipopDevice_whenLoadingVideo_thenSetsMovieAudioAttributesOnExoPlayer() {
             given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(true);
 
-            facade.loadVideo(surface, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             AudioAttributes expectedMovieAudioAttributes = new AudioAttributes.Builder()
                     .setContentType(C.CONTENT_TYPE_MOVIE)
@@ -123,24 +229,65 @@ public class ExoPlayerFacadeTest {
         public void givenNonLollipopDevice_whenLoadingVideo_thenDoesNotSetAudioAttributesOnExoPlayer() {
             given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(false);
 
-            facade.loadVideo(surface, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer, never()).setAudioAttributes(any(AudioAttributes.class));
         }
 
         @Test
         public void givenMediaSource_whenLoadingVideo_thenPreparesInternalExoPlayer() {
-            MediaSource mediaSource = givenMediaSource();
+            MediaSource mediaSource = givenMediaSource(OPTIONS);
 
-            facade.loadVideo(surface, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
             verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
+        }
+
+        @Test
+        public void givenInitialPosition_whenLoadingVideo_thenPerformsSeekBeforePreparing() {
+            Options options = OPTIONS.toOptionsBuilder()
+                    .withInitialPositionInMillis(TWENTY_FIVE_SECONDS_IN_MILLIS)
+                    .build();
+            MediaSource mediaSource = givenMediaSource(options);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, mediaCodecSelector);
+
+            InOrder inOrder = inOrder(exoPlayer);
+            inOrder.verify(exoPlayer).seekTo(TWENTY_FIVE_SECONDS_IN_MILLIS);
+            inOrder.verify(exoPlayer).prepare(mediaSource, DO_NOT_RESET_POSITION, DO_NOT_RESET_STATE);
+        }
+
+        @Test
+        public void givenNoInitialPosition_whenLoadingVideo_thenDoesNotPerformSeekBeforePreparing() {
+            MediaSource mediaSource = givenMediaSource(OPTIONS);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+
+            InOrder inOrder = inOrder(exoPlayer);
+            inOrder.verify(exoPlayer, never()).seekTo(TWENTY_FIVE_SECONDS_IN_MILLIS);
+            inOrder.verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
         }
 
         @Test
         public void whenQueryingIsPlaying_thenReturnsFalse() {
 
             boolean isPlaying = facade.isPlaying();
+
+            assertThat(isPlaying).isFalse();
+        }
+
+        @Test
+        public void whenQueryingIsPlayingAdvert_thenReturnsFalse() {
+
+            boolean isPlaying = facade.isPlayingAdvert();
+
+            assertThat(isPlaying).isFalse();
+        }
+
+        @Test
+        public void whenQueryingisPlayingContent_thenReturnsFalse() {
+
+            boolean isPlaying = facade.isPlayingContent();
 
             assertThat(isPlaying).isFalse();
         }
@@ -157,6 +304,20 @@ public class ExoPlayerFacadeTest {
             thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
             facade.mediaDurationInMillis();
+        }
+
+        @Test
+        public void whenQueryingAdvertBreakDuration_thenThrowsIllegalStateException() {
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
+
+            facade.advertBreakDurationInMillis();
+        }
+
+        @Test
+        public void whenQueryingPositionInAdvertBreak_thenThrowsIllegalStateException() {
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
+
+            facade.positionInAdvertBreakInMillis();
         }
 
         @Test
@@ -236,8 +397,8 @@ public class ExoPlayerFacadeTest {
         }
 
         private void givenPlayerIsLoaded() {
-            givenMediaSource();
-            facade.loadVideo(surface, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            givenMediaSource(OPTIONS);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
         }
 
         @Test
@@ -296,6 +457,46 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
+        public void givenExoPlayerIsReadyToPlayAndIsPlayingAd_whenQueryingIsPlayingAdvert_thenReturnsTrue() {
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+
+            boolean isPlaying = facade.isPlayingAdvert();
+
+            assertThat(isPlaying).isTrue();
+        }
+
+        @Test
+        public void givenExoPlayerIsReadyToPlayAndIsNotPlayingAd_whenQueryingIsPlayingAdvert_thenReturnsFalse() {
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
+
+            boolean isPlaying = facade.isPlayingAdvert();
+
+            assertThat(isPlaying).isFalse();
+        }
+
+        @Test
+        public void givenExoPlayerIsReadyToPlayAndIsPlayingAd_whenQueryingIsPlayingContent_thenReturnsFalse() {
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+
+            boolean isPlaying = facade.isPlayingContent();
+
+            assertThat(isPlaying).isFalse();
+        }
+
+        @Test
+        public void givenExoPlayerIsReadyToPlayAndIsNotPlayingAd_whenQueryingIsPlayingContent_thenReturnsTrue() {
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
+
+            boolean isPlaying = facade.isPlayingContent();
+
+            assertThat(isPlaying).isTrue();
+        }
+
+        @Test
         public void whenGettingPlayheadPosition_thenReturnsCurrentPosition() {
             given(exoPlayer.getCurrentPosition()).willReturn(TWO_MINUTES_IN_MILLIS);
 
@@ -311,6 +512,132 @@ public class ExoPlayerFacadeTest {
             long videoDurationInMillis = facade.mediaDurationInMillis();
 
             assertThat(videoDurationInMillis).isEqualTo(TEN_MINUTES_IN_MILLIS);
+        }
+
+        @Test
+        public void whenGettingAdvertBreakDuration_thenReturnsDurationOfAllAdsInTheBreak() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            long[] durations = {100 * MICROS, 200 * MICROS, 300 * MICROS, 400 * MICROS};
+            givenAdGroupAtPositionContainsAdsWithDurations(2, durations);
+
+            long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
+
+            assertThat(advertBreakDurationInMillis).isEqualTo(1000);
+        }
+
+        @Test
+        public void whenGettingAdvertBreakDuration_andDurationIsUnset_thenUsesDurationFromAdsLoader() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+            long[] durations = {100 * MICROS, 200 * MICROS, C.TIME_UNSET, 400 * MICROS};
+            givenAdGroupAtPositionContainsAdsWithDurations(2, durations);
+            given(adsLoader.advertDurationBy(2, 2)).willReturn(800 * MICROS);
+
+            long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
+
+            assertThat(advertBreakDurationInMillis).isEqualTo(1500);
+        }
+
+        @Test
+        public void whenGettingAdvertBreakDuration_andAdvertIsNotPlaying_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+
+            long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
+
+            assertThat(advertBreakDurationInMillis).isEqualTo(0);
+        }
+
+        @Test
+        public void whenGettingAdvertBreakDuration_andPlayerIsNotReady_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+
+            long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
+
+            assertThat(advertBreakDurationInMillis).isEqualTo(0);
+        }
+
+        @Test
+        public void whenGettingAdvertBreakDuration_andAdvertLoaderIsMissing_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
+            given(optionalAdsLoader.isPresent()).willReturn(false);
+
+            long advertBreakDurationInMillis = facade.advertBreakDurationInMillis();
+
+            assertThat(advertBreakDurationInMillis).isEqualTo(0);
+        }
+
+        @Test
+        public void whenGettingPositionInAdvertBreak_thenReturnsDurationOfPreviousAdsInBreakWithCurrentPlayheadPosition() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            long[] durations = {100 * MICROS, 200 * MICROS, 300 * MICROS, 400 * MICROS};
+            givenAdGroupAtPositionContainsAdsWithDurations(1, durations);
+            given(exoPlayer.getCurrentPosition()).willReturn(150L);
+            given(exoPlayer.getCurrentAdIndexInAdGroup()).willReturn(2);
+
+            long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
+
+            assertThat(positionInAdvertBreakInMillis).isEqualTo(450);
+        }
+
+        @Test
+        public void whenGettingPositionInAdvertBreak_andDurationIsUnset_thenUsesDurationFromAdsLoader() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+            long[] durations = {100 * MICROS, 200 * MICROS, C.TIME_UNSET, 400 * MICROS};
+            givenAdGroupAtPositionContainsAdsWithDurations(2, durations);
+            given(adsLoader.advertDurationBy(2, 2)).willReturn(800 * MICROS);
+            given(exoPlayer.getCurrentPosition()).willReturn(150L);
+            given(exoPlayer.getCurrentAdIndexInAdGroup()).willReturn(3);
+
+            long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
+
+            assertThat(positionInAdvertBreakInMillis).isEqualTo(1250);
+        }
+
+        @Test
+        public void whenGettingPositionInAdvertBreak_andAdvertIsNotPlaying_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+
+            long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
+
+            assertThat(positionInAdvertBreakInMillis).isEqualTo(0);
+        }
+
+        @Test
+        public void whenGettingPositionInAdvertBreak_andPlayerIsNotReady_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+
+            long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
+
+            assertThat(positionInAdvertBreakInMillis).isEqualTo(0);
+        }
+
+        @Test
+        public void whenGettingPositionInAdvertBreak_andAdvertLoaderIsMissing_thenReturnsZero() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(exoPlayer.getPlayWhenReady()).willReturn(IS_NOT_PLAYING);
+            given(optionalAdsLoader.isPresent()).willReturn(false);
+
+            long positionInAdvertBreakInMillis = facade.positionInAdvertBreakInMillis();
+
+            assertThat(positionInAdvertBreakInMillis).isEqualTo(0);
         }
 
         @Test
@@ -456,6 +783,10 @@ public class ExoPlayerFacadeTest {
         public MockitoRule mockitoRule = MockitoJUnit.rule();
 
         @Mock
+        BandwidthMeterCreator bandwidthMeterCreator;
+        @Mock
+        DefaultBandwidthMeter defaultBandwidthMeter;
+        @Mock
         AndroidDeviceVersion androidDeviceVersion;
         @Mock
         SimpleExoPlayer exoPlayer;
@@ -474,13 +805,27 @@ public class ExoPlayerFacadeTest {
         @Mock
         RendererTypeRequesterCreator rendererTypeRequesterCreator;
         @Mock
+        Optional<NoPlayerAdsLoader> optionalAdsLoader;
+        @Mock
+        NoPlayerAdsLoader adsLoader;
+        @Mock
         DrmSessionCreator drmSessionCreator;
         @Mock
-        DefaultDrmSessionManager.EventListener drmSessionEventListener;
+        DefaultDrmSessionEventListener drmSessionEventListener;
+        @Mock
+        MediaSourceEventListener mediaSourceEventListener;
+        @Mock
+        Optional<NoPlayer.AdvertListener> optionalAdvertListener;
+        @Mock
+        NoPlayer.AdvertListener advertListener;
         @Mock
         MediaCodecSelector mediaCodecSelector;
         @Mock
-        Surface surface;
+        SurfaceView surfaceView;
+        @Mock
+        TextureView textureView;
+        PlayerSurfaceHolder surfaceViewHolder;
+        PlayerSurfaceHolder textureViewHolder;
 
         ExoPlayerFacade facade;
 
@@ -488,30 +833,64 @@ public class ExoPlayerFacadeTest {
         public void setUp() {
             ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
-            given(trackSelectorCreator.create(OPTIONS)).willReturn(trackSelector);
+            given(exoPlayerForwarder.mediaSourceEventListener()).willReturn(mediaSourceEventListener);
+            given(exoPlayerForwarder.advertListener()).willReturn(optionalAdvertListener);
+            given(bandwidthMeterCreator.create(anyLong())).willReturn(defaultBandwidthMeter);
+            given(trackSelectorCreator.create(any(Options.class), eq(defaultBandwidthMeter))).willReturn(trackSelector);
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
+            willDoNothing().given(exoPlayer).seekTo(anyInt());
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
+                    bandwidthMeterCreator,
                     androidDeviceVersion,
                     mediaSourceFactory,
                     trackSelectorCreator,
                     exoPlayerCreator,
-                    rendererTypeRequesterCreator
+                    rendererTypeRequesterCreator,
+                    optionalAdsLoader
             );
+            given(surfaceView.getHolder()).willReturn(mock(SurfaceHolder.class));
+            surfaceViewHolder = PlayerSurfaceHolder.create(surfaceView);
+            textureViewHolder = PlayerSurfaceHolder.create(textureView);
         }
 
-        MediaSource givenMediaSource() {
+        MediaSource givenMediaSource(Options options) {
             MediaSource mediaSource = mock(MediaSource.class);
             given(
                     mediaSourceFactory.create(
-                            OPTIONS.contentType(),
+                            options,
                             uri,
-                            exoPlayerForwarder.extractorMediaSourceListener(),
-                            exoPlayerForwarder.mediaSourceEventListener()
+                            mediaSourceEventListener,
+                            defaultBandwidthMeter,
+                            optionalAdsLoader
                     )
             ).willReturn(mediaSource);
 
             return mediaSource;
+        }
+
+        void givenAdGroupAtPositionContainsAdsWithDurations(int position, long[] durations) {
+            Timeline contentTimeline = new SinglePeriodTimeline(1, false, false);
+            SinglePeriodAdTimeline timeline = new SinglePeriodAdTimeline(contentTimeline, adPlaybackState(position, durations));
+            given(exoPlayer.getCurrentTimeline()).willReturn(timeline);
+            given(exoPlayer.getCurrentAdGroupIndex()).willReturn(position);
+        }
+
+        AdPlaybackState adPlaybackState(int position, long[] durations) {
+            long[] adGroupTimesUs = {0, 100, 200, 300};
+            long[][] adGroupDurations = {
+                    ADVERT_DURATIONS,
+                    ADVERT_DURATIONS,
+                    ADVERT_DURATIONS,
+                    ADVERT_DURATIONS
+            };
+            adGroupDurations[position] = durations;
+            return new AdPlaybackState(adGroupTimesUs)
+                    .withAdCount(0, adGroupDurations[0].length)
+                    .withAdCount(1, adGroupDurations[1].length)
+                    .withAdCount(2, adGroupDurations[2].length)
+                    .withAdCount(3, adGroupDurations[3].length)
+                    .withAdDurationsUs(adGroupDurations);
         }
     }
 }

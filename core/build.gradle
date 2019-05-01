@@ -11,20 +11,28 @@ buildProperties {
         def bintrayCredentials = {
             boolean isDryRun = cli['dryRun'].or(true).boolean
             return isDryRun ?
-                    ['bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
+                    ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
                     new File("${System.getenv('BINTRAY_PROPERTIES')}")
         }
         using(bintrayCredentials()).or(cli)
         description = '''This should contain the following properties:
-                       | - bintrayRepo: name of the repo of the organisation to deploy the artifacts to
-                       | - bintrayUser: name of the account used to deploy the artifacts
-                       | - bintrayKey: API key of the account used to deploy the artifacts
-        '''.stripMargin()
+                        - bintrayOrg: name of the Bintray organisation to deploy the artifacts to
+                        - bintrayRepo: name of the repo of the organisation to deploy the artifacts to
+                        - bintrayUser: name of the account used to deploy the artifacts
+                        - bintrayKey: API key of the account used to deploy the artifacts
+        '''.stripIndent()
     }
     publish {
         def generateVersion = {
             boolean isSnapshot = cli['bintraySnapshot'].or(false).boolean
-            return isSnapshot ? "SNAPSHOT-${System.getenv('BUILD_NUMBER')?:'LOCAL'}" : version
+            if (isSnapshot) {
+                return "DEVELOP-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
+            }
+            boolean isExperimental = cli['bintrayExperimental'].or(false).boolean
+            if (isExperimental) {
+                return "EXPERIMENTAL-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
+            }
+            return version
         }
         using(['version': "${generateVersion()}"])
                 .or(buildProperties.bintray)
@@ -32,8 +40,8 @@ buildProperties {
 }
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         minSdkVersion 16
@@ -45,26 +53,32 @@ android {
         abortOnError true
         warningsAsErrors true
     }
+
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    implementation 'com.google.android.exoplayer:exoplayer:2.7.3'
+    implementation 'com.google.android.exoplayer:exoplayer:2.9.6'
+
+    implementation 'com.android.support:support-annotations:28.0.0'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.16.0'
+    testImplementation 'org.mockito:mockito-core:2.27.0'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
 }
 
 publish {
-    userOrg = 'novoda'
+    userOrg = buildProperties.publish['bintrayOrg'].string
     repoName = buildProperties.publish['bintrayRepo'].string
     groupId = 'com.novoda'
     artifactId = 'no-player'
     version = buildProperties.publish['version'].string
     bintrayUser = buildProperties.publish['bintrayUser'].string
     bintrayKey = buildProperties.publish['bintrayKey'].string
-
+    publishVersion = version
     uploadName = 'no-player'
-    description = 'player to wrap players'
+    desc = 'player to wrap players'
     website = 'https://github.com/novoda/no-player'
 }

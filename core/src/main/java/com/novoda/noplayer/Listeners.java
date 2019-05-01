@@ -130,4 +130,32 @@ public interface Listeners {
      * @param videoSizeChangedListener to remove.
      */
     void removeVideoSizeChangedListener(NoPlayer.VideoSizeChangedListener videoSizeChangedListener);
+
+    /**
+     * Add a given {@link NoPlayer.DroppedVideoFramesListener} to be notified when video playback drops frames
+     *
+     * @param droppedVideoFramesListener to notify
+     */
+    void addDroppedVideoFrames(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListener);
+
+    /**
+     * Remove a given {@link NoPlayer.DroppedVideoFramesListener}.
+     *
+     * @param droppedVideoFramesListener to remove.
+     */
+    void removeDroppedVideoFrames(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListener);
+
+    /**
+     * Add a given {@link com.novoda.noplayer.NoPlayer.AdvertListener} to be notified about advert events.
+     *
+     * @param advertListener to notify.
+     */
+    void addAdvertListener(NoPlayer.AdvertListener advertListener);
+
+    /**
+     * Remove a given {@link com.novoda.noplayer.NoPlayer.AdvertListener}.
+     *
+     * @param advertListener to remove.
+     */
+    void removeAdvertListener(NoPlayer.AdvertListener advertListener);
 }

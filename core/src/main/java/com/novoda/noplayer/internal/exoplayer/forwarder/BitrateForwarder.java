@@ -1,15 +1,16 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
+import android.support.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
-import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.model.Bitrate;
 
 import java.io.IOException;
 
-class BitrateForwarder implements AdaptiveMediaSourceEventListener {
+class BitrateForwarder implements MediaSourceEventListener {
 
     private Bitrate videoBitrate = Bitrate.fromBitsPerSecond(0);
     private Bitrate audioBitrate = Bitrate.fromBitsPerSecond(0);
@@ -21,82 +22,75 @@ class BitrateForwarder implements AdaptiveMediaSourceEventListener {
     }
 
     @Override
-    public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason, Object trackSelectionData, long mediaTimeMs) {
-        if (trackType == C.TRACK_TYPE_VIDEO) {
-            videoBitrate = Bitrate.fromBitsPerSecond(trackFormat.bitrate);
-            bitrateChangedListener.onBitrateChanged(audioBitrate, videoBitrate);
-        } else if (trackType == C.TRACK_TYPE_AUDIO) {
-            audioBitrate = Bitrate.fromBitsPerSecond(trackFormat.bitrate);
-            bitrateChangedListener.onBitrateChanged(audioBitrate, videoBitrate);
-        }
-    }
-
-    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
-    @Override
-    public void onLoadStarted(DataSpec dataSpec,
-                              int dataType,
-                              int trackType,
-                              Format trackFormat,
-                              int trackSelectionReason,
-                              Object trackSelectionData,
-                              long mediaStartTimeMs,
-                              long mediaEndTimeMs,
-                              long elapsedRealtimeMs) {
+    public void onMediaPeriodCreated(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
         // TODO: should we send?
     }
 
-    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
     @Override
-    public void onLoadCompleted(DataSpec dataSpec,
-                                int dataType,
-                                int trackType,
-                                Format trackFormat,
-                                int trackSelectionReason,
-                                Object trackSelectionData,
-                                long mediaStartTimeMs,
-                                long mediaEndTimeMs,
-                                long elapsedRealtimeMs,
-                                long loadDurationMs,
-                                long bytesLoaded) {
+    public void onMediaPeriodReleased(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
         // TODO: should we send?
     }
 
-    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
     @Override
-    public void onLoadCanceled(DataSpec dataSpec,
-                               int dataType,
-                               int trackType,
-                               Format trackFormat,
-                               int trackSelectionReason,
-                               Object trackSelectionData,
-                               long mediaStartTimeMs,
-                               long mediaEndTimeMs,
-                               long elapsedRealtimeMs,
-                               long loadDurationMs,
-                               long bytesLoaded) {
+    public void onLoadStarted(int windowIndex,
+                              @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+                              LoadEventInfo loadEventInfo,
+                              MediaLoadData mediaLoadData) {
         // TODO: should we send?
     }
 
-    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // This implements an interface method defined by ExoPlayer
     @Override
-    public void onLoadError(DataSpec dataSpec,
-                            int dataType,
-                            int trackType,
-                            Format trackFormat,
-                            int trackSelectionReason,
-                            Object trackSelectionData,
-                            long mediaStartTimeMs,
-                            long mediaEndTimeMs,
-                            long elapsedRealtimeMs,
-                            long loadDurationMs,
-                            long bytesLoaded,
+    public void onLoadCompleted(int windowIndex,
+                                @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+                                LoadEventInfo loadEventInfo,
+                                MediaLoadData mediaLoadData) {
+        // TODO: should we send?
+    }
+
+    @Override
+    public void onLoadCanceled(int windowIndex,
+                               @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+                               LoadEventInfo loadEventInfo,
+                               MediaLoadData mediaLoadData) {
+        // TODO: should we send?
+    }
+
+    @Override
+    public void onLoadError(int windowIndex,
+                            @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+                            LoadEventInfo loadEventInfo,
+                            MediaLoadData mediaLoadData,
                             IOException error,
                             boolean wasCanceled) {
         // TODO: should we send?
     }
 
     @Override
-    public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {
+    public void onReadingStarted(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
         // TODO: should we send?
+    }
+
+    @Override
+    public void onUpstreamDiscarded(int windowIndex,
+                                    MediaSource.MediaPeriodId mediaPeriodId,
+                                    MediaLoadData mediaLoadData) {
+        // TODO: should we send?
+    }
+
+    @Override
+    public void onDownstreamFormatChanged(int windowIndex,
+                                          @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+                                          MediaLoadData mediaLoadData) {
+        if (mediaLoadData.trackFormat == null) {
+            return;
+        }
+
+        if (mediaLoadData.trackType == C.TRACK_TYPE_VIDEO) {
+            videoBitrate = Bitrate.fromBitsPerSecond(mediaLoadData.trackFormat.bitrate);
+            bitrateChangedListener.onBitrateChanged(audioBitrate, videoBitrate);
+        } else if (mediaLoadData.trackType == C.TRACK_TYPE_AUDIO) {
+            audioBitrate = Bitrate.fromBitsPerSecond(mediaLoadData.trackFormat.bitrate);
+            bitrateChangedListener.onBitrateChanged(audioBitrate, videoBitrate);
+        }
     }
 }
