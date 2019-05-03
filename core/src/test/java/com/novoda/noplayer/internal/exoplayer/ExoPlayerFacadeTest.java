@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -34,10 +33,6 @@ import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,8 +43,10 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-
 import utils.ExceptionMatcher;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -277,17 +274,17 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void whenQueryingIsPlayingAdvert_thenReturnsFalse() {
+        public void whenQueryingIsSetToPlayAdvert_thenReturnsFalse() {
 
-            boolean isPlaying = facade.isPlayingAdvert();
+            boolean isPlaying = facade.isSetToPlayAdvert();
 
             assertThat(isPlaying).isFalse();
         }
 
         @Test
-        public void whenQueryingisPlayingContent_thenReturnsFalse() {
+        public void whenQueryingIsSetToPlayContent_thenReturnsFalse() {
 
-            boolean isPlaying = facade.isPlayingContent();
+            boolean isPlaying = facade.isSetToPlayContent();
 
             assertThat(isPlaying).isFalse();
         }
@@ -457,41 +454,37 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void givenExoPlayerIsReadyToPlayAndIsPlayingAd_whenQueryingIsPlayingAdvert_thenReturnsTrue() {
-            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+        public void givenExoPlayerIsPlayingAd_whenQueryingIsSetToPlayAdvert_thenReturnsTrue() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
 
-            boolean isPlaying = facade.isPlayingAdvert();
+            boolean isPlaying = facade.isSetToPlayAdvert();
 
             assertThat(isPlaying).isTrue();
         }
 
         @Test
-        public void givenExoPlayerIsReadyToPlayAndIsNotPlayingAd_whenQueryingIsPlayingAdvert_thenReturnsFalse() {
-            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+        public void givenExoPlayerIsNotPlayingAd_whenQueryingIsSetToPlayAdvert_thenReturnsFalse() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
 
-            boolean isPlaying = facade.isPlayingAdvert();
+            boolean isPlaying = facade.isSetToPlayAdvert();
 
             assertThat(isPlaying).isFalse();
         }
 
         @Test
-        public void givenExoPlayerIsReadyToPlayAndIsPlayingAd_whenQueryingIsPlayingContent_thenReturnsFalse() {
-            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+        public void givenExoPlayerIsPlayingAd_whenQueryingIsSetToPlayContent_thenReturnsFalse() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
 
-            boolean isPlaying = facade.isPlayingContent();
+            boolean isPlaying = facade.isSetToPlayContent();
 
             assertThat(isPlaying).isFalse();
         }
 
         @Test
-        public void givenExoPlayerIsReadyToPlayAndIsNotPlayingAd_whenQueryingIsPlayingContent_thenReturnsTrue() {
-            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+        public void givenExoPlayerIsNotPlayingAd_whenQueryingIsSetToPlayContent_thenReturnsTrue() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
 
-            boolean isPlaying = facade.isPlayingContent();
+            boolean isPlaying = facade.isSetToPlayContent();
 
             assertThat(isPlaying).isTrue();
         }

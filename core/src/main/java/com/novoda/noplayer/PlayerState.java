@@ -4,9 +4,9 @@ public interface PlayerState {
 
     boolean isPlaying();
 
-    boolean isPlayingAdvert();
+    boolean isSetToPlayAdvert();
 
-    boolean isPlayingContent();
+    boolean isSetToPlayContent();
 
     int videoWidth();
 

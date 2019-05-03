@@ -70,12 +70,12 @@ class ExoPlayerFacade {
         return exoPlayer != null && exoPlayer.getPlayWhenReady();
     }
 
-    boolean isPlayingAdvert() {
-        return isPlaying() && exoPlayer.isPlayingAd();
+    boolean isSetToPlayAdvert() {
+        return exoPlayer != null && exoPlayer.isPlayingAd();
     }
 
-    boolean isPlayingContent() {
-        return isPlaying() && !exoPlayer.isPlayingAd();
+    boolean isSetToPlayContent() {
+        return exoPlayer != null && !isSetToPlayAdvert();
     }
 
     long mediaDurationInMillis() throws IllegalStateException {
@@ -91,7 +91,7 @@ class ExoPlayerFacade {
     long advertBreakDurationInMillis() throws IllegalStateException {
         assertVideoLoaded();
         Timeline currentTimeline = exoPlayer.getCurrentTimeline();
-        if (isPlayingAdvert() && adsLoader.isPresent() && currentTimeline instanceof SinglePeriodAdTimeline) {
+        if (isSetToPlayAdvert() && adsLoader.isPresent() && currentTimeline instanceof SinglePeriodAdTimeline) {
             SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
             Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
 
@@ -108,7 +108,7 @@ class ExoPlayerFacade {
     long positionInAdvertBreakInMillis() throws IllegalStateException {
         assertVideoLoaded();
         Timeline currentTimeline = exoPlayer.getCurrentTimeline();
-        if (isPlayingAdvert() && adsLoader.isPresent() && currentTimeline instanceof SinglePeriodAdTimeline) {
+        if (isSetToPlayAdvert() && adsLoader.isPresent() && currentTimeline instanceof SinglePeriodAdTimeline) {
             SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
             Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
 
