@@ -99,13 +99,13 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public boolean isPlayingAdvert() {
-        return exoPlayer.isPlayingAdvert();
+    public boolean isSetToPlayAdvert() {
+        return exoPlayer.isSetToPlayAdvert();
     }
 
     @Override
-    public boolean isPlayingContent() {
-        return exoPlayer.isPlayingContent();
+    public boolean isSetToPlayContent() {
+        return exoPlayer.isSetToPlayContent();
     }
 
     @Override
