@@ -95,7 +95,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         @Override
         public void onAdvertsError(String message) {
             loadingAds = null;
-            eventListener.onAdLoadError(null, null);
+            advertListener.onAdvertsLoadError(message);
+            eventListener.onAdPlaybackState(new AdPlaybackState());
         }
     };
 
@@ -150,6 +151,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     public void handlePrepareError(int adGroupIndex, int adIndexInAdGroup, IOException exception) {
         if (adPlaybackState != null) {
             adPlaybackState = adPlaybackState.withAdLoadError(adGroupIndex, adIndexInAdGroup);
+
+            AdvertBreak advertBreak = advertBreaks.get(adGroupIndex);
+            Advert advert = advertBreak.adverts().get(adIndexInAdGroup);
+            advertListener.onAdvertPrepareError(advert, exception);
         }
     }
 

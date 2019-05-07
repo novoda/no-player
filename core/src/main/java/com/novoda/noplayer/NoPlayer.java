@@ -11,6 +11,7 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -311,11 +312,15 @@ public interface NoPlayer extends PlayerState {
 
     interface AdvertListener {
 
+        void onAdvertsLoadError(String message);
+
         void onAdvertsLoaded(List<AdvertBreak> advertBreaks);
 
         void onAdvertBreakStart(AdvertBreak advertBreak);
 
         void onAdvertBreakEnd(AdvertBreak advertBreak);
+
+        void onAdvertPrepareError(Advert advert, IOException failedWith);
 
         void onAdvertStart(Advert advert);
 
@@ -328,6 +333,7 @@ public interface NoPlayer extends PlayerState {
         void onAdvertsEnabled(List<AdvertBreak> advertBreaks);
 
         void onAdvertsSkipped(List<AdvertBreak> advertBreaks);
+
     }
 
     /**
