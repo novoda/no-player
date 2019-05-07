@@ -159,6 +159,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     public void handlePrepareError(int adGroupIndex, int adIndexInAdGroup, IOException exception) {
         if (adPlaybackState != null) {
             adPlaybackState = adPlaybackState.withAdLoadError(adGroupIndex, adIndexInAdGroup);
+            updateAdPlaybackState();
 
             AdvertBreak advertBreak = advertBreaks.get(adGroupIndex);
             Advert advert = advertBreak.adverts().get(adIndexInAdGroup);
