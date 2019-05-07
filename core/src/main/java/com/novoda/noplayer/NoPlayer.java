@@ -312,7 +312,7 @@ public interface NoPlayer extends PlayerState {
 
     interface AdvertListener {
 
-        void onAdvertsLoadError(String message);
+        void onAdvertsLoadError(Exception cause);
 
         void onAdvertsLoaded(List<AdvertBreak> advertBreaks);
 

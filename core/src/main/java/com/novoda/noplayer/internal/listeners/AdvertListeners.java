@@ -26,9 +26,9 @@ class AdvertListeners implements NoPlayer.AdvertListener {
     }
 
     @Override
-    public void onAdvertsLoadError(String message) {
+    public void onAdvertsLoadError(Exception cause) {
         for (NoPlayer.AdvertListener listener : listeners) {
-            listener.onAdvertsLoadError(message);
+            listener.onAdvertsLoadError(cause);
         }
     }
 

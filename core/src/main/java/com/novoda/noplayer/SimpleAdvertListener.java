@@ -6,7 +6,7 @@ import java.util.List;
 public class SimpleAdvertListener implements NoPlayer.AdvertListener {
 
     @Override
-    public void onAdvertsLoadError(String message) {
+    public void onAdvertsLoadError(Exception cause) {
         // no-op
     }
 

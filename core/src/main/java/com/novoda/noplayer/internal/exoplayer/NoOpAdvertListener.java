@@ -11,7 +11,7 @@ enum NoOpAdvertListener implements NoPlayer.AdvertListener {
     INSTANCE;
 
     @Override
-    public void onAdvertsLoadError(String message) {
+    public void onAdvertsLoadError(Exception cause) {
         // no-op
     }
 
