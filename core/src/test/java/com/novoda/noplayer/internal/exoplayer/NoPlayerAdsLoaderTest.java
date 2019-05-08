@@ -3,11 +3,13 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.os.Handler;
 
 import com.google.android.exoplayer2.source.ads.AdsLoader;
+import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.utils.Optional;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.Before;
@@ -33,10 +35,11 @@ import static org.mockito.Mockito.verify;
 
 public class NoPlayerAdsLoaderTest {
 
+    private static final Advert FIRST_ADVERT = anAdvert().withDurationInMillis(1000).build();
     private static final AdvertBreak FIRST_ADVERT_BREAK = anAdvertBreak()
             .withStartTimeInMillis(1000)
             .withAdvertBreakId("first_break_id")
-            .withAdvert(anAdvert().withDurationInMillis(1000).build())
+            .withAdvert(FIRST_ADVERT)
             .withAdvert(anAdvert().withDurationInMillis(2000).build())
             .withAdvert(anAdvert().withDurationInMillis(3000).build())
             .withAdvert(anAdvert().withDurationInMillis(4000).build())
@@ -73,12 +76,14 @@ public class NoPlayerAdsLoaderTest {
     }
 
     @Test
-    public void notifiesEventListenerWhenAdvertLoadingFails() {
+    public void notifiesAdvertListenerWhenAdvertLoadingFails() {
+        IOException error = new IOException("some error");
+        noPlayerAdsLoader.bind(Optional.of(advertListener));
         noPlayerAdsLoader.start(eventListener, adViewProvider);
 
-        invokeCallback().onAdvertsError("some error");
+        invokeCallback().onAdvertsError(error);
 
-        then(eventListener).should().onAdLoadError(null, null);
+        then(advertListener).should().onAdvertsLoadError(any(IOException.class));
     }
 
     @Test
@@ -137,6 +142,18 @@ public class NoPlayerAdsLoaderTest {
         long advertDurationMicros = noPlayerAdsLoader.advertDurationBy(0, 0);
 
         assertThat(advertDurationMicros).isEqualTo(1000000);
+    }
+
+    @Test
+    public void notifiesAdvertListenerWhenAdvertPreparingFails() {
+        noPlayerAdsLoader.bind(Optional.of(advertListener));
+        noPlayerAdsLoader.start(eventListener, adViewProvider);
+        invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
+
+        IOException error = new IOException("some error");
+        noPlayerAdsLoader.handlePrepareError(0, 0, error);
+
+        then(advertListener).should().onAdvertPrepareError(FIRST_ADVERT, error);
     }
 
     private AdvertsLoader.Callback invokeCallback() {

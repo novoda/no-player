@@ -16,7 +16,7 @@ public interface AdvertsLoader {
     interface Callback {
         void onAdvertsLoaded(List<AdvertBreak> advertBreaks);
 
-        void onAdvertsError(String message);
+        void onAdvertsError(Exception cause);
     }
 
     interface Cancellable {

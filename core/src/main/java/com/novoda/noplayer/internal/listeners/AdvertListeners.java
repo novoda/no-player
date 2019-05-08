@@ -4,6 +4,7 @@ import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.NoPlayer;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -25,6 +26,13 @@ class AdvertListeners implements NoPlayer.AdvertListener {
     }
 
     @Override
+    public void onAdvertsLoadError(Exception cause) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertsLoadError(cause);
+        }
+    }
+
+    @Override
     public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
         for (NoPlayer.AdvertListener listener : listeners) {
             listener.onAdvertsLoaded(advertBreaks);
@@ -42,6 +50,13 @@ class AdvertListeners implements NoPlayer.AdvertListener {
     public void onAdvertBreakEnd(AdvertBreak advertBreak) {
         for (NoPlayer.AdvertListener listener : listeners) {
             listener.onAdvertBreakEnd(advertBreak);
+        }
+    }
+
+    @Override
+    public void onAdvertPrepareError(Advert advert, IOException cause) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertPrepareError(advert, cause);
         }
     }
 
