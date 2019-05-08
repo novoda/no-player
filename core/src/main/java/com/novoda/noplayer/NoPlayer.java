@@ -3,6 +3,7 @@ package com.novoda.noplayer;
 import android.net.Uri;
 import android.support.annotation.FloatRange;
 
+import com.novoda.noplayer.internal.exoplayer.NoPlayerAdsLoader;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.Bitrate;
@@ -310,28 +311,89 @@ public interface NoPlayer extends PlayerState {
         void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
     }
 
+    /**
+     * A listener for responding to advert events.
+     */
     interface AdvertListener {
 
+        /**
+         * Called when adverts fail to load from {@link AdvertsLoader}. Content playback will
+         * trigger prior to this call being executed in the {@link NoPlayerAdsLoader}.
+         *
+         * @param cause of the advert load error that is emitted by {@link AdvertsLoader}.
+         */
         void onAdvertsLoadError(Exception cause);
 
+        /**
+         * Called when adverts have successfully loaded from {@link AdvertsLoader}. The {@link NoPlayerAdsLoader}
+         * will map to a player implementation specific Advert representation and trigger playback.
+         *
+         * @param advertBreaks that should be used to display adverts.
+         */
         void onAdvertsLoaded(List<AdvertBreak> advertBreaks);
 
+        /**
+         * Called when an {@link AdvertBreak}, a collection of {@link Advert}s, begins playback.
+         *
+         * @param advertBreak that is beginning playback.
+         */
         void onAdvertBreakStart(AdvertBreak advertBreak);
 
+        /**
+         * Called when an {@link AdvertBreak} has finished playing all {@link Advert}s.
+         *
+         * @param advertBreak that has finished playback.
+         */
         void onAdvertBreakEnd(AdvertBreak advertBreak);
 
+        /**
+         * Called when an {@link Advert} fails to prepare for playback. This could fail for a variety of
+         * reasons including: Invalid url, loss of connection etc.
+         *
+         * @param advert that failed to prepare.
+         * @param cause  of the advert prepare error, as emitted by the underlying player.
+         */
         void onAdvertPrepareError(Advert advert, IOException cause);
 
+        /**
+         * Called when an {@link Advert} begins playback.
+         *
+         * @param advert that is beginning playback.
+         */
         void onAdvertStart(Advert advert);
 
+        /**
+         * Called when an {@link Advert} has finished playback.
+         *
+         * @param advert that has finished playback.
+         */
         void onAdvertEnd(Advert advert);
 
+        /**
+         * Called when a piece of UI associated to an {@link Advert} is interacted with.
+         *
+         * @param advert that has been interacted with.
+         */
         void onAdvertClicked(Advert advert);
 
+        /**
+         * Called when the adverts have been disabled prior to being enabled.
+         */
         void onAdvertsDisabled();
 
+        /**
+         * Called when adverts have been enabled prior to being disabled.
+         *
+         * @param advertBreaks that are remaining to play after re-enabling adverts.
+         */
         void onAdvertsEnabled(List<AdvertBreak> advertBreaks);
 
+        /**
+         * Called when adverts have been skipped. Usually this is triggered as a result
+         * of resuming playback from a given position.
+         *
+         * @param advertBreaks that have been skipped.
+         */
         void onAdvertsSkipped(List<AdvertBreak> advertBreaks);
 
     }
