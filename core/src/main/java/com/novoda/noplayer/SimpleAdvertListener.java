@@ -26,7 +26,7 @@ public class SimpleAdvertListener implements NoPlayer.AdvertListener {
     }
 
     @Override
-    public void onAdvertPrepareError(Advert advert, IOException failedWith) {
+    public void onAdvertPrepareError(Advert advert, IOException cause) {
         // no-op
     }
 

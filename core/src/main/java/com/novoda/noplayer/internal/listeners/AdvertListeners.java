@@ -54,9 +54,9 @@ class AdvertListeners implements NoPlayer.AdvertListener {
     }
 
     @Override
-    public void onAdvertPrepareError(Advert advert, IOException failedWith) {
+    public void onAdvertPrepareError(Advert advert, IOException cause) {
         for (NoPlayer.AdvertListener listener : listeners) {
-            listener.onAdvertPrepareError(advert, failedWith);
+            listener.onAdvertPrepareError(advert, cause);
         }
     }
 

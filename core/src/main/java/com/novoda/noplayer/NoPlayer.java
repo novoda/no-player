@@ -320,7 +320,7 @@ public interface NoPlayer extends PlayerState {
 
         void onAdvertBreakEnd(AdvertBreak advertBreak);
 
-        void onAdvertPrepareError(Advert advert, IOException failedWith);
+        void onAdvertPrepareError(Advert advert, IOException cause);
 
         void onAdvertStart(Advert advert);
 
