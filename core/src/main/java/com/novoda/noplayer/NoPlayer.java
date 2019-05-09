@@ -388,14 +388,6 @@ public interface NoPlayer extends PlayerState {
          */
         void onAdvertsEnabled(List<AdvertBreak> advertBreaks);
 
-        /**
-         * Called when adverts have been skipped. Usually this is triggered as a result
-         * of resuming playback from a given position.
-         *
-         * @param advertBreaks that have been skipped.
-         */
-        void onAdvertsSkipped(List<AdvertBreak> advertBreaks);
-
     }
 
     /**
