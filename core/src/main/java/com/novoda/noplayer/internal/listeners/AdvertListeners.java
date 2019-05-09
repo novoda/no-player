@@ -95,10 +95,4 @@ class AdvertListeners implements NoPlayer.AdvertListener {
         }
     }
 
-    @Override
-    public void onAdvertsSkipped(List<AdvertBreak> advertBreaks) {
-        for (NoPlayer.AdvertListener listener : listeners) {
-            listener.onAdvertsSkipped(advertBreaks);
-        }
-    }
 }
