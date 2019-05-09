@@ -260,7 +260,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     }
 
     void disableAdverts() {
-        if (adPlaybackState == null || player == null) {
+        if (adPlaybackState == null || player == null || advertsDisabled) {
             return;
         }
 
@@ -272,7 +272,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     }
 
     void enableAdverts() {
-        if (adPlaybackState == null || player == null) {
+        if (adPlaybackState == null || player == null || !advertsDisabled) {
             return;
         }
 
