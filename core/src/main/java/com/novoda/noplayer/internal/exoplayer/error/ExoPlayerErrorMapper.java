@@ -21,9 +21,18 @@ public final class ExoPlayerErrorMapper {
             case ExoPlaybackException.TYPE_RENDERER:
                 return RendererErrorMapper.map(exception.getRendererException(), message);
             case ExoPlaybackException.TYPE_UNEXPECTED:
-                return UnexpectedErrorMapper.map(exception.getUnexpectedException(), message);
-            default:
+                RuntimeException unexpectedException = exception.getUnexpectedException();
+                message = ErrorFormatter.formatMessage(unexpectedException.getCause());
                 return new NoPlayerError(PlayerErrorType.UNKNOWN, DetailErrorType.UNKNOWN, message);
+            case ExoPlaybackException.TYPE_OUT_OF_MEMORY:
+                OutOfMemoryError outOfMemoryError = exception.getOutOfMemoryError();
+                message = ErrorFormatter.formatMessage(outOfMemoryError.getCause());
+                return new NoPlayerError(PlayerErrorType.UNKNOWN, DetailErrorType.OUT_OF_MEMORY_EXCEPTION, message);
+            case ExoPlaybackException.TYPE_REMOTE:
+                message = exception.getMessage();
+                return new NoPlayerError(PlayerErrorType.UNKNOWN, DetailErrorType.REMOTE_COMPONENT_EXCEPTION, message);
+            default:
+                return UnexpectedErrorMapper.map(exception.getUnexpectedException(), message);
         }
     }
 }
