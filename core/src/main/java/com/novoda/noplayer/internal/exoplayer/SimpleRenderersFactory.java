@@ -55,6 +55,7 @@ class SimpleRenderersFactory implements RenderersFactory {
     private static final boolean DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS = false;
     private static final boolean INIT_ARGS = true;
     private static final boolean PLAY_CLEAR_SAMPLES_WITHOUT_KEYS = true;
+    public static final boolean ENABLE_DECODER_FALLBACK = true;
 
     /**
      * Modes for using extension renderers.
@@ -165,6 +166,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                 allowedVideoJoiningTimeMs,
                 drmSessionManager,
                 DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
+                ENABLE_DECODER_FALLBACK,
                 eventHandler,
                 eventListener,
                 MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY));
