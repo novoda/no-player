@@ -1,8 +1,9 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.view.View;
+
+import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.AdvertView;

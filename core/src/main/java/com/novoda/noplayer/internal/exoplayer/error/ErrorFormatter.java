@@ -2,7 +2,8 @@ package com.novoda.noplayer.internal.exoplayer.error;
 
 import android.media.MediaCodec;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+
+import androidx.annotation.RequiresApi;
 
 final class ErrorFormatter {
 
