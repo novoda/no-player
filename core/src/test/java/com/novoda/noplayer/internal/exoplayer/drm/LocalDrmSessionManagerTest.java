@@ -9,7 +9,7 @@ import android.os.Looper;
 
 import androidx.annotation.RequiresApi;
 
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
@@ -53,13 +53,13 @@ public class LocalDrmSessionManagerTest {
     @Mock
     private Handler handler;
     @Mock
-    private DefaultDrmSessionManager.EventListener eventListener;
+    private DefaultDrmSessionEventListener eventListener;
 
     private LocalDrmSessionManager localDrmSessionManager;
     private FrameworkMediaCrypto frameworkMediaCrypto;
 
     @Before
-    public void setUp() throws MediaDrmException, MediaCryptoException {
+    public void setUp() throws MediaDrmException {
         frameworkMediaCrypto = FrameworkMediaCryptoFixture.aFrameworkMediaCrypto().build();
         given(mediaDrm.openSession()).willReturn(SESSION_ID.asBytes());
 

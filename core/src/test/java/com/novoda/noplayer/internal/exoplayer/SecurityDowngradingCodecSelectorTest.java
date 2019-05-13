@@ -19,6 +19,7 @@ public class SecurityDowngradingCodecSelectorTest {
 
     private static final boolean CONTENT_SECURE = true;
     private static final boolean CONTENT_INSECURE = false;
+    private static final boolean DOES_NOT_REQUIRES_TUNNELING_DECODER = false;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -30,10 +31,10 @@ public class SecurityDowngradingCodecSelectorTest {
     public void whenContentIsSecure_thenRequiresSecureDecoderIsFalse() throws MediaCodecUtil.DecoderQueryException {
         SecurityDowngradingCodecSelector securityDowngradingCodecSelector = new SecurityDowngradingCodecSelector(internalMediaCodecUtil);
 
-        securityDowngradingCodecSelector.getDecoderInfos(ANY_MIME_TYPE, CONTENT_SECURE);
+        securityDowngradingCodecSelector.getDecoderInfos(ANY_MIME_TYPE, CONTENT_SECURE, DOES_NOT_REQUIRES_TUNNELING_DECODER);
 
         ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
-        verify(internalMediaCodecUtil).getDecoderInfos(eq(ANY_MIME_TYPE), argumentCaptor.capture());
+        verify(internalMediaCodecUtil).getDecoderInfos(eq(ANY_MIME_TYPE), argumentCaptor.capture(), eq(DOES_NOT_REQUIRES_TUNNELING_DECODER));
         assertThat(argumentCaptor.getValue()).isFalse();
     }
 
@@ -41,10 +42,10 @@ public class SecurityDowngradingCodecSelectorTest {
     public void whenContentIsInsecure_thenRequiresSecureDecoderIsFalse() throws MediaCodecUtil.DecoderQueryException {
         SecurityDowngradingCodecSelector securityDowngradingCodecSelector = new SecurityDowngradingCodecSelector(internalMediaCodecUtil);
 
-        securityDowngradingCodecSelector.getDecoderInfos(ANY_MIME_TYPE, CONTENT_INSECURE);
+        securityDowngradingCodecSelector.getDecoderInfos(ANY_MIME_TYPE, CONTENT_INSECURE, DOES_NOT_REQUIRES_TUNNELING_DECODER);
 
         ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
-        verify(internalMediaCodecUtil).getDecoderInfos(eq(ANY_MIME_TYPE), argumentCaptor.capture());
+        verify(internalMediaCodecUtil).getDecoderInfos(eq(ANY_MIME_TYPE), argumentCaptor.capture(), eq(DOES_NOT_REQUIRES_TUNNELING_DECODER));
         assertThat(argumentCaptor.getValue()).isFalse();
     }
 
