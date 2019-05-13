@@ -21,9 +21,7 @@ public final class ExoPlayerErrorMapper {
             case ExoPlaybackException.TYPE_RENDERER:
                 return RendererErrorMapper.map(exception.getRendererException(), message);
             case ExoPlaybackException.TYPE_UNEXPECTED:
-                RuntimeException unexpectedException = exception.getUnexpectedException();
-                message = ErrorFormatter.formatMessage(unexpectedException.getCause());
-                return new NoPlayerError(PlayerErrorType.UNKNOWN, DetailErrorType.UNKNOWN, message);
+                return UnexpectedErrorMapper.map(exception.getUnexpectedException(), message);
             case ExoPlaybackException.TYPE_OUT_OF_MEMORY:
                 OutOfMemoryError outOfMemoryError = exception.getOutOfMemoryError();
                 message = ErrorFormatter.formatMessage(outOfMemoryError.getCause());
