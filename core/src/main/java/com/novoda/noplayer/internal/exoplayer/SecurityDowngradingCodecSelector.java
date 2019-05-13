@@ -22,7 +22,10 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
     }
 
     @Override
-    public List<MediaCodecInfo> getDecoderInfos(String mimeType, boolean requiresSecureDecoder, boolean requiresTunnelingDecoder) throws MediaCodecUtil.DecoderQueryException {
+    public List<MediaCodecInfo> getDecoderInfos(String mimeType,
+                                                boolean requiresSecureDecoder,
+                                                boolean requiresTunnelingDecoder)
+            throws MediaCodecUtil.DecoderQueryException {
         return internalMediaCodecUtil.getDecoderInfos(mimeType, USE_INSECURE_DECODER, requiresTunnelingDecoder);
     }
 
@@ -33,7 +36,10 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
 
     static class InternalMediaCodecUtil {
 
-        List<MediaCodecInfo> getDecoderInfos(String mimeType, boolean requiresSecureDecoder, boolean requiresTunnelingDecoder) throws MediaCodecUtil.DecoderQueryException {
+        List<MediaCodecInfo> getDecoderInfos(String mimeType,
+                                             boolean requiresSecureDecoder,
+                                             boolean requiresTunnelingDecoder)
+                throws MediaCodecUtil.DecoderQueryException {
             return MediaCodecUtil.getDecoderInfos(mimeType, requiresSecureDecoder, requiresTunnelingDecoder);
         }
 
