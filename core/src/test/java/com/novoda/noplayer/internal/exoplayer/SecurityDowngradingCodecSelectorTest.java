@@ -42,7 +42,7 @@ public class SecurityDowngradingCodecSelectorTest {
     public void whenContentIsInsecure_thenRequiresSecureDecoderIsFalse() throws MediaCodecUtil.DecoderQueryException {
         SecurityDowngradingCodecSelector securityDowngradingCodecSelector = new SecurityDowngradingCodecSelector(internalMediaCodecUtil);
 
-        securityDowngradingCodecSelector.getDecoderInfos(ANY_MIME_TYPE, CONTENT_INSECURE, DOES_NOT_REQUIRES_TUNNELING_DECODER);
+        securityDowngradingCodecSelector.getDecoderInfos(ANY_MIME_TYPE, CONTENT_INSECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER);
 
         ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
         verify(internalMediaCodecUtil).getDecoderInfos(eq(ANY_MIME_TYPE), argumentCaptor.capture(), eq(DOES_NOT_REQUIRES_TUNNELING_DECODER));
