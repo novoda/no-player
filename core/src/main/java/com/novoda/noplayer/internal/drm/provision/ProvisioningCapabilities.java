@@ -1,7 +1,8 @@
 package com.novoda.noplayer.internal.drm.provision;
 
 import android.os.Build;
-import android.support.annotation.VisibleForTesting;
+
+import androidx.annotation.VisibleForTesting;
 
 class ProvisioningCapabilities {
 

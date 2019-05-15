@@ -1,25 +1,28 @@
 package com.google.android.exoplayer2.drm;
 
-import android.media.MediaCrypto;
-import android.media.MediaCryptoException;
-
 import java.util.UUID;
 
 public final class FrameworkMediaCryptoFixture {
 
-    private MediaCrypto mediaCrypto = new MediaCrypto(UUID.randomUUID(), new byte[0]);
+    private UUID uuid = UUID.randomUUID();
+    private byte[] sessionId = new byte[0];
     private boolean forceAllowInsecureDecoderComponents = true;
 
-    private FrameworkMediaCryptoFixture() throws MediaCryptoException {
+    private FrameworkMediaCryptoFixture() {
         // Static factory method.
     }
 
-    public static FrameworkMediaCryptoFixture aFrameworkMediaCrypto() throws MediaCryptoException {
+    public static FrameworkMediaCryptoFixture aFrameworkMediaCrypto() {
         return new FrameworkMediaCryptoFixture();
     }
 
-    public FrameworkMediaCryptoFixture withMediaCrypto(MediaCrypto mediaCrypto) {
-        this.mediaCrypto = mediaCrypto;
+    public FrameworkMediaCryptoFixture withUUID(UUID uuid) {
+        this.uuid = uuid;
+        return this;
+    }
+
+    public FrameworkMediaCryptoFixture withUUID(byte[] sessionId) {
+        this.sessionId = sessionId;
         return this;
     }
 
@@ -29,6 +32,6 @@ public final class FrameworkMediaCryptoFixture {
     }
 
     public FrameworkMediaCrypto build() {
-        return new FrameworkMediaCrypto(mediaCrypto, forceAllowInsecureDecoderComponents);
+        return new FrameworkMediaCrypto(uuid, sessionId, forceAllowInsecureDecoderComponents);
     }
 }

@@ -1,8 +1,10 @@
 package com.novoda.noplayer;
 
-import android.support.annotation.Nullable;
 import android.view.SurfaceView;
 import android.view.TextureView;
+
+import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Player;
 
 public class PlayerSurfaceHolder {

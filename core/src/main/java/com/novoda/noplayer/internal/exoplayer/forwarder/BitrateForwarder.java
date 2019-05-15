@@ -1,6 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer.forwarder;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.MediaSource;

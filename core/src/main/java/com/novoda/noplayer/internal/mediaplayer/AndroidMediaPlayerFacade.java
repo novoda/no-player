@@ -4,9 +4,10 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+
+import androidx.annotation.Nullable;
 
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;

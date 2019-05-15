@@ -1,7 +1,8 @@
 package com.novoda.noplayer;
 
 import android.net.Uri;
-import android.support.annotation.FloatRange;
+
+import androidx.annotation.FloatRange;
 
 import com.novoda.noplayer.internal.exoplayer.NoPlayerAdsLoader;
 import com.novoda.noplayer.internal.utils.Optional;
