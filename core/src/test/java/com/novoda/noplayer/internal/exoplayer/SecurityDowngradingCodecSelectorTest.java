@@ -19,7 +19,7 @@ public class SecurityDowngradingCodecSelectorTest {
 
     private static final boolean CONTENT_SECURE = true;
     private static final boolean CONTENT_INSECURE = false;
-    private static final boolean DOES_NOT_REQUIRES_TUNNELING_DECODER = false;
+    private static final boolean DOES_NOT_REQUIRE_TUNNELING_DECODER = false;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
