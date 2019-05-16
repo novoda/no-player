@@ -12,7 +12,6 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 
 import java.io.IOException;
-import java.lang.IllegalStateException;
 import java.util.List;
 import java.util.Map;
 
