@@ -220,5 +220,6 @@ public class PlayerListenersHolder implements Listeners {
         heartbeatCallbacks.clear();
         droppedFramesListeners.clear();
         advertListeners.clear();
+        tracksChangedListeners.clear();
     }
 }
