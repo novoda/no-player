@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
@@ -16,10 +15,15 @@ import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
+import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.PlayerSubtitleTrack;
+import com.novoda.noplayer.model.PlayerVideoTrack;
+
+import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private static final String URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD = "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd";
+    private static final String URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD = "https://storage.googleapis.com/wvmedia/cenc/hevc/tears/tears.mpd";
     private static final String EXAMPLE_MODULAR_LICENSE_SERVER_PROXY = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
     private static final int HALF_A_SECOND_IN_MILLIS = 500;
     private static final int TWO_MEGABITS = 2000000;
@@ -36,9 +40,9 @@ public class MainActivity extends Activity {
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
         PlayerView playerView = findViewById(R.id.player_view);
-        View videoSelectionButton = findViewById(R.id.button_video_selection);
-        View audioSelectionButton = findViewById(R.id.button_audio_selection);
-        View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
+        final View videoSelectionButton = findViewById(R.id.button_video_selection);
+        final View audioSelectionButton = findViewById(R.id.button_audio_selection);
+        final View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
         hdSelectionCheckBox = findViewById(R.id.button_hd_selection);
         ControllerView controllerView = findViewById(R.id.controller_view);
 
@@ -63,6 +67,31 @@ public class MainActivity extends Activity {
             @Override
             public void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames) {
                 Log.v(getClass().toString(), "dropped frames: " + droppedFrames + " since: " + elapsedMsSinceLastDroppedFrames + "ms");
+            }
+        });
+        player.getListeners().addTracksChangedListener(new NoPlayer.TracksChangedListener() {
+            @Override
+            public void onTracksChanged() {
+                AudioTracks audioTracks = player.getAudioTracks();
+                if (audioTracks.size() > 1) {
+                    audioSelectionButton.setVisibility(View.VISIBLE);
+                } else {
+                    audioSelectionButton.setVisibility(View.GONE);
+                }
+
+                List<PlayerVideoTrack> videoTracks = player.getVideoTracks();
+                if (videoTracks.size() > 1) {
+                    videoSelectionButton.setVisibility(View.VISIBLE);
+                } else {
+                    videoSelectionButton.setVisibility(View.GONE);
+                }
+
+                List<PlayerSubtitleTrack> subtitleTracks = player.getSubtitleTracks();
+                if (subtitleTracks.size() > 1) {
+                    subtitleSelectionButton.setVisibility(View.VISIBLE);
+                } else {
+                    subtitleSelectionButton.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -91,11 +120,7 @@ public class MainActivity extends Activity {
     private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (player.getVideoTracks().isEmpty()) {
-                Toast.makeText(MainActivity.this, "no additional video tracks available!", Toast.LENGTH_LONG).show();
-            } else {
-                dialogCreator.showVideoSelectionDialog();
-            }
+            dialogCreator.showVideoSelectionDialog();
         }
     };
 
@@ -110,11 +135,7 @@ public class MainActivity extends Activity {
     private final View.OnClickListener showSubtitleSelectionDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (player.getSubtitleTracks().isEmpty()) {
-                Toast.makeText(MainActivity.this, "no subtitles available!", Toast.LENGTH_LONG).show();
-            } else {
-                dialogCreator.showSubtitleSelectionDialog();
-            }
+            dialogCreator.showSubtitleSelectionDialog();
         }
     };
 

@@ -88,4 +88,8 @@ public class ExoPlayerForwarder {
     public void bind(NoPlayer.AdvertListener advertListeners) {
         this.advertListeners = Optional.of(advertListeners);
     }
+
+    public void bind(NoPlayer.TracksChangedListener tracksChangedListeners) {
+        exoPlayerEventListener.add(new TracksChangedForwarder(tracksChangedListeners));
+    }
 }
