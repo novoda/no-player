@@ -2,8 +2,6 @@ package com.novoda.noplayer;
 
 import android.net.Uri;
 
-import androidx.annotation.FloatRange;
-
 import com.novoda.noplayer.internal.exoplayer.NoPlayerAdsLoader;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
@@ -14,8 +12,11 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 
 import java.io.IOException;
+import java.lang.IllegalStateException;
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.FloatRange;
 
 // There are a lot of features for playing and monitoring video.
 @SuppressWarnings("PMD.ExcessivePublicCount")
@@ -310,6 +311,10 @@ public interface NoPlayer extends PlayerState {
     interface VideoSizeChangedListener {
 
         void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
+    }
+
+    interface TracksChangedListener {
+        void onTracksChanged();
     }
 
     /**
