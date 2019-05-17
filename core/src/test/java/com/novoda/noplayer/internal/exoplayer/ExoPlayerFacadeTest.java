@@ -70,6 +70,7 @@ public class ExoPlayerFacadeTest {
     private static final long TEN_MINUTES_IN_MILLIS = 600000;
     private static final long MICROS = 1000;
     private static final long[] ADVERT_DURATIONS = {10 * MICROS, 20 * MICROS, 30 * MICROS, 40 * MICROS};
+    private static final long NO_RESUME_POSITION = 0;
 
     private static final int TEN_PERCENT = 10;
 
@@ -127,7 +128,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(adsLoader).bind(optionalAdvertListener);
+            verify(adsLoader).bind(optionalAdvertListener, NO_RESUME_POSITION);
         }
 
         @Test
@@ -138,7 +139,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(adsLoader).bind(exoPlayerForwarder.advertListener());
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
         }
 
         @Test
@@ -167,7 +168,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener());
+            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
         }
 
         @Test
@@ -175,7 +176,20 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener());
+            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
+        }
+
+        @Test
+        public void givenInitialAdvertBreakPosition_whenLoadingVideo_thenBindsAdvertListenerWithResumePosition() {
+            Options options = OPTIONS.toOptionsBuilder()
+                    .withInitialAdvertBreakPositionInMillis(TWENTY_FIVE_SECONDS_IN_MILLIS)
+                    .build();
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, mediaCodecSelector);
+
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), TWENTY_FIVE_SECONDS_IN_MILLIS);
         }
 
         @Test

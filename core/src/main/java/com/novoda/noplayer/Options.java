@@ -12,6 +12,7 @@ public class Options {
     private final int maxInitialBitrate;
     private final int maxVideoBitrate;
     private final Optional<Long> initialPositionInMillis;
+    private final Optional<Long> initialAdvertBreakPositionInMillis;
 
     /**
      * Creates a {@link OptionsBuilder} from this Options.
@@ -26,7 +27,10 @@ public class Options {
                 .withMaxVideoBitrate(maxVideoBitrate);
 
         if (initialPositionInMillis.isPresent()) {
-            optionsBuilder = optionsBuilder.withInitialPositionInMillis(initialPositionInMillis.get());
+            optionsBuilder.withInitialPositionInMillis(initialPositionInMillis.get());
+        }
+        if (initialAdvertBreakPositionInMillis.isPresent()) {
+            optionsBuilder.withInitialAdvertBreakPositionInMillis(initialAdvertBreakPositionInMillis.get());
         }
         return optionsBuilder;
     }
@@ -35,12 +39,14 @@ public class Options {
             int minDurationBeforeQualityIncreaseInMillis,
             int maxInitialBitrate,
             int maxVideoBitrate,
-            Optional<Long> initialPositionInMillis) {
+            Optional<Long> initialPositionInMillis,
+            Optional<Long> initialAdvertBreakPositionInMillis) {
         this.contentType = contentType;
         this.minDurationBeforeQualityIncreaseInMillis = minDurationBeforeQualityIncreaseInMillis;
         this.maxInitialBitrate = maxInitialBitrate;
         this.maxVideoBitrate = maxVideoBitrate;
         this.initialPositionInMillis = initialPositionInMillis;
+        this.initialAdvertBreakPositionInMillis = initialAdvertBreakPositionInMillis;
     }
 
     public ContentType contentType() {
@@ -61,6 +67,10 @@ public class Options {
 
     public Optional<Long> getInitialPositionInMillis() {
         return initialPositionInMillis;
+    }
+
+    public Optional<Long> getInitialAdvertBreakPositionInMillis() {
+        return initialAdvertBreakPositionInMillis;
     }
 
     @Override
@@ -86,8 +96,14 @@ public class Options {
         if (contentType != options.contentType) {
             return false;
         }
-        return initialPositionInMillis != null
-                ? initialPositionInMillis.equals(options.initialPositionInMillis) : options.initialPositionInMillis == null;
+        if (initialPositionInMillis != null
+                ? !initialPositionInMillis.equals(options.initialPositionInMillis)
+                : options.initialPositionInMillis != null) {
+            return false;
+        }
+        return initialAdvertBreakPositionInMillis != null
+                ? initialAdvertBreakPositionInMillis.equals(options.initialAdvertBreakPositionInMillis)
+                : options.initialAdvertBreakPositionInMillis == null;
     }
 
     @Override
@@ -97,6 +113,7 @@ public class Options {
         result = 31 * result + maxInitialBitrate;
         result = 31 * result + maxVideoBitrate;
         result = 31 * result + (initialPositionInMillis != null ? initialPositionInMillis.hashCode() : 0);
+        result = 31 * result + (initialAdvertBreakPositionInMillis != null ? initialAdvertBreakPositionInMillis.hashCode() : 0);
         return result;
     }
 

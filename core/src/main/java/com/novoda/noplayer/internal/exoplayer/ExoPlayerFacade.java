@@ -33,6 +33,7 @@ import java.util.List;
 class ExoPlayerFacade {
 
     private static final boolean DO_NOT_RESET_STATE = false;
+    private static final long NO_AD_RESUME_POSITION = 0L;
 
     private final BandwidthMeterCreator bandwidthMeterCreator;
     private final AndroidDeviceVersion androidDeviceVersion;
@@ -199,7 +200,8 @@ class ExoPlayerFacade {
         setMovieAudioAttributes(exoPlayer);
 
         if (adsLoader.isPresent()) {
-            adsLoader.get().bind(forwarder.advertListener());
+            long advertBreakInitialPositionMillis = options.getInitialAdvertBreakPositionInMillis().or(NO_AD_RESUME_POSITION);
+            adsLoader.get().bind(forwarder.advertListener(), advertBreakInitialPositionMillis);
         }
 
         MediaSource mediaSource = mediaSourceFactory.create(
