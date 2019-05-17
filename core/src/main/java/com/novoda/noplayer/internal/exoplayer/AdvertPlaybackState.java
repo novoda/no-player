@@ -14,6 +14,13 @@ final class AdvertPlaybackState {
     private final AdPlaybackState adPlaybackState;
     private final List<AdvertBreak> advertBreaks;
 
+    static AdvertPlaybackState from(List<AdvertBreak> advertBreaks, long advertBreakResumePositionMillis) {
+        AdvertPlaybackState advertPlaybackState = from(advertBreaks);
+        AdPlaybackState adPlaybackState = advertPlaybackState.adPlaybackState;
+        adPlaybackState = updateResumePositionInFirstGroup(adPlaybackState, advertBreakResumePositionMillis);
+        return new AdvertPlaybackState(adPlaybackState, advertPlaybackState.advertBreaks);
+    }
+
     static AdvertPlaybackState from(List<AdvertBreak> advertBreaks) {
         List<AdvertBreak> sortedAdvertBreaks = sortAdvertBreaksByStartTime(advertBreaks);
 
@@ -43,6 +50,33 @@ final class AdvertPlaybackState {
 
         adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
         return new AdvertPlaybackState(adPlaybackState, sortedAdvertBreaks);
+    }
+
+    private static AdPlaybackState updateResumePositionInFirstGroup(AdPlaybackState state, long positionMillis) {
+        if (state.adGroupCount <= 0 || state.adGroups[0].count <= 0) {
+            return state;
+        }
+        long groupResumePosition = C.msToUs(positionMillis);
+        AdPlaybackState.AdGroup firstAdGroup = state.adGroups[0];
+
+        AdPlaybackState updatedState = state;
+        long playedAdvertDuration = 0;
+        for (int index = 0; index < firstAdGroup.count; index++) {
+            long durationWithCurrentAd = playedAdvertDuration + firstAdGroup.durationsUs[index];
+            if (durationWithCurrentAd <= groupResumePosition) {
+                updatedState = updatedState.withPlayedAd(0, index);
+                playedAdvertDuration += firstAdGroup.durationsUs[index];
+            }
+            if (groupResumePosition <= playedAdvertDuration) {
+                break;
+            }
+
+        }
+        if (updatedState.adGroups[0].hasUnplayedAds()) {
+            updatedState = updatedState.withAdResumePositionUs(groupResumePosition - playedAdvertDuration);
+        }
+
+        return updatedState;
     }
 
     private AdvertPlaybackState(AdPlaybackState adPlaybackState, List<AdvertBreak> advertBreaks) {
