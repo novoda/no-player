@@ -14,14 +14,11 @@ final class AdvertPlaybackState {
     private final AdPlaybackState adPlaybackState;
     private final List<AdvertBreak> advertBreaks;
 
-    static AdvertPlaybackState from(List<AdvertBreak> advertBreaks, long advertBreakResumePositionMillis) {
-        AdvertPlaybackState advertPlaybackState = from(advertBreaks);
-        AdPlaybackState adPlaybackState = advertPlaybackState.adPlaybackState;
-        adPlaybackState = updateResumePositionInFirstGroup(adPlaybackState, advertBreakResumePositionMillis);
-        return new AdvertPlaybackState(adPlaybackState, advertPlaybackState.advertBreaks);
+    static AdvertPlaybackState from(List<AdvertBreak> advertBreaks) {
+        return from(advertBreaks, 0);
     }
 
-    static AdvertPlaybackState from(List<AdvertBreak> advertBreaks) {
+    static AdvertPlaybackState from(List<AdvertBreak> advertBreaks, long advertBreakResumePositionMillis) {
         List<AdvertBreak> sortedAdvertBreaks = sortAdvertBreaksByStartTime(advertBreaks);
 
         long[] advertOffsets = advertBreakOffset(sortedAdvertBreaks);
@@ -49,6 +46,7 @@ final class AdvertPlaybackState {
         }
 
         adPlaybackState = adPlaybackState.withAdDurationsUs(advertBreaksWithAdvertDurations);
+        adPlaybackState = updateResumePositionInFirstGroup(adPlaybackState, advertBreakResumePositionMillis);
         return new AdvertPlaybackState(adPlaybackState, sortedAdvertBreaks);
     }
 

@@ -55,7 +55,7 @@ public class AdvertPlaybackStateTest {
     private static final AdPlaybackState.AdGroup THIRD_AD_GROUP = thirdAdGroupFixture().build();
 
     @Test
-    public void createsCorrectAdvertPlaybackState() {
+    public void createsCorrectAdvertPlaybackStateWithZeroResumePosition() {
         List<AdvertBreak> advertBreaks = Arrays.asList(THIRD_ADVERT_BREAK, SECOND_ADVERT_BREAK, FIRST_ADVERT_BREAK);
 
         AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks);
@@ -64,6 +64,20 @@ public class AdvertPlaybackStateTest {
         assertThat(adPlaybackState.adGroupCount).isEqualTo(3);
         assertThat(adPlaybackState.adGroupTimesUs).containsSequence(ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS, THREE_SECONDS_IN_MICROS);
         assertThat(adPlaybackState.adGroups).containsExactly(FIRST_AD_GROUP, SECOND_AD_GROUP, THIRD_AD_GROUP);
+        assertThat(adPlaybackState.adResumePositionUs).isEqualTo(0L);
+        assertThat(adPlaybackState.contentDurationUs).isEqualTo(C.TIME_UNSET);
+    }
+
+    @Test
+    public void createsEmptyStateWhenAdvertBreaksAreEmpty() {
+        List<AdvertBreak> advertBreaks = Collections.emptyList();
+
+        AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks, HALF_SECOND_IN_MILLIS);
+        AdPlaybackState adPlaybackState = advertPlaybackState.adPlaybackState();
+
+        assertThat(adPlaybackState.adGroupCount).isEqualTo(0);
+        assertThat(adPlaybackState.adGroupTimesUs).isEmpty();
+        assertThat(adPlaybackState.adGroups).isEmpty();
         assertThat(adPlaybackState.adResumePositionUs).isEqualTo(0L);
         assertThat(adPlaybackState.contentDurationUs).isEqualTo(C.TIME_UNSET);
     }
@@ -79,13 +93,13 @@ public class AdvertPlaybackStateTest {
     }
 
     @Test
-    public void marksAdvertsInAdvertBreakAsPlayedWhenResumePositionIsMoreThanAdvertDuration() {
+    public void marksAdvertsInAdvertBreakAsPlayedWhenResumePositionIsMoreThanEachAdvertDuration() {
         List<AdvertBreak> advertBreaks = Collections.singletonList(THIRD_ADVERT_BREAK);
         AdPlaybackState.AdGroup expectedAdGroup = thirdAdGroupFixture()
                 .withPlayedStateAt(0)
                 .withPlayedStateAt(1)
                 .build();
-        int resumePosition = ONE_SECOND_IN_MILLIS + TWO_SECONDS_IN_MILLIS + HALF_SECOND_IN_MILLIS;
+        long resumePosition = FIRST_ADVERT.durationInMillis() + SECOND_ADVERT.durationInMillis() + HALF_SECOND_IN_MILLIS;
 
         AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks, resumePosition);
         AdPlaybackState adPlaybackState = advertPlaybackState.adPlaybackState();
@@ -110,10 +124,10 @@ public class AdvertPlaybackStateTest {
     }
 
     @Test
-    public void doesNotSetResumePositionWhenIsBiggerThanTotalLengthOfFirstAdvertBreak() {
+    public void doesNotSetResumePositionWhenBiggerThanTotalLengthOfFirstAdvertBreak() {
         List<AdvertBreak> advertBreaks = Arrays.asList(THIRD_ADVERT_BREAK, SECOND_ADVERT_BREAK);
 
-        int resumePosition = TWO_SECONDS_IN_MILLIS + THREE_SECONDS_IN_MILLIS;
+        int resumePosition = THREE_SECONDS_IN_MILLIS * 2;
         AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks, resumePosition);
         AdPlaybackState adPlaybackState = advertPlaybackState.adPlaybackState();
 
