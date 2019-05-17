@@ -38,11 +38,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private AdvertsLoader.Cancellable loadingAds;
 
     private NoPlayer.AdvertListener advertListener = NoOpAdvertListener.INSTANCE;
-    private long advertBreakResumePosition = 0;
     private List<AdvertBreak> advertBreaks = Collections.emptyList();
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
     private boolean advertsDisabled;
+    private long advertBreakResumePosition;
 
     static NoPlayerAdsLoader create(AdvertsLoader loader) {
         return new NoPlayerAdsLoader(loader, new Handler(Looper.getMainLooper()));
