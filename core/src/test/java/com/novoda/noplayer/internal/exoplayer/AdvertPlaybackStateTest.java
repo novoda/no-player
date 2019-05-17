@@ -1,6 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
@@ -72,6 +73,8 @@ public class AdvertPlaybackStateTest {
         assertThat(adPlaybackState.adGroupCount).isEqualTo(3);
         assertThat(adPlaybackState.adGroupTimesUs).containsSequence(ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS, THREE_SECONDS_IN_MICROS);
         assertThat(adPlaybackState.adGroups).containsExactly(FIRST_AD_GROUP, SECOND_AD_GROUP, THIRD_AD_GROUP);
+        assertThat(adPlaybackState.adResumePositionUs).isEqualTo(0L);
+        assertThat(adPlaybackState.contentDurationUs).isEqualTo(C.TIME_UNSET);
     }
 
     @Test
