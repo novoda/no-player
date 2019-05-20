@@ -2,9 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.os.Handler;
 import android.os.Looper;
-
 import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
@@ -44,6 +42,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
     private boolean advertsDisabled;
+    private long advertBreakResumePosition;
 
     static NoPlayerAdsLoader create(AdvertsLoader loader) {
         return new NoPlayerAdsLoader(loader, new Handler(Looper.getMainLooper()));
@@ -54,8 +53,9 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         this.handler = handler;
     }
 
-    public void bind(Optional<NoPlayer.AdvertListener> advertListener) {
+    public void bind(Optional<NoPlayer.AdvertListener> advertListener, long advertBreakResumePositionMillis) {
         this.advertListener = advertListener.isPresent() ? advertListener.get() : NoOpAdvertListener.INSTANCE;
+        this.advertBreakResumePosition = advertBreakResumePositionMillis;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         @Override
         public void onAdvertsLoaded(List<AdvertBreak> breaks) {
             loadingAds = null;
-            AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks);
+            AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks, advertBreakResumePosition);
             advertBreaks = advertPlaybackState.advertBreaks();
             adPlaybackState = advertPlaybackState.adPlaybackState();
             handler.post(new Runnable() {

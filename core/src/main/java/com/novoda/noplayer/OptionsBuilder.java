@@ -18,6 +18,7 @@ public class OptionsBuilder {
     private int maxInitialBitrate = DEFAULT_MAX_INITIAL_BITRATE;
     private int maxVideoBitrate = DEFAULT_MAX_VIDEO_BITRATE;
     private Optional<Long> initialPositionInMillis = Optional.absent();
+    private Optional<Long> initialAdvertBreakPositionInMillis = Optional.absent();
 
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} with a given {@link ContentType}.
@@ -83,6 +84,18 @@ public class OptionsBuilder {
     }
 
     /**
+     * Sets {@link OptionsBuilder} to build {@link Options} with given initial position in millis in order
+     * to specify the start position of the first advert break that will be played.
+     *
+     * @param initialAdvertBreakPositionInMillis position that the first advert break should begin playback at.
+     * @return {@link OptionsBuilder}.
+     */
+    public OptionsBuilder withInitialAdvertBreakPositionInMillis(long initialAdvertBreakPositionInMillis) {
+        this.initialAdvertBreakPositionInMillis = Optional.of(initialAdvertBreakPositionInMillis);
+        return this;
+    }
+
+    /**
      * Builds a new {@link Options} instance.
      *
      * @return a {@link Options} instance.
@@ -93,7 +106,7 @@ public class OptionsBuilder {
                 minDurationBeforeQualityIncreaseInMillis,
                 maxInitialBitrate,
                 maxVideoBitrate,
-                initialPositionInMillis
-        );
+                initialPositionInMillis,
+                initialAdvertBreakPositionInMillis);
     }
 }
