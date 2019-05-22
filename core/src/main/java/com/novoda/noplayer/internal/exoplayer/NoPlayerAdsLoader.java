@@ -56,6 +56,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     public void bind(Optional<NoPlayer.AdvertListener> advertListener, long advertBreakResumePositionMillis) {
         this.advertListener = advertListener.isPresent() ? advertListener.get() : NoOpAdvertListener.INSTANCE;
         this.advertBreakResumePosition = advertBreakResumePositionMillis;
+        resetAdvertPosition();
     }
 
     @Override
