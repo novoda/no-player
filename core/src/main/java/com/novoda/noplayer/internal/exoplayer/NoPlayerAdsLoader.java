@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
@@ -21,9 +21,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.Nullable;
+
 // Not much we can do, orchestrating adverts is a lot of work.
 @SuppressWarnings("PMD.GodClass")
-public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, AdvertView.AdvertInteractionListener {
+public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, AdvertView.AdvertInteractionListener, NoPlayer.HeartbeatCallback {
 
     private final AdvertsLoader loader;
     private final Handler handler;
@@ -43,6 +45,9 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private int adGroupIndex = -1;
     private boolean advertsDisabled;
     private long advertBreakResumePosition;
+
+    private long lastContentPositionInMillis;
+    private boolean hasPerformedSeek;
 
     static NoPlayerAdsLoader create(AdvertsLoader loader) {
         return new NoPlayerAdsLoader(loader, new Handler(Looper.getMainLooper()));
@@ -216,8 +221,13 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         }
 
         if (reason == Player.DISCONTINUITY_REASON_SEEK) {
-            long contentPosition = player.getContentPosition();
-            AvailableAdverts.markAllFutureAdvertsAsAvailable(contentPosition, advertBreaks, adPlaybackState);
+            long contentPositionInMillis = player.getContentPosition();
+
+            if (contentPositionInMillis < lastContentPositionInMillis) {
+                adPlaybackState = SkippedAdverts.markAllPastAvailableAdvertsAsSkipped(contentPositionInMillis, advertBreaks, adPlaybackState);
+                hasPerformedSeek = true;
+            }
+
             updateAdPlaybackState();
             return;
         }
@@ -283,5 +293,20 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         updateAdPlaybackState();
         advertListener.onAdvertsEnabled(advertBreaks);
         advertsDisabled = false;
+    }
+
+    @Override
+    public void onBeat(NoPlayer noPlayer) {
+        if (player == null || player.isPlayingAd()) {
+            return;
+        }
+
+        lastContentPositionInMillis = player.getContentPosition();
+
+        if (hasPerformedSeek) {
+            hasPerformedSeek = false;
+            AvailableAdverts.markAllFutureAdvertsAsAvailable(lastContentPositionInMillis, advertBreaks, adPlaybackState);
+            updateAdPlaybackState();
+        }
     }
 }

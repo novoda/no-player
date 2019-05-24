@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_AVAILABLE;
 import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_PLAYED;
 import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_SKIPPED;
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
@@ -62,7 +63,38 @@ public class SkippedAdvertsTest {
         assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_SKIPPED});
     }
 
+    @Test
+    public void makesAvailableAdvertsBeforeCurrentPositionSkipped() {
+        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+        AdPlaybackState adPlaybackState = SkippedAdverts.markAllPastAvailableAdvertsAsSkipped(TWENTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
+    }
+
+    @Test
+    public void doesNotMarkAdvertsAlreadyPlayedAsSkipped() {
+        AdPlaybackState initialAvailableAdPlaybackState = adPlaybackStateWithPlayedAdverts();
+        AdPlaybackState adPlaybackState = SkippedAdverts.markAllPastAvailableAdvertsAsSkipped(TWENTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_PLAYED});
+    }
+
     private void assertThatGroupContains(AdPlaybackState.AdGroup adGroup, int[] states) {
         assertThat(adGroup.states).containsOnly(states);
+    }
+
+    private AdPlaybackState adPlaybackStateWithPlayedAdverts() {
+        AdPlaybackState adPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+        adPlaybackState = adPlaybackState.withPlayedAd(0, 0);
+        adPlaybackState = adPlaybackState.withPlayedAd(1, 0);
+        adPlaybackState = adPlaybackState.withPlayedAd(2, 0);
+        adPlaybackState = adPlaybackState.withPlayedAd(3, 0);
+        return adPlaybackState;
     }
 }

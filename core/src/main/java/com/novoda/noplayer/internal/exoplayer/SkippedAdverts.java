@@ -32,4 +32,26 @@ final class SkippedAdverts {
         return adPlaybackStateWithSkippedAdGroups;
     }
 
+    /**
+     * Transforms all available adverts before a given position to skipped adverts.
+     *
+     * @param currentPositionInMillis The position before which all adverts will transition from Available to Skipped.
+     * @param advertBreaks            The client representation of the adverts, our source of truth.
+     * @param adPlaybackState         The {@link AdPlaybackState} to alter advert state on.
+     * @return The {@link AdPlaybackState} with the new Skipped states.
+     */
+    static AdPlaybackState markAllPastAvailableAdvertsAsSkipped(long currentPositionInMillis,
+                                                                List<AdvertBreak> advertBreaks,
+                                                                AdPlaybackState adPlaybackState) {
+        AdPlaybackState adPlaybackStateWithSkippedAdGroups = adPlaybackState;
+        for (int i = advertBreaks.size() - 1; i >= 0; i--) {
+            AdvertBreak advertBreak = advertBreaks.get(i);
+            AdPlaybackState.AdGroup adGroup = adPlaybackState.adGroups[i];
+            if (advertBreak.startTimeInMillis() < currentPositionInMillis && adGroup.hasUnplayedAds()) {
+                adPlaybackStateWithSkippedAdGroups = adPlaybackState.withSkippedAdGroup(i);
+            }
+        }
+        return adPlaybackStateWithSkippedAdGroups;
+    }
+
 }
