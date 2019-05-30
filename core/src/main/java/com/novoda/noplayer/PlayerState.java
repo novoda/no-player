@@ -11,7 +11,7 @@ public interface PlayerState {
 
     /**
      * Returns {@code true} when player is prepared to start playing and adverts are loaded
-     * (see {@link PlayerBuilder#withAdverts(AdvertsLoader)}.
+     * (see {@link PlayerBuilder#withAdverts(AdvertsLoader)}).
      *
      * @return true when player is prepared to play adverts.
      */
@@ -23,6 +23,15 @@ public interface PlayerState {
      * @return true when player is prepared to play content.
      */
     boolean isSetToPlayContent();
+
+    /**
+     * Returns an enum value that represents the the type of video (content or advert) that the player is playing or about to play.
+     *
+     * @return {@link VideoType#CONTENT} when player is prepared to start playing content
+     * {@link VideoType#ADVERT} when player is prepared to start playing advert (see {@link PlayerBuilder#withAdverts(AdvertsLoader)})
+     * {@link VideoType#UNDEFINED} when player is not ready to play (e.g. before video is loaded or after it was stopped)
+     */
+    VideoType videoType();
 
     /**
      * Width of the video.
@@ -90,4 +99,10 @@ public interface PlayerState {
      * @return percentage value between 0 and 100.
      */
     int bufferPercentage();
+
+    enum VideoType {
+        CONTENT,
+        ADVERT,
+        UNDEFINED
+    }
 }

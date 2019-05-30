@@ -21,6 +21,7 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
+import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
@@ -304,6 +305,14 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
+        public void whenQueryingVideoType_thenReturnsUndefined() {
+
+            PlayerState.VideoType videoType = facade.videoType();
+
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.UNDEFINED);
+        }
+
+        @Test
         public void whenQueryingPlayheadPosition_thenThrowsIllegalStateException() {
             thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
@@ -483,6 +492,24 @@ public class ExoPlayerFacadeTest {
             boolean isPlaying = facade.isSetToPlayAdvert();
 
             assertThat(isPlaying).isFalse();
+        }
+
+        @Test
+        public void givenExoPlayerIsPlayingAd_whenQueryingVideoType_thenReturnsAdvert() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+
+            PlayerState.VideoType videoType = facade.videoType();
+
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.ADVERT);
+        }
+
+        @Test
+        public void givenExoPlayerIsNotPlayingAd_whenQueryingVideoType_thenReturnsContent() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
+
+            PlayerState.VideoType videoType = facade.videoType();
+
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.CONTENT);
         }
 
         @Test

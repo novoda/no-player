@@ -112,6 +112,11 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
+    public VideoType videoType() {
+        return exoPlayer.videoType();
+    }
+
+    @Override
     public int videoWidth() {
         return videoWidth;
     }
