@@ -1,9 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-
 import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -15,6 +13,7 @@ import com.google.android.exoplayer2.source.ads.SinglePeriodAdTimeline;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Options;
+import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
@@ -72,12 +71,14 @@ class ExoPlayerFacade {
         return exoPlayer != null && exoPlayer.getPlayWhenReady();
     }
 
-    boolean isSetToPlayAdvert() {
-        return exoPlayer != null && exoPlayer.isPlayingAd();
-    }
-
-    boolean isSetToPlayContent() {
-        return exoPlayer != null && !isSetToPlayAdvert();
+    PlayerState.VideoType videoType() {
+        if (exoPlayer == null) {
+            return PlayerState.VideoType.UNDEFINED;
+        }
+        if (exoPlayer.isPlayingAd()) {
+            return PlayerState.VideoType.ADVERT;
+        }
+        return PlayerState.VideoType.CONTENT;
     }
 
     long mediaDurationInMillis() throws IllegalStateException {
@@ -122,6 +123,11 @@ class ExoPlayerFacade {
 
         return 0;
     }
+
+    private boolean isSetToPlayAdvert() {
+        return videoType() == PlayerState.VideoType.ADVERT;
+    }
+
 
     private long combinedAdvertDurationInGroup(Timeline.Period period, int numberOfAdvertsToInclude) {
         int adGroupIndex = exoPlayer.getCurrentAdGroupIndex();

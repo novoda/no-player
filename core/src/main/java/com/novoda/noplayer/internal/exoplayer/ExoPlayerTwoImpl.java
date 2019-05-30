@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.view.View;
-
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
@@ -24,8 +24,6 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 
 import java.util.List;
-
-import androidx.annotation.Nullable;
 
 // Not much we can do, wrapping ExoPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
@@ -74,16 +72,11 @@ class ExoPlayerTwoImpl implements NoPlayer {
         forwarder.bind(listenersHolder.getDroppedVideoFramesListeners());
         forwarder.bind(listenersHolder.getAdvertListeners());
         forwarder.bind(listenersHolder.getTracksChangedListeners());
+        forwarder.bind(resetOnErrorListener());
         listenersHolder.addPreparedListener(new PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
                 loadTimeout.cancel();
-            }
-        });
-        listenersHolder.addErrorListener(new ErrorListener() {
-            @Override
-            public void onError(PlayerError error) {
-                reset();
             }
         });
         listenersHolder.addVideoSizeChangedListener(new VideoSizeChangedListener() {
@@ -95,19 +88,23 @@ class ExoPlayerTwoImpl implements NoPlayer {
         });
     }
 
+    private ErrorListener resetOnErrorListener() {
+        return new ErrorListener() {
+            @Override
+            public void onError(PlayerError error) {
+                reset();
+            }
+        };
+    }
+
     @Override
     public boolean isPlaying() {
         return exoPlayer.isPlaying();
     }
 
     @Override
-    public boolean isSetToPlayAdvert() {
-        return exoPlayer.isSetToPlayAdvert();
-    }
-
-    @Override
-    public boolean isSetToPlayContent() {
-        return exoPlayer.isSetToPlayContent();
+    public VideoType videoType() {
+        return exoPlayer.videoType();
     }
 
     @Override

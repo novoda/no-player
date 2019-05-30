@@ -117,8 +117,8 @@ public class ExoPlayerTwoImplTest {
 
             ArgumentCaptor<NoPlayer.ErrorListener> argumentCaptor = ArgumentCaptor.forClass(NoPlayer.ErrorListener.class);
 
-            verify(listenersHolder).addErrorListener(argumentCaptor.capture());
-            NoPlayer.ErrorListener errorListener = argumentCaptor.getValue();
+            verify(forwarder, times(2)).bind(argumentCaptor.capture());
+            NoPlayer.ErrorListener errorListener = argumentCaptor.getAllValues().get(1);
             errorListener.onError(mock(NoPlayer.PlayerError.class));
 
             verify(listenersHolder).resetState();

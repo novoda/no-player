@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
-
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
@@ -210,13 +209,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
-    public boolean isSetToPlayAdvert() {
-        return false;
-    }
-
-    @Override
-    public boolean isSetToPlayContent() {
-        return mediaPlayer.isPlaying();
+    public VideoType videoType() {
+        if (mediaPlayer.isPlaying()) {
+            return VideoType.CONTENT;
+        }
+        return VideoType.UNDEFINED;
     }
 
     @Override

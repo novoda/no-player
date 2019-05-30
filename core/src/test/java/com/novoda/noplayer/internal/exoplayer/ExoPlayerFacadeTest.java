@@ -21,6 +21,7 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
+import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
@@ -288,19 +289,11 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void whenQueryingIsSetToPlayAdvert_thenReturnsFalse() {
+        public void whenQueryingVideoType_thenReturnsUndefined() {
 
-            boolean isPlaying = facade.isSetToPlayAdvert();
+            PlayerState.VideoType videoType = facade.videoType();
 
-            assertThat(isPlaying).isFalse();
-        }
-
-        @Test
-        public void whenQueryingIsSetToPlayContent_thenReturnsFalse() {
-
-            boolean isPlaying = facade.isSetToPlayContent();
-
-            assertThat(isPlaying).isFalse();
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.UNDEFINED);
         }
 
         @Test
@@ -468,39 +461,21 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void givenExoPlayerIsPlayingAd_whenQueryingIsSetToPlayAdvert_thenReturnsTrue() {
+        public void givenExoPlayerIsPlayingAd_whenQueryingVideoType_thenReturnsAdvert() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
 
-            boolean isPlaying = facade.isSetToPlayAdvert();
+            PlayerState.VideoType videoType = facade.videoType();
 
-            assertThat(isPlaying).isTrue();
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.ADVERT);
         }
 
         @Test
-        public void givenExoPlayerIsNotPlayingAd_whenQueryingIsSetToPlayAdvert_thenReturnsFalse() {
+        public void givenExoPlayerIsNotPlayingAd_whenQueryingVideoType_thenReturnsContent() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
 
-            boolean isPlaying = facade.isSetToPlayAdvert();
+            PlayerState.VideoType videoType = facade.videoType();
 
-            assertThat(isPlaying).isFalse();
-        }
-
-        @Test
-        public void givenExoPlayerIsPlayingAd_whenQueryingIsSetToPlayContent_thenReturnsFalse() {
-            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
-
-            boolean isPlaying = facade.isSetToPlayContent();
-
-            assertThat(isPlaying).isFalse();
-        }
-
-        @Test
-        public void givenExoPlayerIsNotPlayingAd_whenQueryingIsSetToPlayContent_thenReturnsTrue() {
-            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
-
-            boolean isPlaying = facade.isSetToPlayContent();
-
-            assertThat(isPlaying).isTrue();
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.CONTENT);
         }
 
         @Test
