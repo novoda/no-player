@@ -64,7 +64,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
         heart.bind(new Heart.Heartbeat(listenersHolder.getHeartbeatCallbacks(), this));
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
-        forwarder.bind(listenersHolder.getErrorListeners(), resetOnErrorListener());
+        forwarder.bind(listenersHolder.getErrorListeners());
         forwarder.bind(listenersHolder.getBufferStateListeners());
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
         forwarder.bind(listenersHolder.getBitrateChangedListeners());
@@ -72,6 +72,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
         forwarder.bind(listenersHolder.getDroppedVideoFramesListeners());
         forwarder.bind(listenersHolder.getAdvertListeners());
         forwarder.bind(listenersHolder.getTracksChangedListeners());
+        forwarder.bind(resetOnErrorListener());
         listenersHolder.addPreparedListener(new PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
