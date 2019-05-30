@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.view.View;
-
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
@@ -24,8 +24,6 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 
 import java.util.List;
-
-import androidx.annotation.Nullable;
 
 // Not much we can do, wrapping ExoPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
@@ -66,7 +64,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
         heart.bind(new Heart.Heartbeat(listenersHolder.getHeartbeatCallbacks(), this));
         forwarder.bind(listenersHolder.getPreparedListeners(), this);
         forwarder.bind(listenersHolder.getCompletionListeners(), listenersHolder.getStateChangedListeners());
-        forwarder.bind(listenersHolder.getErrorListeners());
+        forwarder.bind(listenersHolder.getErrorListeners(), resetOnErrorListener());
         forwarder.bind(listenersHolder.getBufferStateListeners());
         forwarder.bind(listenersHolder.getVideoSizeChangedListeners());
         forwarder.bind(listenersHolder.getBitrateChangedListeners());
@@ -80,12 +78,6 @@ class ExoPlayerTwoImpl implements NoPlayer {
                 loadTimeout.cancel();
             }
         });
-        listenersHolder.addErrorListener(new ErrorListener() {
-            @Override
-            public void onError(PlayerError error) {
-                reset();
-            }
-        });
         listenersHolder.addVideoSizeChangedListener(new VideoSizeChangedListener() {
             @Override
             public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
@@ -93,6 +85,15 @@ class ExoPlayerTwoImpl implements NoPlayer {
                 videoHeight = height;
             }
         });
+    }
+
+    private ErrorListener resetOnErrorListener() {
+        return new ErrorListener() {
+            @Override
+            public void onError(PlayerError error) {
+                reset();
+            }
+        };
     }
 
     @Override

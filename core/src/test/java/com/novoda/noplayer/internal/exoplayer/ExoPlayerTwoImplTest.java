@@ -40,6 +40,7 @@ import java.util.List;
 
 import static android.provider.CalendarContract.CalendarCache.URI;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -83,7 +84,7 @@ public class ExoPlayerTwoImplTest {
 
             verify(forwarder).bind(preparedListener, player);
             verify(forwarder).bind(completionListener, stateChangedListener);
-            verify(forwarder).bind(errorListener);
+            verify(forwarder).bind(eq(errorListener), any(NoPlayer.ErrorListener.class));
             verify(forwarder).bind(bufferStateListener);
             verify(forwarder).bind(videoSizeChangedListener);
             verify(forwarder).bind(bitrateChangedListener);
@@ -117,7 +118,7 @@ public class ExoPlayerTwoImplTest {
 
             ArgumentCaptor<NoPlayer.ErrorListener> argumentCaptor = ArgumentCaptor.forClass(NoPlayer.ErrorListener.class);
 
-            verify(listenersHolder).addErrorListener(argumentCaptor.capture());
+            verify(forwarder).bind(any(NoPlayer.ErrorListener.class), argumentCaptor.capture());
             NoPlayer.ErrorListener errorListener = argumentCaptor.getValue();
             errorListener.onError(mock(NoPlayer.PlayerError.class));
 

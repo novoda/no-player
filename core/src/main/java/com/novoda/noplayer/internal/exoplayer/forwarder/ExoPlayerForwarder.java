@@ -58,8 +58,9 @@ public class ExoPlayerForwarder {
         exoPlayerEventListener.add(new OnCompletionStateChangedForwarder(stateChangedListener));
     }
 
-    public void bind(NoPlayer.ErrorListener errorListener) {
+    public void bind(NoPlayer.ErrorListener errorListener, NoPlayer.ErrorListener internalErrorListener) {
         exoPlayerEventListener.add(new PlayerOnErrorForwarder(errorListener));
+        exoPlayerEventListener.add(new PlayerOnErrorForwarder(internalErrorListener));
     }
 
     public void bind(NoPlayer.BufferStateListener bufferStateListener) {
