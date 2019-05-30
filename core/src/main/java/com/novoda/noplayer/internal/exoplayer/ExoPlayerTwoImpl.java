@@ -102,16 +102,6 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public boolean isSetToPlayAdvert() {
-        return exoPlayer.isSetToPlayAdvert();
-    }
-
-    @Override
-    public boolean isSetToPlayContent() {
-        return exoPlayer.isSetToPlayContent();
-    }
-
-    @Override
     public VideoType videoType() {
         return exoPlayer.videoType();
     }

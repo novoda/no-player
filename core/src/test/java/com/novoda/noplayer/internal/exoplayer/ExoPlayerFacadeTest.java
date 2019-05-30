@@ -289,22 +289,6 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void whenQueryingIsSetToPlayAdvert_thenReturnsFalse() {
-
-            boolean isPlaying = facade.isSetToPlayAdvert();
-
-            assertThat(isPlaying).isFalse();
-        }
-
-        @Test
-        public void whenQueryingIsSetToPlayContent_thenReturnsFalse() {
-
-            boolean isPlaying = facade.isSetToPlayContent();
-
-            assertThat(isPlaying).isFalse();
-        }
-
-        @Test
         public void whenQueryingVideoType_thenReturnsUndefined() {
 
             PlayerState.VideoType videoType = facade.videoType();
@@ -477,24 +461,6 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void givenExoPlayerIsPlayingAd_whenQueryingIsSetToPlayAdvert_thenReturnsTrue() {
-            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
-
-            boolean isPlaying = facade.isSetToPlayAdvert();
-
-            assertThat(isPlaying).isTrue();
-        }
-
-        @Test
-        public void givenExoPlayerIsNotPlayingAd_whenQueryingIsSetToPlayAdvert_thenReturnsFalse() {
-            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
-
-            boolean isPlaying = facade.isSetToPlayAdvert();
-
-            assertThat(isPlaying).isFalse();
-        }
-
-        @Test
         public void givenExoPlayerIsPlayingAd_whenQueryingVideoType_thenReturnsAdvert() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
 
@@ -510,24 +476,6 @@ public class ExoPlayerFacadeTest {
             PlayerState.VideoType videoType = facade.videoType();
 
             assertThat(videoType).isEqualTo(PlayerState.VideoType.CONTENT);
-        }
-
-        @Test
-        public void givenExoPlayerIsPlayingAd_whenQueryingIsSetToPlayContent_thenReturnsFalse() {
-            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
-
-            boolean isPlaying = facade.isSetToPlayContent();
-
-            assertThat(isPlaying).isFalse();
-        }
-
-        @Test
-        public void givenExoPlayerIsNotPlayingAd_whenQueryingIsSetToPlayContent_thenReturnsTrue() {
-            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
-
-            boolean isPlaying = facade.isSetToPlayContent();
-
-            assertThat(isPlaying).isTrue();
         }
 
         @Test

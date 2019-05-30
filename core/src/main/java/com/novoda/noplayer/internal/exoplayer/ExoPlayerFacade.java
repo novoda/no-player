@@ -71,14 +71,6 @@ class ExoPlayerFacade {
         return exoPlayer != null && exoPlayer.getPlayWhenReady();
     }
 
-    boolean isSetToPlayAdvert() {
-        return exoPlayer != null && exoPlayer.isPlayingAd();
-    }
-
-    boolean isSetToPlayContent() {
-        return exoPlayer != null && !isSetToPlayAdvert();
-    }
-
     PlayerState.VideoType videoType() {
         if (exoPlayer == null) {
             return PlayerState.VideoType.UNDEFINED;
@@ -131,6 +123,11 @@ class ExoPlayerFacade {
 
         return 0;
     }
+
+    private boolean isSetToPlayAdvert() {
+        return videoType() == PlayerState.VideoType.ADVERT;
+    }
+
 
     private long combinedAdvertDurationInGroup(Timeline.Period period, int numberOfAdvertsToInclude) {
         int adGroupIndex = exoPlayer.getCurrentAdGroupIndex();

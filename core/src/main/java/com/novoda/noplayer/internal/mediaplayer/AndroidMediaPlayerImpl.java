@@ -209,16 +209,6 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
-    public boolean isSetToPlayAdvert() {
-        return false;
-    }
-
-    @Override
-    public boolean isSetToPlayContent() {
-        return mediaPlayer.isPlaying();
-    }
-
-    @Override
     public VideoType videoType() {
         if (mediaPlayer.isPlaying()) {
             return VideoType.CONTENT;

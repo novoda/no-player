@@ -10,21 +10,6 @@ public interface PlayerState {
     boolean isPlaying();
 
     /**
-     * Returns {@code true} when player is prepared to start playing and adverts are loaded
-     * (see {@link PlayerBuilder#withAdverts(AdvertsLoader)}).
-     *
-     * @return true when player is prepared to play adverts.
-     */
-    boolean isSetToPlayAdvert();
-
-    /**
-     * Returns {@code true} when player is prepared to start playing content.
-     *
-     * @return true when player is prepared to play content.
-     */
-    boolean isSetToPlayContent();
-
-    /**
      * Returns an enum value that represents the the type of video (content or advert) that the player is playing or about to play.
      *
      * @return {@link VideoType#CONTENT} when player is prepared to start playing content
