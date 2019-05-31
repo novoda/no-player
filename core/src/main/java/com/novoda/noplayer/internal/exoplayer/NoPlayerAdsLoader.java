@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.os.Handler;
 import android.os.Looper;
-
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import androidx.annotation.Nullable;
 
 // Not much we can do, orchestrating adverts is a lot of work.
 @SuppressWarnings("PMD.GodClass")
@@ -45,6 +43,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private int adGroupIndex = -1;
     private boolean advertsDisabled;
     private long advertBreakResumePosition;
+    private long contentInitialPosition;
 
     private long lastContentPositionInMillis;
     private boolean hasPerformedSeek;
@@ -58,9 +57,14 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         this.handler = handler;
     }
 
-    public void bind(Optional<NoPlayer.AdvertListener> advertListener, long advertBreakResumePositionMillis) {
+    public void bind(
+            Optional<NoPlayer.AdvertListener> advertListener,
+            long advertBreakResumePositionMillis,
+            long contentInitialPositionMillis
+    ) {
         this.advertListener = advertListener.isPresent() ? advertListener.get() : NoOpAdvertListener.INSTANCE;
         this.advertBreakResumePosition = advertBreakResumePositionMillis;
+        this.contentInitialPosition = contentInitialPositionMillis;
     }
 
     @Override
@@ -89,6 +93,9 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks, advertBreakResumePosition);
             advertBreaks = advertPlaybackState.advertBreaks();
             adPlaybackState = advertPlaybackState.adPlaybackState();
+            if (contentInitialPosition > 0) {
+                updateAdvertStateForSeek(contentInitialPosition);
+            }
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -224,8 +231,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             long contentPositionInMillis = player.getContentPosition();
 
             if (contentPositionInMillis < lastContentPositionInMillis) {
-                adPlaybackState = SkippedAdverts.markAllPastAvailableAdvertsAsSkipped(contentPositionInMillis, advertBreaks, adPlaybackState);
-                hasPerformedSeek = true;
+                updateAdvertStateForSeek(contentPositionInMillis);
             }
 
             updateAdPlaybackState();
@@ -242,6 +248,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
             handleAdvertStart();
         }
+    }
+
+    private void updateAdvertStateForSeek(long contentPositionInMillis) {
+        adPlaybackState = SkippedAdverts.markAllPastAvailableAdvertsAsSkipped(contentPositionInMillis, advertBreaks, adPlaybackState);
+        hasPerformedSeek = true;
     }
 
     private boolean isPlayingAdvert() {

@@ -43,15 +43,15 @@ final class SkippedAdverts {
     static AdPlaybackState markAllPastAvailableAdvertsAsSkipped(long currentPositionInMillis,
                                                                 List<AdvertBreak> advertBreaks,
                                                                 AdPlaybackState adPlaybackState) {
-        AdPlaybackState adPlaybackStateWithSkippedAdGroups = adPlaybackState;
+        AdPlaybackState updatedPlaybackState = adPlaybackState;
         for (int i = advertBreaks.size() - 1; i >= 0; i--) {
             AdvertBreak advertBreak = advertBreaks.get(i);
-            AdPlaybackState.AdGroup adGroup = adPlaybackState.adGroups[i];
+            AdPlaybackState.AdGroup adGroup = updatedPlaybackState.adGroups[i];
             if (advertBreak.startTimeInMillis() < currentPositionInMillis && adGroup.hasUnplayedAds()) {
-                adPlaybackStateWithSkippedAdGroups = adPlaybackState.withSkippedAdGroup(i);
+                updatedPlaybackState = updatedPlaybackState.withSkippedAdGroup(i);
             }
         }
-        return adPlaybackStateWithSkippedAdGroups;
+        return updatedPlaybackState;
     }
 
 }

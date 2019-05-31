@@ -2,15 +2,12 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.AdvertBreak;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-
-import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_AVAILABLE;
-import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_PLAYED;
-import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_SKIPPED;
+import static com.google.android.exoplayer2.source.ads.AdPlaybackState.*;
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
 import static com.novoda.noplayer.AdvertFixtures.anAdvert;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -66,10 +63,10 @@ public class SkippedAdvertsTest {
     @Test
     public void makesAvailableAdvertsBeforeCurrentPositionSkipped() {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
-        AdPlaybackState adPlaybackState = SkippedAdverts.markAllPastAvailableAdvertsAsSkipped(TWENTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+        AdPlaybackState adPlaybackState = SkippedAdverts.markAllPastAvailableAdvertsAsSkipped(TWENTY_SECONDS_IN_MILLIS + 1, ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
-        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
         assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
     }
