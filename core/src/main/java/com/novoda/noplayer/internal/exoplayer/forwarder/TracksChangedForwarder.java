@@ -11,6 +11,7 @@ import com.novoda.noplayer.NoPlayer;
 class TracksChangedForwarder implements Player.EventListener {
 
     private final NoPlayer.TracksChangedListener tracksChangedListener;
+    private int discontinuityReason = -1;
 
     TracksChangedForwarder(NoPlayer.TracksChangedListener tracksChangedListener) {
         this.tracksChangedListener = tracksChangedListener;
@@ -38,7 +39,11 @@ class TracksChangedForwarder implements Player.EventListener {
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-        tracksChangedListener.onTracksChanged();
+        if (discontinuityReason == Player.TIMELINE_CHANGE_REASON_RESET && trackGroups.isEmpty()) {
+            // ignore internal resets with empty track groups
+        } else {
+            tracksChangedListener.onTracksChanged();
+        }
     }
 
     @Override
@@ -53,7 +58,7 @@ class TracksChangedForwarder implements Player.EventListener {
 
     @Override
     public void onPositionDiscontinuity(int reason) {
-        // no-op.
+        discontinuityReason = reason;
     }
 
     @Override
