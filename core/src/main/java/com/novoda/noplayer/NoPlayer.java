@@ -135,6 +135,10 @@ public interface NoPlayer extends PlayerState {
 
     void disableAdverts();
 
+    void skipAdvertBreak();
+
+    void skipAdvert();
+
     void enableAdverts();
 
     /**
@@ -393,6 +397,19 @@ public interface NoPlayer extends PlayerState {
          */
         void onAdvertsEnabled(List<AdvertBreak> advertBreaks);
 
+        /**
+         * Called when advert break is skipped or prior to being skipped
+         *
+         * @param advertBreak that is being skipped.
+         */
+        void onAdvertBreakSkipped(AdvertBreak advertBreak);
+
+        /**
+         * Called when advert is skipped or prior to being skipped
+         *
+         * @param advert that is being skipped.
+         */
+        void onAdvertSkipped(Advert advert);
     }
 
     /**

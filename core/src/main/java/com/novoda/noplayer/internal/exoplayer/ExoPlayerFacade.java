@@ -1,7 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -26,6 +26,8 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 // Not much we can do, wrapping ExoPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
@@ -127,7 +129,6 @@ class ExoPlayerFacade {
     private boolean isSetToPlayAdvert() {
         return videoType() == PlayerState.VideoType.ADVERT;
     }
-
 
     private long combinedAdvertDurationInGroup(Timeline.Period period, int numberOfAdvertsToInclude) {
         int adGroupIndex = exoPlayer.getCurrentAdGroupIndex();
@@ -362,6 +363,20 @@ class ExoPlayerFacade {
         if (adsLoader.isPresent()) {
             NoPlayerAdsLoader adsLoader = this.adsLoader.get();
             adsLoader.disableAdverts();
+        }
+    }
+
+    void skipAdvertBreak() {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            adsLoader.skipAdvertBreak();
+        }
+    }
+
+    void skipAdvert() {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            adsLoader.skipAdvert();
         }
     }
 

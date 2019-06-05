@@ -35,4 +35,5 @@ final class AvailableAdverts {
             }
         }
     }
+
 }

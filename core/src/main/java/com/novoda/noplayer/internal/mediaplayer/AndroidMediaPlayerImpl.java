@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
+
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
@@ -341,6 +342,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     @Override
     public void disableAdverts() {
         mediaPlayer.disableAdverts();
+    }
+
+    @Override
+    public void skipAdvertBreak() {
+        mediaPlayer.skipAdvertBreak();
+    }
+
+    @Override
+    public void skipAdvert() {
+        mediaPlayer.skipAdvert();
     }
 
     @Override

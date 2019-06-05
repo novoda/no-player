@@ -2,10 +2,11 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.AdvertBreak;
-import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.junit.Test;
 
 import static com.google.android.exoplayer2.source.ads.AdPlaybackState.*;
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
@@ -21,6 +22,7 @@ public class SkippedAdvertsTest {
 
     private static final AdvertBreak FIRST_ADVERT_BREAK = anAdvertBreak()
             .withStartTimeInMillis(TEN_SECONDS_IN_MILLIS)
+            .withAdvert(anAdvert().build())
             .withAdvert(anAdvert().build())
             .build();
     private static final AdvertBreak SECOND_ADVERT_BREAK = anAdvertBreak()
@@ -40,21 +42,43 @@ public class SkippedAdvertsTest {
     @Test
     public void skipsAllAdverts() {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
-        AdPlaybackState adPlaybackState = SkippedAdverts.markAllNonPlayedAdvertsAsSkipped(ADVERT_BREAKS, initialAvailableAdPlaybackState);
+        AdPlaybackState adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
-        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED, AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_SKIPPED});
     }
 
     @Test
+    public void skipAdvertBreak() {
+        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+        AdPlaybackState adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(0, initialAvailableAdPlaybackState);
+
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED, AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
+    }
+
+    @Test
+    public void skipAdvert() {
+        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+        AdPlaybackState adPlaybackState = SkippedAdverts.markAdvertAsSkipped(0, 0, initialAvailableAdPlaybackState);
+
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED, AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
+    }
+
+    @Test
     public void doesNotSkipAdvertThatHasAlreadyPlayed() {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
         initialAvailableAdPlaybackState = initialAvailableAdPlaybackState.withPlayedAd(1, 0);
-        AdPlaybackState adPlaybackState = SkippedAdverts.markAllNonPlayedAdvertsAsSkipped(ADVERT_BREAKS, initialAvailableAdPlaybackState);
+        AdPlaybackState adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
-        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED, AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_SKIPPED});
@@ -65,7 +89,7 @@ public class SkippedAdvertsTest {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
         AdPlaybackState adPlaybackState = SkippedAdverts.markAllPastAvailableAdvertsAsSkipped(TWENTY_SECONDS_IN_MILLIS + 1, ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
-        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED, AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
         assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
@@ -76,7 +100,7 @@ public class SkippedAdvertsTest {
         AdPlaybackState initialAvailableAdPlaybackState = adPlaybackStateWithPlayedAdverts();
         AdPlaybackState adPlaybackState = SkippedAdverts.markAllPastAvailableAdvertsAsSkipped(TWENTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
-        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED, AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_PLAYED});
@@ -89,6 +113,7 @@ public class SkippedAdvertsTest {
     private AdPlaybackState adPlaybackStateWithPlayedAdverts() {
         AdPlaybackState adPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
         adPlaybackState = adPlaybackState.withPlayedAd(0, 0);
+        adPlaybackState = adPlaybackState.withPlayedAd(0, 1);
         adPlaybackState = adPlaybackState.withPlayedAd(1, 0);
         adPlaybackState = adPlaybackState.withPlayedAd(2, 0);
         adPlaybackState = adPlaybackState.withPlayedAd(3, 0);

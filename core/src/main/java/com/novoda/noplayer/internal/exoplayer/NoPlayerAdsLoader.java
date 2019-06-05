@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import androidx.annotation.Nullable;
 
 // Not much we can do, orchestrating adverts is a lot of work.
 @SuppressWarnings("PMD.GodClass")
@@ -286,11 +288,33 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        adPlaybackState = SkippedAdverts.markAllNonPlayedAdvertsAsSkipped(advertBreaks, adPlaybackState);
+        adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreaks, adPlaybackState);
         updateAdPlaybackState();
         advertListener.onAdvertsDisabled();
         resetAdvertPosition();
         advertsDisabled = true;
+    }
+
+    void skipAdvertBreak() {
+        if (adPlaybackState == null || player == null || advertsDisabled || adGroupIndex < 0) {
+            return;
+        }
+
+        adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(adGroupIndex, adPlaybackState);
+        updateAdPlaybackState();
+        advertListener.onAdvertBreakSkipped(advertBreaks.get(adGroupIndex));
+        resetAdvertPosition();
+    }
+
+    void skipAdvert() {
+        if (adPlaybackState == null || player == null || advertsDisabled || adIndexInGroup < 0 || adGroupIndex < 0) {
+            return;
+        }
+
+        adPlaybackState = SkippedAdverts.markAdvertAsSkipped(adIndexInGroup, adGroupIndex, adPlaybackState);
+        updateAdPlaybackState();
+        advertListener.onAdvertSkipped(advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup));
+        resetAdvertPosition();
     }
 
     void enableAdverts() {

@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.view.View;
-import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
@@ -25,8 +25,10 @@ import com.novoda.noplayer.model.Timeout;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
+
 // Not much we can do, wrapping ExoPlayer is a lot of work
-@SuppressWarnings("PMD.GodClass")
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount"})
 class ExoPlayerTwoImpl implements NoPlayer {
 
     private final ExoPlayerFacade exoPlayer;
@@ -287,6 +289,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public void disableAdverts() {
         exoPlayer.disableAdverts();
+    }
+
+    @Override
+    public void skipAdvertBreak() {
+        exoPlayer.skipAdvertBreak();
+    }
+
+    @Override
+    public void skipAdvert() {
+        exoPlayer.skipAdvert();
     }
 
     @Override
