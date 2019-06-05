@@ -348,8 +348,13 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
-    public void skipAdvertBreak(@NonNull AdvertBreak advertBreak) {
-        mediaPlayer.skipAdvertBreak(advertBreak);
+    public void skipAdvertBreak() {
+        mediaPlayer.skipAdvertBreak();
+    }
+
+    @Override
+    public void skipAdvert() {
+        mediaPlayer.skipAdvert();
     }
 
     @Override

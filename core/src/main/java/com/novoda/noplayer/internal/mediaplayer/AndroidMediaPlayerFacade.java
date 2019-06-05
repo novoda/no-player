@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
@@ -357,7 +356,12 @@ class AndroidMediaPlayerFacade {
         NoPlayerLog.w("Tried to enable adverts but has not been implemented for MediaPlayer.");
     }
 
-    void skipAdvertBreak(AdvertBreak advertBreak) {
+    void skipAdvertBreak() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to skip advert break but has not been implemented for MediaPlayer.");
+    }
+
+    void skipAdvert() {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to skip advert break but has not been implemented for MediaPlayer.");
     }

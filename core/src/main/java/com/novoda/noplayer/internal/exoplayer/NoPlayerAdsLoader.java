@@ -295,14 +295,25 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         advertsDisabled = true;
     }
 
-    void skipAdvertBreak(AdvertBreak advertBreak) {
-        if (adPlaybackState == null || player == null || advertsDisabled) {
+    void skipAdvertBreak() {
+        if (adPlaybackState == null || player == null || advertsDisabled || adGroupIndex < 0) {
             return;
         }
 
-        adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreak, advertBreaks, adPlaybackState);
+        adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(adGroupIndex, adPlaybackState);
         updateAdPlaybackState();
-        advertListener.onAdvertsSkipped(advertBreak);
+        advertListener.onAdvertBreakSkipped(advertBreaks.get(adGroupIndex));
+        resetAdvertPosition();
+    }
+
+    void skipAdvert() {
+        if (adPlaybackState == null || player == null || advertsDisabled || adIndexInGroup < 0 || adGroupIndex < 0) {
+            return;
+        }
+
+        adPlaybackState = SkippedAdverts.markAdvertAsSkipped(adIndexInGroup, adGroupIndex, adPlaybackState);
+        updateAdPlaybackState();
+        advertListener.onAdvertSkipped(advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup));
         resetAdvertPosition();
     }
 

@@ -11,7 +11,6 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ads.SinglePeriodAdTimeline;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerState;
@@ -367,10 +366,17 @@ class ExoPlayerFacade {
         }
     }
 
-    void skipAdvertBreak(AdvertBreak advertBreak) {
+    void skipAdvertBreak() {
         if (adsLoader.isPresent()) {
             NoPlayerAdsLoader adsLoader = this.adsLoader.get();
-            adsLoader.skipAdvertBreak(advertBreak);
+            adsLoader.skipAdvertBreak();
+        }
+    }
+
+    void skipAdvert() {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            adsLoader.skipAdvert();
         }
     }
 

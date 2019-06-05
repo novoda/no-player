@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.view.View;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
-import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
@@ -26,7 +25,6 @@ import com.novoda.noplayer.model.Timeout;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 // Not much we can do, wrapping ExoPlayer is a lot of work
@@ -294,8 +292,13 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public void skipAdvertBreak(@NonNull AdvertBreak advertBreak) {
-        exoPlayer.skipAdvertBreak(advertBreak);
+    public void skipAdvertBreak() {
+        exoPlayer.skipAdvertBreak();
+    }
+
+    @Override
+    public void skipAdvert() {
+        exoPlayer.skipAdvert();
     }
 
     @Override
