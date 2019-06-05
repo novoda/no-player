@@ -7,8 +7,7 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import androidx.annotation.Nullable;
-
+import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
@@ -25,9 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState.IDLE;
-import static com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState.PAUSED;
-import static com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState.PLAYING;
+import androidx.annotation.Nullable;
+
+import static com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState.*;
 
 // Not much we can do, wrapping MediaPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
@@ -356,5 +355,10 @@ class AndroidMediaPlayerFacade {
     void enableAdverts() {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to enable adverts but has not been implemented for MediaPlayer.");
+    }
+
+    void skipAdverts(AdvertBreak advertBreak) {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to skip advert break but has not been implemented for MediaPlayer.");
     }
 }

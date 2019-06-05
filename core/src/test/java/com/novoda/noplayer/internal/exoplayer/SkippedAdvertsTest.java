@@ -2,10 +2,11 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.AdvertBreak;
-import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.junit.Test;
 
 import static com.google.android.exoplayer2.source.ads.AdPlaybackState.*;
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
@@ -46,6 +47,17 @@ public class SkippedAdvertsTest {
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_SKIPPED});
+    }
+
+    @Test
+    public void skipAdvertBreak() {
+        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+        AdPlaybackState adPlaybackState = SkippedAdverts.markAllNonPlayedAdvertsAsSkipped(ADVERT_BREAKS.get(0), ADVERT_BREAKS, initialAvailableAdPlaybackState);
+
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
     }
 
     @Test

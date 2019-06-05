@@ -55,4 +55,9 @@ public class SimpleAdvertListener implements NoPlayer.AdvertListener {
         // no-op
     }
 
+    @Override
+    public void onAdvertsSkipped(AdvertBreak advertBreak) {
+        // no-op
+    }
+
 }

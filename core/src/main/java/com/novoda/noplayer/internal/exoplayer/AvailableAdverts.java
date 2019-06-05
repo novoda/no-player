@@ -35,4 +35,16 @@ final class AvailableAdverts {
             }
         }
     }
+
+    static void markAllFutureAdvertsAsPlayed(long currentPositionInMillis, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
+        for (int i = advertBreaks.size() - 1; i >= 0; i--) {
+            AdvertBreak advertBreak = advertBreaks.get(i);
+            AdPlaybackState.AdGroup adGroup = adPlaybackState.adGroups[i];
+            if (advertBreak.startTimeInMillis() >= currentPositionInMillis) {
+                for (int stateIndex = 0; stateIndex < adGroup.states.length; stateIndex++) {
+                    adGroup.states[stateIndex] = AdPlaybackState.AD_STATE_PLAYED;
+                }
+            }
+        }
+    }
 }

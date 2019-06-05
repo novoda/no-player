@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
+
+import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
@@ -28,6 +30,8 @@ import com.novoda.noplayer.model.Timeout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 // Not much we can do, wrapping MediaPlayer is a lot of work
 @SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount"})
@@ -341,6 +345,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     @Override
     public void disableAdverts() {
         mediaPlayer.disableAdverts();
+    }
+
+    @Override
+    public void skipAdverts(@NonNull AdvertBreak advertBreak) {
+        mediaPlayer.skipAdverts(advertBreak);
     }
 
     @Override

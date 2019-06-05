@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
 
 // There are a lot of features for playing and monitoring video.
 @SuppressWarnings("PMD.ExcessivePublicCount")
@@ -134,6 +135,8 @@ public interface NoPlayer extends PlayerState {
     void detach(AdvertView advertView);
 
     void disableAdverts();
+
+    void skipAdverts(@NonNull AdvertBreak advertBreak);
 
     void enableAdverts();
 
@@ -393,6 +396,12 @@ public interface NoPlayer extends PlayerState {
          */
         void onAdvertsEnabled(List<AdvertBreak> advertBreaks);
 
+        /**
+         * Called when advert break is skipped or prior to being skipped
+         *
+         * @param advertBreak that is being skipped.
+         */
+        void onAdvertsSkipped(AdvertBreak advertBreak);
     }
 
     /**

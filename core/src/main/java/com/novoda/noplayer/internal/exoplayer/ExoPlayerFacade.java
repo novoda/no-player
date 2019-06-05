@@ -1,7 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ads.SinglePeriodAdTimeline;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerState;
@@ -26,6 +27,9 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 // Not much we can do, wrapping ExoPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
@@ -127,7 +131,6 @@ class ExoPlayerFacade {
     private boolean isSetToPlayAdvert() {
         return videoType() == PlayerState.VideoType.ADVERT;
     }
-
 
     private long combinedAdvertDurationInGroup(Timeline.Period period, int numberOfAdvertsToInclude) {
         int adGroupIndex = exoPlayer.getCurrentAdGroupIndex();
@@ -362,6 +365,13 @@ class ExoPlayerFacade {
         if (adsLoader.isPresent()) {
             NoPlayerAdsLoader adsLoader = this.adsLoader.get();
             adsLoader.disableAdverts();
+        }
+    }
+
+    void skipAdverts(@NonNull AdvertBreak advertBreak) {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            adsLoader.skipAdverts(advertBreak);
         }
     }
 
