@@ -28,7 +28,7 @@ import java.util.List;
 import androidx.annotation.Nullable;
 
 // Not much we can do, wrapping ExoPlayer is a lot of work
-@SuppressWarnings("PMD.GodClass")
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount"})
 class ExoPlayerTwoImpl implements NoPlayer {
 
     private final ExoPlayerFacade exoPlayer;
