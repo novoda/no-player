@@ -357,7 +357,7 @@ class AndroidMediaPlayerFacade {
         NoPlayerLog.w("Tried to enable adverts but has not been implemented for MediaPlayer.");
     }
 
-    void skipAdverts(AdvertBreak advertBreak) {
+    void skipAdvertBreak(AdvertBreak advertBreak) {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to skip advert break but has not been implemented for MediaPlayer.");
     }

@@ -294,8 +294,8 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
-    public void skipAdverts(@NonNull AdvertBreak advertBreak) {
-        exoPlayer.skipAdverts(advertBreak);
+    public void skipAdvertBreak(@NonNull AdvertBreak advertBreak) {
+        exoPlayer.skipAdvertBreak(advertBreak);
     }
 
     @Override

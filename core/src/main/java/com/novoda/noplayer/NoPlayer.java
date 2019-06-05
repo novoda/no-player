@@ -136,7 +136,7 @@ public interface NoPlayer extends PlayerState {
 
     void disableAdverts();
 
-    void skipAdverts(@NonNull AdvertBreak advertBreak);
+    void skipAdvertBreak(@NonNull AdvertBreak advertBreak);
 
     void enableAdverts();
 

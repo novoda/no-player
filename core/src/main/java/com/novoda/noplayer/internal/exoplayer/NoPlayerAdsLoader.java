@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 // Not much we can do, orchestrating adverts is a lot of work.
@@ -289,19 +288,19 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        adPlaybackState = SkippedAdverts.markAllNonPlayedAdvertsAsSkipped(advertBreaks, adPlaybackState);
+        adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreaks, adPlaybackState);
         updateAdPlaybackState();
         advertListener.onAdvertsDisabled();
         resetAdvertPosition();
         advertsDisabled = true;
     }
 
-    void skipAdverts(@NonNull AdvertBreak advertBreak) {
+    void skipAdvertBreak(AdvertBreak advertBreak) {
         if (adPlaybackState == null || player == null || advertsDisabled) {
             return;
         }
 
-        adPlaybackState = SkippedAdverts.markAllNonPlayedAdvertsAsSkipped(advertBreak, advertBreaks, adPlaybackState);
+        adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreak, advertBreaks, adPlaybackState);
         updateAdPlaybackState();
         advertListener.onAdvertsSkipped(advertBreak);
         resetAdvertPosition();

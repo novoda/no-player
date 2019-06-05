@@ -24,7 +24,7 @@ final class SkippedAdverts {
      * @param adPlaybackState The {@link AdPlaybackState} to alter advert state on.
      * @return The {@link AdPlaybackState} with the new Skipped states.
      */
-    static AdPlaybackState markAllNonPlayedAdvertsAsSkipped(List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
+    static AdPlaybackState markAdvertBreakAsSkipped(List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         AdPlaybackState adPlaybackStateWithSkippedAdGroups = adPlaybackState;
         for (int i = advertBreaks.size() - 1; i >= 0; i--) {
             adPlaybackStateWithSkippedAdGroups = adPlaybackStateWithSkippedAdGroups.withSkippedAdGroup(i);
@@ -36,15 +36,13 @@ final class SkippedAdverts {
      * Transforms all adverts in the given break that are not currently Played to Skipped.
      *
      * @param advertBreaks    The client representation of all the adverts break.
-     * @param advertBreak    The client representation of the advert break to be skipped.
+     * @param advertBreak     The client representation of the advert break to be skipped.
      * @param adPlaybackState The {@link AdPlaybackState} to alter advert state on.
      * @return The {@link AdPlaybackState} with the new Skipped states.
      */
-    static AdPlaybackState markAllNonPlayedAdvertsAsSkipped(AdvertBreak advertBreak, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
-        AdPlaybackState adPlaybackStateWithSkippedAdGroups = adPlaybackState;
+    static AdPlaybackState markAdvertBreakAsSkipped(AdvertBreak advertBreak, List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         int breakIndex = advertBreaks.indexOf(advertBreak);
-        adPlaybackStateWithSkippedAdGroups = adPlaybackStateWithSkippedAdGroups.withSkippedAdGroup(breakIndex);
-        return adPlaybackStateWithSkippedAdGroups;
+        return adPlaybackState.withSkippedAdGroup(breakIndex);
     }
 
     /**

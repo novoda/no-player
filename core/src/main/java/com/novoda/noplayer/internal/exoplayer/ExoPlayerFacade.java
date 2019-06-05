@@ -28,7 +28,6 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 // Not much we can do, wrapping ExoPlayer is a lot of work
@@ -368,10 +367,10 @@ class ExoPlayerFacade {
         }
     }
 
-    void skipAdverts(@NonNull AdvertBreak advertBreak) {
+    void skipAdvertBreak(AdvertBreak advertBreak) {
         if (adsLoader.isPresent()) {
             NoPlayerAdsLoader adsLoader = this.adsLoader.get();
-            adsLoader.skipAdverts(advertBreak);
+            adsLoader.skipAdvertBreak(advertBreak);
         }
     }
 
