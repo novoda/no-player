@@ -39,8 +39,8 @@ class TracksChangedForwarder implements Player.EventListener {
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-        if (discontinuityReason == Player.TIMELINE_CHANGE_REASON_RESET && trackGroups.isEmpty()) {
-            // ignore internal resets with empty track groups
+        if (discontinuityReason == Player.DISCONTINUITY_REASON_SEEK && trackGroups.isEmpty()) {
+            // ignore changes to empty track groups after seek
         } else {
             tracksChangedListener.onTracksChanged();
         }
