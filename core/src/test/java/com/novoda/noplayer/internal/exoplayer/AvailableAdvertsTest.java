@@ -45,7 +45,7 @@ public class AvailableAdvertsTest {
     @Test
     public void makesSkippedAdvertsAfterCurrentOrAtCurrentPositionAvailable() {
         AdPlaybackState adPlaybackState = adPlaybackStateWithSkippedAdverts();
-        AvailableAdverts.markAllFutureAdvertsAsAvailable(THIRTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, adPlaybackState);
+        AvailableAdverts.markSkippedAdvertsAsAvailable(ADVERT_BREAKS, adPlaybackState);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
@@ -56,7 +56,7 @@ public class AvailableAdvertsTest {
     @Test
     public void marksAllAsAvailableWhenPositionIsBeginning() {
         AdPlaybackState adPlaybackState = adPlaybackStateWithSkippedAdverts();
-        AvailableAdverts.markAllFutureAdvertsAsAvailable(BEGINNING, ADVERT_BREAKS, adPlaybackState);
+        AvailableAdverts.markSkippedAdvertsAsAvailable(ADVERT_BREAKS, adPlaybackState);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_AVAILABLE});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
@@ -67,7 +67,7 @@ public class AvailableAdvertsTest {
     @Test
     public void leavesAsCurrentStateWhenNotPreviouslySkipped() {
         AdPlaybackState adPlaybackState = adPlaybackStateWithPlayedAdverts();
-        AvailableAdverts.markAllFutureAdvertsAsAvailable(BEGINNING, ADVERT_BREAKS, adPlaybackState);
+        AvailableAdverts.markSkippedAdvertsAsAvailable(ADVERT_BREAKS, adPlaybackState);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
@@ -78,7 +78,7 @@ public class AvailableAdvertsTest {
     @Test
     public void leavesAsSkippedWhenPositionIsAfterAllAdvertStartPositions() {
         AdPlaybackState adPlaybackState = adPlaybackStateWithSkippedAdverts();
-        AvailableAdverts.markAllFutureAdvertsAsAvailable(END, ADVERT_BREAKS, adPlaybackState);
+        AvailableAdverts.markSkippedAdvertsAsAvailable(ADVERT_BREAKS, adPlaybackState);
 
         assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});

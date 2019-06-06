@@ -47,7 +47,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private long advertBreakResumePosition;
     private long contentInitialPosition;
 
-    private long lastContentPositionInMillis;
     private boolean hasPerformedSeek;
 
     static NoPlayerAdsLoader create(AdvertsLoader loader) {
@@ -96,7 +95,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             advertBreaks = advertPlaybackState.advertBreaks();
             adPlaybackState = advertPlaybackState.adPlaybackState();
             if (contentInitialPosition > 0) {
-                updateAdvertStateForSeek(contentInitialPosition);
+                updateAdvertStateForStartingPosition(contentInitialPosition);
             }
             handler.post(new Runnable() {
                 @Override
@@ -229,17 +228,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        if (reason == Player.DISCONTINUITY_REASON_SEEK) {
-            long contentPositionInMillis = player.getContentPosition();
-
-            if (contentPositionInMillis < lastContentPositionInMillis) {
-                updateAdvertStateForSeek(contentPositionInMillis);
-            }
-
-            updateAdPlaybackState();
-            return;
-        }
-
         if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION) {
             if (isPlayingAdvert()) {
                 notifyAdvertEnd(advertBreaks.get(adGroupIndex));
@@ -252,7 +240,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         }
     }
 
-    private void updateAdvertStateForSeek(long contentPositionInMillis) {
+    private void updateAdvertStateForStartingPosition(long contentPositionInMillis) {
         adPlaybackState = SkippedAdverts.markAllPastAvailableAdvertsAsSkipped(contentPositionInMillis, advertBreaks, adPlaybackState);
         hasPerformedSeek = true;
     }
@@ -327,8 +315,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        long contentPosition = player.getContentPosition();
-        AvailableAdverts.markAllFutureAdvertsAsAvailable(contentPosition, advertBreaks, adPlaybackState);
+        AvailableAdverts.markSkippedAdvertsAsAvailable(advertBreaks, adPlaybackState);
 
         updateAdPlaybackState();
         advertListener.onAdvertsEnabled(advertBreaks);
@@ -341,11 +328,9 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        lastContentPositionInMillis = player.getContentPosition();
-
         if (hasPerformedSeek) {
             hasPerformedSeek = false;
-            AvailableAdverts.markAllFutureAdvertsAsAvailable(lastContentPositionInMillis, advertBreaks, adPlaybackState);
+            AvailableAdverts.markSkippedAdvertsAsAvailable(advertBreaks, adPlaybackState);
             updateAdPlaybackState();
         }
     }
