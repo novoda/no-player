@@ -313,7 +313,12 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
         adPlaybackState = SkippedAdverts.markAdvertAsSkipped(adIndexInGroup, adGroupIndex, adPlaybackState);
         updateAdPlaybackState();
-        advertListener.onAdvertSkipped(advertBreaks.get(adGroupIndex).adverts().get(adIndexInGroup));
+        AdvertBreak advertBreak = advertBreaks.get(adGroupIndex);
+        List<Advert> adverts = advertBreak.adverts();
+        advertListener.onAdvertSkipped(adverts.get(adIndexInGroup));
+        if (adIndexInGroup == adverts.size() - 1) {
+            advertListener.onAdvertBreakEnd(advertBreak);
+        }
         resetAdvertPosition();
     }
 
