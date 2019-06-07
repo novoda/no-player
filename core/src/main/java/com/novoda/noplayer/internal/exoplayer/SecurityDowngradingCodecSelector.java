@@ -4,6 +4,7 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,19 +33,20 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
             boolean requiresSecureDecoder,
             boolean requiresTunnelingDecoder
     ) throws MediaCodecUtil.DecoderQueryException {
-        List<MediaCodecInfo> decoderInfos = internalMediaCodecUtil.getDecoderInfos(
+        List<MediaCodecInfo> decoderInfos = new ArrayList<>(internalMediaCodecUtil.getDecoderInfos(
                 mimeType,
                 DECODER_REQUIRES_SECURE_DECRYPTION,
                 requiresTunnelingDecoder
+        ));
+
+        decoderInfos.addAll(
+                internalMediaCodecUtil.getDecoderInfos(
+                        mimeType,
+                        DECODER_DOES_NOT_REQUIRE_SECURE_DECRYPTION,
+                        requiresTunnelingDecoder
+                )
         );
 
-        if (decoderInfos.isEmpty()) {
-            decoderInfos = internalMediaCodecUtil.getDecoderInfos(
-                    mimeType,
-                    DECODER_DOES_NOT_REQUIRE_SECURE_DECRYPTION,
-                    requiresTunnelingDecoder
-            );
-        }
         return decoderInfos;
     }
 
