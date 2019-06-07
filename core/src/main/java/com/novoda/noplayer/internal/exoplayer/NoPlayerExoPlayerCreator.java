@@ -108,9 +108,6 @@ public class NoPlayerExoPlayerCreator {
             );
 
             PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
-            if (adsLoader.isPresent()) {
-                listenersHolder.addHeartbeatCallback(adsLoader.get());
-            }
             ExoPlayerForwarder exoPlayerForwarder = new ExoPlayerForwarder();
             LoadTimeout loadTimeout = new LoadTimeout(new SystemClock(), handler);
             Heart heart = Heart.newInstance(handler);

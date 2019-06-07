@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -34,6 +35,10 @@ import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,10 +49,8 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import utils.ExceptionMatcher;
 
-import java.util.Collections;
-import java.util.List;
+import utils.ExceptionMatcher;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -129,7 +132,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(adsLoader).bind(optionalAdvertListener, NO_RESUME_POSITION, NO_RESUME_POSITION);
+            verify(adsLoader).bind(optionalAdvertListener, NO_RESUME_POSITION);
         }
 
         @Test
@@ -140,7 +143,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION, NO_RESUME_POSITION);
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
         }
 
         @Test
@@ -169,7 +172,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION, NO_RESUME_POSITION);
+            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
         }
 
         @Test
@@ -177,7 +180,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION, NO_RESUME_POSITION);
+            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
         }
 
         @Test
@@ -190,7 +193,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), TWENTY_FIVE_SECONDS_IN_MILLIS, NO_RESUME_POSITION);
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), TWENTY_FIVE_SECONDS_IN_MILLIS);
         }
 
         @Test
@@ -203,7 +206,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, mediaCodecSelector);
 
-            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION, TWENTY_FIVE_SECONDS_IN_MILLIS);
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
         }
 
         @Test
