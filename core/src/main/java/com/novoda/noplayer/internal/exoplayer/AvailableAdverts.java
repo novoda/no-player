@@ -23,7 +23,6 @@ final class AvailableAdverts {
      */
     static void markSkippedAdvertsAsAvailable(List<AdvertBreak> advertBreaks, AdPlaybackState adPlaybackState) {
         for (int i = advertBreaks.size() - 1; i >= 0; i--) {
-            AdvertBreak advertBreak = advertBreaks.get(i);
             AdPlaybackState.AdGroup adGroup = adPlaybackState.adGroups[i];
             for (int stateIndex = 0; stateIndex < adGroup.states.length; stateIndex++) {
                 if (adGroup.states[stateIndex] == AdPlaybackState.AD_STATE_SKIPPED) {

@@ -10,19 +10,16 @@ import org.junit.Test;
 
 import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_AVAILABLE;
 import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_PLAYED;
-import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_SKIPPED;
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
 import static com.novoda.noplayer.AdvertFixtures.anAdvert;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class AvailableAdvertsTest {
 
-    private static final int BEGINNING = 0;
     private static final int TEN_SECONDS_IN_MILLIS = 10000;
     private static final int TWENTY_SECONDS_IN_MILLIS = 20000;
     private static final int THIRTY_SECONDS_IN_MILLIS = 30000;
     private static final int FORTY_SECONDS_IN_MILLIS = 40000;
-    private static final int END = 40001;
 
     private static final AdvertBreak FIRST_ADVERT_BREAK = anAdvertBreak()
             .withStartTimeInMillis(TEN_SECONDS_IN_MILLIS)
@@ -43,18 +40,7 @@ public class AvailableAdvertsTest {
     private static final List<AdvertBreak> ADVERT_BREAKS = Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK, FOURTH_ADVERT_BREAK);
 
     @Test
-    public void makesSkippedAdvertsAfterCurrentOrAtCurrentPositionAvailable() {
-        AdPlaybackState adPlaybackState = adPlaybackStateWithSkippedAdverts();
-        AvailableAdverts.markSkippedAdvertsAsAvailable(ADVERT_BREAKS, adPlaybackState);
-
-        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
-        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
-        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
-        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
-    }
-
-    @Test
-    public void marksAllAsAvailableWhenPositionIsBeginning() {
+    public void marksSkippedAdvertsAsAvailable() {
         AdPlaybackState adPlaybackState = adPlaybackStateWithSkippedAdverts();
         AvailableAdverts.markSkippedAdvertsAsAvailable(ADVERT_BREAKS, adPlaybackState);
 
@@ -73,17 +59,6 @@ public class AvailableAdvertsTest {
         assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_PLAYED});
-    }
-
-    @Test
-    public void leavesAsSkippedWhenPositionIsAfterAllAdvertStartPositions() {
-        AdPlaybackState adPlaybackState = adPlaybackStateWithSkippedAdverts();
-        AvailableAdverts.markSkippedAdvertsAsAvailable(ADVERT_BREAKS, adPlaybackState);
-
-        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED});
-        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
-        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_SKIPPED});
-        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_SKIPPED});
     }
 
     private AdPlaybackState adPlaybackStateWithSkippedAdverts() {
