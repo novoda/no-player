@@ -1,60 +1,68 @@
 package com.novoda.noplayer.internal.exoplayer;
 
+import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
+import com.novoda.noplayer.internal.exoplayer.SecurityDowngradingCodecSelector.InternalMediaCodecUtil;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
+@RunWith(Parameterized.class)
 public class SecurityDowngradingCodecSelectorTest {
-
-    private static final String ANY_MIME_TYPE = "mimeType";
 
     private static final boolean CONTENT_SECURE = true;
     private static final boolean CONTENT_INSECURE = false;
     private static final boolean DOES_NOT_REQUIRE_TUNNELING_DECODER = false;
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    private static final String MIMETYPE = "mimetype";
+    private static final List<MediaCodecInfo> SECURE_CODECS = Collections.singletonList(MediaCodecInfo.newInstance("secure-codec", MIMETYPE, null));
+    private static final List<MediaCodecInfo> UNSECURE_CODECS = Collections.singletonList(MediaCodecInfo.newInstance("unsecure-codec", "mimetype", null));
+    private static final List<MediaCodecInfo> NO_CODECS = Collections.emptyList();
 
-    @Mock
-    private SecurityDowngradingCodecSelector.InternalMediaCodecUtil internalMediaCodecUtil;
+    private final InternalMediaCodecUtil internalMediaCodecUtil = mock(InternalMediaCodecUtil.class);
 
-    @Test
-    public void whenContentIsSecure_thenRequiresSecureDecoderIsFalse() throws MediaCodecUtil.DecoderQueryException {
-        SecurityDowngradingCodecSelector securityDowngradingCodecSelector = new SecurityDowngradingCodecSelector(internalMediaCodecUtil);
+    @Parameterized.Parameter
+    public boolean secureCodecRequest;
+    @Parameterized.Parameter(1)
+    public List<MediaCodecInfo> secureDecoders;
+    @Parameterized.Parameter(2)
+    public List<MediaCodecInfo> unsecureDecoders;
+    @Parameterized.Parameter(3)
+    public List<MediaCodecInfo> decodersReturned;
 
-        securityDowngradingCodecSelector.getDecoderInfos(ANY_MIME_TYPE, CONTENT_SECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER);
+    @Parameterized.Parameters(name = "given request secure codecs {0}, when device contains secure decoders {1} and unsecure decoders {2} then returns {3}")
+    public static Collection<Object[]> parameters() {
+        return Arrays.asList(
+                new Object[]{CONTENT_SECURE, NO_CODECS, NO_CODECS, NO_CODECS},
+                new Object[]{CONTENT_SECURE, NO_CODECS, UNSECURE_CODECS, UNSECURE_CODECS},
+                new Object[]{CONTENT_SECURE, SECURE_CODECS, NO_CODECS, SECURE_CODECS},
+                new Object[]{CONTENT_SECURE, SECURE_CODECS, UNSECURE_CODECS, SECURE_CODECS},
 
-        ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
-        verify(internalMediaCodecUtil).getDecoderInfos(eq(ANY_MIME_TYPE), argumentCaptor.capture(), eq(DOES_NOT_REQUIRE_TUNNELING_DECODER));
-        assertThat(argumentCaptor.getValue()).isFalse();
+                new Object[]{CONTENT_INSECURE, NO_CODECS, NO_CODECS, NO_CODECS},
+                new Object[]{CONTENT_INSECURE, NO_CODECS, UNSECURE_CODECS, UNSECURE_CODECS},
+                new Object[]{CONTENT_INSECURE, SECURE_CODECS, NO_CODECS, SECURE_CODECS},
+                new Object[]{CONTENT_INSECURE, SECURE_CODECS, UNSECURE_CODECS, SECURE_CODECS}
+        );
     }
 
     @Test
-    public void whenContentIsInsecure_thenRequiresSecureDecoderIsFalse() throws MediaCodecUtil.DecoderQueryException {
+    public void whenRequestingSecureDecoders_thenReturnsTheCorrectInternalDecodersList() throws MediaCodecUtil.DecoderQueryException {
+        given(internalMediaCodecUtil.getDecoderInfos(MIMETYPE, CONTENT_SECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER)).willReturn(secureDecoders);
+        given(internalMediaCodecUtil.getDecoderInfos(MIMETYPE, CONTENT_INSECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER)).willReturn(unsecureDecoders);
+
         SecurityDowngradingCodecSelector securityDowngradingCodecSelector = new SecurityDowngradingCodecSelector(internalMediaCodecUtil);
+        List<MediaCodecInfo> decoderInfos = securityDowngradingCodecSelector.getDecoderInfos(MIMETYPE, secureCodecRequest, DOES_NOT_REQUIRE_TUNNELING_DECODER);
 
-        securityDowngradingCodecSelector.getDecoderInfos(ANY_MIME_TYPE, CONTENT_INSECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER);
-
-        ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
-        verify(internalMediaCodecUtil).getDecoderInfos(eq(ANY_MIME_TYPE), argumentCaptor.capture(), eq(DOES_NOT_REQUIRE_TUNNELING_DECODER));
-        assertThat(argumentCaptor.getValue()).isFalse();
-    }
-
-    @Test
-    public void whenGettingPassthroughDecoderInfo_thenDelegates() throws MediaCodecUtil.DecoderQueryException {
-        SecurityDowngradingCodecSelector securityDowngradingCodecSelector = new SecurityDowngradingCodecSelector(internalMediaCodecUtil);
-
-        securityDowngradingCodecSelector.getPassthroughDecoderInfo();
-
-        verify(internalMediaCodecUtil).getPassthroughDecoderInfo();
+        assertThat(decoderInfos).isEqualTo(decodersReturned);
     }
 }
