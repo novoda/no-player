@@ -107,8 +107,7 @@ public class PlayerBuilder {
     }
 
     /**
-     * Forces secure decoder selection to be ignored in favour of using an insecure decoder.
-     * e.g. Forcing an L3 stream to play with an L3 decoder instead of an L1 secure decoder by default.
+     * Allows the selection of an insecure decoder when the device does not support a secure decoder.
      *
      * @return {@link PlayerBuilder}
      */
