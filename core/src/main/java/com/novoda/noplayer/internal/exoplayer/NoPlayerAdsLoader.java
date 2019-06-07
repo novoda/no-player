@@ -25,7 +25,7 @@ import androidx.annotation.Nullable;
 
 // Not much we can do, orchestrating adverts is a lot of work.
 @SuppressWarnings("PMD.GodClass")
-public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, AdvertView.AdvertInteractionListener, NoPlayer.HeartbeatCallback {
+public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, AdvertView.AdvertInteractionListener {
 
     private final AdvertsLoader loader;
     private final Handler handler;
@@ -45,9 +45,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private int adGroupIndex = -1;
     private boolean advertsDisabled;
     private long advertBreakResumePosition;
-    private long contentInitialPosition;
-
-    private boolean hasPerformedSeek;
 
     static NoPlayerAdsLoader create(AdvertsLoader loader) {
         return new NoPlayerAdsLoader(loader, new Handler(Looper.getMainLooper()));
@@ -60,12 +57,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     public void bind(
             Optional<NoPlayer.AdvertListener> advertListener,
-            long advertBreakResumePositionMillis,
-            long contentInitialPositionMillis
+            long advertBreakResumePositionMillis
     ) {
         this.advertListener = advertListener.isPresent() ? advertListener.get() : NoOpAdvertListener.INSTANCE;
         this.advertBreakResumePosition = advertBreakResumePositionMillis;
-        this.contentInitialPosition = contentInitialPositionMillis;
     }
 
     @Override
@@ -94,9 +89,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks, advertBreakResumePosition);
             advertBreaks = advertPlaybackState.advertBreaks();
             adPlaybackState = advertPlaybackState.adPlaybackState();
-            if (contentInitialPosition > 0) {
-                updateAdvertStateForStartingPosition(contentInitialPosition);
-            }
+
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -240,11 +233,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         }
     }
 
-    private void updateAdvertStateForStartingPosition(long contentPositionInMillis) {
-        adPlaybackState = SkippedAdverts.markAllPastAvailableAdvertsAsSkipped(contentPositionInMillis, advertBreaks, adPlaybackState);
-        hasPerformedSeek = true;
-    }
-
     private boolean isPlayingAdvert() {
         return adGroupIndex != -1 && adIndexInGroup != -1;
     }
@@ -320,18 +308,5 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         updateAdPlaybackState();
         advertListener.onAdvertsEnabled(advertBreaks);
         advertsDisabled = false;
-    }
-
-    @Override
-    public void onBeat(NoPlayer noPlayer) {
-        if (player == null || player.isPlayingAd()) {
-            return;
-        }
-
-        if (hasPerformedSeek) {
-            hasPerformedSeek = false;
-            AvailableAdverts.markSkippedAdvertsAsAvailable(advertBreaks, adPlaybackState);
-            updateAdPlaybackState();
-        }
     }
 }
