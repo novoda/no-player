@@ -1,12 +1,17 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.os.Handler;
+
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.utils.Optional;
+
+import java.io.IOException;
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,10 +20,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import utils.ExceptionMatcher;
 
-import java.io.IOException;
-import java.util.Arrays;
+import utils.ExceptionMatcher;
 
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
 import static com.novoda.noplayer.AdvertFixtures.anAdvert;
@@ -77,7 +80,7 @@ public class NoPlayerAdsLoaderTest {
     @Test
     public void notifiesAdvertListenerWhenAdvertLoadingFails() {
         IOException error = new IOException("some error");
-        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION, NO_AD_RESUME_POSITION);
+        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION);
         noPlayerAdsLoader.start(eventListener, adViewProvider);
 
         invokeCallback().onAdvertsError(error);
@@ -87,7 +90,7 @@ public class NoPlayerAdsLoaderTest {
 
     @Test
     public void notifiesAdvertListenerWhenAdvertLoadingSucceeds() {
-        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION, NO_AD_RESUME_POSITION);
+        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION);
 
         noPlayerAdsLoader.start(eventListener, adViewProvider);
         invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
@@ -145,7 +148,7 @@ public class NoPlayerAdsLoaderTest {
 
     @Test
     public void notifiesAdvertListenerWhenAdvertPreparingFails() {
-        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION, NO_AD_RESUME_POSITION);
+        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION);
         noPlayerAdsLoader.start(eventListener, adViewProvider);
         invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
 
