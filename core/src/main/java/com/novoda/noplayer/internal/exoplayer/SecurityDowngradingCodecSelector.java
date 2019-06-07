@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * This class will try and get a decoder that requires secure decryption and fallback
- * to a decoder that does not require secure decryption if there is non available
+ * to a decoder that does not require secure decryption if there is none available.
  */
 class SecurityDowngradingCodecSelector implements MediaCodecSelector {
 
