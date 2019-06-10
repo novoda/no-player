@@ -34,11 +34,26 @@
         android:text="@string/subtitle" />
 
       <CheckBox
-          android:id="@+id/button_hd_selection"
-          style="?android:attr/buttonBarButtonStyle"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="@string/hd"/>
+        android:id="@+id/button_hd_selection"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hd" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      style="?android:attr/buttonBarStyle"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+      <Button
+        android:id="@+id/button_revoke_drm"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/revoke_drm" />
 
     </LinearLayout>
 

@@ -1,7 +1,9 @@
 package com.novoda.demo;
 
 import android.app.Activity;
+import android.drm.DrmManagerClient;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -43,6 +45,7 @@ public class MainActivity extends Activity {
         final View videoSelectionButton = findViewById(R.id.button_video_selection);
         final View audioSelectionButton = findViewById(R.id.button_audio_selection);
         final View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
+        final View revokeDrmButton = findViewById(R.id.button_revoke_drm);
         hdSelectionCheckBox = findViewById(R.id.button_hd_selection);
         ControllerView controllerView = findViewById(R.id.controller_view);
 
@@ -94,6 +97,7 @@ public class MainActivity extends Activity {
                 }
             }
         });
+        revokeDrmButton.setOnClickListener(revokeDrmRights);
 
     }
 
@@ -146,6 +150,25 @@ public class MainActivity extends Activity {
                 player.clearMaxVideoBitrate();
             } else {
                 player.setMaxVideoBitrate(MAX_VIDEO_BITRATE);
+            }
+        }
+    };
+
+    private final View.OnClickListener revokeDrmRights = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DrmManagerClient drmManager = null;
+            try {
+                drmManager = new DrmManagerClient(getApplicationContext());
+                drmManager.removeAllRights();
+            } finally {
+                if (drmManager != null) {
+                    if (Build.VERSION.SDK_INT >= 24) {
+                        drmManager.close();
+                    } else {
+                        drmManager.release();
+                    }
+                }
             }
         }
     };
