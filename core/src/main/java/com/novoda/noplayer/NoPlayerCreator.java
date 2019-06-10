@@ -2,6 +2,7 @@ package com.novoda.noplayer;
 
 import android.content.Context;
 
+import com.google.android.exoplayer2.drm.MediaDrmCallback;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
@@ -32,10 +33,14 @@ class NoPlayerCreator {
         this.drmSessionCreatorFactory = drmSessionCreatorFactory;
     }
 
-    NoPlayer create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder, boolean allowCrossProtocolRedirects) {
+    NoPlayer create(DrmType drmType,
+                    DrmHandler drmHandler,
+                    boolean downgradeSecureDecoder,
+                    boolean allowCrossProtocolRedirects,
+                    MediaDrmCallback mediaDrmCallback) {
         for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
-                return createPlayerForType(player, drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects);
+                return createPlayerForType(player, drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects, mediaDrmCallback);
             }
         }
         throw UnableToCreatePlayerException.unhandledDrmType(drmType);
@@ -45,13 +50,13 @@ class NoPlayerCreator {
                                          DrmType drmType,
                                          DrmHandler drmHandler,
                                          boolean downgradeSecureDecoder,
-                                         boolean allowCrossProtocolRedirects) {
+                                         boolean allowCrossProtocolRedirects, MediaDrmCallback mediaDrmCallback) {
         switch (playerType) {
             case MEDIA_PLAYER:
                 return noPlayerMediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
                 try {
-                    DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler);
+                    DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler, mediaDrmCallback);
                     return noPlayerExoPlayerCreator.createExoPlayer(
                             context,
                             drmSessionCreator,

@@ -60,7 +60,7 @@ public class NoPlayerCreatorTest {
 
         @Before
         public void setUp() throws DrmSessionCreatorException {
-            given(drmSessionCreatorFactory.createFor(any(DrmType.class), any(DrmHandler.class))).willReturn(drmSessionCreator);
+            given(drmSessionCreatorFactory.createFor(any(DrmType.class), any(DrmHandler.class), mediaDrmCallback)).willReturn(drmSessionCreator);
             given(noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS)).willReturn(EXO_PLAYER);
             given(noPlayerMediaPlayerCreator.createMediaPlayer(context)).willReturn(MEDIA_PLAYER);
             noPlayerCreator = new NoPlayerCreator(context, prioritizedPlayerTypes(), noPlayerExoPlayerCreator, noPlayerMediaPlayerCreator, drmSessionCreatorFactory);
@@ -78,28 +78,28 @@ public class NoPlayerCreatorTest {
 
         @Test
         public void whenCreatingPlayerWithDrmTypeNone_thenReturnsMediaPlayer() {
-            NoPlayer player = noPlayerCreator.create(DrmType.NONE, DrmHandler.NO_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS);
+            NoPlayer player = noPlayerCreator.create(DrmType.NONE, DrmHandler.NO_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS, mediaDrmCallback);
 
             assertThat(player).isEqualTo(MEDIA_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineClassic_thenReturnsMediaPlayer() {
-            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS, mediaDrmCallback);
 
             assertThat(player).isEqualTo(MEDIA_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularStream_thenReturnsExoPlayer() {
-            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS, mediaDrmCallback);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularDownload_thenReturnsExoPlayer() {
-            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS, mediaDrmCallback);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
@@ -114,28 +114,28 @@ public class NoPlayerCreatorTest {
 
         @Test
         public void whenCreatingPlayerWithDrmTypeNone_thenReturnsExoPlayer() {
-            NoPlayer player = noPlayerCreator.create(DrmType.NONE, DrmHandler.NO_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS);
+            NoPlayer player = noPlayerCreator.create(DrmType.NONE, DrmHandler.NO_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS, mediaDrmCallback);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineClassic_thenReturnsMediaPlayer() {
-            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS, mediaDrmCallback);
 
             assertThat(player).isEqualTo(MEDIA_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularStream_thenReturnsExoPlayer() {
-            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_STREAM, STREAMING_MODULAR_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS, mediaDrmCallback);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }
 
         @Test
         public void whenCreatingPlayerWithDrmTypeWidevineModularDownload_thenReturnsExoPlayer() {
-            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS);
+            NoPlayer player = noPlayerCreator.create(DrmType.WIDEVINE_MODULAR_DOWNLOAD, DOWNLOADED_MODULAR_DRM, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS, mediaDrmCallback);
 
             assertThat(player).isEqualTo(EXO_PLAYER);
         }

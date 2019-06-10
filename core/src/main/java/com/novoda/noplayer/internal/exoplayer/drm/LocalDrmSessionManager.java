@@ -12,10 +12,8 @@ import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
-import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
-import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
+import com.google.android.exoplayer2.drm.MediaDrmCallback;
 import com.google.android.exoplayer2.drm.OfflineLicenseHelper;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.model.KeySetId;
 
@@ -26,17 +24,20 @@ import static com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator.WIDEV
 
 class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> {
 
+    private final MediaDrmCallback mediaDrmCallback;
     private final DownloadedModularDrm downloadedModularDrm;
     private final ExoMediaDrm<FrameworkMediaCrypto> mediaDrm;
     private final DefaultDrmSessionEventListener eventListener;
     private final UUID drmScheme;
     private final Handler handler;
 
-    LocalDrmSessionManager(DownloadedModularDrm downloadedModularDrm,
+    LocalDrmSessionManager(MediaDrmCallback mediaDrmCallback,
+                           DownloadedModularDrm downloadedModularDrm,
                            ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
                            UUID drmScheme,
                            Handler handler,
                            DefaultDrmSessionEventListener eventListener) {
+        this.mediaDrmCallback = mediaDrmCallback;
         this.downloadedModularDrm = downloadedModularDrm;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;
@@ -57,15 +58,15 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
         DrmSession<FrameworkMediaCrypto> drmSession;
 
         try {
-            OfflineLicenseHelper<FrameworkMediaCrypto> offlineLicenseHelper = new OfflineLicenseHelper<>(
-                    WIDEVINE_MODULAR_UUID,
-                    FrameworkMediaDrm.newInstance(WIDEVINE_MODULAR_UUID),
-                    new HttpMediaDrmCallback("", new DefaultHttpDataSourceFactory("android")),
-                    new HashMap<String, String>()
-            );
-
             SessionId sessionId = SessionId.of(mediaDrm.openSession());
             FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(sessionId.asBytes());
+
+            OfflineLicenseHelper<FrameworkMediaCrypto> offlineLicenseHelper = new OfflineLicenseHelper<>(
+                    WIDEVINE_MODULAR_UUID,
+                    mediaDrm,
+                    mediaDrmCallback,
+                    new HashMap<String, String>()
+            );
 
             KeySetId keySetId = downloadedModularDrm.getKeySetId();
             byte[] licenseBytes = keySetId.asBytes();
