@@ -68,7 +68,8 @@ public class LocalDrmSessionManagerTest {
                 mediaDrm,
                 DRM_SCHEME,
                 handler,
-                eventListener
+                eventListener,
+                offlineLicenseHelper
         );
     }
 
