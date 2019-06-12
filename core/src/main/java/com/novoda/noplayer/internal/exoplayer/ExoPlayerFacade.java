@@ -7,7 +7,6 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ads.SinglePeriodAdTimeline;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -187,7 +186,7 @@ class ExoPlayerFacade {
                    Uri uri,
                    Options options,
                    ExoPlayerForwarder forwarder,
-                   MediaCodecSelector mediaCodecSelector) {
+                   SecurityDowngradingCodecSelector mediaCodecSelector) {
         this.options = options;
 
         DefaultBandwidthMeter bandwidthMeter = bandwidthMeterCreator.create(options.maxInitialBitrate());

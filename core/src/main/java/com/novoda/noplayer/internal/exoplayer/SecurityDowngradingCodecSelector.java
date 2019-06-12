@@ -5,6 +5,7 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
     private static final boolean DECODER_DOES_NOT_REQUIRE_SECURE_DECRYPTION = false;
 
     private final InternalMediaCodecUtil internalMediaCodecUtil;
+    private boolean useSecureCodecs;
 
     public static SecurityDowngradingCodecSelector newInstance() {
         InternalMediaCodecUtil internalMediaCodecUtil = new InternalMediaCodecUtil();
@@ -33,11 +35,7 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
             boolean requiresSecureDecoder,
             boolean requiresTunnelingDecoder
     ) throws MediaCodecUtil.DecoderQueryException {
-        List<MediaCodecInfo> decoderInfos = new ArrayList<>(internalMediaCodecUtil.getDecoderInfos(
-                mimeType,
-                DECODER_REQUIRES_SECURE_DECRYPTION,
-                requiresTunnelingDecoder
-        ));
+        List<MediaCodecInfo> decoderInfos = new ArrayList<>(secureCodecs(mimeType, requiresTunnelingDecoder));
 
         decoderInfos.addAll(
                 internalMediaCodecUtil.getDecoderInfos(
@@ -50,9 +48,28 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
         return decoderInfos;
     }
 
+    private List<MediaCodecInfo> secureCodecs(String mimeType, boolean requiresTunnelingDecoder) throws MediaCodecUtil.DecoderQueryException {
+        if (useSecureCodecs) {
+            return internalMediaCodecUtil.getDecoderInfos(
+                    mimeType,
+                    DECODER_REQUIRES_SECURE_DECRYPTION,
+                    requiresTunnelingDecoder
+            );
+        }
+        return Collections.emptyList();
+    }
+
     @Override
     public MediaCodecInfo getPassthroughDecoderInfo() throws MediaCodecUtil.DecoderQueryException {
         return internalMediaCodecUtil.getPassthroughDecoderInfo();
+    }
+
+    public void disableSecureCodecs() {
+        this.useSecureCodecs = false;
+    }
+
+    public void enableSecureCodecs() {
+        this.useSecureCodecs = true;
     }
 
     static class InternalMediaCodecUtil {

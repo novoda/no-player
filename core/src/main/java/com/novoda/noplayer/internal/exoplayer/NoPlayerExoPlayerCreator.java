@@ -3,7 +3,6 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.content.Context;
 import android.os.Handler;
 
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
@@ -87,9 +86,7 @@ public class NoPlayerExoPlayerCreator {
                     allowCrossProtocolRedirects
             );
 
-            MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
-                    ? SecurityDowngradingCodecSelector.newInstance()
-                    : MediaCodecSelector.DEFAULT;
+            SecurityDowngradingCodecSelector mediaCodecSelector = SecurityDowngradingCodecSelector.newInstance();
 
             CompositeTrackSelectorCreator trackSelectorCreator = new CompositeTrackSelectorCreator();
 

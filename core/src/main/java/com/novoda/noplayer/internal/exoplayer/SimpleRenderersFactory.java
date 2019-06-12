@@ -20,18 +20,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import androidx.annotation.IntDef;
-import androidx.annotation.Nullable;
-
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.audio.AudioCapabilities;
 import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
+import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
+import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.metadata.MetadataOutput;
 import com.google.android.exoplayer2.metadata.MetadataRenderer;
 import com.google.android.exoplayer2.text.SubtitleDecoder;
@@ -47,6 +47,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
 
 /**
  * Default {@link RenderersFactory} implementation.
@@ -97,7 +100,7 @@ class SimpleRenderersFactory implements RenderersFactory {
     private final int extensionRendererMode;
 
     private final long allowedVideoJoiningTimeMs;
-    private final MediaCodecSelector mediaCodecSelector;
+    private final SecurityDowngradingCodecSelector mediaCodecSelector;
     private final SubtitleDecoderFactory subtitleDecoderFactory;
 
     /**
@@ -113,7 +116,7 @@ class SimpleRenderersFactory implements RenderersFactory {
     SimpleRenderersFactory(Context context,
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,
-                           MediaCodecSelector mediaCodecSelector,
+                           SecurityDowngradingCodecSelector mediaCodecSelector,
                            SubtitleDecoderFactory subtitleDecoderFactory) {
         this.context = context;
         this.extensionRendererMode = extensionRendererMode;
@@ -131,12 +134,15 @@ class SimpleRenderersFactory implements RenderersFactory {
                                       @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
         ArrayList<Renderer> renderersList = new ArrayList<>();
         buildVideoRenderers(context, drmSessionManager, allowedVideoJoiningTimeMs,
-                eventHandler, videoRendererEventListener, extensionRendererMode, renderersList);
+                            eventHandler, videoRendererEventListener, extensionRendererMode, renderersList
+        );
         buildAudioRenderers(context, drmSessionManager, buildAudioProcessors(),
-                eventHandler, audioRendererEventListener, extensionRendererMode, renderersList);
+                            eventHandler, audioRendererEventListener, extensionRendererMode, renderersList
+        );
         buildTextRenderers(textRendererOutput, eventHandler.getLooper(), renderersList, subtitleDecoderFactory);
         buildMetadataRenderers(metadataRendererOutput, eventHandler.getLooper(),
-                renderersList);
+                               renderersList
+        );
         buildMiscellaneousRenderers();
         return renderersList.toArray(new Renderer[renderersList.size()]);
     }
@@ -162,7 +168,8 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      VideoRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
-        outRenderers.add(new MediaCodecVideoRenderer(context,
+        outRenderers.add(new TempMediaCodecVideoRenderer(
+                context,
                 mediaCodecSelector,
                 allowedVideoJoiningTimeMs,
                 drmSessionManager,
@@ -170,7 +177,8 @@ class SimpleRenderersFactory implements RenderersFactory {
                 ENABLE_DECODER_FALLBACK,
                 eventHandler,
                 eventListener,
-                MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY));
+                MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
+        ));
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {
             return;
@@ -183,11 +191,13 @@ class SimpleRenderersFactory implements RenderersFactory {
         try {
             Class<?> clazz = Class.forName("com.google.android.exoplayer2.ext.vp9.LibvpxVideoRenderer");
             Constructor<?> constructor = clazz.getConstructor(boolean.class, long.class, Handler.class, VideoRendererEventListener.class, int.class);
-            Renderer renderer = (Renderer) constructor.newInstance(INIT_ARGS,
+            Renderer renderer = (Renderer) constructor.newInstance(
+                    INIT_ARGS,
                     allowedVideoJoiningTimeMs,
                     eventHandler,
                     eventListener,
-                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY);
+                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
+            );
             outRenderers.add(extensionRendererIndex, renderer);
             Log.i(TAG, "Loaded LibvpxVideoRenderer.");
         } catch (ClassNotFoundException e) {
@@ -278,10 +288,11 @@ class SimpleRenderersFactory implements RenderersFactory {
 
     /**
      * Builds text renderers for use by the player.
-     *  @param output       An output for the renderers.
-     * @param outputLooper The looper associated with the thread on which the output should be
-     *                     called.
-     * @param outRenderers An array to which the built renderers should be appended.
+     *
+     * @param output         An output for the renderers.
+     * @param outputLooper   The looper associated with the thread on which the output should be
+     *                       called.
+     * @param outRenderers   An array to which the built renderers should be appended.
      * @param decoderFactory A factory from which to obtain {@link SubtitleDecoder} instances.
      */
     private void buildTextRenderers(TextOutput output, Looper outputLooper, List<Renderer> outRenderers, SubtitleDecoderFactory decoderFactory) {
@@ -318,6 +329,28 @@ class SimpleRenderersFactory implements RenderersFactory {
 
         RendererInstantiationException(String rendererName, Throwable cause) {
             super("Unable to instantiate renderer " + rendererName, cause);
+        }
+    }
+
+    class TempMediaCodecVideoRenderer extends MediaCodecVideoRenderer {
+
+        private final SecurityDowngradingCodecSelector mediaCodecSelector;
+
+        TempMediaCodecVideoRenderer(Context context, SecurityDowngradingCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, boolean enableDecoderFallback, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify) {
+            super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, enableDecoderFallback, eventHandler, eventListener, maxDroppedFramesToNotify);
+            this.mediaCodecSelector = mediaCodecSelector;
+        }
+
+        @Override
+        protected int supportsFormat(MediaCodecSelector mediaCodecSelector, DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, Format format) throws MediaCodecUtil.DecoderQueryException {
+            DrmInitData drmInitData = format.drmInitData;
+            if (drmInitData == null) {
+                this.mediaCodecSelector.disableSecureCodecs();
+            } else {
+                this.mediaCodecSelector.enableSecureCodecs();
+            }
+
+            return super.supportsFormat(mediaCodecSelector, drmSessionManager, format);
         }
     }
 }
