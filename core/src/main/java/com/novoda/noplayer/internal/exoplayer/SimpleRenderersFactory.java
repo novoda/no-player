@@ -20,19 +20,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.audio.AudioCapabilities;
 import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
-import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
-import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
-import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.metadata.MetadataOutput;
 import com.google.android.exoplayer2.metadata.MetadataRenderer;
 import com.google.android.exoplayer2.text.SubtitleDecoder;
@@ -40,7 +36,6 @@ import com.google.android.exoplayer2.text.SubtitleDecoderFactory;
 import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.lang.annotation.Retention;
@@ -330,45 +325,6 @@ class SimpleRenderersFactory implements RenderersFactory {
 
         RendererInstantiationException(String rendererName, Throwable cause) {
             super("Unable to instantiate renderer " + rendererName, cause);
-        }
-    }
-
-    class SecurityRequirementBasedMediaCodecVideoRenderer extends MediaCodecVideoRenderer {
-
-        SecurityRequirementBasedMediaCodecVideoRenderer(Context context,
-                                                        MediaCodecSelector mediaCodecSelector,
-                                                        long allowedJoiningTimeMs,
-                                                        @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
-                                                        boolean playClearSamplesWithoutKeys,
-                                                        boolean enableDecoderFallback,
-                                                        @Nullable Handler eventHandler,
-                                                        @Nullable VideoRendererEventListener eventListener,
-                                                        int maxDroppedFramesToNotify) {
-            super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, enableDecoderFallback, eventHandler, eventListener, maxDroppedFramesToNotify);
-        }
-
-        @Override
-        protected int supportsFormat(MediaCodecSelector mediaCodecSelector, DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, Format format) throws MediaCodecUtil.DecoderQueryException {
-            CodecSecurityRequirement codecSecurityRequirement = CodecSecurityRequirement.getInstance();
-            DrmInitData drmInitData = format.drmInitData;
-            if (drmInitData == null) {
-                codecSecurityRequirement.disableSecureCodecs();
-            } else {
-                codecSecurityRequirement.enableSecureCodecs();
-            }
-            return super.supportsFormat(mediaCodecSelector, drmSessionManager, format);
-        }
-
-        @Override
-        protected List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector, Format format, boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
-            CodecSecurityRequirement codecSecurityRequirement = CodecSecurityRequirement.getInstance();
-            DrmInitData drmInitData = format.drmInitData;
-            if (drmInitData == null) {
-                codecSecurityRequirement.disableSecureCodecs();
-            } else {
-                codecSecurityRequirement.enableSecureCodecs();
-            }
-            return super.getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder);
         }
     }
 
