@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
@@ -48,12 +47,7 @@ class SecurityRequirementBasedMediaCodecVideoRenderer extends MediaCodecVideoRen
                                  DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
                                  Format format) throws MediaCodecUtil.DecoderQueryException {
         CodecSecurityRequirement codecSecurityRequirement = CodecSecurityRequirement.getInstance();
-        DrmInitData drmInitData = format.drmInitData;
-        if (drmInitData == null) {
-            codecSecurityRequirement.disableSecureCodecs();
-        } else {
-            codecSecurityRequirement.enableSecureCodecs();
-        }
+        codecSecurityRequirement.updateSecureCodecsRequirement(format.drmInitData);
         return super.supportsFormat(mediaCodecSelector, drmSessionManager, format);
     }
 
@@ -62,12 +56,7 @@ class SecurityRequirementBasedMediaCodecVideoRenderer extends MediaCodecVideoRen
                                                    Format format,
                                                    boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
         CodecSecurityRequirement codecSecurityRequirement = CodecSecurityRequirement.getInstance();
-        DrmInitData drmInitData = format.drmInitData;
-        if (drmInitData == null) {
-            codecSecurityRequirement.disableSecureCodecs();
-        } else {
-            codecSecurityRequirement.enableSecureCodecs();
-        }
+        codecSecurityRequirement.updateSecureCodecsRequirement(format.drmInitData);
         return super.getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder);
     }
 }

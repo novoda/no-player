@@ -1,5 +1,9 @@
 package com.novoda.noplayer.internal.exoplayer;
 
+import com.google.android.exoplayer2.drm.DrmInitData;
+
+import androidx.annotation.Nullable;
+
 final class CodecSecurityRequirement {
 
     private boolean secureCodecsRequired;
@@ -8,12 +12,8 @@ final class CodecSecurityRequirement {
         return LazySingleton.PROVIDER;
     }
 
-    void enableSecureCodecs() {
-        secureCodecsRequired = true;
-    }
-
-    void disableSecureCodecs() {
-        secureCodecsRequired = false;
+    void updateSecureCodecsRequirement(@Nullable DrmInitData drmInitData) {
+        secureCodecsRequired = drmInitData != null;
     }
 
     boolean secureCodecsRequired() {
