@@ -18,11 +18,14 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 
-// Extension from MediaCodecAudioRenderer, we can't do anything about this.
-@SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
 class SecurityRequirementBasedMediaCodecAudioRenderer extends MediaCodecAudioRenderer {
 
-    SecurityRequirementBasedMediaCodecAudioRenderer(Context context,
+    private final CodecSecurityRequirement codecSecurityRequirement;
+
+    // Extension from MediaCodecAudioRenderer, we can't do anything about this.
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
+    SecurityRequirementBasedMediaCodecAudioRenderer(CodecSecurityRequirement codecSecurityRequirement,
+                                                    Context context,
                                                     MediaCodecSelector mediaCodecSelector,
                                                     @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
                                                     boolean playClearSamplesWithoutKeys,
@@ -40,13 +43,13 @@ class SecurityRequirementBasedMediaCodecAudioRenderer extends MediaCodecAudioRen
                 audioCapabilities,
                 audioProcessors
         );
+        this.codecSecurityRequirement = codecSecurityRequirement;
     }
 
     @Override
     protected int supportsFormat(MediaCodecSelector mediaCodecSelector,
                                  DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
                                  Format format) throws MediaCodecUtil.DecoderQueryException {
-        CodecSecurityRequirement codecSecurityRequirement = CodecSecurityRequirement.getInstance();
         codecSecurityRequirement.updateSecureCodecsRequirement(format.drmInitData);
         return super.supportsFormat(mediaCodecSelector, drmSessionManager, format);
     }
@@ -55,7 +58,6 @@ class SecurityRequirementBasedMediaCodecAudioRenderer extends MediaCodecAudioRen
     protected List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector,
                                                    Format format,
                                                    boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
-        CodecSecurityRequirement codecSecurityRequirement = CodecSecurityRequirement.getInstance();
         codecSecurityRequirement.updateSecureCodecsRequirement(format.drmInitData);
         return super.getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder);
     }

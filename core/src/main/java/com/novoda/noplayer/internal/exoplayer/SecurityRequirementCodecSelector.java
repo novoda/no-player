@@ -18,14 +18,16 @@ class SecurityRequirementCodecSelector implements MediaCodecSelector {
     private static final boolean DECODER_DOES_NOT_REQUIRE_SECURE_DECRYPTION = false;
 
     private final InternalMediaCodecUtil internalMediaCodecUtil;
+    private final CodecSecurityRequirement codecSecurityRequirement;
 
-    public static SecurityRequirementCodecSelector newInstance() {
+    public static SecurityRequirementCodecSelector newInstance(CodecSecurityRequirement codecSecurityRequirement) {
         InternalMediaCodecUtil internalMediaCodecUtil = new InternalMediaCodecUtil();
-        return new SecurityRequirementCodecSelector(internalMediaCodecUtil);
+        return new SecurityRequirementCodecSelector(internalMediaCodecUtil, codecSecurityRequirement);
     }
 
-    SecurityRequirementCodecSelector(InternalMediaCodecUtil internalMediaCodecUtil) {
+    SecurityRequirementCodecSelector(InternalMediaCodecUtil internalMediaCodecUtil, CodecSecurityRequirement codecSecurityRequirement) {
         this.internalMediaCodecUtil = internalMediaCodecUtil;
+        this.codecSecurityRequirement = codecSecurityRequirement;
     }
 
     @Override
@@ -48,9 +50,7 @@ class SecurityRequirementCodecSelector implements MediaCodecSelector {
     }
 
     private List<MediaCodecInfo> secureCodecs(String mimeType, boolean requiresTunnelingDecoder) throws MediaCodecUtil.DecoderQueryException {
-        boolean secureCodecsRequired = CodecSecurityRequirement.getInstance().secureCodecsRequired();
-
-        if (secureCodecsRequired) {
+        if (codecSecurityRequirement.secureCodecsRequired()) {
             return internalMediaCodecUtil.getDecoderInfos(
                     mimeType,
                     DECODER_REQUIRES_SECURE_DECRYPTION,

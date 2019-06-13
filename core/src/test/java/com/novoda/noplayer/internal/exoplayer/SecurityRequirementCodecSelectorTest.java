@@ -65,13 +65,18 @@ public class SecurityRequirementCodecSelectorTest {
 
     @Test
     public void whenRequestingSecureDecoders_thenReturnsTheCorrectInternalDecodersList() throws MediaCodecUtil.DecoderQueryException {
-        CodecSecurityRequirement.getInstance().updateSecureCodecsRequirement(drmInitData);
         given(internalMediaCodecUtil.getDecoderInfos(MIMETYPE, CONTENT_SECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER)).willReturn(secureDecoders);
         given(internalMediaCodecUtil.getDecoderInfos(MIMETYPE, CONTENT_INSECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER)).willReturn(unsecureDecoders);
 
-        SecurityRequirementCodecSelector securityRequirementCodecSelector = new SecurityRequirementCodecSelector(internalMediaCodecUtil);
+        SecurityRequirementCodecSelector securityRequirementCodecSelector = new SecurityRequirementCodecSelector(internalMediaCodecUtil, codecSecurityRequirement());
         List<MediaCodecInfo> decoderInfos = securityRequirementCodecSelector.getDecoderInfos(MIMETYPE, CONTENT_SECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER);
 
         assertThat(decoderInfos).isEqualTo(decodersReturned);
+    }
+
+    private CodecSecurityRequirement codecSecurityRequirement() {
+        CodecSecurityRequirement codecSecurityRequirement = new CodecSecurityRequirement();
+        codecSecurityRequirement.updateSecureCodecsRequirement(drmInitData);
+        return codecSecurityRequirement;
     }
 }

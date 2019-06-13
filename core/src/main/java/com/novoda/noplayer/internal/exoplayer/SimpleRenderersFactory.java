@@ -50,6 +50,7 @@ import androidx.annotation.Nullable;
 /**
  * Default {@link RenderersFactory} implementation.
  */
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.StdCyclomaticComplexity", "PMD.ModifiedCyclomaticComplexity", "PMD.NPathComplexity"})
 class SimpleRenderersFactory implements RenderersFactory {
 
     private static final boolean DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS = false;
@@ -96,7 +97,7 @@ class SimpleRenderersFactory implements RenderersFactory {
     private final int extensionRendererMode;
 
     private final long allowedVideoJoiningTimeMs;
-    private final MediaCodecSelector mediaCodecSelector;
+    private final boolean downgradeSecureDecoder;
     private final SubtitleDecoderFactory subtitleDecoderFactory;
 
     /**
@@ -106,18 +107,18 @@ class SimpleRenderersFactory implements RenderersFactory {
      *                                  application build for them to be considered available.
      * @param allowedVideoJoiningTimeMs The maximum duration for which video renderers can attempt
      *                                  to seamlessly join an ongoing playback.
-     * @param mediaCodecSelector        Used for selecting the codec for the video renderer.
+     * @param downgradeSecureDecoder    Used for selecting the codec for the video renderer.
      * @param subtitleDecoderFactory    A factory from which to obtain {@link SubtitleDecoder} instances.
      */
     SimpleRenderersFactory(Context context,
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,
-                           MediaCodecSelector mediaCodecSelector,
+                           boolean downgradeSecureDecoder,
                            SubtitleDecoderFactory subtitleDecoderFactory) {
         this.context = context;
         this.extensionRendererMode = extensionRendererMode;
         this.allowedVideoJoiningTimeMs = allowedVideoJoiningTimeMs;
-        this.mediaCodecSelector = mediaCodecSelector;
+        this.downgradeSecureDecoder = downgradeSecureDecoder;
         this.subtitleDecoderFactory = subtitleDecoderFactory;
     }
 
@@ -164,7 +165,13 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      VideoRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
+        CodecSecurityRequirement codecSecurityRequirement = new CodecSecurityRequirement();
+        MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
+                ? SecurityRequirementCodecSelector.newInstance(codecSecurityRequirement)
+                : MediaCodecSelector.DEFAULT;
+
         outRenderers.add(new SecurityRequirementBasedMediaCodecVideoRenderer(
+                codecSecurityRequirement,
                 context,
                 mediaCodecSelector,
                 allowedVideoJoiningTimeMs,
@@ -224,7 +231,13 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      AudioRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
+        CodecSecurityRequirement codecSecurityRequirement = new CodecSecurityRequirement();
+        MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
+                ? SecurityRequirementCodecSelector.newInstance(codecSecurityRequirement)
+                : MediaCodecSelector.DEFAULT;
+
         MediaCodecAudioRenderer mediaCodecAudioRenderer = new SecurityRequirementBasedMediaCodecAudioRenderer(
+                codecSecurityRequirement,
                 context,
                 mediaCodecSelector,
                 drmSessionManager,
