@@ -224,7 +224,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      AudioRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
-        MediaCodecAudioRenderer mediaCodecAudioRenderer = new MediaCodecAudioRenderer(
+        MediaCodecAudioRenderer mediaCodecAudioRenderer = new SecurityRequirementBasedMediaCodecAudioRenderer(
                 context,
                 mediaCodecSelector,
                 drmSessionManager,
