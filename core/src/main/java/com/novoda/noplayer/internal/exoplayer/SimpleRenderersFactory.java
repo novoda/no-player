@@ -169,7 +169,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      VideoRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
-        outRenderers.add(new SecurityBasedMediaCodecVideoRenderer(
+        outRenderers.add(new SecurityRequirementBasedMediaCodecVideoRenderer(
                 context,
                 mediaCodecSelector,
                 allowedVideoJoiningTimeMs,
@@ -333,35 +333,43 @@ class SimpleRenderersFactory implements RenderersFactory {
         }
     }
 
-    class SecurityBasedMediaCodecVideoRenderer extends MediaCodecVideoRenderer {
+    class SecurityRequirementBasedMediaCodecVideoRenderer extends MediaCodecVideoRenderer {
 
-        private final SecurityDowngradingCodecSelector mediaCodecSelector;
-
-        SecurityBasedMediaCodecVideoRenderer(Context context, SecurityDowngradingCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, boolean enableDecoderFallback, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify) {
+        SecurityRequirementBasedMediaCodecVideoRenderer(Context context,
+                                                        MediaCodecSelector mediaCodecSelector,
+                                                        long allowedJoiningTimeMs,
+                                                        @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
+                                                        boolean playClearSamplesWithoutKeys,
+                                                        boolean enableDecoderFallback,
+                                                        @Nullable Handler eventHandler,
+                                                        @Nullable VideoRendererEventListener eventListener,
+                                                        int maxDroppedFramesToNotify) {
             super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, enableDecoderFallback, eventHandler, eventListener, maxDroppedFramesToNotify);
-            this.mediaCodecSelector = mediaCodecSelector;
         }
 
         @Override
         protected int supportsFormat(MediaCodecSelector mediaCodecSelector, DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, Format format) throws MediaCodecUtil.DecoderQueryException {
+            CodecSecurityRequirement codecSecurityRequirement = CodecSecurityRequirement.getInstance();
             DrmInitData drmInitData = format.drmInitData;
             if (drmInitData == null) {
-                this.mediaCodecSelector.disableSecureCodecs();
+                codecSecurityRequirement.disableSecureCodecs();
             } else {
-                this.mediaCodecSelector.enableSecureCodecs();
+                codecSecurityRequirement.enableSecureCodecs();
             }
             return super.supportsFormat(mediaCodecSelector, drmSessionManager, format);
         }
 
         @Override
         protected List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector, Format format, boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
+            CodecSecurityRequirement codecSecurityRequirement = CodecSecurityRequirement.getInstance();
             DrmInitData drmInitData = format.drmInitData;
             if (drmInitData == null) {
-                this.mediaCodecSelector.disableSecureCodecs();
+                codecSecurityRequirement.disableSecureCodecs();
             } else {
-                this.mediaCodecSelector.enableSecureCodecs();
+                codecSecurityRequirement.enableSecureCodecs();
             }
             return super.getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder);
         }
     }
+
 }

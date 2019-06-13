@@ -18,7 +18,6 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
     private static final boolean DECODER_DOES_NOT_REQUIRE_SECURE_DECRYPTION = false;
 
     private final InternalMediaCodecUtil internalMediaCodecUtil;
-    private boolean useSecureCodecs;
 
     public static SecurityDowngradingCodecSelector newInstance() {
         InternalMediaCodecUtil internalMediaCodecUtil = new InternalMediaCodecUtil();
@@ -49,7 +48,9 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
     }
 
     private List<MediaCodecInfo> secureCodecs(String mimeType, boolean requiresTunnelingDecoder) throws MediaCodecUtil.DecoderQueryException {
-        if (useSecureCodecs) {
+        boolean secureCodecsRequired = CodecSecurityRequirement.getInstance().secureCodecsRequired();
+
+        if (secureCodecsRequired) {
             return internalMediaCodecUtil.getDecoderInfos(
                     mimeType,
                     DECODER_REQUIRES_SECURE_DECRYPTION,
@@ -62,14 +63,6 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
     @Override
     public MediaCodecInfo getPassthroughDecoderInfo() throws MediaCodecUtil.DecoderQueryException {
         return internalMediaCodecUtil.getPassthroughDecoderInfo();
-    }
-
-    public void disableSecureCodecs() {
-        this.useSecureCodecs = false;
-    }
-
-    public void enableSecureCodecs() {
-        this.useSecureCodecs = true;
     }
 
     static class InternalMediaCodecUtil {
