@@ -1,6 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer;
 
-class CodecSecurityRequirement {
+final class CodecSecurityRequirement {
 
     private boolean secureCodecsRequired;
 
