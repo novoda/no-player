@@ -4,10 +4,6 @@ final class CodecSecurityRequirement {
 
     private boolean secureCodecsRequired;
 
-    private CodecSecurityRequirement() {
-        // Singleton.
-    }
-
     static CodecSecurityRequirement getInstance() {
         return LazySingleton.PROVIDER;
     }
