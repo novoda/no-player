@@ -3,6 +3,7 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.view.View;
 
+import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
@@ -35,7 +36,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
     private final DrmSessionCreator drmSessionCreator;
-    private final SecurityRequirementCodecSelector mediaCodecSelector;
+    private final MediaCodecSelector mediaCodecSelector;
     private final LoadTimeout loadTimeout;
 
     @Nullable
@@ -51,7 +52,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
                      LoadTimeout loadTimeoutParam,
                      Heart heart,
                      DrmSessionCreator drmSessionCreator,
-                     SecurityRequirementCodecSelector mediaCodecSelector) {
+                     MediaCodecSelector mediaCodecSelector) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
