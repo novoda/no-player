@@ -13,7 +13,7 @@ import java.util.List;
  * to a decoder that does not require secure decryption if there is none available.
  */
 class SecurityRequirementCodecSelector implements MediaCodecSelector {
-                                                                                                                   
+
     private static final boolean DECODER_REQUIRES_SECURE_DECRYPTION = true;
     private static final boolean DECODER_DOES_NOT_REQUIRE_SECURE_DECRYPTION = false;
 

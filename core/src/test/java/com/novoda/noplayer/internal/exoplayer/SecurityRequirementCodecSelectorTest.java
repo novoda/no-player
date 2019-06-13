@@ -49,8 +49,8 @@ public class SecurityRequirementCodecSelectorTest {
         return Arrays.asList(
                 new Object[]{CONTENT_SECURE, NO_CODECS, NO_CODECS, NO_CODECS},
                 new Object[]{CONTENT_SECURE, NO_CODECS, UNSECURE_CODECS, UNSECURE_CODECS},
-                new Object[]{CONTENT_SECURE, SECURE_CODECS, NO_CODECS, NO_CODECS},
-                new Object[]{CONTENT_SECURE, SECURE_CODECS, UNSECURE_CODECS, UNSECURE_CODECS},
+                new Object[]{CONTENT_SECURE, SECURE_CODECS, NO_CODECS, SECURE_CODECS},
+                new Object[]{CONTENT_SECURE, SECURE_CODECS, UNSECURE_CODECS, BOTH_CODECS},
 
                 new Object[]{CONTENT_INSECURE, NO_CODECS, NO_CODECS, NO_CODECS},
                 new Object[]{CONTENT_INSECURE, NO_CODECS, UNSECURE_CODECS, UNSECURE_CODECS},
@@ -61,6 +61,7 @@ public class SecurityRequirementCodecSelectorTest {
 
     @Test
     public void whenRequestingSecureDecoders_thenReturnsTheCorrectInternalDecodersList() throws MediaCodecUtil.DecoderQueryException {
+        setCodecSecurityRequirement(secureCodecRequest);
         given(internalMediaCodecUtil.getDecoderInfos(MIMETYPE, CONTENT_SECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER)).willReturn(secureDecoders);
         given(internalMediaCodecUtil.getDecoderInfos(MIMETYPE, CONTENT_INSECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER)).willReturn(unsecureDecoders);
 
@@ -68,5 +69,14 @@ public class SecurityRequirementCodecSelectorTest {
         List<MediaCodecInfo> decoderInfos = securityRequirementCodecSelector.getDecoderInfos(MIMETYPE, secureCodecRequest, DOES_NOT_REQUIRE_TUNNELING_DECODER);
 
         assertThat(decoderInfos).isEqualTo(decodersReturned);
+    }
+
+    private void setCodecSecurityRequirement(boolean requiresSecureCodec) {
+        CodecSecurityRequirement codecSecurityRequirement = CodecSecurityRequirement.getInstance();
+        if (requiresSecureCodec) {
+            codecSecurityRequirement.enableSecureCodecs();
+        } else {
+            codecSecurityRequirement.disableSecureCodecs();
+        }
     }
 }
