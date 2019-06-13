@@ -12,19 +12,19 @@ import java.util.List;
  * This class will try and get a decoder that requires secure decryption and fallback
  * to a decoder that does not require secure decryption if there is none available.
  */
-class SecurityDowngradingCodecSelector implements MediaCodecSelector {
+class SecurityRequirementCodecSelector implements MediaCodecSelector {
 
     private static final boolean DECODER_REQUIRES_SECURE_DECRYPTION = true;
     private static final boolean DECODER_DOES_NOT_REQUIRE_SECURE_DECRYPTION = false;
 
     private final InternalMediaCodecUtil internalMediaCodecUtil;
 
-    public static SecurityDowngradingCodecSelector newInstance() {
+    public static SecurityRequirementCodecSelector newInstance() {
         InternalMediaCodecUtil internalMediaCodecUtil = new InternalMediaCodecUtil();
-        return new SecurityDowngradingCodecSelector(internalMediaCodecUtil);
+        return new SecurityRequirementCodecSelector(internalMediaCodecUtil);
     }
 
-    SecurityDowngradingCodecSelector(InternalMediaCodecUtil internalMediaCodecUtil) {
+    SecurityRequirementCodecSelector(InternalMediaCodecUtil internalMediaCodecUtil) {
         this.internalMediaCodecUtil = internalMediaCodecUtil;
     }
 

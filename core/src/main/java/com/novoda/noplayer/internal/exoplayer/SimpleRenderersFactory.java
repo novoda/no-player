@@ -101,7 +101,7 @@ class SimpleRenderersFactory implements RenderersFactory {
     private final int extensionRendererMode;
 
     private final long allowedVideoJoiningTimeMs;
-    private final SecurityDowngradingCodecSelector mediaCodecSelector;
+    private final SecurityRequirementCodecSelector mediaCodecSelector;
     private final SubtitleDecoderFactory subtitleDecoderFactory;
 
     /**
@@ -117,7 +117,7 @@ class SimpleRenderersFactory implements RenderersFactory {
     SimpleRenderersFactory(Context context,
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,
-                           SecurityDowngradingCodecSelector mediaCodecSelector,
+                           SecurityRequirementCodecSelector mediaCodecSelector,
                            SubtitleDecoderFactory subtitleDecoderFactory) {
         this.context = context;
         this.extensionRendererMode = extensionRendererMode;

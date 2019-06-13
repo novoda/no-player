@@ -31,7 +31,7 @@ class ExoPlayerCreator {
     @NonNull
     public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator,
                                   DefaultDrmSessionEventListener drmSessionEventListener,
-                                  SecurityDowngradingCodecSelector mediaCodecSelector,
+                                  SecurityRequirementCodecSelector mediaCodecSelector,
                                   TrackSelector trackSelector) {
         DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
         SubtitleDecoderFactory subtitleDecoderFactory = new NoPlayerSubtitleDecoderFactory();

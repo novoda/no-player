@@ -35,7 +35,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
     private final DrmSessionCreator drmSessionCreator;
-    private final SecurityDowngradingCodecSelector mediaCodecSelector;
+    private final SecurityRequirementCodecSelector mediaCodecSelector;
     private final LoadTimeout loadTimeout;
 
     @Nullable
@@ -51,7 +51,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
                      LoadTimeout loadTimeoutParam,
                      Heart heart,
                      DrmSessionCreator drmSessionCreator,
-                     SecurityDowngradingCodecSelector mediaCodecSelector) {
+                     SecurityRequirementCodecSelector mediaCodecSelector) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;

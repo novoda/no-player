@@ -86,7 +86,7 @@ public class NoPlayerExoPlayerCreator {
                     allowCrossProtocolRedirects
             );
 
-            SecurityDowngradingCodecSelector mediaCodecSelector = SecurityDowngradingCodecSelector.newInstance();
+            SecurityRequirementCodecSelector mediaCodecSelector = SecurityRequirementCodecSelector.newInstance();
 
             CompositeTrackSelectorCreator trackSelectorCreator = new CompositeTrackSelectorCreator();
 

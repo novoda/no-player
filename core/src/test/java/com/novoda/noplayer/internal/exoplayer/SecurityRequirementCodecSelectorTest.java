@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
-import com.novoda.noplayer.internal.exoplayer.SecurityDowngradingCodecSelector.InternalMediaCodecUtil;
+import com.novoda.noplayer.internal.exoplayer.SecurityRequirementCodecSelector.InternalMediaCodecUtil;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,7 +18,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
-public class SecurityDowngradingCodecSelectorTest {
+public class SecurityRequirementCodecSelectorTest {
 
     private static final boolean CONTENT_SECURE = true;
     private static final boolean CONTENT_INSECURE = false;
@@ -64,8 +64,8 @@ public class SecurityDowngradingCodecSelectorTest {
         given(internalMediaCodecUtil.getDecoderInfos(MIMETYPE, CONTENT_SECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER)).willReturn(secureDecoders);
         given(internalMediaCodecUtil.getDecoderInfos(MIMETYPE, CONTENT_INSECURE, DOES_NOT_REQUIRE_TUNNELING_DECODER)).willReturn(unsecureDecoders);
 
-        SecurityDowngradingCodecSelector securityDowngradingCodecSelector = new SecurityDowngradingCodecSelector(internalMediaCodecUtil);
-        List<MediaCodecInfo> decoderInfos = securityDowngradingCodecSelector.getDecoderInfos(MIMETYPE, secureCodecRequest, DOES_NOT_REQUIRE_TUNNELING_DECODER);
+        SecurityRequirementCodecSelector securityRequirementCodecSelector = new SecurityRequirementCodecSelector(internalMediaCodecUtil);
+        List<MediaCodecInfo> decoderInfos = securityRequirementCodecSelector.getDecoderInfos(MIMETYPE, secureCodecRequest, DOES_NOT_REQUIRE_TUNNELING_DECODER);
 
         assertThat(decoderInfos).isEqualTo(decodersReturned);
     }

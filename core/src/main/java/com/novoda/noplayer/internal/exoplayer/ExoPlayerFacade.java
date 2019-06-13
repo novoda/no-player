@@ -186,7 +186,7 @@ class ExoPlayerFacade {
                    Uri uri,
                    Options options,
                    ExoPlayerForwarder forwarder,
-                   SecurityDowngradingCodecSelector mediaCodecSelector) {
+                   SecurityRequirementCodecSelector mediaCodecSelector) {
         this.options = options;
 
         DefaultBandwidthMeter bandwidthMeter = bandwidthMeterCreator.create(options.maxInitialBitrate());
