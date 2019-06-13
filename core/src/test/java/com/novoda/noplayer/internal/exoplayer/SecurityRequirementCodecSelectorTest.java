@@ -49,13 +49,13 @@ public class SecurityRequirementCodecSelectorTest {
         return Arrays.asList(
                 new Object[]{CONTENT_SECURE, NO_CODECS, NO_CODECS, NO_CODECS},
                 new Object[]{CONTENT_SECURE, NO_CODECS, UNSECURE_CODECS, UNSECURE_CODECS},
-                new Object[]{CONTENT_SECURE, SECURE_CODECS, NO_CODECS, SECURE_CODECS},
-                new Object[]{CONTENT_SECURE, SECURE_CODECS, UNSECURE_CODECS, BOTH_CODECS},
+                new Object[]{CONTENT_SECURE, SECURE_CODECS, NO_CODECS, NO_CODECS},
+                new Object[]{CONTENT_SECURE, SECURE_CODECS, UNSECURE_CODECS, UNSECURE_CODECS},
 
                 new Object[]{CONTENT_INSECURE, NO_CODECS, NO_CODECS, NO_CODECS},
                 new Object[]{CONTENT_INSECURE, NO_CODECS, UNSECURE_CODECS, UNSECURE_CODECS},
-                new Object[]{CONTENT_INSECURE, SECURE_CODECS, NO_CODECS, SECURE_CODECS},
-                new Object[]{CONTENT_INSECURE, SECURE_CODECS, UNSECURE_CODECS, BOTH_CODECS}
+                new Object[]{CONTENT_INSECURE, SECURE_CODECS, NO_CODECS, NO_CODECS},
+                new Object[]{CONTENT_INSECURE, SECURE_CODECS, UNSECURE_CODECS, UNSECURE_CODECS}
         );
     }
 
