@@ -30,6 +30,7 @@ import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.metadata.MetadataOutput;
@@ -349,8 +350,18 @@ class SimpleRenderersFactory implements RenderersFactory {
             } else {
                 this.mediaCodecSelector.enableSecureCodecs();
             }
-
             return super.supportsFormat(mediaCodecSelector, drmSessionManager, format);
+        }
+
+        @Override
+        protected List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector, Format format, boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
+            DrmInitData drmInitData = format.drmInitData;
+            if (drmInitData == null) {
+                this.mediaCodecSelector.disableSecureCodecs();
+            } else {
+                this.mediaCodecSelector.enableSecureCodecs();
+            }
+            return super.getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder);
         }
     }
 }
