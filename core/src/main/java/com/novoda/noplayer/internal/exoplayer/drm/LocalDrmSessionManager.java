@@ -11,24 +11,25 @@ import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.model.KeySetId;
 
 import java.util.UUID;
 
 class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> {
 
-    private final KeySetId keySetIdToRestore;
+    private final DownloadedModularDrm downloadedModularDrm;
     private final ExoMediaDrm<FrameworkMediaCrypto> mediaDrm;
     private final DefaultDrmSessionEventListener eventListener;
     private final UUID drmScheme;
     private final Handler handler;
 
-    LocalDrmSessionManager(KeySetId keySetIdToRestore,
-                           ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
-                           UUID drmScheme,
-                           Handler handler,
-                           DefaultDrmSessionEventListener eventListener) {
-        this.keySetIdToRestore = keySetIdToRestore;
+    LocalDrmSessionManager(DownloadedModularDrm downloadedModularDrm,
+                           ExoMediaDrm<com.google.android.exoplayer2.drm.FrameworkMediaCrypto> mediaDrm,
+                           java.util.UUID drmScheme,
+                           android.os.Handler handler,
+                           com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener eventListener) {
+        this.downloadedModularDrm = downloadedModularDrm;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;
         this.drmScheme = drmScheme;
@@ -50,10 +51,10 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
         try {
             SessionId sessionId = SessionId.of(mediaDrm.openSession());
             FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(sessionId.asBytes());
+            KeySetId keySetId = downloadedModularDrm.getKeySetId();
+            mediaDrm.restoreKeys(sessionId.asBytes(), keySetId.asBytes());
 
-            mediaDrm.restoreKeys(sessionId.asBytes(), keySetIdToRestore.asBytes());
-
-            drmSession = new LocalDrmSession(mediaCrypto, keySetIdToRestore, sessionId);
+            drmSession = new LocalDrmSession(mediaCrypto, keySetId, sessionId);
         } catch (Exception exception) {
             drmSession = new InvalidDrmSession(new DrmSession.DrmSessionException(exception));
             notifyErrorListener(drmSession);
