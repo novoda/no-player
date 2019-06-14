@@ -26,9 +26,9 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
 
     LocalDrmSessionManager(DownloadedModularDrm downloadedModularDrm,
                            ExoMediaDrm<com.google.android.exoplayer2.drm.FrameworkMediaCrypto> mediaDrm,
-                           java.util.UUID drmScheme,
-                           android.os.Handler handler,
-                           com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener eventListener) {
+                           UUID drmScheme,
+                           Handler handler,
+                           DefaultDrmSessionEventListener eventListener) {
         this.downloadedModularDrm = downloadedModularDrm;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;
