@@ -167,7 +167,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      List<Renderer> outRenderers) {
         CodecSecurityRequirement codecSecurityRequirement = new CodecSecurityRequirement();
         MediaCodecSelector mediaCodecSelector = allowFallbackDecoder
-                ? SecurityRequirementCodecSelector.newInstance(codecSecurityRequirement)
+                ? CodecSelectorWithFallback.newInstance(codecSecurityRequirement)
                 : MediaCodecSelector.DEFAULT;
 
         outRenderers.add(new SecurityRequirementBasedMediaCodecVideoRenderer(
@@ -233,7 +233,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      List<Renderer> outRenderers) {
         CodecSecurityRequirement codecSecurityRequirement = new CodecSecurityRequirement();
         MediaCodecSelector mediaCodecSelector = allowFallbackDecoder
-                ? SecurityRequirementCodecSelector.newInstance(codecSecurityRequirement)
+                ? CodecSelectorWithFallback.newInstance(codecSecurityRequirement)
                 : MediaCodecSelector.DEFAULT;
 
         MediaCodecAudioRenderer mediaCodecAudioRenderer = new SecurityRequirementBasedMediaCodecAudioRenderer(

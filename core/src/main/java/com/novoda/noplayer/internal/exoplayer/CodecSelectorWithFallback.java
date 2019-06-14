@@ -12,7 +12,7 @@ import java.util.List;
  * This class will try and get a decoder that requires secure decryption and fallback
  * to a decoder that does not require secure decryption if there is none available.
  */
-class SecurityRequirementCodecSelector implements MediaCodecSelector {
+class CodecSelectorWithFallback implements MediaCodecSelector {
 
     private static final boolean DECODER_REQUIRES_SECURE_DECRYPTION = true;
     private static final boolean DECODER_DOES_NOT_REQUIRE_SECURE_DECRYPTION = false;
@@ -20,12 +20,12 @@ class SecurityRequirementCodecSelector implements MediaCodecSelector {
     private final InternalMediaCodecUtil internalMediaCodecUtil;
     private final CodecSecurityRequirement codecSecurityRequirement;
 
-    public static SecurityRequirementCodecSelector newInstance(CodecSecurityRequirement codecSecurityRequirement) {
+    public static CodecSelectorWithFallback newInstance(CodecSecurityRequirement codecSecurityRequirement) {
         InternalMediaCodecUtil internalMediaCodecUtil = new InternalMediaCodecUtil();
-        return new SecurityRequirementCodecSelector(internalMediaCodecUtil, codecSecurityRequirement);
+        return new CodecSelectorWithFallback(internalMediaCodecUtil, codecSecurityRequirement);
     }
 
-    SecurityRequirementCodecSelector(InternalMediaCodecUtil internalMediaCodecUtil, CodecSecurityRequirement codecSecurityRequirement) {
+    CodecSelectorWithFallback(InternalMediaCodecUtil internalMediaCodecUtil, CodecSecurityRequirement codecSecurityRequirement) {
         this.internalMediaCodecUtil = internalMediaCodecUtil;
         this.codecSecurityRequirement = codecSecurityRequirement;
     }
