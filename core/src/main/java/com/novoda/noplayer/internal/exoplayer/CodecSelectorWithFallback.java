@@ -4,24 +4,27 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * This class will try and get a decoder that requires secure decryption and fallback
  * to a decoder that does not require secure decryption if there is none available.
  */
-class SecurityDowngradingCodecSelector implements MediaCodecSelector {
+class CodecSelectorWithFallback implements MediaCodecSelector {
 
-    private static final boolean USE_INSECURE_DECODER = false;
+    private static final boolean DECODER_REQUIRES_SECURE_DECRYPTION = true;
+    private static final boolean DECODER_DOES_NOT_REQUIRE_SECURE_DECRYPTION = false;
 
     private final InternalMediaCodecUtil internalMediaCodecUtil;
 
-    public static SecurityDowngradingCodecSelector newInstance() {
+    public static CodecSelectorWithFallback newInstance() {
         InternalMediaCodecUtil internalMediaCodecUtil = new InternalMediaCodecUtil();
-        return new SecurityDowngradingCodecSelector(internalMediaCodecUtil);
+        return new CodecSelectorWithFallback(internalMediaCodecUtil);
     }
 
-    SecurityDowngradingCodecSelector(InternalMediaCodecUtil internalMediaCodecUtil) {
+    CodecSelectorWithFallback(InternalMediaCodecUtil internalMediaCodecUtil) {
         this.internalMediaCodecUtil = internalMediaCodecUtil;
     }
 
@@ -31,7 +34,30 @@ class SecurityDowngradingCodecSelector implements MediaCodecSelector {
             boolean requiresSecureDecoder,
             boolean requiresTunnelingDecoder
     ) throws MediaCodecUtil.DecoderQueryException {
-        return internalMediaCodecUtil.getDecoderInfos(mimeType, USE_INSECURE_DECODER, requiresTunnelingDecoder);
+        List<MediaCodecInfo> decoderInfos = new ArrayList<>(secureCodecs(requiresSecureDecoder, mimeType, requiresTunnelingDecoder));
+
+        decoderInfos.addAll(
+                internalMediaCodecUtil.getDecoderInfos(
+                        mimeType,
+                        DECODER_DOES_NOT_REQUIRE_SECURE_DECRYPTION,
+                        requiresTunnelingDecoder
+                )
+        );
+
+        return decoderInfos;
+    }
+
+    private List<MediaCodecInfo> secureCodecs(boolean requiresSecureDecoder,
+                                              String mimeType,
+                                              boolean requiresTunnelingDecoder) throws MediaCodecUtil.DecoderQueryException {
+        if (requiresSecureDecoder) {
+            return internalMediaCodecUtil.getDecoderInfos(
+                    mimeType,
+                    DECODER_REQUIRES_SECURE_DECRYPTION,
+                    requiresTunnelingDecoder
+            );
+        }
+        return Collections.emptyList();
     }
 
     @Override

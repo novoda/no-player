@@ -32,10 +32,10 @@ class NoPlayerCreator {
         this.drmSessionCreatorFactory = drmSessionCreatorFactory;
     }
 
-    NoPlayer create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder, boolean allowCrossProtocolRedirects) {
+    NoPlayer create(DrmType drmType, DrmHandler drmHandler, boolean allowFallbackDecoder, boolean allowCrossProtocolRedirects) {
         for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
-                return createPlayerForType(player, drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects);
+                return createPlayerForType(player, drmType, drmHandler, allowFallbackDecoder, allowCrossProtocolRedirects);
             }
         }
         throw UnableToCreatePlayerException.unhandledDrmType(drmType);
@@ -44,7 +44,7 @@ class NoPlayerCreator {
     private NoPlayer createPlayerForType(PlayerType playerType,
                                          DrmType drmType,
                                          DrmHandler drmHandler,
-                                         boolean downgradeSecureDecoder,
+                                         boolean allowFallbackDecoder,
                                          boolean allowCrossProtocolRedirects) {
         switch (playerType) {
             case MEDIA_PLAYER:
@@ -55,7 +55,7 @@ class NoPlayerCreator {
                     return noPlayerExoPlayerCreator.createExoPlayer(
                             context,
                             drmSessionCreator,
-                            downgradeSecureDecoder,
+                            allowFallbackDecoder,
                             allowCrossProtocolRedirects
                     );
                 } catch (DrmSessionCreatorException exception) {
