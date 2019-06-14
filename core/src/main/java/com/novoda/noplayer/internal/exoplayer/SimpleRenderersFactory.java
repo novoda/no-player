@@ -36,6 +36,7 @@ import com.google.android.exoplayer2.text.SubtitleDecoderFactory;
 import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.lang.annotation.Retention;
@@ -107,7 +108,7 @@ class SimpleRenderersFactory implements RenderersFactory {
      *                                  application build for them to be considered available.
      * @param allowedVideoJoiningTimeMs The maximum duration for which video renderers can attempt
      *                                  to seamlessly join an ongoing playback.
-     * @param allowFallbackDecoder    Used for selecting the codec for the video renderer.
+     * @param allowFallbackDecoder      Used for selecting the codec for the video renderer.
      * @param subtitleDecoderFactory    A factory from which to obtain {@link SubtitleDecoder} instances.
      */
     SimpleRenderersFactory(Context context,
@@ -166,22 +167,33 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
         CodecSecurityRequirement codecSecurityRequirement = new CodecSecurityRequirement();
-        MediaCodecSelector mediaCodecSelector = allowFallbackDecoder
-                ? CodecSelectorWithFallback.newInstance()
-                : MediaCodecSelector.DEFAULT;
 
-        outRenderers.add(new MediaCodecVideoRendererWithSimplifiedDrmRequirement(
-                codecSecurityRequirement,
-                context,
-                mediaCodecSelector,
-                allowedVideoJoiningTimeMs,
-                drmSessionManager,
-                DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
-                ENABLE_DECODER_FALLBACK,
-                eventHandler,
-                eventListener,
-                MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
-        ));
+        if (allowFallbackDecoder) {
+            outRenderers.add(new MediaCodecVideoRendererWithSimplifiedDrmRequirement(
+                    codecSecurityRequirement,
+                    context,
+                    CodecSelectorWithFallback.newInstance(),
+                    allowedVideoJoiningTimeMs,
+                    drmSessionManager,
+                    DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
+                    ENABLE_DECODER_FALLBACK,
+                    eventHandler,
+                    eventListener,
+                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
+            ));
+        } else {
+            outRenderers.add(new MediaCodecVideoRenderer(
+                    context,
+                    MediaCodecSelector.DEFAULT,
+                    allowedVideoJoiningTimeMs,
+                    drmSessionManager,
+                    DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
+                    ENABLE_DECODER_FALLBACK,
+                    eventHandler,
+                    eventListener,
+                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
+            ));
+        }
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {
             return;
@@ -232,23 +244,31 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
         CodecSecurityRequirement codecSecurityRequirement = new CodecSecurityRequirement();
-        MediaCodecSelector mediaCodecSelector = allowFallbackDecoder
-                ? CodecSelectorWithFallback.newInstance()
-                : MediaCodecSelector.DEFAULT;
 
-        MediaCodecAudioRenderer mediaCodecAudioRenderer = new MediaCodecAudioRendererWithSimplifiedDrmRequirement(
-                codecSecurityRequirement,
-                context,
-                mediaCodecSelector,
-                drmSessionManager,
-                PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
-                eventHandler,
-                eventListener,
-                AudioCapabilities.getCapabilities(context),
-                audioProcessors
-        );
-
-        outRenderers.add(mediaCodecAudioRenderer);
+        if (allowFallbackDecoder) {
+            outRenderers.add(new MediaCodecAudioRendererWithSimplifiedDrmRequirement(
+                    codecSecurityRequirement,
+                    context,
+                    CodecSelectorWithFallback.newInstance(),
+                    drmSessionManager,
+                    PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
+                    eventHandler,
+                    eventListener,
+                    AudioCapabilities.getCapabilities(context),
+                    audioProcessors
+            ));
+        } else {
+            outRenderers.add(new MediaCodecAudioRenderer(
+                    context,
+                    MediaCodecSelector.DEFAULT,
+                    drmSessionManager,
+                    PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
+                    eventHandler,
+                    eventListener,
+                    AudioCapabilities.getCapabilities(context),
+                    audioProcessors
+            ));
+        }
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {
             return;
