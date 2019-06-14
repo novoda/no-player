@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
 
         player = new PlayerBuilder()
                 .withWidevineModularStreamingDrm(drmHandler)
-                .withDowngradedSecureDecoder()
+                .allowFallbackDecoders()
                 .withUserAgent("Android/Linux")
                 .allowCrossProtocolRedirects()
                 .build(this);

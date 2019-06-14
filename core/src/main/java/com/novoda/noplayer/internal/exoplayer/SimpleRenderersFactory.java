@@ -97,7 +97,7 @@ class SimpleRenderersFactory implements RenderersFactory {
     private final int extensionRendererMode;
 
     private final long allowedVideoJoiningTimeMs;
-    private final boolean downgradeSecureDecoder;
+    private final boolean allowFallbackDecoder;
     private final SubtitleDecoderFactory subtitleDecoderFactory;
 
     /**
@@ -107,18 +107,18 @@ class SimpleRenderersFactory implements RenderersFactory {
      *                                  application build for them to be considered available.
      * @param allowedVideoJoiningTimeMs The maximum duration for which video renderers can attempt
      *                                  to seamlessly join an ongoing playback.
-     * @param downgradeSecureDecoder    Used for selecting the codec for the video renderer.
+     * @param allowFallbackDecoder    Used for selecting the codec for the video renderer.
      * @param subtitleDecoderFactory    A factory from which to obtain {@link SubtitleDecoder} instances.
      */
     SimpleRenderersFactory(Context context,
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,
-                           boolean downgradeSecureDecoder,
+                           boolean allowFallbackDecoder,
                            SubtitleDecoderFactory subtitleDecoderFactory) {
         this.context = context;
         this.extensionRendererMode = extensionRendererMode;
         this.allowedVideoJoiningTimeMs = allowedVideoJoiningTimeMs;
-        this.downgradeSecureDecoder = downgradeSecureDecoder;
+        this.allowFallbackDecoder = allowFallbackDecoder;
         this.subtitleDecoderFactory = subtitleDecoderFactory;
     }
 
@@ -166,7 +166,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
         CodecSecurityRequirement codecSecurityRequirement = new CodecSecurityRequirement();
-        MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
+        MediaCodecSelector mediaCodecSelector = allowFallbackDecoder
                 ? SecurityRequirementCodecSelector.newInstance(codecSecurityRequirement)
                 : MediaCodecSelector.DEFAULT;
 
@@ -232,7 +232,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
         CodecSecurityRequirement codecSecurityRequirement = new CodecSecurityRequirement();
-        MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
+        MediaCodecSelector mediaCodecSelector = allowFallbackDecoder
                 ? SecurityRequirementCodecSelector.newInstance(codecSecurityRequirement)
                 : MediaCodecSelector.DEFAULT;
 

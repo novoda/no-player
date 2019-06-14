@@ -31,7 +31,7 @@ class ExoPlayerCreator {
     @NonNull
     public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator,
                                   DefaultDrmSessionEventListener drmSessionEventListener,
-                                  boolean downgradeSecureDecoder,
+                                  boolean allowFallbackDecoder,
                                   TrackSelector trackSelector) {
         DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
         SubtitleDecoderFactory subtitleDecoderFactory = new NoPlayerSubtitleDecoderFactory();
@@ -39,7 +39,7 @@ class ExoPlayerCreator {
                 context,
                 EXTENSION_RENDERER_MODE_OFF,
                 DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS,
-                downgradeSecureDecoder,
+                allowFallbackDecoder,
                 subtitleDecoderFactory
         );
 

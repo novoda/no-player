@@ -220,7 +220,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, OPTIONS);
 
-            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, downgradeSecureDecoder);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, allowFallbackDecoder);
         }
 
         @Test
@@ -229,7 +229,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, downgradeSecureDecoder);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, allowFallbackDecoder);
         }
 
         @Test
@@ -571,7 +571,7 @@ public class ExoPlayerTwoImplTest {
 
     public abstract static class Base {
 
-        static final boolean downgradeSecureDecoder = true;
+        static final boolean allowFallbackDecoder = true;
 
         @Rule
         public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -640,7 +640,7 @@ public class ExoPlayerTwoImplTest {
                     loadTimeout,
                     heart,
                     drmSessionCreator,
-                    downgradeSecureDecoder
+                    allowFallbackDecoder
             );
         }
     }

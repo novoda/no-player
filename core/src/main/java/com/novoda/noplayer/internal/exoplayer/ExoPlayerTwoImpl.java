@@ -35,7 +35,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
     private final DrmSessionCreator drmSessionCreator;
-    private final boolean downgradeSecureDecoder;
+    private final boolean allowFallbackDecoder;
     private final LoadTimeout loadTimeout;
 
     @Nullable
@@ -51,14 +51,14 @@ class ExoPlayerTwoImpl implements NoPlayer {
                      LoadTimeout loadTimeoutParam,
                      Heart heart,
                      DrmSessionCreator drmSessionCreator,
-                     boolean downgradeSecureDecoder) {
+                     boolean allowFallbackDecoder) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.heart = heart;
         this.drmSessionCreator = drmSessionCreator;
-        this.downgradeSecureDecoder = downgradeSecureDecoder;
+        this.allowFallbackDecoder = allowFallbackDecoder;
     }
 
     void initialise() {
@@ -233,7 +233,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
             stop();
         }
         assertPlayerViewIsAttached();
-        exoPlayer.loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, options, forwarder, downgradeSecureDecoder);
+        exoPlayer.loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, options, forwarder, allowFallbackDecoder);
         createSurfaceByShowingVideoContainer();
     }
 

@@ -186,7 +186,7 @@ class ExoPlayerFacade {
                    Uri uri,
                    Options options,
                    ExoPlayerForwarder forwarder,
-                   boolean downgradeSecureDecoder) {
+                   boolean allowFallbackDecoder) {
         this.options = options;
 
         DefaultBandwidthMeter bandwidthMeter = bandwidthMeterCreator.create(options.maxInitialBitrate());
@@ -195,7 +195,7 @@ class ExoPlayerFacade {
         exoPlayer = exoPlayerCreator.create(
                 drmSessionCreator,
                 forwarder.drmSessionEventListener(),
-                downgradeSecureDecoder,
+                allowFallbackDecoder,
                 compositeTrackSelector.trackSelector()
         );
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
