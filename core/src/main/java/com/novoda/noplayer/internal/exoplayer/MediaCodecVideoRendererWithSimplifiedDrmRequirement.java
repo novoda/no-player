@@ -18,12 +18,9 @@ import androidx.annotation.Nullable;
 
 class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVideoRenderer {
 
-    private final CodecSecurityRequirement codecSecurityRequirement;
-
     // Extension from MediaCodecVideoRenderer, we can't do anything about this.
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
-    MediaCodecVideoRendererWithSimplifiedDrmRequirement(CodecSecurityRequirement codecSecurityRequirement,
-                                                        Context context,
+    MediaCodecVideoRendererWithSimplifiedDrmRequirement(Context context,
                                                         MediaCodecSelector mediaCodecSelector,
                                                         long allowedJoiningTimeMs,
                                                         @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
@@ -43,22 +40,12 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                 eventListener,
                 maxDroppedFramesToNotify
         );
-        this.codecSecurityRequirement = codecSecurityRequirement;
-    }
-
-    @Override
-    protected int supportsFormat(MediaCodecSelector mediaCodecSelector,
-                                 DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
-                                 Format format) throws MediaCodecUtil.DecoderQueryException {
-        codecSecurityRequirement.updateSecureCodecsRequirement(format.drmInitData);
-        return super.supportsFormat(mediaCodecSelector, drmSessionManager, format);
     }
 
     @Override
     protected List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector,
                                                    Format format,
                                                    boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
-        codecSecurityRequirement.updateSecureCodecsRequirement(format.drmInitData);
-        return super.getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder);
+        return super.getDecoderInfos(mediaCodecSelector, format, format.drmInitData != null);
     }
 }

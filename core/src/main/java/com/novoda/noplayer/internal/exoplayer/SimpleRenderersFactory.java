@@ -166,11 +166,8 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      VideoRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
-        CodecSecurityRequirement codecSecurityRequirement = new CodecSecurityRequirement();
-
         if (allowFallbackDecoder) {
             outRenderers.add(new MediaCodecVideoRendererWithSimplifiedDrmRequirement(
-                    codecSecurityRequirement,
                     context,
                     CodecSelectorWithFallback.newInstance(),
                     allowedVideoJoiningTimeMs,
@@ -243,11 +240,8 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      AudioRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
-        CodecSecurityRequirement codecSecurityRequirement = new CodecSecurityRequirement();
-
         if (allowFallbackDecoder) {
             outRenderers.add(new MediaCodecAudioRendererWithSimplifiedDrmRequirement(
-                    codecSecurityRequirement,
                     context,
                     CodecSelectorWithFallback.newInstance(),
                     drmSessionManager,
