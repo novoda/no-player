@@ -18,21 +18,21 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 
-class SecurityRequirementBasedMediaCodecAudioRenderer extends MediaCodecAudioRenderer {
+class MediaCodecAudioRendererWithSimplifiedDrmRequirement extends MediaCodecAudioRenderer {
 
     private final CodecSecurityRequirement codecSecurityRequirement;
 
     // Extension from MediaCodecAudioRenderer, we can't do anything about this.
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
-    SecurityRequirementBasedMediaCodecAudioRenderer(CodecSecurityRequirement codecSecurityRequirement,
-                                                    Context context,
-                                                    MediaCodecSelector mediaCodecSelector,
-                                                    @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
-                                                    boolean playClearSamplesWithoutKeys,
-                                                    @Nullable Handler eventHandler,
-                                                    @Nullable AudioRendererEventListener eventListener,
-                                                    @Nullable AudioCapabilities audioCapabilities,
-                                                    AudioProcessor... audioProcessors) {
+    MediaCodecAudioRendererWithSimplifiedDrmRequirement(CodecSecurityRequirement codecSecurityRequirement,
+                                                        Context context,
+                                                        MediaCodecSelector mediaCodecSelector,
+                                                        @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
+                                                        boolean playClearSamplesWithoutKeys,
+                                                        @Nullable Handler eventHandler,
+                                                        @Nullable AudioRendererEventListener eventListener,
+                                                        @Nullable AudioCapabilities audioCapabilities,
+                                                        AudioProcessor... audioProcessors) {
         super(
                 context,
                 mediaCodecSelector,

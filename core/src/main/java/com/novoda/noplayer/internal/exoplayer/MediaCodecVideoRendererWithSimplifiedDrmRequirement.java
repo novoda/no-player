@@ -16,22 +16,22 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 
-class SecurityRequirementBasedMediaCodecVideoRenderer extends MediaCodecVideoRenderer {
+class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVideoRenderer {
 
     private final CodecSecurityRequirement codecSecurityRequirement;
 
     // Extension from MediaCodecVideoRenderer, we can't do anything about this.
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
-    SecurityRequirementBasedMediaCodecVideoRenderer(CodecSecurityRequirement codecSecurityRequirement,
-                                                    Context context,
-                                                    MediaCodecSelector mediaCodecSelector,
-                                                    long allowedJoiningTimeMs,
-                                                    @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
-                                                    boolean playClearSamplesWithoutKeys,
-                                                    boolean enableDecoderFallback,
-                                                    @Nullable Handler eventHandler,
-                                                    @Nullable VideoRendererEventListener eventListener,
-                                                    int maxDroppedFramesToNotify) {
+    MediaCodecVideoRendererWithSimplifiedDrmRequirement(CodecSecurityRequirement codecSecurityRequirement,
+                                                        Context context,
+                                                        MediaCodecSelector mediaCodecSelector,
+                                                        long allowedJoiningTimeMs,
+                                                        @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
+                                                        boolean playClearSamplesWithoutKeys,
+                                                        boolean enableDecoderFallback,
+                                                        @Nullable Handler eventHandler,
+                                                        @Nullable VideoRendererEventListener eventListener,
+                                                        int maxDroppedFramesToNotify) {
         super(
                 context,
                 mediaCodecSelector,
