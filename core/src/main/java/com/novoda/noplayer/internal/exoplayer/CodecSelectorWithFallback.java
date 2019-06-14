@@ -18,16 +18,14 @@ class CodecSelectorWithFallback implements MediaCodecSelector {
     private static final boolean DECODER_DOES_NOT_REQUIRE_SECURE_DECRYPTION = false;
 
     private final InternalMediaCodecUtil internalMediaCodecUtil;
-    private final CodecSecurityRequirement codecSecurityRequirement;
 
-    public static CodecSelectorWithFallback newInstance(CodecSecurityRequirement codecSecurityRequirement) {
+    public static CodecSelectorWithFallback newInstance() {
         InternalMediaCodecUtil internalMediaCodecUtil = new InternalMediaCodecUtil();
-        return new CodecSelectorWithFallback(internalMediaCodecUtil, codecSecurityRequirement);
+        return new CodecSelectorWithFallback(internalMediaCodecUtil);
     }
 
-    CodecSelectorWithFallback(InternalMediaCodecUtil internalMediaCodecUtil, CodecSecurityRequirement codecSecurityRequirement) {
+    CodecSelectorWithFallback(InternalMediaCodecUtil internalMediaCodecUtil) {
         this.internalMediaCodecUtil = internalMediaCodecUtil;
-        this.codecSecurityRequirement = codecSecurityRequirement;
     }
 
     @Override
@@ -36,7 +34,7 @@ class CodecSelectorWithFallback implements MediaCodecSelector {
             boolean requiresSecureDecoder,
             boolean requiresTunnelingDecoder
     ) throws MediaCodecUtil.DecoderQueryException {
-        List<MediaCodecInfo> decoderInfos = new ArrayList<>(secureCodecs(mimeType, requiresTunnelingDecoder));
+        List<MediaCodecInfo> decoderInfos = new ArrayList<>(secureCodecs(requiresSecureDecoder, mimeType, requiresTunnelingDecoder));
 
         decoderInfos.addAll(
                 internalMediaCodecUtil.getDecoderInfos(
@@ -49,8 +47,10 @@ class CodecSelectorWithFallback implements MediaCodecSelector {
         return decoderInfos;
     }
 
-    private List<MediaCodecInfo> secureCodecs(String mimeType, boolean requiresTunnelingDecoder) throws MediaCodecUtil.DecoderQueryException {
-        if (codecSecurityRequirement.secureCodecsRequired()) {
+    private List<MediaCodecInfo> secureCodecs(boolean requiresSecureDecoder,
+                                              String mimeType,
+                                              boolean requiresTunnelingDecoder) throws MediaCodecUtil.DecoderQueryException {
+        if (requiresSecureDecoder) {
             return internalMediaCodecUtil.getDecoderInfos(
                     mimeType,
                     DECODER_REQUIRES_SECURE_DECRYPTION,
