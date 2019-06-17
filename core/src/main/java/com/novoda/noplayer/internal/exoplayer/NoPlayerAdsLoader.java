@@ -86,9 +86,9 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         @Override
         public void onAdvertsLoaded(List<AdvertBreak> breaks) {
             loadingAds = null;
-            AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks, advertBreakResumePosition);
+            AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks);
             advertBreaks = advertPlaybackState.advertBreaks();
-            adPlaybackState = advertPlaybackState.adPlaybackState();
+            adPlaybackState = ResumeableAdverts.markAsResumeableFrom(advertPlaybackState.adPlaybackState(), advertBreakResumePosition);
 
             handler.post(new Runnable() {
                 @Override
