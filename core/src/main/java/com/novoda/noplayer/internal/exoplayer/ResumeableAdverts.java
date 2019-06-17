@@ -20,14 +20,12 @@ final class ResumeableAdverts {
         long playedAdvertDuration = 0;
         for (int index = 0; index < firstAdGroup.count; index++) {
             long durationWithCurrentAd = playedAdvertDuration + firstAdGroup.durationsUs[index];
-            if (durationWithCurrentAd <= groupResumePosition) {
+            if (groupResumePosition >= durationWithCurrentAd) {
                 updatedState = updatedState.withPlayedAd(0, index);
                 playedAdvertDuration += firstAdGroup.durationsUs[index];
-            }
-            if (groupResumePosition <= playedAdvertDuration) {
+            } else {
                 break;
             }
-
         }
         if (updatedState.adGroups[0].hasUnplayedAds()) {
             updatedState = updatedState.withAdResumePositionUs(groupResumePosition - playedAdvertDuration);

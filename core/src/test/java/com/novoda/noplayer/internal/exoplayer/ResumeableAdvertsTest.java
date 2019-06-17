@@ -20,19 +20,15 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class ResumeableAdvertsTest {
 
     private static final int ZERO = 0;
-    private static final int HALF_SECOND_IN_MICROS = 500000;
     private static final int FIVE_SECONDS_IN_MICROS = 5000000;
     private static final int TEN_SECONDS_IN_MICROS = 10000000;
     private static final int TWENTY_SECONDS_IN_MICROS = 20000000;
-    private static final int THIRTY_SECONDS_IN_MICROS = 30000000;
 
     private static final int HALF_SECOND_IN_MILLIS = 500;
     private static final int FIVE_SECONDS_IN_MILLIS = 5000;
     private static final int TEN_SECONDS_IN_MILLIS = 10000;
     private static final int TWENTY_SECONDS_IN_MILLIS = 20000;
     private static final int THIRTY_SECONDS_IN_MILLIS = 30000;
-
-    // Make resume position greater than first advert duration but less than second advert duration.
 
     private static final Advert FIRST_ADVERT = anAdvert()
             .withDurationInMillis(TWENTY_SECONDS_IN_MILLIS)
@@ -53,7 +49,6 @@ public class ResumeableAdvertsTest {
             .withAdverts(THIRD_ADVERT)
             .build();
     private static final List<AdvertBreak> ADVERT_BREAKS = Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK);
-    private static final AdPlaybackState.AdGroup FIRST_AD_GROUP = firstAdGroupFixture().build();
     private static final AdPlaybackState.AdGroup SECOND_AD_GROUP = secondAdGroupFixture().build();
 
     @Test
