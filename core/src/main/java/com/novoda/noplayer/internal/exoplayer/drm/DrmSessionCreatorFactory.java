@@ -31,11 +31,8 @@ public class DrmSessionCreatorFactory {
             case WIDEVINE_CLASSIC:
                 return new NoDrmSessionCreator();
             case WIDEVINE_MODULAR_STREAM:
-                assertThatApiLevelIsJellyBeanEighteenOrAbove(drmType);
-                return createModularStream((StreamingModularDrm) drmHandler);
             case WIDEVINE_MODULAR_DOWNLOAD:
-                assertThatApiLevelIsJellyBeanEighteenOrAbove(drmType);
-                return createModularDownload((DownloadedModularDrm) drmHandler);
+                return createModularStream((StreamingModularDrm) drmHandler);
             default:
                 throw DrmSessionCreatorException.noDrmHandlerFor(drmType);
         }

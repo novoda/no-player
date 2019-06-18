@@ -1,12 +1,18 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
+import android.util.Pair;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DrmSession;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.drm.OfflineLicenseHelper;
+import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ads.SinglePeriodAdTimeline;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -25,8 +31,11 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
+
+import static com.google.android.exoplayer2.drm.DefaultDrmSessionManager.MODE_DOWNLOAD;
 
 // Not much we can do, wrapping ExoPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
@@ -192,6 +201,24 @@ class ExoPlayerFacade {
         DefaultBandwidthMeter bandwidthMeter = bandwidthMeterCreator.create(options.maxInitialBitrate());
 
         compositeTrackSelector = trackSelectorCreator.create(options, bandwidthMeter);
+
+        DefaultDrmSessionManager<FrameworkMediaCrypto> drmSessionManager = (DefaultDrmSessionManager<FrameworkMediaCrypto>) drmSessionCreator.create(forwarder.drmSessionEventListener());
+        byte[] keySetId = options.getKeySetId();
+        if (drmSessionManager != null) {
+            if (keySetId != null) {
+                try {
+                    OfflineLicenseHelper<FrameworkMediaCrypto> offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance("", null);
+                    Pair<Long, Long> licenseDurationRemainingSec = offlineLicenseHelper.getLicenseDurationRemainingSec(keySetId);
+                    Long first = licenseDurationRemainingSec.first;
+                    if (first > TimeUnit.HOURS.toSeconds(1)) {
+                        drmSessionManager.setMode(MODE_DOWNLOAD, keySetId);
+                    }
+                } catch (UnsupportedDrmException | DrmSession.DrmSessionException e) {
+                    forwarder.drmSessionEventListener().onDrmSessionManagerError(e);
+                }
+            }
+        }
+
         exoPlayer = exoPlayerCreator.create(
                 drmSessionCreator,
                 forwarder.drmSessionEventListener(),

@@ -24,10 +24,9 @@ import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.drm.DownloadedModularDrm;
+import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
-import com.novoda.noplayer.model.KeySetId;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
@@ -84,15 +83,10 @@ public class MainActivity extends Activity {
         }
 
         downloadLicense(onLicenseDownloaded);
-        DownloadedModularDrm drmHandler = new DownloadedModularDrm() {
-            @Override
-            public KeySetId getKeySetId() {
-                return KeySetId.of(offlineKeySetId);
-            }
-        };
+        StreamingModularDrm drmHandler = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
 
         player = new PlayerBuilder()
-                .withWidevineModularDownloadDrm(drmHandler)
+                .withWidevineModularStreamingDrm(drmHandler)
                 .allowFallbackDecoders()
                 .withUserAgent("Android/Linux")
                 .allowCrossProtocolRedirects()
@@ -149,6 +143,7 @@ public class MainActivity extends Activity {
                     .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
                     .withMaxInitialBitrate(TWO_MEGABITS)
                     .withMaxVideoBitrate(getMaxVideoBitrate())
+                    .withKeySetId(offlineKeySetId)
                     .build();
             demoPresenter.startPresenting(uri, options);
         }

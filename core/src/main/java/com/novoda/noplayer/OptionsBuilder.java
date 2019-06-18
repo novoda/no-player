@@ -4,6 +4,8 @@ import android.net.Uri;
 
 import com.novoda.noplayer.internal.utils.Optional;
 
+import androidx.annotation.Nullable;
+
 /**
  * Builds instances of {@link Options} for {@link NoPlayer#loadVideo(Uri, Options)}.
  */
@@ -19,6 +21,8 @@ public class OptionsBuilder {
     private int maxVideoBitrate = DEFAULT_MAX_VIDEO_BITRATE;
     private Optional<Long> initialPositionInMillis = Optional.absent();
     private Optional<Long> initialAdvertBreakPositionInMillis = Optional.absent();
+    @Nullable
+    private byte[] keySetId = null;
 
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} with a given {@link ContentType}.
@@ -95,6 +99,11 @@ public class OptionsBuilder {
         return this;
     }
 
+    public OptionsBuilder withKeySetId(byte[] keySetId) {
+        this.keySetId = keySetId;
+        return this;
+    }
+
     /**
      * Builds a new {@link Options} instance.
      *
@@ -107,6 +116,8 @@ public class OptionsBuilder {
                 maxInitialBitrate,
                 maxVideoBitrate,
                 initialPositionInMillis,
-                initialAdvertBreakPositionInMillis);
+                initialAdvertBreakPositionInMillis,
+                keySetId
+        );
     }
 }
