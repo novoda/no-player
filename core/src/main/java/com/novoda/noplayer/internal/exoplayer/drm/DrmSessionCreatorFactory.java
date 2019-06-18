@@ -3,7 +3,6 @@ package com.novoda.noplayer.internal.exoplayer.drm;
 import android.os.Build;
 import android.os.Handler;
 
-import com.google.android.exoplayer2.drm.MediaDrmCallback;
 import com.novoda.noplayer.UnableToCreatePlayerException;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
@@ -25,7 +24,7 @@ public class DrmSessionCreatorFactory {
         this.handler = handler;
     }
 
-    public DrmSessionCreator createFor(DrmType drmType, DrmHandler drmHandler, MediaDrmCallback mediaDrmCallback) throws DrmSessionCreatorException {
+    public DrmSessionCreator createFor(DrmType drmType, DrmHandler drmHandler) throws DrmSessionCreatorException {
         switch (drmType) {
             case NONE:
                 // Fall-through.
@@ -36,7 +35,7 @@ public class DrmSessionCreatorFactory {
                 return createModularStream((StreamingModularDrm) drmHandler);
             case WIDEVINE_MODULAR_DOWNLOAD:
                 assertThatApiLevelIsJellyBeanEighteenOrAbove(drmType);
-                return createModularDownload((DownloadedModularDrm) drmHandler, mediaDrmCallback);
+                return createModularDownload((DownloadedModularDrm) drmHandler);
             default:
                 throw DrmSessionCreatorException.noDrmHandlerFor(drmType);
         }
@@ -63,8 +62,8 @@ public class DrmSessionCreatorFactory {
         return new StreamingDrmSessionCreator(mediaDrmCallback, mediaDrmCreator, handler);
     }
 
-    private DownloadDrmSessionCreator createModularDownload(DownloadedModularDrm drmHandler, MediaDrmCallback mediaDrmCallback) {
+    private DownloadDrmSessionCreator createModularDownload(DownloadedModularDrm drmHandler) {
         FrameworkMediaDrmCreator mediaDrmCreator = new FrameworkMediaDrmCreator();
-        return new DownloadDrmSessionCreator(mediaDrmCallback, drmHandler, mediaDrmCreator, handler);
+        return new DownloadDrmSessionCreator(drmHandler, mediaDrmCreator, handler);
     }
 }

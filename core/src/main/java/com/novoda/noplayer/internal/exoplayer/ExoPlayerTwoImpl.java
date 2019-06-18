@@ -3,7 +3,6 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.view.View;
 
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
@@ -36,7 +35,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
     private final DrmSessionCreator drmSessionCreator;
-    private final MediaCodecSelector mediaCodecSelector;
+    private final boolean allowFallbackDecoder;
     private final LoadTimeout loadTimeout;
 
     @Nullable
@@ -52,14 +51,14 @@ class ExoPlayerTwoImpl implements NoPlayer {
                      LoadTimeout loadTimeoutParam,
                      Heart heart,
                      DrmSessionCreator drmSessionCreator,
-                     MediaCodecSelector mediaCodecSelector) {
+                     boolean allowFallbackDecoder) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.heart = heart;
         this.drmSessionCreator = drmSessionCreator;
-        this.mediaCodecSelector = mediaCodecSelector;
+        this.allowFallbackDecoder = allowFallbackDecoder;
     }
 
     void initialise() {
@@ -234,7 +233,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
             stop();
         }
         assertPlayerViewIsAttached();
-        exoPlayer.loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, options, forwarder, mediaCodecSelector);
+        exoPlayer.loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, options, forwarder, allowFallbackDecoder);
         createSurfaceByShowingVideoContainer();
     }
 

@@ -7,15 +7,17 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
-import androidx.annotation.RequiresApi;
-
 import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaCryptoFixture;
+import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.model.KeySetId;
+
+import java.util.Collections;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,8 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import java.util.Collections;
-import java.util.UUID;
+import androidx.annotation.RequiresApi;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,6 +41,12 @@ public class LocalDrmSessionManagerTest {
     private static final DrmInitData IGNORED_DRM_DATA = null;
 
     private static final KeySetId KEY_SET_ID_TO_RESTORE = KeySetId.of(new byte[12]);
+    private static final DownloadedModularDrm DOWNLOADED_MODULAR_DRM = new DownloadedModularDrm() {
+        @Override
+        public KeySetId getKeySetId() {
+            return KEY_SET_ID_TO_RESTORE;
+        }
+    };
     private static final SessionId SESSION_ID = SessionId.of(new byte[10]);
     private static final UUID DRM_SCHEME = UUID.randomUUID();
 
@@ -64,7 +71,7 @@ public class LocalDrmSessionManagerTest {
         given(mediaDrm.openSession()).willReturn(SESSION_ID.asBytes());
 
         localDrmSessionManager = new LocalDrmSessionManager(
-                KEY_SET_ID_TO_RESTORE,
+                DOWNLOADED_MODULAR_DRM,
                 mediaDrm,
                 DRM_SCHEME,
                 handler,

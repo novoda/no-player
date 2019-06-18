@@ -60,7 +60,7 @@ public class NoPlayerCreatorTest {
 
         @Before
         public void setUp() throws DrmSessionCreatorException {
-            given(drmSessionCreatorFactory.createFor(any(DrmType.class), any(DrmHandler.class), mediaDrmCallback)).willReturn(drmSessionCreator);
+            given(drmSessionCreatorFactory.createFor(any(DrmType.class), any(DrmHandler.class))).willReturn(drmSessionCreator);
             given(noPlayerExoPlayerCreator.createExoPlayer(context, drmSessionCreator, USE_SECURE_CODEC, ALLOW_CROSS_PROTOCOL_REDIRECTS)).willReturn(EXO_PLAYER);
             given(noPlayerMediaPlayerCreator.createMediaPlayer(context)).willReturn(MEDIA_PLAYER);
             noPlayerCreator = new NoPlayerCreator(context, prioritizedPlayerTypes(), noPlayerExoPlayerCreator, noPlayerMediaPlayerCreator, drmSessionCreatorFactory);

@@ -93,7 +93,7 @@ public class MainActivity extends Activity {
 
         player = new PlayerBuilder()
                 .withWidevineModularDownloadDrm(drmHandler)
-                .withDowngradedSecureDecoder()
+                .allowFallbackDecoders()
                 .withUserAgent("Android/Linux")
                 .allowCrossProtocolRedirects()
                 .build(this);

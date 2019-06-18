@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Pair;
 
 import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DrmInitData;
@@ -12,32 +11,24 @@ import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
-import com.google.android.exoplayer2.drm.MediaDrmCallback;
-import com.google.android.exoplayer2.drm.OfflineLicenseHelper;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.model.KeySetId;
 
-import java.util.HashMap;
 import java.util.UUID;
-
-import static com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator.WIDEVINE_MODULAR_UUID;
 
 class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> {
 
-    private final MediaDrmCallback mediaDrmCallback;
     private final DownloadedModularDrm downloadedModularDrm;
     private final ExoMediaDrm<FrameworkMediaCrypto> mediaDrm;
     private final DefaultDrmSessionEventListener eventListener;
     private final UUID drmScheme;
     private final Handler handler;
 
-    LocalDrmSessionManager(MediaDrmCallback mediaDrmCallback,
-                           DownloadedModularDrm downloadedModularDrm,
+    LocalDrmSessionManager(DownloadedModularDrm downloadedModularDrm,
                            ExoMediaDrm<FrameworkMediaCrypto> mediaDrm,
                            UUID drmScheme,
                            Handler handler,
                            DefaultDrmSessionEventListener eventListener) {
-        this.mediaDrmCallback = mediaDrmCallback;
         this.downloadedModularDrm = downloadedModularDrm;
         this.mediaDrm = mediaDrm;
         this.eventListener = eventListener;
@@ -60,24 +51,11 @@ class LocalDrmSessionManager implements DrmSessionManager<FrameworkMediaCrypto> 
         try {
             SessionId sessionId = SessionId.of(mediaDrm.openSession());
             FrameworkMediaCrypto mediaCrypto = mediaDrm.createMediaCrypto(sessionId.asBytes());
-
-            OfflineLicenseHelper<FrameworkMediaCrypto> offlineLicenseHelper = new OfflineLicenseHelper<>(
-                    WIDEVINE_MODULAR_UUID,
-                    mediaDrm,
-                    mediaDrmCallback,
-                    new HashMap<String, String>()
-            );
-
             KeySetId keySetId = downloadedModularDrm.getKeySetId();
-            byte[] licenseBytes = keySetId.asBytes();
-            Pair<Long, Long> durationRemainingSec = offlineLicenseHelper.getLicenseDurationRemainingSec(keySetId.asBytes());
-            if (durationRemainingSec.first == 0) {
-                licenseBytes = offlineLicenseHelper.renewLicense(keySetId.asBytes());
-            }
 
-            mediaDrm.restoreKeys(sessionId.asBytes(), licenseBytes);
+            mediaDrm.restoreKeys(sessionId.asBytes(), keySetId.asBytes());
 
-            drmSession = new LocalDrmSession(mediaCrypto, KeySetId.of(licenseBytes), sessionId);
+            drmSession = new LocalDrmSession(mediaCrypto, keySetId, sessionId);
         } catch (Exception exception) {
             drmSession = new InvalidDrmSession(new DrmSession.DrmSessionException(exception));
             notifyErrorListener(drmSession);

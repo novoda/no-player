@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.google.android.exoplayer2.drm.MediaDrmCallback;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
@@ -26,9 +25,8 @@ public class PlayerBuilder {
 
     private DrmType drmType = DrmType.NONE;
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
-    private MediaDrmCallback mediaDrmCallback = null;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
-    private boolean downgradeSecureDecoder; /* initialised to false by default */
+    private boolean allowFallbackDecoder; /* initialised to false by default */
     private boolean allowCrossProtocolRedirects; /* initialised to false by default */
     private String userAgent = "user-agent";
     private AdvertsLoader advertsLoader;
@@ -52,7 +50,7 @@ public class PlayerBuilder {
      * @see NoPlayer
      */
     public PlayerBuilder withWidevineClassicDrm() {
-        return withDrm(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, null);
+        return withDrm(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM);
     }
 
     /**
@@ -63,7 +61,7 @@ public class PlayerBuilder {
      * @see NoPlayer
      */
     public PlayerBuilder withWidevineModularStreamingDrm(StreamingModularDrm streamingModularDrm) {
-        return withDrm(DrmType.WIDEVINE_MODULAR_STREAM, streamingModularDrm, null);
+        return withDrm(DrmType.WIDEVINE_MODULAR_STREAM, streamingModularDrm);
     }
 
     /**
@@ -74,11 +72,7 @@ public class PlayerBuilder {
      * @see NoPlayer
      */
     public PlayerBuilder withWidevineModularDownloadDrm(DownloadedModularDrm downloadedModularDrm) {
-        return withDrm(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm, null);
-    }
-
-    public PlayerBuilder withWidevineModularDownloadDrmTemp(DownloadedModularDrm downloadedModularDrm, MediaDrmCallback mediaDrmCallback) {
-        return withDrm(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm, mediaDrmCallback);
+        return withDrm(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm);
     }
 
     /**
@@ -89,10 +83,9 @@ public class PlayerBuilder {
      * @return {@link PlayerBuilder}
      * @see NoPlayer
      */
-    public PlayerBuilder withDrm(DrmType drmType, DrmHandler drmHandler, MediaDrmCallback mediaDrmCallback) {
+    public PlayerBuilder withDrm(DrmType drmType, DrmHandler drmHandler) {
         this.drmType = drmType;
         this.drmHandler = drmHandler;
-        this.mediaDrmCallback = mediaDrmCallback;
         return this;
     }
 
@@ -114,12 +107,12 @@ public class PlayerBuilder {
     }
 
     /**
-     * Allows the selection of an insecure decoder when the device does not support a secure decoder.
+     * Will fallback to using a non-secure decoder when the device does not support a secure decoder.
      *
      * @return {@link PlayerBuilder}
      */
-    public PlayerBuilder withDowngradedSecureDecoder() {
-        downgradeSecureDecoder = true;
+    public PlayerBuilder allowFallbackDecoders() {
+        allowFallbackDecoder = true;
         return this;
     }
 
@@ -169,7 +162,7 @@ public class PlayerBuilder {
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
-        return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects, mediaDrmCallback);
+        return noPlayerCreator.create(drmType, drmHandler, allowFallbackDecoder, allowCrossProtocolRedirects);
     }
 
     private NoPlayerExoPlayerCreator createExoPlayerCreator(Handler handler) {

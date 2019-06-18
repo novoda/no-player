@@ -2,8 +2,8 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.view.View;
+
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.text.Cue;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
@@ -22,6 +22,10 @@ import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.TextCues;
 import com.novoda.noplayer.model.Timeout;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,9 +38,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static android.provider.CalendarContract.CalendarCache.URI;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -219,7 +220,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, OPTIONS);
 
-            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, allowFallbackDecoder);
         }
 
         @Test
@@ -228,7 +229,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, allowFallbackDecoder);
         }
 
         @Test
@@ -570,6 +571,8 @@ public class ExoPlayerTwoImplTest {
 
     public abstract static class Base {
 
+        static final boolean allowFallbackDecoder = true;
+
         @Rule
         public MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -608,8 +611,6 @@ public class ExoPlayerTwoImplTest {
         @Mock
         DrmSessionCreator drmSessionCreator;
         @Mock
-        MediaCodecSelector mediaCodecSelector;
-        @Mock
         View containerView;
         @Mock
         PlayerSurfaceHolder playerSurfaceHolder;
@@ -639,7 +640,7 @@ public class ExoPlayerTwoImplTest {
                     loadTimeout,
                     heart,
                     drmSessionCreator,
-                    mediaCodecSelector
+                    allowFallbackDecoder
             );
         }
     }

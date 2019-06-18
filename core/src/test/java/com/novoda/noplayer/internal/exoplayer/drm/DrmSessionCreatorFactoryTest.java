@@ -51,21 +51,21 @@ public class DrmSessionCreatorFactoryTest {
 
     @Test
     public void givenDrmTypeNone_whenCreatingDrmSessionCreator_thenReturnsNoDrmSession() throws DrmSessionCreatorException {
-        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.NONE, IGNORED_DRM_HANDLER, mediaDrmCallback);
+        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.NONE, IGNORED_DRM_HANDLER);
 
         assertThat(drmSessionCreator).isInstanceOf(NoDrmSessionCreator.class);
     }
 
     @Test
     public void givenDrmTypeWidevineClassic_whenCreatingDrmSessionCreator_thenReturnsNoDrmSession() throws DrmSessionCreatorException {
-        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_CLASSIC, IGNORED_DRM_HANDLER, mediaDrmCallback);
+        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_CLASSIC, IGNORED_DRM_HANDLER);
 
         assertThat(drmSessionCreator).isInstanceOf(NoDrmSessionCreator.class);
     }
 
     @Test
     public void givenDrmTypeWidevineModularStream_whenCreatingDrmSessionCreator_thenReturnsStreaming() throws DrmSessionCreatorException {
-        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, streamingModularDrm, mediaDrmCallback);
+        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, streamingModularDrm);
 
         assertThat(drmSessionCreator).isInstanceOf(StreamingDrmSessionCreator.class);
     }
@@ -77,12 +77,12 @@ public class DrmSessionCreatorFactoryTest {
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_STREAM";
         thrown.expect(ExceptionMatcher.matches(message, UnableToCreatePlayerException.class));
 
-        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, IGNORED_DRM_HANDLER, mediaDrmCallback);
+        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, IGNORED_DRM_HANDLER);
     }
 
     @Test
     public void givenDrmTypeWidevineModularDownload_whenCreatingDrmSessionCreator_thenReturnsDownload() throws DrmSessionCreatorException {
-        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm, mediaDrmCallback);
+        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm);
 
         assertThat(drmSessionCreator).isInstanceOf(DownloadDrmSessionCreator.class);
     }
@@ -94,6 +94,6 @@ public class DrmSessionCreatorFactoryTest {
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_DOWNLOAD";
         thrown.expect(ExceptionMatcher.matches(message, UnableToCreatePlayerException.class));
 
-        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, IGNORED_DRM_HANDLER, mediaDrmCallback);
+        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, IGNORED_DRM_HANDLER);
     }
 }
