@@ -4,7 +4,8 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              tools:context=".LandingActivity">
+              tools:context=".LandingActivity"
+              tools:targetApi="o">
 
   <EditText
     android:id="@+id/mpd_address"
