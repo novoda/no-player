@@ -181,7 +181,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        handleAdvertStart();
+        // handle only pre-roll start on timeline change
+        if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED) {
+            handleAdvertStart();
+        }
     }
 
     private void handleAdvertStart() {
