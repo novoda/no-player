@@ -10,7 +10,8 @@
     android:id="@+id/mpd_address"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:hint="Enter MPD Address"
+    android:hint="@string/enter_mpd_address"
+    android:importantForAutofill="no"
     android:inputType="text|textMultiLine"
     android:text="@string/default_mpd_url" />
 
@@ -18,7 +19,8 @@
     android:id="@+id/license_address"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:hint="Enter License Server Address"
+    android:hint="@string/enter_license_server_address"
+    android:importantForAutofill="no"
     android:inputType="text|textMultiLine"
     android:text="@string/default_licence_url" />
 
@@ -34,6 +36,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
-    android:text="Play" />
+    android:text="@string/play" />
 
 </LinearLayout>

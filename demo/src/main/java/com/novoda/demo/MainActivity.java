@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSession;
@@ -185,8 +186,18 @@ public class MainActivity extends Activity {
     private void extractFromIntent() {
         Intent intent = getIntent();
         if (intent != null) {
-            mpdAddress = Uri.parse(intent.getStringExtra(LandingActivity.KEY_MPD_ADDRESS));
+            String rawMpdAddress = intent.getStringExtra(LandingActivity.KEY_MPD_ADDRESS);
+            if (rawMpdAddress == null || rawMpdAddress.isEmpty()) {
+                Toast.makeText(this, "MPD address not specified", Toast.LENGTH_SHORT).show();
+            } else {
+                mpdAddress = Uri.parse(rawMpdAddress);
+            }
+
             licenseServerAddress = intent.getStringExtra(LandingActivity.KEY_LICENSE_SERVER_ADDRESS);
+            if (licenseServerAddress == null || licenseServerAddress.isEmpty()) {
+                Toast.makeText(this, "License server address not specified", Toast.LENGTH_SHORT).show();
+            }
+
             downloadLicense = intent.getBooleanExtra(LandingActivity.KEY_DOWNLOAD_LICENSE, false);
         }
     }
