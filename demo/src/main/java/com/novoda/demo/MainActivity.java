@@ -15,8 +15,12 @@ import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.drm.DownloadedModularDrm;
+import com.novoda.noplayer.drm.DrmHandler;
+import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.KeySetId;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
@@ -35,6 +39,7 @@ public class MainActivity extends Activity {
 
     private Uri mpdAddress;
     private String licenseServerAddress;
+    private boolean downloadLicense;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +61,23 @@ public class MainActivity extends Activity {
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
         hdSelectionCheckBox.setOnCheckedChangeListener(toggleHdSelection);
 
-        DataPostingModularDrm drmHandler = new DataPostingModularDrm(licenseServerAddress);
+        DrmHandler drmHandler;
+        DrmType drmType;
+        if (downloadLicense) {
+            drmHandler = new DownloadedModularDrm() {
+                @Override
+                public KeySetId getKeySetId() {
+                    return null; //TODO: Actually download the keyset id.
+                }
+            };
+            drmType = DrmType.WIDEVINE_MODULAR_DOWNLOAD;
+        } else {
+            drmHandler = new DataPostingModularDrm(licenseServerAddress);
+            drmType = DrmType.WIDEVINE_MODULAR_STREAM;
+        }
 
         player = new PlayerBuilder()
-                .withWidevineModularStreamingDrm(drmHandler)
+                .withDrm(drmType, drmHandler)
                 .allowFallbackDecoders()
                 .withUserAgent("Android/Linux")
                 .allowCrossProtocolRedirects()
@@ -106,6 +124,7 @@ public class MainActivity extends Activity {
         if (intent != null) {
             mpdAddress = Uri.parse(intent.getStringExtra(LandingActivity.KEY_MPD_ADDRESS));
             licenseServerAddress = intent.getStringExtra(LandingActivity.KEY_LICENSE_SERVER_ADDRESS);
+            downloadLicense = intent.getBooleanExtra(LandingActivity.KEY_DOWNLOAD_LICENSE, false);
         }
     }
 
