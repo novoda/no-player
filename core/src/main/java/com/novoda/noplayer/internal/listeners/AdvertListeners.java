@@ -4,9 +4,12 @@ import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.NoPlayer;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+import androidx.annotation.NonNull;
 
 class AdvertListeners implements NoPlayer.AdvertListener {
 
@@ -22,6 +25,13 @@ class AdvertListeners implements NoPlayer.AdvertListener {
 
     public void clear() {
         listeners.clear();
+    }
+
+    @Override
+    public void onAdvertsLoadError(Exception cause) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertsLoadError(cause);
+        }
     }
 
     @Override
@@ -42,6 +52,13 @@ class AdvertListeners implements NoPlayer.AdvertListener {
     public void onAdvertBreakEnd(AdvertBreak advertBreak) {
         for (NoPlayer.AdvertListener listener : listeners) {
             listener.onAdvertBreakEnd(advertBreak);
+        }
+    }
+
+    @Override
+    public void onAdvertPrepareError(Advert advert, IOException cause) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertPrepareError(advert, cause);
         }
     }
 
@@ -81,9 +98,17 @@ class AdvertListeners implements NoPlayer.AdvertListener {
     }
 
     @Override
-    public void onAdvertsSkipped(List<AdvertBreak> advertBreaks) {
+    public void onAdvertBreakSkipped(@NonNull AdvertBreak advertBreak) {
         for (NoPlayer.AdvertListener listener : listeners) {
-            listener.onAdvertsSkipped(advertBreaks);
+            listener.onAdvertBreakSkipped(advertBreak);
         }
     }
+
+    @Override
+    public void onAdvertSkipped(Advert advert) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertSkipped(advert);
+        }
+    }
+
 }

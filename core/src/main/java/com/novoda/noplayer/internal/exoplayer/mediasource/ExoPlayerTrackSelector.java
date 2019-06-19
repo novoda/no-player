@@ -52,7 +52,12 @@ public class ExoPlayerTrackSelector {
     }
 
     private int mappedTrackInfoLength() {
-        return trackSelector.getCurrentMappedTrackInfo().length;
+        MappingTrackSelector.MappedTrackInfo trackInfo = trackSelector.getCurrentMappedTrackInfo();
+        if (trackInfo == null) {
+            return 0;
+        } else {
+            return trackInfo.getRendererCount();
+        }
     }
 
     boolean setSelectionOverride(TrackType trackType,

@@ -16,6 +16,7 @@ public class PlayerListenersHolder implements Listeners {
     private final BitrateChangedListeners bitrateChangedListeners;
     private final DroppedFramesListeners droppedFramesListeners;
     private final AdvertListeners advertListeners;
+    private final TracksChangedListeners tracksChangedListeners;
 
     private final HeartbeatCallbacks heartbeatCallbacks;
 
@@ -31,6 +32,7 @@ public class PlayerListenersHolder implements Listeners {
         heartbeatCallbacks = new HeartbeatCallbacks();
         droppedFramesListeners = new DroppedFramesListeners();
         advertListeners = new AdvertListeners();
+        tracksChangedListeners = new TracksChangedListeners();
     }
 
     @Override
@@ -143,6 +145,16 @@ public class PlayerListenersHolder implements Listeners {
         advertListeners.remove(advertListener);
     }
 
+    @Override
+    public void addTracksChangedListener(NoPlayer.TracksChangedListener tracksChangedListener) {
+        tracksChangedListeners.add(tracksChangedListener);
+    }
+
+    @Override
+    public void removeTracksChangedListener(NoPlayer.TracksChangedListener tracksChangedListener) {
+        tracksChangedListeners.remove(tracksChangedListener);
+    }
+
     public NoPlayer.ErrorListener getErrorListeners() {
         return errorListeners;
     }
@@ -187,6 +199,10 @@ public class PlayerListenersHolder implements Listeners {
         return advertListeners;
     }
 
+    public NoPlayer.TracksChangedListener getTracksChangedListeners() {
+        return tracksChangedListeners;
+    }
+
     public void resetState() {
         preparedListeners.resetPreparedState();
         completionListeners.resetCompletedState();
@@ -204,5 +220,6 @@ public class PlayerListenersHolder implements Listeners {
         heartbeatCallbacks.clear();
         droppedFramesListeners.clear();
         advertListeners.clear();
+        tracksChangedListeners.clear();
     }
 }

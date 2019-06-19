@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.content.Context;
 import android.os.Handler;
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
+
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.novoda.noplayer.AdvertsLoader;
 import com.novoda.noplayer.NoPlayer;
@@ -51,9 +51,9 @@ public class NoPlayerExoPlayerCreator {
 
     public NoPlayer createExoPlayer(Context context,
                                     DrmSessionCreator drmSessionCreator,
-                                    boolean downgradeSecureDecoder,
+                                    boolean allowFallbackDecoder,
                                     boolean allowCrossProtocolRedirects) {
-        ExoPlayerTwoImpl player = internalCreator.create(context, drmSessionCreator, downgradeSecureDecoder, allowCrossProtocolRedirects);
+        ExoPlayerTwoImpl player = internalCreator.create(context, drmSessionCreator, allowFallbackDecoder, allowCrossProtocolRedirects);
         player.initialise();
         return player;
     }
@@ -74,7 +74,7 @@ public class NoPlayerExoPlayerCreator {
 
         ExoPlayerTwoImpl create(Context context,
                                 DrmSessionCreator drmSessionCreator,
-                                boolean downgradeSecureDecoder,
+                                boolean allowFallbackDecoder,
                                 boolean allowCrossProtocolRedirects) {
             Optional<NoPlayerAdsLoader> adsLoader = createAdsLoaderFrom(advertsLoader);
 
@@ -85,10 +85,6 @@ public class NoPlayerExoPlayerCreator {
                     dataSourceFactory,
                     allowCrossProtocolRedirects
             );
-
-            MediaCodecSelector mediaCodecSelector = downgradeSecureDecoder
-                    ? SecurityDowngradingCodecSelector.newInstance()
-                    : MediaCodecSelector.DEFAULT_WITH_FALLBACK;
 
             CompositeTrackSelectorCreator trackSelectorCreator = new CompositeTrackSelectorCreator();
 
@@ -118,7 +114,7 @@ public class NoPlayerExoPlayerCreator {
                     loadTimeout,
                     heart,
                     drmSessionCreator,
-                    mediaCodecSelector
+                    allowFallbackDecoder
             );
         }
 

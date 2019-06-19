@@ -2,7 +2,6 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
@@ -21,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import androidx.annotation.Nullable;
 
 // Not much we can do, orchestrating adverts is a lot of work.
 @SuppressWarnings("PMD.GodClass")
@@ -43,6 +44,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private int adIndexInGroup = -1;
     private int adGroupIndex = -1;
     private boolean advertsDisabled;
+    private long advertBreakResumePosition;
 
     static NoPlayerAdsLoader create(AdvertsLoader loader) {
         return new NoPlayerAdsLoader(loader, new Handler(Looper.getMainLooper()));
@@ -53,8 +55,12 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         this.handler = handler;
     }
 
-    public void bind(Optional<NoPlayer.AdvertListener> advertListener) {
+    public void bind(
+            Optional<NoPlayer.AdvertListener> advertListener,
+            long advertBreakResumePositionMillis
+    ) {
         this.advertListener = advertListener.isPresent() ? advertListener.get() : NoOpAdvertListener.INSTANCE;
+        this.advertBreakResumePosition = advertBreakResumePositionMillis;
     }
 
     @Override
@@ -82,7 +88,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             loadingAds = null;
             AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks);
             advertBreaks = advertPlaybackState.advertBreaks();
-            adPlaybackState = advertPlaybackState.adPlaybackState();
+            adPlaybackState = ResumeableAdverts.markAsResumeableFrom(advertPlaybackState.adPlaybackState(), advertBreakResumePosition);
+
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -93,9 +100,18 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         }
 
         @Override
-        public void onAdvertsError(String message) {
+        public void onAdvertsError(final Exception cause) {
             loadingAds = null;
-            eventListener.onAdLoadError(null, null);
+            advertBreaks = Collections.emptyList();
+            adPlaybackState = new AdPlaybackState();
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    updateAdPlaybackState();
+                    advertListener.onAdvertsLoadError(cause);
+                }
+            });
         }
     };
 
@@ -150,6 +166,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     public void handlePrepareError(int adGroupIndex, int adIndexInAdGroup, IOException exception) {
         if (adPlaybackState != null) {
             adPlaybackState = adPlaybackState.withAdLoadError(adGroupIndex, adIndexInAdGroup);
+            updateAdPlaybackState();
+
+            AdvertBreak advertBreak = advertBreaks.get(adGroupIndex);
+            Advert advert = advertBreak.adverts().get(adIndexInAdGroup);
+            advertListener.onAdvertPrepareError(advert, exception);
         }
     }
 
@@ -158,17 +179,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         if (reason == Player.TIMELINE_CHANGE_REASON_RESET || player == null || adPlaybackState == null || advertsDisabled) {
             // The player is being reset and this source will be released.
             return;
-        }
-
-        if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED) {
-            long contentPosition = player.getContentPosition();
-            if (contentPosition > 0) {
-                PlayedAdverts playedAdverts = PlayedAdverts.from(contentPosition, advertBreaks, adPlaybackState);
-                this.adPlaybackState = playedAdverts.adPlaybackState();
-                updateAdPlaybackState();
-                advertListener.onAdvertsSkipped(playedAdverts.playedAdvertBreaks());
-                return;
-            }
         }
 
         handleAdvertStart();
@@ -211,13 +221,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        if (reason == Player.DISCONTINUITY_REASON_SEEK) {
-            long contentPosition = player.getContentPosition();
-            AvailableAdverts.markAllFutureAdvertsAsAvailable(contentPosition, advertBreaks, adPlaybackState);
-            updateAdPlaybackState();
-            return;
-        }
-
         if (reason == Player.DISCONTINUITY_REASON_AD_INSERTION) {
             if (isPlayingAdvert()) {
                 notifyAdvertEnd(advertBreaks.get(adGroupIndex));
@@ -257,24 +260,50 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     }
 
     void disableAdverts() {
-        if (adPlaybackState == null || player == null) {
+        if (adPlaybackState == null || player == null || advertsDisabled) {
             return;
         }
 
-        adPlaybackState = SkippedAdverts.markAllNonPlayedAdvertsAsSkipped(advertBreaks, adPlaybackState);
+        adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreaks, adPlaybackState);
         updateAdPlaybackState();
         advertListener.onAdvertsDisabled();
         resetAdvertPosition();
         advertsDisabled = true;
     }
 
-    void enableAdverts() {
-        if (adPlaybackState == null || player == null) {
+    void skipAdvertBreak() {
+        if (adPlaybackState == null || player == null || advertsDisabled || adGroupIndex < 0) {
             return;
         }
 
-        long contentPosition = player.getContentPosition();
-        AvailableAdverts.markAllFutureAdvertsAsAvailable(contentPosition, advertBreaks, adPlaybackState);
+        adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(adGroupIndex, adPlaybackState);
+        updateAdPlaybackState();
+        advertListener.onAdvertBreakSkipped(advertBreaks.get(adGroupIndex));
+        resetAdvertPosition();
+    }
+
+    void skipAdvert() {
+        if (adPlaybackState == null || player == null || advertsDisabled || adIndexInGroup < 0 || adGroupIndex < 0) {
+            return;
+        }
+
+        adPlaybackState = SkippedAdverts.markAdvertAsSkipped(adIndexInGroup, adGroupIndex, adPlaybackState);
+        updateAdPlaybackState();
+        AdvertBreak advertBreak = advertBreaks.get(adGroupIndex);
+        List<Advert> adverts = advertBreak.adverts();
+        advertListener.onAdvertSkipped(adverts.get(adIndexInGroup));
+        if (adIndexInGroup == adverts.size() - 1) {
+            advertListener.onAdvertBreakEnd(advertBreak);
+        }
+        resetAdvertPosition();
+    }
+
+    void enableAdverts() {
+        if (adPlaybackState == null || player == null || !advertsDisabled) {
+            return;
+        }
+
+        AvailableAdverts.markSkippedAdvertsAsAvailable(advertBreaks, adPlaybackState);
 
         updateAdPlaybackState();
         advertListener.onAdvertsEnabled(advertBreaks);

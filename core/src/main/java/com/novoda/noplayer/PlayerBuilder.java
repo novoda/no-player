@@ -26,7 +26,7 @@ public class PlayerBuilder {
     private DrmType drmType = DrmType.NONE;
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
-    private boolean downgradeSecureDecoder; /* initialised to false by default */
+    private boolean allowFallbackDecoder; /* initialised to false by default */
     private boolean allowCrossProtocolRedirects; /* initialised to false by default */
     private String userAgent = "user-agent";
     private AdvertsLoader advertsLoader;
@@ -107,13 +107,12 @@ public class PlayerBuilder {
     }
 
     /**
-     * Forces secure decoder selection to be ignored in favour of using an insecure decoder.
-     * e.g. Forcing an L3 stream to play with an L3 decoder instead of an L1 secure decoder by default.
+     * Will fallback to using a non-secure decoder when the device does not support a secure decoder.
      *
      * @return {@link PlayerBuilder}
      */
-    public PlayerBuilder withDowngradedSecureDecoder() {
-        downgradeSecureDecoder = true;
+    public PlayerBuilder allowFallbackDecoders() {
+        allowFallbackDecoder = true;
         return this;
     }
 
@@ -163,7 +162,7 @@ public class PlayerBuilder {
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
-        return noPlayerCreator.create(drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects);
+        return noPlayerCreator.create(drmType, drmHandler, allowFallbackDecoder, allowCrossProtocolRedirects);
     }
 
     private NoPlayerExoPlayerCreator createExoPlayerCreator(Handler handler) {

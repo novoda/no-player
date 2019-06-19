@@ -4,10 +4,16 @@ import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.NoPlayer;
 
+import java.io.IOException;
 import java.util.List;
 
 enum NoOpAdvertListener implements NoPlayer.AdvertListener {
     INSTANCE;
+
+    @Override
+    public void onAdvertsLoadError(Exception cause) {
+        // no-op
+    }
 
     @Override
     public void onAdvertsLoaded(List<AdvertBreak> advertBreaks) {
@@ -21,6 +27,11 @@ enum NoOpAdvertListener implements NoPlayer.AdvertListener {
 
     @Override
     public void onAdvertBreakEnd(AdvertBreak advertBreak) {
+        // no-op
+    }
+
+    @Override
+    public void onAdvertPrepareError(Advert advert, IOException cause) {
         // no-op
     }
 
@@ -50,7 +61,13 @@ enum NoOpAdvertListener implements NoPlayer.AdvertListener {
     }
 
     @Override
-    public void onAdvertsSkipped(List<AdvertBreak> advertBreaks) {
-        // no op
+    public void onAdvertBreakSkipped(AdvertBreak advertBreak) {
+        // no-op
     }
+
+    @Override
+    public void onAdvertSkipped(Advert advert) {
+        // no-op
+    }
+
 }

@@ -210,13 +210,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
-    public boolean isPlayingAdvert() {
-        return false;
-    }
-
-    @Override
-    public boolean isPlayingContent() {
-        return mediaPlayer.isPlaying();
+    public VideoType videoType() {
+        if (mediaPlayer.isPlaying()) {
+            return VideoType.CONTENT;
+        }
+        return VideoType.UNDEFINED;
     }
 
     @Override
@@ -344,6 +342,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     @Override
     public void disableAdverts() {
         mediaPlayer.disableAdverts();
+    }
+
+    @Override
+    public void skipAdvertBreak() {
+        mediaPlayer.skipAdvertBreak();
+    }
+
+    @Override
+    public void skipAdvert() {
+        mediaPlayer.skipAdvert();
     }
 
     @Override

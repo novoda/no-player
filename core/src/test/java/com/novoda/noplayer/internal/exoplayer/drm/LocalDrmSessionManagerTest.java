@@ -6,18 +6,16 @@ import android.media.ResourceBusyException;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.RequiresApi;
 
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import androidx.annotation.RequiresApi;
+
+import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaCryptoFixture;
 import com.novoda.noplayer.model.KeySetId;
-
-import java.util.Collections;
-import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,6 +25,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Collections;
+import java.util.UUID;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,13 +53,13 @@ public class LocalDrmSessionManagerTest {
     @Mock
     private Handler handler;
     @Mock
-    private DefaultDrmSessionManager.EventListener eventListener;
+    private DefaultDrmSessionEventListener eventListener;
 
     private LocalDrmSessionManager localDrmSessionManager;
     private FrameworkMediaCrypto frameworkMediaCrypto;
 
     @Before
-    public void setUp() throws MediaDrmException, MediaCryptoException {
+    public void setUp() throws MediaDrmException {
         frameworkMediaCrypto = FrameworkMediaCryptoFixture.aFrameworkMediaCrypto().build();
         given(mediaDrm.openSession()).willReturn(SESSION_ID.asBytes());
 

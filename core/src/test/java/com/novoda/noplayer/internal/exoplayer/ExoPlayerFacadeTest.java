@@ -11,7 +11,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.SinglePeriodTimeline;
@@ -22,6 +21,7 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
+import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
@@ -73,6 +73,7 @@ public class ExoPlayerFacadeTest {
     private static final long TEN_MINUTES_IN_MILLIS = 600000;
     private static final long MICROS = 1000;
     private static final long[] ADVERT_DURATIONS = {10 * MICROS, 20 * MICROS, 30 * MICROS, 40 * MICROS};
+    private static final long NO_RESUME_POSITION = 0;
 
     private static final int TEN_PERCENT = 10;
 
@@ -108,7 +109,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenAddsPlayerEventListener() {
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
             verify(exoPlayer).addListener(exoPlayerForwarder.exoPlayerEventListener());
         }
@@ -116,7 +117,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void whenLoadingVideo_thenSetsAnalyticsListener() {
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
             verify(exoPlayer).addAnalyticsListener(exoPlayerForwarder.analyticsListener());
         }
@@ -128,9 +129,9 @@ public class ExoPlayerFacadeTest {
             given(optionalAdvertListener.isPresent()).willReturn(true);
             given(optionalAdvertListener.get()).willReturn(advertListener);
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
-            verify(adsLoader).bind(optionalAdvertListener);
+            verify(adsLoader).bind(optionalAdvertListener, NO_RESUME_POSITION);
         }
 
         @Test
@@ -139,9 +140,9 @@ public class ExoPlayerFacadeTest {
             given(optionalAdsLoader.get()).willReturn(adsLoader);
             given(optionalAdvertListener.isPresent()).willReturn(false);
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
-            verify(adsLoader).bind(exoPlayerForwarder.advertListener());
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
         }
 
         @Test
@@ -149,7 +150,7 @@ public class ExoPlayerFacadeTest {
             given(optionalAdsLoader.isPresent()).willReturn(true);
             given(optionalAdsLoader.get()).willReturn(adsLoader);
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
             verify(adsLoader).setPlayer(exoPlayer);
         }
@@ -168,23 +169,49 @@ public class ExoPlayerFacadeTest {
         public void givenAbsentAdsLoader_butPresentListener_whenLoadingVideo_thenDoesNotBindAdvertListener() {
             given(optionalAdvertListener.isPresent()).willReturn(true);
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
-            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener());
+            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
         }
 
         @Test
         public void givenAbsentAdsLoader_whenLoadingVideo_thenDoesNotBindAdvertListener() {
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
-            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener());
+            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
+        }
+
+        @Test
+        public void givenInitialAdvertBreakPosition_whenLoadingVideo_thenBindsAdvertListenerWithResumePosition() {
+            Options options = OPTIONS.toOptionsBuilder()
+                    .withInitialAdvertBreakPositionInMillis(TWENTY_FIVE_SECONDS_IN_MILLIS)
+                    .build();
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, allowFallbackDecoder);
+
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), TWENTY_FIVE_SECONDS_IN_MILLIS);
+        }
+
+        @Test
+        public void givenInitialContentPosition_whenLoadingVideo_thenBindsAdvertListenerWithInitialContentPosition() {
+            Options options = OPTIONS.toOptionsBuilder()
+                    .withInitialPositionInMillis(TWENTY_FIVE_SECONDS_IN_MILLIS)
+                    .build();
+            given(optionalAdsLoader.isPresent()).willReturn(true);
+            given(optionalAdsLoader.get()).willReturn(adsLoader);
+
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, allowFallbackDecoder);
+
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
         }
 
         @Test
         public void givenAbsentAdsLoader_whenLoadingVideo_thenDoesNotSetPlayerOnAdLoader() {
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
             verify(adsLoader, never()).setPlayer(exoPlayer);
         }
@@ -200,7 +227,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void givenSurfaceContainerContainsSurfaceView_whenLoadingVideo_thenSetsSurfaceViewOnExoPlayer() {
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
             verify(exoPlayer).setVideoSurfaceView(surfaceView);
         }
@@ -208,7 +235,7 @@ public class ExoPlayerFacadeTest {
         @Test
         public void givenSurfaceContainerContainsTextureView_whenLoadingVideo_thenSetsTextureViewOnExoPlayer() {
 
-            facade.loadVideo(textureViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(textureViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
             verify(exoPlayer).setVideoTextureView(textureView);
         }
@@ -217,7 +244,7 @@ public class ExoPlayerFacadeTest {
         public void givenLollipopDevice_whenLoadingVideo_thenSetsMovieAudioAttributesOnExoPlayer() {
             given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(true);
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
             AudioAttributes expectedMovieAudioAttributes = new AudioAttributes.Builder()
                     .setContentType(C.CONTENT_TYPE_MOVIE)
@@ -229,7 +256,7 @@ public class ExoPlayerFacadeTest {
         public void givenNonLollipopDevice_whenLoadingVideo_thenDoesNotSetAudioAttributesOnExoPlayer() {
             given(androidDeviceVersion.isLollipopTwentyOneOrAbove()).willReturn(false);
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
             verify(exoPlayer, never()).setAudioAttributes(any(AudioAttributes.class));
         }
@@ -238,7 +265,7 @@ public class ExoPlayerFacadeTest {
         public void givenMediaSource_whenLoadingVideo_thenPreparesInternalExoPlayer() {
             MediaSource mediaSource = givenMediaSource(OPTIONS);
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
             verify(exoPlayer).prepare(mediaSource, RESET_POSITION, DO_NOT_RESET_STATE);
         }
@@ -250,7 +277,7 @@ public class ExoPlayerFacadeTest {
                     .build();
             MediaSource mediaSource = givenMediaSource(options);
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, allowFallbackDecoder);
 
             InOrder inOrder = inOrder(exoPlayer);
             inOrder.verify(exoPlayer).seekTo(TWENTY_FIVE_SECONDS_IN_MILLIS);
@@ -261,7 +288,7 @@ public class ExoPlayerFacadeTest {
         public void givenNoInitialPosition_whenLoadingVideo_thenDoesNotPerformSeekBeforePreparing() {
             MediaSource mediaSource = givenMediaSource(OPTIONS);
 
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
             InOrder inOrder = inOrder(exoPlayer);
             inOrder.verify(exoPlayer, never()).seekTo(TWENTY_FIVE_SECONDS_IN_MILLIS);
@@ -277,19 +304,11 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void whenQueryingIsPlayingAdvert_thenReturnsFalse() {
+        public void whenQueryingVideoType_thenReturnsUndefined() {
 
-            boolean isPlaying = facade.isPlayingAdvert();
+            PlayerState.VideoType videoType = facade.videoType();
 
-            assertThat(isPlaying).isFalse();
-        }
-
-        @Test
-        public void whenQueryingisPlayingContent_thenReturnsFalse() {
-
-            boolean isPlaying = facade.isPlayingContent();
-
-            assertThat(isPlaying).isFalse();
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.UNDEFINED);
         }
 
         @Test
@@ -398,7 +417,7 @@ public class ExoPlayerFacadeTest {
 
         private void givenPlayerIsLoaded() {
             givenMediaSource(OPTIONS);
-            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, mediaCodecSelector);
+            facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
         }
 
         @Test
@@ -457,43 +476,21 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
-        public void givenExoPlayerIsReadyToPlayAndIsPlayingAd_whenQueryingIsPlayingAdvert_thenReturnsTrue() {
-            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+        public void givenExoPlayerIsPlayingAd_whenQueryingVideoType_thenReturnsAdvert() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
 
-            boolean isPlaying = facade.isPlayingAdvert();
+            PlayerState.VideoType videoType = facade.videoType();
 
-            assertThat(isPlaying).isTrue();
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.ADVERT);
         }
 
         @Test
-        public void givenExoPlayerIsReadyToPlayAndIsNotPlayingAd_whenQueryingIsPlayingAdvert_thenReturnsFalse() {
-            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
+        public void givenExoPlayerIsNotPlayingAd_whenQueryingVideoType_thenReturnsContent() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
 
-            boolean isPlaying = facade.isPlayingAdvert();
+            PlayerState.VideoType videoType = facade.videoType();
 
-            assertThat(isPlaying).isFalse();
-        }
-
-        @Test
-        public void givenExoPlayerIsReadyToPlayAndIsPlayingAd_whenQueryingIsPlayingContent_thenReturnsFalse() {
-            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
-            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
-
-            boolean isPlaying = facade.isPlayingContent();
-
-            assertThat(isPlaying).isFalse();
-        }
-
-        @Test
-        public void givenExoPlayerIsReadyToPlayAndIsNotPlayingAd_whenQueryingIsPlayingContent_thenReturnsTrue() {
-            given(exoPlayer.getPlayWhenReady()).willReturn(IS_PLAYING);
-            given(exoPlayer.isPlayingAd()).willReturn(IS_NOT_PLAYING);
-
-            boolean isPlaying = facade.isPlayingContent();
-
-            assertThat(isPlaying).isTrue();
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.CONTENT);
         }
 
         @Test
@@ -778,6 +775,7 @@ public class ExoPlayerFacadeTest {
     public abstract static class Base {
 
         static final float ANY_VOLUME = 0.5f;
+        static final boolean allowFallbackDecoder = true;
 
         @Rule
         public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -819,8 +817,6 @@ public class ExoPlayerFacadeTest {
         @Mock
         NoPlayer.AdvertListener advertListener;
         @Mock
-        MediaCodecSelector mediaCodecSelector;
-        @Mock
         SurfaceView surfaceView;
         @Mock
         TextureView textureView;
@@ -837,7 +833,7 @@ public class ExoPlayerFacadeTest {
             given(exoPlayerForwarder.advertListener()).willReturn(optionalAdvertListener);
             given(bandwidthMeterCreator.create(anyLong())).willReturn(defaultBandwidthMeter);
             given(trackSelectorCreator.create(any(Options.class), eq(defaultBandwidthMeter))).willReturn(trackSelector);
-            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, mediaCodecSelector, trackSelector.trackSelector())).willReturn(exoPlayer);
+            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, allowFallbackDecoder, trackSelector.trackSelector())).willReturn(exoPlayer);
             willDoNothing().given(exoPlayer).seekTo(anyInt());
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(

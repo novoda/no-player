@@ -10,6 +10,7 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceRequester;
@@ -173,6 +174,24 @@ public class AndroidMediaPlayerImplTest {
             boolean isPlaying = player.isPlaying();
 
             assertThat(isPlaying).isTrue();
+        }
+
+        @Test
+        public void givenAndroidMediaPlayerIsPlaying_whenQueryingVideoType_thenReturnsContent() {
+            given(mediaPlayer.isPlaying()).willReturn(IS_PLAYING);
+
+            PlayerState.VideoType videoType = player.videoType();
+
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.CONTENT);
+        }
+
+        @Test
+        public void givenAndroidMediaPlayerIsNotPlaying_whenQueryingVideoType_thenReturnsUndefined() {
+            given(mediaPlayer.isPlaying()).willReturn(false);
+
+            PlayerState.VideoType videoType = player.videoType();
+
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.UNDEFINED);
         }
 
         @Test

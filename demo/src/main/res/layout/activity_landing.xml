@@ -20,13 +20,6 @@
     android:hint="Enter License Server Address"
     android:inputType="text|textMultiLine" />
 
-  <EditText
-    android:id="@+id/token"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:hint="Enter Token"
-    android:inputType="text|textMultiLine" />
-
   <Button
     android:id="@+id/button_custom_uri"
     android:layout_width="wrap_content"
