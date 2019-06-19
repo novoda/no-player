@@ -1,5 +1,6 @@
 package com.novoda.noplayer;
 
+import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.utils.Optional;
 
 import java.util.Arrays;
@@ -19,6 +20,7 @@ public class Options {
     private final Optional<Long> initialAdvertBreakPositionInMillis;
     @Nullable
     private final byte[] keySetId;
+    private final Optional<KeyRequestExecutor> keyRequestExecutor;
 
     /**
      * Creates a {@link OptionsBuilder} from this Options.
@@ -48,7 +50,8 @@ public class Options {
             int maxVideoBitrate,
             Optional<Long> initialPositionInMillis,
             Optional<Long> initialAdvertBreakPositionInMillis,
-            @Nullable byte[] keySetId) {
+            @Nullable byte[] keySetId,
+            Optional<KeyRequestExecutor> keyRequestExecutor) {
         this.contentType = contentType;
         this.minDurationBeforeQualityIncreaseInMillis = minDurationBeforeQualityIncreaseInMillis;
         this.maxInitialBitrate = maxInitialBitrate;
@@ -56,6 +59,7 @@ public class Options {
         this.initialPositionInMillis = initialPositionInMillis;
         this.initialAdvertBreakPositionInMillis = initialAdvertBreakPositionInMillis;
         this.keySetId = keySetId;
+        this.keyRequestExecutor = keyRequestExecutor;
     }
 
     public ContentType contentType() {
@@ -87,6 +91,10 @@ public class Options {
         return keySetId;
     }
 
+    public Optional<KeyRequestExecutor> keyRequestExecutor() {
+        return keyRequestExecutor;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -116,7 +124,10 @@ public class Options {
         if (initialAdvertBreakPositionInMillis != null ? !initialAdvertBreakPositionInMillis.equals(options.initialAdvertBreakPositionInMillis) : options.initialAdvertBreakPositionInMillis != null) {
             return false;
         }
-        return Arrays.equals(keySetId, options.keySetId);
+        if (!Arrays.equals(keySetId, options.keySetId)) {
+            return false;
+        }
+        return keyRequestExecutor != null ? keyRequestExecutor.equals(options.keyRequestExecutor) : options.keyRequestExecutor == null;
     }
 
     @Override
@@ -128,19 +139,21 @@ public class Options {
         result = 31 * result + (initialPositionInMillis != null ? initialPositionInMillis.hashCode() : 0);
         result = 31 * result + (initialAdvertBreakPositionInMillis != null ? initialAdvertBreakPositionInMillis.hashCode() : 0);
         result = 31 * result + Arrays.hashCode(keySetId);
+        result = 31 * result + (keyRequestExecutor != null ? keyRequestExecutor.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "Options{" +
-                "contentType=" + contentType +
-                ", minDurationBeforeQualityIncreaseInMillis=" + minDurationBeforeQualityIncreaseInMillis +
-                ", maxInitialBitrate=" + maxInitialBitrate +
-                ", maxVideoBitrate=" + maxVideoBitrate +
-                ", initialPositionInMillis=" + initialPositionInMillis +
-                ", initialAdvertBreakPositionInMillis=" + initialAdvertBreakPositionInMillis +
-                ", keySetId=" + Arrays.toString(keySetId) +
-                '}';
+        return "Options{"
+                + "contentType=" + contentType
+                + ", minDurationBeforeQualityIncreaseInMillis=" + minDurationBeforeQualityIncreaseInMillis
+                + ", maxInitialBitrate=" + maxInitialBitrate
+                + ", maxVideoBitrate=" + maxVideoBitrate
+                + ", initialPositionInMillis=" + initialPositionInMillis
+                + ", initialAdvertBreakPositionInMillis=" + initialAdvertBreakPositionInMillis
+                + ", keySetId=" + Arrays.toString(keySetId)
+                + ", keyRequestExecutor=" + keyRequestExecutor
+                + '}';
     }
 }

@@ -2,6 +2,7 @@ package com.novoda.noplayer;
 
 import android.net.Uri;
 
+import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.utils.Optional;
 
 import androidx.annotation.Nullable;
@@ -23,6 +24,7 @@ public class OptionsBuilder {
     private Optional<Long> initialAdvertBreakPositionInMillis = Optional.absent();
     @Nullable
     private byte[] keySetId = null;
+    private Optional<KeyRequestExecutor> keyRequestExecutor = Optional.absent();
 
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} with a given {@link ContentType}.
@@ -104,6 +106,11 @@ public class OptionsBuilder {
         return this;
     }
 
+    public OptionsBuilder withKeySetExecutor(KeyRequestExecutor keyRequestExecutor) {
+        this.keyRequestExecutor = Optional.of(keyRequestExecutor);
+        return this;
+    }
+
     /**
      * Builds a new {@link Options} instance.
      *
@@ -117,7 +124,8 @@ public class OptionsBuilder {
                 maxVideoBitrate,
                 initialPositionInMillis,
                 initialAdvertBreakPositionInMillis,
-                keySetId
+                keySetId,
+                keyRequestExecutor
         );
     }
 }
