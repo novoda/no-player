@@ -88,7 +88,6 @@ public class MainActivity extends Activity {
         StreamingModularDrm drmHandler = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
 
         player = new PlayerBuilder()
-                .withWidevineModularStreamingDrm(drmHandler)
                 .allowFallbackDecoders()
                 .withUserAgent("Android/Linux")
                 .allowCrossProtocolRedirects()

@@ -36,8 +36,6 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
 
-import static com.google.android.exoplayer2.drm.DefaultDrmSessionManager.MODE_DOWNLOAD;
-
 // Not much we can do, wrapping ExoPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
 class ExoPlayerFacade {
@@ -206,8 +204,9 @@ class ExoPlayerFacade {
 
         compositeTrackSelector = trackSelectorCreator.create(options, bandwidthMeter);
 
+        DefaultDrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
         if (options.keyRequestExecutor().isPresent()) {
-            DefaultDrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionManagerCreator.create(options.keyRequestExecutor().get(), forwarder.drmSessionEventListener());
+            drmSessionManager = drmSessionManagerCreator.create(options.keyRequestExecutor().get(), forwarder.drmSessionEventListener());
             byte[] keySetId = options.getKeySetId();
             if (drmSessionManager != null) {
                 if (keySetId != null) {
@@ -216,7 +215,7 @@ class ExoPlayerFacade {
                         Pair<Long, Long> licenseDurationRemainingSec = offlineLicenseHelper.getLicenseDurationRemainingSec(keySetId);
                         Long first = licenseDurationRemainingSec.first;
                         if (first > TimeUnit.HOURS.toSeconds(1)) {
-                            drmSessionManager.setMode(MODE_DOWNLOAD, keySetId);
+                            drmSessionManager.setMode(DefaultDrmSessionManager.MODE_QUERY, keySetId);
                         }
                     } catch (UnsupportedDrmException | DrmSession.DrmSessionException e) {
                         forwarder.drmSessionEventListener().onDrmSessionManagerError(e);
@@ -226,8 +225,7 @@ class ExoPlayerFacade {
         }
 
         exoPlayer = exoPlayerCreator.create(
-                drmSessionCreator,
-                forwarder.drmSessionEventListener(),
+                drmSessionManager,
                 allowFallbackDecoder,
                 compositeTrackSelector.trackSelector()
         );
