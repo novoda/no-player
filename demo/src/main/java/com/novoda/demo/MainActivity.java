@@ -4,21 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.drm.DrmInitData;
-import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.OfflineLicenseHelper;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
-import com.google.android.exoplayer2.source.dash.DashUtil;
-import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
@@ -35,7 +28,6 @@ import com.novoda.noplayer.model.KeySetId;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -59,13 +51,25 @@ public class MainActivity extends Activity {
     private String licenseServerAddress;
     private boolean downloadLicense;
 
-    private OfflineLicenseHelper offlineLicenseHelper;
+    private OfflineLicense offlineLicense;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         extractFromIntent();
+
+        DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory("no-player");
+        try {
+            OfflineLicenseHelper offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance(
+                    licenseServerAddress,
+                    httpDataSourceFactory
+            );
+            offlineLicense = new OfflineLicense(getApplicationContext(), offlineLicenseHelper, httpDataSourceFactory, mpdAddress);
+        } catch (UnsupportedDrmException e) {
+            Log.e(getClass().getSimpleName(), "UnsupportedDrmException", e);
+            Toast.makeText(this, "UnsupportedDrmException: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
@@ -139,50 +143,6 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void downloadLicense(final DownloadLicenseCallback downloadLicenseCallback) {
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory("no-player");
-
-                    offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance(
-                            licenseServerAddress,
-                            httpDataSourceFactory
-                    );
-
-                    DataSource dataSource = httpDataSourceFactory.createDataSource();
-                    DashManifest dashManifest = DashUtil.loadManifest(
-                            dataSource,
-                            mpdAddress
-                    );
-                    DrmInitData drmInitData = DashUtil.loadDrmInitData(dataSource, dashManifest.getPeriod(0));
-                    final byte[] offlineKeySetId = offlineLicenseHelper.downloadLicense(drmInitData);
-
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            downloadLicenseCallback.onLicenseDownloaded(offlineKeySetId);
-                        }
-                    });
-                } catch (DrmSession.DrmSessionException e) {
-                    Log.e("TAG", "DrmSession.DrmSessionException", e);
-                } catch (IOException e) {
-                    Log.e("TAG", "IOException", e);
-                } catch (InterruptedException e) {
-                    Log.e("TAG", "InterruptedException", e);
-                } catch (UnsupportedDrmException e) {
-                    Log.e("TAG", "UnsupportedDrmException", e);
-                }
-            }
-        });
-    }
-
-    interface DownloadLicenseCallback {
-        void onLicenseDownloaded(byte[] license);
-    }
-
     private void extractFromIntent() {
         Intent intent = getIntent();
         if (intent != null) {
@@ -205,7 +165,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        downloadLicense(new DownloadLicenseCallback() {
+        offlineLicense.download(new OfflineLicense.OfflineLicenseCallback() {
             @Override
             public void onLicenseDownloaded(byte[] license) {
                 offlineKeySetId = license;
