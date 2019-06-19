@@ -29,16 +29,12 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity {
 
     private static final int HALF_A_SECOND_IN_MILLIS = 500;
     private static final int TWO_MEGABITS = 2000000;
     private static final int MAX_VIDEO_BITRATE = 800000;
-
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private byte[] offlineKeySetId;
 
