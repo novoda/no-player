@@ -11,14 +11,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:hint="Enter MPD Address"
-    android:inputType="text|textMultiLine" />
+    android:inputType="text|textMultiLine"
+    android:text="@string/default_mpd_url" />
 
   <EditText
     android:id="@+id/license_address"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:hint="Enter License Server Address"
-    android:inputType="text|textMultiLine" />
+    android:inputType="text|textMultiLine"
+    android:text="@string/default_licence_url" />
 
   <Button
     android:id="@+id/button_custom_uri"
