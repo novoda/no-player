@@ -234,6 +234,9 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
             handleAdvertStart();
         }
+        if (reason == Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT) {
+            handleAdvertStart();
+        }
     }
 
     private boolean isPlayingAdvert() {
