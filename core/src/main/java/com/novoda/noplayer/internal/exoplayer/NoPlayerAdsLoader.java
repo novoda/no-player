@@ -247,10 +247,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        if (!playingAdvert && !player.isPlayingAd()) {
-            return;
-        }
-
         updateState();
     }
 
