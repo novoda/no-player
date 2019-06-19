@@ -184,14 +184,14 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        updateAdPlaybackStateRework();
+        updateState();
 
         if (!playingAdvert) {
             Log.d("TAG", "Continue Main Content");
         }
     }
 
-    private void updateAdPlaybackStateRework() {
+    private void updateState() {
         boolean wasPlayingAd = playingAdvert;
         playingAdvert = player.isPlayingAd();
 
@@ -251,7 +251,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        updateAdPlaybackStateRework();
+        updateState();
     }
 
     @Override
