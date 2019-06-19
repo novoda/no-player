@@ -1,12 +1,14 @@
 package com.novoda.demo;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
@@ -14,8 +16,12 @@ import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.drm.DownloadedModularDrm;
+import com.novoda.noplayer.drm.DrmHandler;
+import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.KeySetId;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
@@ -23,8 +29,6 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private static final String URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD = "https://storage.googleapis.com/wvmedia/cenc/hevc/tears/tears.mpd";
-    private static final String EXAMPLE_MODULAR_LICENSE_SERVER_PROXY = "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
     private static final int HALF_A_SECOND_IN_MILLIS = 500;
     private static final int TWO_MEGABITS = 2000000;
     private static final int MAX_VIDEO_BITRATE = 800000;
@@ -34,9 +38,16 @@ public class MainActivity extends Activity {
     private DialogCreator dialogCreator;
     private CheckBox hdSelectionCheckBox;
 
+    private Uri mpdAddress;
+    private String licenseServerAddress;
+    private boolean downloadLicense;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        extractFromIntent();
+
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
         PlayerView playerView = findViewById(R.id.player_view);
@@ -51,10 +62,23 @@ public class MainActivity extends Activity {
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
         hdSelectionCheckBox.setOnCheckedChangeListener(toggleHdSelection);
 
-        DataPostingModularDrm drmHandler = new DataPostingModularDrm(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY);
+        DrmHandler drmHandler;
+        DrmType drmType;
+        if (downloadLicense) {
+            drmHandler = new DownloadedModularDrm() {
+                @Override
+                public KeySetId getKeySetId() {
+                    return null; //TODO: Actually download the keyset id.
+                }
+            };
+            drmType = DrmType.WIDEVINE_MODULAR_DOWNLOAD;
+        } else {
+            drmHandler = new DataPostingModularDrm(licenseServerAddress);
+            drmType = DrmType.WIDEVINE_MODULAR_STREAM;
+        }
 
         player = new PlayerBuilder()
-                .withWidevineModularStreamingDrm(drmHandler)
+                .withDrm(drmType, drmHandler)
                 .allowFallbackDecoders()
                 .withUserAgent("Android/Linux")
                 .allowCrossProtocolRedirects()
@@ -94,20 +118,37 @@ public class MainActivity extends Activity {
                 }
             }
         });
+    }
 
+    private void extractFromIntent() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            String rawMpdAddress = intent.getStringExtra(LandingActivity.KEY_MPD_ADDRESS);
+            if (rawMpdAddress == null || rawMpdAddress.isEmpty()) {
+                Toast.makeText(this, "MPD address not specified", Toast.LENGTH_SHORT).show();
+            } else {
+                mpdAddress = Uri.parse(rawMpdAddress);
+            }
+
+            licenseServerAddress = intent.getStringExtra(LandingActivity.KEY_LICENSE_SERVER_ADDRESS);
+            if (licenseServerAddress == null || licenseServerAddress.isEmpty()) {
+                Toast.makeText(this, "License server address not specified", Toast.LENGTH_SHORT).show();
+            }
+
+            downloadLicense = intent.getBooleanExtra(LandingActivity.KEY_DOWNLOAD_LICENSE, false);
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Uri uri = Uri.parse(URI_VIDEO_WIDEVINE_EXAMPLE_MODULAR_MPD);
         Options options = new OptionsBuilder()
                 .withContentType(ContentType.DASH)
                 .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
                 .withMaxInitialBitrate(TWO_MEGABITS)
                 .withMaxVideoBitrate(getMaxVideoBitrate())
                 .build();
-        demoPresenter.startPresenting(uri, options);
+        demoPresenter.startPresenting(mpdAddress, options);
     }
 
     private int getMaxVideoBitrate() {
