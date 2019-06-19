@@ -1,5 +1,5 @@
 allprojects {
-    version = 'foo_bar'
+    version = 'download'
 }
 
 def teamPropsFile(propsFile) {

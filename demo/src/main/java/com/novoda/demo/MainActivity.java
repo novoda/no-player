@@ -24,6 +24,8 @@ import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
+import com.novoda.noplayer.drm.KeyRequestExecutor;
+import com.novoda.noplayer.drm.ModularDrmKeyRequest;
 import com.novoda.noplayer.drm.StreamingModularDrm;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
@@ -143,7 +145,12 @@ public class MainActivity extends Activity {
                     .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
                     .withMaxInitialBitrate(TWO_MEGABITS)
                     .withMaxVideoBitrate(getMaxVideoBitrate())
-                    .withKeySetId(offlineKeySetId)
+                    .withKeySetExecutor(new KeyRequestExecutor() {
+                        @Override
+                        public byte[] executeKeyRequest(ModularDrmKeyRequest request) throws DrmRequestException {
+                            return HttpClient.post(EXAMPLE_MODULAR_LICENSE_SERVER_PROXY, request.data());
+                        }
+                    })
                     .build();
             demoPresenter.startPresenting(uri, options);
         }

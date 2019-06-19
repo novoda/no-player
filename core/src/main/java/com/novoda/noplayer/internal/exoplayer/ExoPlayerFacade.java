@@ -21,6 +21,7 @@ import com.novoda.noplayer.Options;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionManagerCreatorTemp;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
@@ -51,6 +52,7 @@ class ExoPlayerFacade {
     private final ExoPlayerCreator exoPlayerCreator;
     private final RendererTypeRequesterCreator rendererTypeRequesterCreator;
     private final Optional<NoPlayerAdsLoader> adsLoader;
+    private final DrmSessionManagerCreatorTemp drmSessionManagerCreator;
 
     @Nullable
     private SimpleExoPlayer exoPlayer;
@@ -67,7 +69,8 @@ class ExoPlayerFacade {
                     CompositeTrackSelectorCreator trackSelectorCreator,
                     ExoPlayerCreator exoPlayerCreator,
                     RendererTypeRequesterCreator rendererTypeRequesterCreator,
-                    Optional<NoPlayerAdsLoader> adsLoader) {
+                    Optional<NoPlayerAdsLoader> adsLoader,
+                    DrmSessionManagerCreatorTemp drmSessionManagerCreator) {
         this.bandwidthMeterCreator = bandwidthMeterCreator;
         this.androidDeviceVersion = androidDeviceVersion;
         this.mediaSourceFactory = mediaSourceFactory;
@@ -75,6 +78,7 @@ class ExoPlayerFacade {
         this.exoPlayerCreator = exoPlayerCreator;
         this.rendererTypeRequesterCreator = rendererTypeRequesterCreator;
         this.adsLoader = adsLoader;
+        this.drmSessionManagerCreator = drmSessionManagerCreator;
     }
 
     boolean isPlaying() {
@@ -202,19 +206,21 @@ class ExoPlayerFacade {
 
         compositeTrackSelector = trackSelectorCreator.create(options, bandwidthMeter);
 
-        DefaultDrmSessionManager<FrameworkMediaCrypto> drmSessionManager = (DefaultDrmSessionManager<FrameworkMediaCrypto>) drmSessionCreator.create(forwarder.drmSessionEventListener());
-        byte[] keySetId = options.getKeySetId();
-        if (drmSessionManager != null) {
-            if (keySetId != null) {
-                try {
-                    OfflineLicenseHelper<FrameworkMediaCrypto> offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance("", null);
-                    Pair<Long, Long> licenseDurationRemainingSec = offlineLicenseHelper.getLicenseDurationRemainingSec(keySetId);
-                    Long first = licenseDurationRemainingSec.first;
-                    if (first > TimeUnit.HOURS.toSeconds(1)) {
-                        drmSessionManager.setMode(MODE_DOWNLOAD, keySetId);
+        if (options.keyRequestExecutor().isPresent()) {
+            DefaultDrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionManagerCreator.create(options.keyRequestExecutor().get(), forwarder.drmSessionEventListener());
+            byte[] keySetId = options.getKeySetId();
+            if (drmSessionManager != null) {
+                if (keySetId != null) {
+                    try {
+                        OfflineLicenseHelper<FrameworkMediaCrypto> offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance("", null);
+                        Pair<Long, Long> licenseDurationRemainingSec = offlineLicenseHelper.getLicenseDurationRemainingSec(keySetId);
+                        Long first = licenseDurationRemainingSec.first;
+                        if (first > TimeUnit.HOURS.toSeconds(1)) {
+                            drmSessionManager.setMode(MODE_DOWNLOAD, keySetId);
+                        }
+                    } catch (UnsupportedDrmException | DrmSession.DrmSessionException e) {
+                        forwarder.drmSessionEventListener().onDrmSessionManagerError(e);
                     }
-                } catch (UnsupportedDrmException | DrmSession.DrmSessionException e) {
-                    forwarder.drmSessionEventListener().onDrmSessionManagerError(e);
                 }
             }
         }

@@ -843,7 +843,8 @@ public class ExoPlayerFacadeTest {
                     trackSelectorCreator,
                     exoPlayerCreator,
                     rendererTypeRequesterCreator,
-                    optionalAdsLoader
+                    optionalAdsLoader,
+                    drmSessionManagerCreator
             );
             given(surfaceView.getHolder()).willReturn(mock(SurfaceHolder.class));
             surfaceViewHolder = PlayerSurfaceHolder.create(surfaceView);

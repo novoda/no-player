@@ -9,6 +9,7 @@ import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.internal.Heart;
 import com.novoda.noplayer.internal.SystemClock;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
+import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionManagerCreatorTemp;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
@@ -92,6 +93,8 @@ public class NoPlayerExoPlayerCreator {
             RendererTypeRequesterCreator rendererTypeRequesterCreator = new RendererTypeRequesterCreator();
             AndroidDeviceVersion androidDeviceVersion = AndroidDeviceVersion.newInstance();
             BandwidthMeterCreator bandwidthMeterCreator = new BandwidthMeterCreator(context);
+
+            DrmSessionManagerCreatorTemp drmSessionManagerCreator = DrmSessionManagerCreatorTemp.newInstance();
             ExoPlayerFacade exoPlayerFacade = new ExoPlayerFacade(
                     bandwidthMeterCreator,
                     androidDeviceVersion,
@@ -99,7 +102,8 @@ public class NoPlayerExoPlayerCreator {
                     trackSelectorCreator,
                     exoPlayerCreator,
                     rendererTypeRequesterCreator,
-                    adsLoader
+                    adsLoader,
+                    drmSessionManagerCreator
             );
 
             PlayerListenersHolder listenersHolder = new PlayerListenersHolder();
