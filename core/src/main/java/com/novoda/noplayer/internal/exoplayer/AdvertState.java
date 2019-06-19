@@ -18,8 +18,8 @@ class AdvertState {
     private boolean playingAdvert;
     private int advertIndex = -1;
     private int advertBreakIndex = -1;
-    private List<AdvertBreak> advertBreaks;
-    private NoPlayer.AdvertListener advertListener;
+    private final List<AdvertBreak> advertBreaks;
+    private final NoPlayer.AdvertListener advertListener;
 
     AdvertState(List<AdvertBreak> advertBreaks, NoPlayer.AdvertListener advertListener) {
         this.advertBreaks = advertBreaks;
