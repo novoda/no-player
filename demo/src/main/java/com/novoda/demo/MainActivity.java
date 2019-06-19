@@ -124,14 +124,14 @@ public class MainActivity extends Activity {
         Intent intent = getIntent();
         if (intent != null) {
             String rawMpdAddress = intent.getStringExtra(LandingActivity.KEY_MPD_ADDRESS);
-            if (rawMpdAddress == null) {
+            if (rawMpdAddress == null || rawMpdAddress.isEmpty()) {
                 Toast.makeText(this, "MPD address not specified", Toast.LENGTH_SHORT).show();
             } else {
                 mpdAddress = Uri.parse(rawMpdAddress);
             }
 
             licenseServerAddress = intent.getStringExtra(LandingActivity.KEY_LICENSE_SERVER_ADDRESS);
-            if (licenseServerAddress == null) {
+            if (licenseServerAddress == null || licenseServerAddress.isEmpty()) {
                 Toast.makeText(this, "License server address not specified", Toast.LENGTH_SHORT).show();
             }
 
