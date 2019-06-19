@@ -2,7 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.os.Handler;
 import android.os.Looper;
-
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import androidx.annotation.Nullable;
 
 // Not much we can do, orchestrating adverts is a lot of work.
 @SuppressWarnings("PMD.GodClass")
@@ -181,7 +179,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        handleAdvertStart();
+        // handle only pre-roll start on timeline change
+        if (reason == Player.TIMELINE_CHANGE_REASON_PREPARED) {
+            handleAdvertStart();
+        }
     }
 
     private void handleAdvertStart() {
@@ -229,6 +230,9 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
                 resetAdvertPosition();
             }
 
+            handleAdvertStart();
+        }
+        if (reason == Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT) {
             handleAdvertStart();
         }
     }
