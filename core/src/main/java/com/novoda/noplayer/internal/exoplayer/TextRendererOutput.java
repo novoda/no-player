@@ -1,7 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import com.google.android.exoplayer2.text.Cue;
-import com.google.android.exoplayer2.text.TextRenderer;
+import com.google.android.exoplayer2.text.TextOutput;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.model.TextCues;
 
@@ -15,8 +15,8 @@ class TextRendererOutput {
         this.playerView = playerView;
     }
 
-    TextRenderer.Output output() {
-        return new TextRenderer.Output() {
+    TextOutput output() {
+        return new TextOutput() {
             @Override
             public void onCues(List<Cue> cues) {
                 TextCues textCues = ExoPlayerCueMapper.map(cues);

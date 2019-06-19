@@ -2,25 +2,30 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
 
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
 import static com.novoda.noplayer.AdvertFixtures.anAdvert;
+import static com.novoda.noplayer.internal.exoplayer.AdGroupFixture.anAdGroup;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class AdvertPlaybackStateTest {
 
+    private static final int HALF_SECOND_IN_MICROS = 500000;
     private static final int ONE_SECOND_IN_MICROS = 1000000;
     private static final int TWO_SECONDS_IN_MICROS = 2000000;
     private static final int THREE_SECONDS_IN_MICROS = 3000000;
 
+    private static final int HALF_SECOND_IN_MILLIS = 500;
     private static final int ONE_SECOND_IN_MILLIS = 1000;
     private static final int TWO_SECONDS_IN_MILLIS = 2000;
     private static final int THREE_SECONDS_IN_MILLIS = 3000;
@@ -47,9 +52,12 @@ public class AdvertPlaybackStateTest {
             .withStartTimeInMillis(THREE_SECONDS_IN_MILLIS)
             .withAdverts(FIRST_ADVERT, SECOND_ADVERT, THIRD_ADVERT)
             .build();
+    private static final AdPlaybackState.AdGroup FIRST_AD_GROUP = firstAdGroupFixture().build();
+    private static final AdPlaybackState.AdGroup SECOND_AD_GROUP = secondAdGroupFixture().build();
+    private static final AdPlaybackState.AdGroup THIRD_AD_GROUP = thirdAdGroupFixture().build();
 
     @Test
-    public void createsCorrectAdvertPlaybackState() {
+    public void createsCorrectAdvertPlaybackStateWithZeroResumePosition() {
         List<AdvertBreak> advertBreaks = Arrays.asList(THIRD_ADVERT_BREAK, SECOND_ADVERT_BREAK, FIRST_ADVERT_BREAK);
 
         AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks);
@@ -57,9 +65,23 @@ public class AdvertPlaybackStateTest {
 
         assertThat(adPlaybackState.adGroupCount).isEqualTo(3);
         assertThat(adPlaybackState.adGroupTimesUs).containsSequence(ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS, THREE_SECONDS_IN_MICROS);
-        assertThatGroupContains(adPlaybackState.adGroups[0], 1, new long[]{ONE_SECOND_IN_MICROS}, new Uri[]{FIRST_ADVERT.uri()});
-        assertThatGroupContains(adPlaybackState.adGroups[1], 2, new long[]{ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS}, new Uri[]{FIRST_ADVERT.uri(), SECOND_ADVERT.uri()});
-        assertThatGroupContains(adPlaybackState.adGroups[2], 3, new long[]{ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS, THREE_SECONDS_IN_MICROS}, new Uri[]{FIRST_ADVERT.uri(), SECOND_ADVERT.uri(), THIRD_ADVERT.uri()});
+        assertThat(adPlaybackState.adGroups).containsExactly(FIRST_AD_GROUP, SECOND_AD_GROUP, THIRD_AD_GROUP);
+        assertThat(adPlaybackState.adResumePositionUs).isEqualTo(0L);
+        assertThat(adPlaybackState.contentDurationUs).isEqualTo(C.TIME_UNSET);
+    }
+
+    @Test
+    public void createsEmptyStateWhenAdvertBreaksAreEmpty() {
+        List<AdvertBreak> advertBreaks = Collections.emptyList();
+
+        AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(advertBreaks);
+        AdPlaybackState adPlaybackState = advertPlaybackState.adPlaybackState();
+
+        assertThat(adPlaybackState.adGroupCount).isEqualTo(0);
+        assertThat(adPlaybackState.adGroupTimesUs).isEmpty();
+        assertThat(adPlaybackState.adGroups).isEmpty();
+        assertThat(adPlaybackState.adResumePositionUs).isEqualTo(0L);
+        assertThat(adPlaybackState.contentDurationUs).isEqualTo(C.TIME_UNSET);
     }
 
     @Test
@@ -81,9 +103,24 @@ public class AdvertPlaybackStateTest {
         assertThat(advertBreaks).containsExactly(THIRD_ADVERT_BREAK, SECOND_ADVERT_BREAK, FIRST_ADVERT_BREAK);
     }
 
-    private void assertThatGroupContains(AdPlaybackState.AdGroup adGroup, int numberOfAdverts, long[] advertDurations, Uri[] advertUris) {
-        assertThat(adGroup.count).isEqualTo(numberOfAdverts);
-        assertThat(adGroup.durationsUs).containsSequence(advertDurations);
-        assertThat(adGroup.uris).containsExactly(advertUris);
+    private static AdGroupFixture firstAdGroupFixture() {
+        return anAdGroup()
+                .withAdCount(1)
+                .withAdDurationsUs(new long[]{ONE_SECOND_IN_MICROS})
+                .withAdUris(new Uri[]{FIRST_ADVERT.uri()});
+    }
+
+    private static AdGroupFixture secondAdGroupFixture() {
+        return anAdGroup()
+                .withAdCount(2)
+                .withAdDurationsUs(new long[]{ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS})
+                .withAdUris(new Uri[]{FIRST_ADVERT.uri(), SECOND_ADVERT.uri()});
+    }
+
+    private static AdGroupFixture thirdAdGroupFixture() {
+        return anAdGroup()
+                .withAdCount(3)
+                .withAdDurationsUs(new long[]{ONE_SECOND_IN_MICROS, TWO_SECONDS_IN_MICROS, THREE_SECONDS_IN_MICROS})
+                .withAdUris(new Uri[]{FIRST_ADVERT.uri(), SECOND_ADVERT.uri(), THIRD_ADVERT.uri()});
     }
 }

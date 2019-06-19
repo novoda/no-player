@@ -158,4 +158,18 @@ public interface Listeners {
      * @param advertListener to remove.
      */
     void removeAdvertListener(NoPlayer.AdvertListener advertListener);
+
+    /**
+     * Add a given {@link com.novoda.noplayer.NoPlayer.TracksChangedListener} to be notified when track changes occur.
+     *
+     * @param tracksChangedListener to notify.
+     */
+    void addTracksChangedListener(NoPlayer.TracksChangedListener tracksChangedListener);
+
+    /**
+     * Remove a given {@link com.novoda.noplayer.NoPlayer.TracksChangedListener}.
+     *
+     * @param tracksChangedListener to remove.
+     */
+    void removeTracksChangedListener(NoPlayer.TracksChangedListener tracksChangedListener);
 }

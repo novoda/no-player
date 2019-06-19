@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import androidx.annotation.NonNull;
+
 class AdvertListeners implements NoPlayer.AdvertListener {
 
     private final Set<NoPlayer.AdvertListener> listeners = new CopyOnWriteArraySet<>();
@@ -92,6 +94,20 @@ class AdvertListeners implements NoPlayer.AdvertListener {
     public void onAdvertsEnabled(List<AdvertBreak> advertBreaks) {
         for (NoPlayer.AdvertListener listener : listeners) {
             listener.onAdvertsEnabled(advertBreaks);
+        }
+    }
+
+    @Override
+    public void onAdvertBreakSkipped(@NonNull AdvertBreak advertBreak) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertBreakSkipped(advertBreak);
+        }
+    }
+
+    @Override
+    public void onAdvertSkipped(Advert advert) {
+        for (NoPlayer.AdvertListener listener : listeners) {
+            listener.onAdvertSkipped(advert);
         }
     }
 

@@ -3,9 +3,6 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.view.View;
 
-import androidx.annotation.Nullable;
-
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
@@ -27,8 +24,10 @@ import com.novoda.noplayer.model.Timeout;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
+
 // Not much we can do, wrapping ExoPlayer is a lot of work
-@SuppressWarnings("PMD.GodClass")
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount"})
 class ExoPlayerTwoImpl implements NoPlayer {
 
     private final ExoPlayerFacade exoPlayer;
@@ -36,7 +35,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     private final ExoPlayerForwarder forwarder;
     private final Heart heart;
     private final DrmSessionCreator drmSessionCreator;
-    private final MediaCodecSelector mediaCodecSelector;
+    private final boolean allowFallbackDecoder;
     private final LoadTimeout loadTimeout;
 
     @Nullable
@@ -52,14 +51,14 @@ class ExoPlayerTwoImpl implements NoPlayer {
                      LoadTimeout loadTimeoutParam,
                      Heart heart,
                      DrmSessionCreator drmSessionCreator,
-                     MediaCodecSelector mediaCodecSelector) {
+                     boolean allowFallbackDecoder) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
         this.forwarder = exoPlayerForwarder;
         this.heart = heart;
         this.drmSessionCreator = drmSessionCreator;
-        this.mediaCodecSelector = mediaCodecSelector;
+        this.allowFallbackDecoder = allowFallbackDecoder;
     }
 
     void initialise() {
@@ -73,16 +72,12 @@ class ExoPlayerTwoImpl implements NoPlayer {
         forwarder.bind(listenersHolder.getInfoListeners());
         forwarder.bind(listenersHolder.getDroppedVideoFramesListeners());
         forwarder.bind(listenersHolder.getAdvertListeners());
+        forwarder.bind(listenersHolder.getTracksChangedListeners());
+        forwarder.bind(resetOnErrorListener());
         listenersHolder.addPreparedListener(new PreparedListener() {
             @Override
             public void onPrepared(PlayerState playerState) {
                 loadTimeout.cancel();
-            }
-        });
-        listenersHolder.addErrorListener(new ErrorListener() {
-            @Override
-            public void onError(PlayerError error) {
-                reset();
             }
         });
         listenersHolder.addVideoSizeChangedListener(new VideoSizeChangedListener() {
@@ -94,19 +89,23 @@ class ExoPlayerTwoImpl implements NoPlayer {
         });
     }
 
+    private ErrorListener resetOnErrorListener() {
+        return new ErrorListener() {
+            @Override
+            public void onError(PlayerError error) {
+                reset();
+            }
+        };
+    }
+
     @Override
     public boolean isPlaying() {
         return exoPlayer.isPlaying();
     }
 
     @Override
-    public boolean isSetToPlayAdvert() {
-        return exoPlayer.isSetToPlayAdvert();
-    }
-
-    @Override
-    public boolean isSetToPlayContent() {
-        return exoPlayer.isSetToPlayContent();
+    public VideoType videoType() {
+        return exoPlayer.videoType();
     }
 
     @Override
@@ -234,7 +233,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
             stop();
         }
         assertPlayerViewIsAttached();
-        exoPlayer.loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, options, forwarder, mediaCodecSelector);
+        exoPlayer.loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, options, forwarder, allowFallbackDecoder);
         createSurfaceByShowingVideoContainer();
     }
 
@@ -289,6 +288,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public void disableAdverts() {
         exoPlayer.disableAdverts();
+    }
+
+    @Override
+    public void skipAdvertBreak() {
+        exoPlayer.skipAdvertBreak();
+    }
+
+    @Override
+    public void skipAdvert() {
+        exoPlayer.skipAdvert();
     }
 
     @Override
