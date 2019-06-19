@@ -100,4 +100,18 @@ public class AdvertStateTest {
         then(callback).shouldHaveNoMoreInteractions();
         then(advertListener).shouldHaveNoMoreInteractions();
     }
+
+    @Test
+    public void transitionsBetweenAdverts() {
+        advertState.update(IS_PLAYING_ADVERT, 1, 0, callback);
+        Mockito.reset(advertListener, callback);
+        advertState.update(IS_PLAYING_ADVERT, 1, 1, callback);
+
+        InOrder inOrder = Mockito.inOrder(advertListener, callback);
+        then(callback).should(inOrder).onAdvertPlayed(1, 0);
+        then(advertListener).should(inOrder).onAdvertEnd(FIRST_ADVERT);
+        then(advertListener).should(inOrder).onAdvertStart(SECOND_ADVERT);
+        then(callback).shouldHaveNoMoreInteractions();
+        then(advertListener).shouldHaveNoMoreInteractions();
+    }
 }
