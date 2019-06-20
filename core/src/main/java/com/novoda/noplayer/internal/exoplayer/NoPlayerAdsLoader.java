@@ -202,7 +202,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             notifyAdvertEnd(previousAdvertGroupIndex, previousAdvertIndexInAdvertGroup);
         }
 
-        if (isPlayingAdvert && advertIndexInAdvertGroup != previousAdvertIndexInAdvertGroup) {
+        boolean advertStarted = isPlayingAdvert && advertIndexInAdvertGroup != previousAdvertIndexInAdvertGroup;
+        if (advertStarted) {
             notifyAdvertStart(advertBreaks.get(advertGroupIndex));
         }
     }
