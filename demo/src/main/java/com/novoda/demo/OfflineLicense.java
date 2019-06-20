@@ -57,15 +57,9 @@ class OfflineLicense {
                             offlineLicenseCallback.onLicenseDownloaded(offlineKeySetId);
                         }
                     });
-                } catch (DrmSession.DrmSessionException e) {
-                    Log.e(getClass().getSimpleName(), "DrmSession.DrmSessionException", e);
-                    Toast.makeText(context, "DrmSession.DrmSessionException: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                } catch (IOException e) {
-                    Log.e(getClass().getSimpleName(), "IOException", e);
-                    Toast.makeText(context, "IOException:" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                } catch (InterruptedException e) {
-                    Log.e(getClass().getSimpleName(), "InterruptedException", e);
-                    Toast.makeText(context, "InterruptedException:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                } catch (DrmSession.DrmSessionException | IOException | InterruptedException e) {
+                    Log.e(getClass().getSimpleName(), "Failed to download license", e);
+                    Toast.makeText(context, "Failed to download license" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
