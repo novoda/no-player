@@ -7,7 +7,7 @@ import android.os.Looper;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
-import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
@@ -56,12 +56,12 @@ public class PlayerBuilder {
     /**
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine modular streaming DRM.
      *
-     * @param streamingModularDrm Implementation of {@link StreamingModularDrm}.
+     * @param keyRequestExecutor Implementation of {@link KeyRequestExecutor}.
      * @return {@link PlayerBuilder}
      * @see NoPlayer
      */
-    public PlayerBuilder withWidevineModularStreamingDrm(StreamingModularDrm streamingModularDrm) {
-        return withDrm(DrmType.WIDEVINE_MODULAR_STREAM, streamingModularDrm);
+    public PlayerBuilder withWidevineModularStreamingDrm(KeyRequestExecutor keyRequestExecutor) {
+        return withDrm(DrmType.WIDEVINE_MODULAR_STREAM, keyRequestExecutor);
     }
 
     /**

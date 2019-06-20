@@ -4,30 +4,42 @@ import android.os.Handler;
 
 import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
-import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
-import com.google.android.exoplayer2.drm.MediaDrmCallback;
+import com.novoda.noplayer.drm.KeyRequestExecutor;
+import com.novoda.noplayer.internal.drm.provision.ProvisionExecutor;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 class StreamingDrmSessionCreator implements DrmSessionCreator {
+
+    private static final UUID WIDEVINE_MODULAR_UUID = new UUID(0xEDEF8BA979D64ACEL, 0xA3C827DCD51D21EDL);
 
     @SuppressWarnings("PMD.LooseCoupling")  // Unfortunately the DefaultDrmSessionManager takes a HashMap, not a Map
     private static final HashMap<String, String> NO_OPTIONAL_PARAMETERS = null;
 
-    private final MediaDrmCallback mediaDrmCallback;
+    private final KeyRequestExecutor keyRequestExecutor;
+    private final ProvisionExecutor provisionExecutor;
     private final FrameworkMediaDrmCreator frameworkMediaDrmCreator;
     private final Handler handler;
 
-    StreamingDrmSessionCreator(MediaDrmCallback mediaDrmCallback, FrameworkMediaDrmCreator frameworkMediaDrmCreator, Handler handler) {
-        this.mediaDrmCallback = mediaDrmCallback;
+    StreamingDrmSessionCreator(KeyRequestExecutor keyRequestExecutor,
+                               ProvisionExecutor provisionExecutor,
+                               FrameworkMediaDrmCreator frameworkMediaDrmCreator,
+                               Handler handler) {
+        this.keyRequestExecutor = keyRequestExecutor;
+        this.provisionExecutor = provisionExecutor;
         this.frameworkMediaDrmCreator = frameworkMediaDrmCreator;
         this.handler = handler;
     }
 
-    @Override
-    public DrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener) {
+    public DefaultDrmSessionManager<FrameworkMediaCrypto> create(DefaultDrmSessionEventListener eventListener) {
+        ProvisioningModularDrmCallback mediaDrmCallback = new ProvisioningModularDrmCallback(
+                keyRequestExecutor,
+                provisionExecutor
+        );
+
         FrameworkMediaDrm frameworkMediaDrm = frameworkMediaDrmCreator.create(WIDEVINE_MODULAR_UUID);
 
         DefaultDrmSessionManager<FrameworkMediaCrypto> defaultDrmSessionManager = new DefaultDrmSessionManager<>(
