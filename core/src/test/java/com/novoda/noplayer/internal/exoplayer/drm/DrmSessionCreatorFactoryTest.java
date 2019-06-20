@@ -3,7 +3,6 @@ package com.novoda.noplayer.internal.exoplayer.drm;
 import android.os.Handler;
 
 import com.novoda.noplayer.UnableToCreatePlayerException;
-import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutorCreator;
@@ -24,7 +23,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class DrmSessionCreatorFactoryTest {
 
     private static final AndroidDeviceVersion UNSUPPORTED_MEDIA_DRM_DEVICE_VERSION = new AndroidDeviceVersion(17);
-    private static final DrmHandler IGNORED_DRM_HANDLER = DrmHandler.NO_DRM;
+    private static final KeyRequestExecutor IGNORED_KEY_REQUEST_EXECUTOR = KeyRequestExecutor.NOT_REQUIRED;
     private static final AndroidDeviceVersion SUPPORTED_MEDIA_DRM_DEVICE = new AndroidDeviceVersion(18);
 
     @Rule
@@ -48,14 +47,14 @@ public class DrmSessionCreatorFactoryTest {
 
     @Test
     public void givenDrmTypeNone_whenCreatingDrmSessionCreator_thenReturnsNoDrmSession() throws DrmSessionCreatorException {
-        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.NONE, IGNORED_DRM_HANDLER, null);
+        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.NONE, IGNORED_KEY_REQUEST_EXECUTOR, null);
 
         assertThat(drmSessionCreator).isInstanceOf(NoDrmSessionCreator.class);
     }
 
     @Test
     public void givenDrmTypeWidevineClassic_whenCreatingDrmSessionCreator_thenReturnsNoDrmSession() throws DrmSessionCreatorException {
-        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_CLASSIC, IGNORED_DRM_HANDLER, null);
+        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_CLASSIC, IGNORED_KEY_REQUEST_EXECUTOR, null);
 
         assertThat(drmSessionCreator).isInstanceOf(NoDrmSessionCreator.class);
     }
@@ -74,7 +73,7 @@ public class DrmSessionCreatorFactoryTest {
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_STREAM";
         thrown.expect(ExceptionMatcher.matches(message, UnableToCreatePlayerException.class));
 
-        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, IGNORED_DRM_HANDLER, null);
+        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, IGNORED_KEY_REQUEST_EXECUTOR, null);
     }
 
     @Test
@@ -91,6 +90,6 @@ public class DrmSessionCreatorFactoryTest {
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_DOWNLOAD";
         thrown.expect(ExceptionMatcher.matches(message, UnableToCreatePlayerException.class));
 
-        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, IGNORED_DRM_HANDLER, null);
+        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, IGNORED_KEY_REQUEST_EXECUTOR, null);
     }
 }

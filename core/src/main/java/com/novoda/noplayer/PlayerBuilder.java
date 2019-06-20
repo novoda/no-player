@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.novoda.noplayer.drm.DownloadedModularDrm;
-import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.drm.ModularDrmKeyRequest;
@@ -28,7 +26,7 @@ import androidx.annotation.Nullable;
 public class PlayerBuilder {
 
     private DrmType drmType = DrmType.NONE;
-    private DrmHandler drmHandler = DrmHandler.NO_DRM;
+    private KeyRequestExecutor keyRequestExecutor = KeyRequestExecutor.NOT_REQUIRED;
     @Nullable
     private KeySetId keySetId;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
@@ -56,7 +54,7 @@ public class PlayerBuilder {
      * @see NoPlayer
      */
     public PlayerBuilder withWidevineClassicDrm() {
-        return withDrm(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, null);
+        return withDrm(DrmType.WIDEVINE_CLASSIC, KeyRequestExecutor.NOT_REQUIRED, null);
     }
 
     /**
@@ -73,32 +71,32 @@ public class PlayerBuilder {
     /**
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports Widevine modular download DRM.
      *
-     * @param downloadedModularDrm Implementation of {@link DownloadedModularDrm}.
+     * @param keySetId The KeySetId to restore.
      * @return {@link PlayerBuilder}
      * @see NoPlayer
      */
-    public PlayerBuilder withWidevineModularDownloadDrm(final DownloadedModularDrm downloadedModularDrm) {
+    public PlayerBuilder withWidevineModularDownloadDrm(final KeySetId keySetId) {
         KeyRequestExecutor keyRequestExecutor = new KeyRequestExecutor() {
             @Override
             public byte[] executeKeyRequest(ModularDrmKeyRequest request) throws DrmRequestException {
-                return downloadedModularDrm.getKeySetId().asBytes();
+                return keySetId.asBytes();
             }
         };
 
-        return withDrm(DrmType.WIDEVINE_MODULAR_DOWNLOAD, keyRequestExecutor, downloadedModularDrm.getKeySetId());
+        return withDrm(DrmType.WIDEVINE_MODULAR_DOWNLOAD, keyRequestExecutor, keySetId);
     }
 
     /**
      * Sets {@link PlayerBuilder} to build a {@link NoPlayer} which supports the specified parameters.
      *
-     * @param drmType    {@link DrmType}
-     * @param drmHandler {@link DrmHandler}
+     * @param drmType            {@link DrmType}
+     * @param keyRequestExecutor {@link KeyRequestExecutor}
      * @return {@link PlayerBuilder}
      * @see NoPlayer
      */
-    public PlayerBuilder withDrm(DrmType drmType, DrmHandler drmHandler, KeySetId keySetId) {
+    public PlayerBuilder withDrm(DrmType drmType, KeyRequestExecutor keyRequestExecutor, KeySetId keySetId) {
         this.drmType = drmType;
-        this.drmHandler = drmHandler;
+        this.keyRequestExecutor = keyRequestExecutor;
         this.keySetId = keySetId;
         return this;
     }
@@ -176,7 +174,7 @@ public class PlayerBuilder {
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
-        return noPlayerCreator.create(drmType, drmHandler, keySetId, allowFallbackDecoder, allowCrossProtocolRedirects);
+        return noPlayerCreator.create(drmType, keyRequestExecutor, keySetId, allowFallbackDecoder, allowCrossProtocolRedirects);
     }
 
     private NoPlayerExoPlayerCreator createExoPlayerCreator(Handler handler) {

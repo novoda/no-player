@@ -4,7 +4,6 @@ import android.os.Build;
 import android.os.Handler;
 
 import com.novoda.noplayer.UnableToCreatePlayerException;
-import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutor;
@@ -26,7 +25,9 @@ public class DrmSessionCreatorFactory {
         this.handler = handler;
     }
 
-    public DrmSessionCreator createFor(DrmType drmType, DrmHandler drmHandler, @Nullable KeySetId keySetId) throws DrmSessionCreatorException {
+    public DrmSessionCreator createFor(DrmType drmType,
+                                       KeyRequestExecutor keyRequestExecutor,
+                                       @Nullable KeySetId keySetId) throws DrmSessionCreatorException {
         switch (drmType) {
             case NONE:
                 // Fall-through.
@@ -35,7 +36,7 @@ public class DrmSessionCreatorFactory {
             case WIDEVINE_MODULAR_STREAM:
             case WIDEVINE_MODULAR_DOWNLOAD:
                 assertThatApiLevelIsJellyBeanEighteenOrAbove(drmType);
-                return createDrmSessionCreator((KeyRequestExecutor) drmHandler, keySetId);
+                return createDrmSessionCreator(keyRequestExecutor, keySetId);
             default:
                 throw DrmSessionCreatorException.noDrmHandlerFor(drmType);
         }
