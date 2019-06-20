@@ -64,7 +64,7 @@ public class DrmSessionCreatorFactoryTest {
     public void givenDrmTypeWidevineModularStream_whenCreatingDrmSessionCreator_thenReturnsStreaming() throws DrmSessionCreatorException {
         DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, keyRequestExecutor, null);
 
-        assertThat(drmSessionCreator).isInstanceOf(DrmSessionCreatorWithFallback.class);
+        assertThat(drmSessionCreator).isInstanceOf(ExoPlayerDrmSessionCreator.class);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class DrmSessionCreatorFactoryTest {
     public void givenDrmTypeWidevineModularDownload_whenCreatingDrmSessionCreator_thenReturnsDownload() throws DrmSessionCreatorException {
         DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, keyRequestExecutor, null);
 
-        assertThat(drmSessionCreator).isInstanceOf(DrmSessionCreatorWithFallback.class);
+        assertThat(drmSessionCreator).isInstanceOf(ExoPlayerDrmSessionCreator.class);
     }
 
     @Test

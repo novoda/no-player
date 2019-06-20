@@ -35,7 +35,7 @@ public class DrmSessionCreatorFactory {
             case WIDEVINE_MODULAR_STREAM:
             case WIDEVINE_MODULAR_DOWNLOAD:
                 assertThatApiLevelIsJellyBeanEighteenOrAbove(drmType);
-                return createReworkedDrm((KeyRequestExecutor) drmHandler, keySetId);
+                return createDrmSessionCreator((KeyRequestExecutor) drmHandler, keySetId);
             default:
                 throw DrmSessionCreatorException.noDrmHandlerFor(drmType);
         }
@@ -52,9 +52,9 @@ public class DrmSessionCreatorFactory {
         );
     }
 
-    private DrmSessionCreatorWithFallback createReworkedDrm(KeyRequestExecutor keyRequestExecutor, @Nullable KeySetId keySetId) {
+    private ExoPlayerDrmSessionCreator createDrmSessionCreator(KeyRequestExecutor keyRequestExecutor, @Nullable KeySetId keySetId) {
         ProvisionExecutor provisionExecutor = provisionExecutorCreator.create();
         FrameworkMediaDrmCreator mediaDrmCreator = new FrameworkMediaDrmCreator();
-        return new DrmSessionCreatorWithFallback(keyRequestExecutor, provisionExecutor, keySetId, mediaDrmCreator, handler);
+        return new ExoPlayerDrmSessionCreator(keyRequestExecutor, provisionExecutor, keySetId, mediaDrmCreator, handler);
     }
 }

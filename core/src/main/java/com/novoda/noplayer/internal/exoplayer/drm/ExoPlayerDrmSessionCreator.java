@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
 
-class DrmSessionCreatorWithFallback implements DrmSessionCreator {
+class ExoPlayerDrmSessionCreator implements DrmSessionCreator {
 
     @SuppressWarnings("PMD.LooseCoupling")  // Unfortunately the DefaultDrmSessionManager takes a HashMap, not a Map
     private static final HashMap<String, String> NO_OPTIONAL_PARAMETERS = null;
@@ -31,11 +31,11 @@ class DrmSessionCreatorWithFallback implements DrmSessionCreator {
     private final FrameworkMediaDrmCreator mediaDrmCreator;
     private final Handler handler;
 
-    DrmSessionCreatorWithFallback(KeyRequestExecutor keyRequestExecutor,
-                                  ProvisionExecutor provisionExecutor,
-                                  @Nullable KeySetId keySetId,
-                                  FrameworkMediaDrmCreator mediaDrmCreator,
-                                  Handler handler) {
+    ExoPlayerDrmSessionCreator(KeyRequestExecutor keyRequestExecutor,
+                               ProvisionExecutor provisionExecutor,
+                               @Nullable KeySetId keySetId,
+                               FrameworkMediaDrmCreator mediaDrmCreator,
+                               Handler handler) {
         this.keyRequestExecutor = keyRequestExecutor;
         this.provisionExecutor = provisionExecutor;
         this.keySetId = keySetId;
