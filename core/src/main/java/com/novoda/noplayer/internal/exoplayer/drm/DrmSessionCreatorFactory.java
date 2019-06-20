@@ -54,16 +54,13 @@ public class DrmSessionCreatorFactory {
 
     private DrmSessionCreator createModularStream(KeyRequestExecutor drmHandler) {
         ProvisionExecutor provisionExecutor = provisionExecutorCreator.create();
-        ProvisioningModularDrmCallback mediaDrmCallback = new ProvisioningModularDrmCallback(
-                drmHandler,
-                provisionExecutor
-        );
         FrameworkMediaDrmCreator mediaDrmCreator = new FrameworkMediaDrmCreator();
-        return new StreamingDrmSessionCreator(mediaDrmCallback, mediaDrmCreator, handler);
+        return new StreamingDrmSessionCreator(drmHandler, provisionExecutor, mediaDrmCreator, handler);
     }
 
     private DownloadDrmSessionCreator createModularDownload(DownloadedModularDrm drmHandler) {
         FrameworkMediaDrmCreator mediaDrmCreator = new FrameworkMediaDrmCreator();
-        return new DownloadDrmSessionCreator(drmHandler, mediaDrmCreator, handler);
+        ProvisionExecutor provisionExecutor = provisionExecutorCreator.create();
+        return new DownloadDrmSessionCreator(drmHandler, provisionExecutor, mediaDrmCreator, handler);
     }
 }
