@@ -40,6 +40,9 @@ public class MainActivity extends Activity {
     private NoPlayer player;
     private DemoPresenter demoPresenter;
     private DialogCreator dialogCreator;
+    private View videoSelectionButton;
+    private View audioSelectionButton;
+    private View subtitleSelectionButton;
     private CheckBox hdSelectionCheckBox;
 
     private OfflineLicense offlineLicense;
@@ -71,9 +74,9 @@ public class MainActivity extends Activity {
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
         PlayerView playerView = findViewById(R.id.player_view);
-        final View videoSelectionButton = findViewById(R.id.button_video_selection);
-        final View audioSelectionButton = findViewById(R.id.button_audio_selection);
-        final View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
+        videoSelectionButton = findViewById(R.id.button_video_selection);
+        audioSelectionButton = findViewById(R.id.button_audio_selection);
+        subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
         hdSelectionCheckBox = findViewById(R.id.button_hd_selection);
         ControllerView controllerView = findViewById(R.id.controller_view);
 
@@ -113,32 +116,34 @@ public class MainActivity extends Activity {
                 Log.v(getClass().toString(), "dropped frames: " + droppedFrames + " since: " + elapsedMsSinceLastDroppedFrames + "ms");
             }
         });
-        player.getListeners().addTracksChangedListener(new NoPlayer.TracksChangedListener() {
-            @Override
-            public void onTracksChanged() {
-                AudioTracks audioTracks = player.getAudioTracks();
-                if (audioTracks.size() > 1) {
-                    audioSelectionButton.setVisibility(View.VISIBLE);
-                } else {
-                    audioSelectionButton.setVisibility(View.GONE);
-                }
-
-                List<PlayerVideoTrack> videoTracks = player.getVideoTracks();
-                if (videoTracks.size() > 1) {
-                    videoSelectionButton.setVisibility(View.VISIBLE);
-                } else {
-                    videoSelectionButton.setVisibility(View.GONE);
-                }
-
-                List<PlayerSubtitleTrack> subtitleTracks = player.getSubtitleTracks();
-                if (subtitleTracks.size() > 1) {
-                    subtitleSelectionButton.setVisibility(View.VISIBLE);
-                } else {
-                    subtitleSelectionButton.setVisibility(View.GONE);
-                }
-            }
-        });
+        player.getListeners().addTracksChangedListener(tracksChangedListener);
     }
+
+    private final NoPlayer.TracksChangedListener tracksChangedListener = new NoPlayer.TracksChangedListener() {
+        @Override
+        public void onTracksChanged() {
+            AudioTracks audioTracks = player.getAudioTracks();
+            if (audioTracks.size() > 1) {
+                audioSelectionButton.setVisibility(View.VISIBLE);
+            } else {
+                audioSelectionButton.setVisibility(View.GONE);
+            }
+
+            List<PlayerVideoTrack> videoTracks = player.getVideoTracks();
+            if (videoTracks.size() > 1) {
+                videoSelectionButton.setVisibility(View.VISIBLE);
+            } else {
+                videoSelectionButton.setVisibility(View.GONE);
+            }
+
+            List<PlayerSubtitleTrack> subtitleTracks = player.getSubtitleTracks();
+            if (subtitleTracks.size() > 1) {
+                subtitleSelectionButton.setVisibility(View.VISIBLE);
+            } else {
+                subtitleSelectionButton.setVisibility(View.GONE);
+            }
+        }
+    };
 
     @Override
     protected void onStart() {
