@@ -213,7 +213,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         List<Advert> adverts = advertBreak.adverts();
         advertListener.onAdvertEnd(adverts.get(playedAdvertIndexInAdvertGroup));
 
-        if (advertIndexInAdvertGroup != playedAdvertGroupIndex) {
+        if (advertGroupIndex != playedAdvertGroupIndex) {
             advertListener.onAdvertBreakEnd(advertBreak);
             resetState();
         }
