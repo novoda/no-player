@@ -68,7 +68,8 @@ class ExoPlayerDrmSessionCreator implements DrmSessionCreator {
         return drmSessionManager;
     }
 
-    private void checkExpiryOfKeySetId(DefaultDrmSessionEventListener eventListener, DefaultDrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
+    private void checkExpiryOfKeySetId(DefaultDrmSessionEventListener eventListener,
+                                       DefaultDrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
         try {
             OfflineLicenseHelper<FrameworkMediaCrypto> offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance(
                     "",
