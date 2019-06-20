@@ -256,10 +256,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             return;
         }
 
-        resetState();
         adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreaks, adPlaybackState);
         updateAdPlaybackState();
         advertListener.onAdvertsDisabled();
+        resetState();
         advertsDisabled = true;
     }
 
@@ -283,7 +283,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         updateAdPlaybackState();
         AdvertBreak advertBreak = advertBreaks.get(advertGroupIndex);
         List<Advert> adverts = advertBreak.adverts();
-        advertListener.onAdvertSkipped(adverts.get(advertGroupIndex));
+        advertListener.onAdvertSkipped(adverts.get(advertIndexInAdvertGroup));
         if (advertIndexInAdvertGroup == adverts.size() - 1) {
             advertListener.onAdvertBreakEnd(advertBreak);
         }
