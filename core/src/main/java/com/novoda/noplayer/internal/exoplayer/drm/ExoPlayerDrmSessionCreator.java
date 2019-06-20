@@ -10,6 +10,7 @@ import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.OfflineLicenseHelper;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.model.KeySetId;
@@ -22,6 +23,8 @@ class ExoPlayerDrmSessionCreator implements DrmSessionCreator {
 
     @SuppressWarnings("PMD.LooseCoupling")  // Unfortunately the DefaultDrmSessionManager takes a HashMap, not a Map
     private static final HashMap<String, String> NO_OPTIONAL_PARAMETERS = null;
+    private static final String NO_DEFAULT_LICENSE_URL = "";
+    private static final HttpDataSource.Factory NO_DATA_SOURCE_FACTORY = null;
 
     private final KeyRequestExecutor keyRequestExecutor;
     private final ProvisionExecutor provisionExecutor;
@@ -71,8 +74,8 @@ class ExoPlayerDrmSessionCreator implements DrmSessionCreator {
                                        DefaultDrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
         try {
             OfflineLicenseHelper<FrameworkMediaCrypto> offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance(
-                    "",
-                    null
+                    NO_DEFAULT_LICENSE_URL,
+                    NO_DATA_SOURCE_FACTORY
             );
 
             byte[] rawKeySetId = keySetId.asBytes();
