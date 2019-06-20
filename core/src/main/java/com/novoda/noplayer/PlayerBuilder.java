@@ -8,15 +8,19 @@ import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.KeyRequestExecutor;
+import com.novoda.noplayer.drm.ModularDrmKeyRequest;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
+import com.novoda.noplayer.model.KeySetId;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 /**
  * Builds instances of {@link NoPlayer} for given configurations.
@@ -25,6 +29,8 @@ public class PlayerBuilder {
 
     private DrmType drmType = DrmType.NONE;
     private DrmHandler drmHandler = DrmHandler.NO_DRM;
+    @Nullable
+    private KeySetId keySetId;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
     private boolean allowFallbackDecoder; /* initialised to false by default */
     private boolean allowCrossProtocolRedirects; /* initialised to false by default */
@@ -50,7 +56,7 @@ public class PlayerBuilder {
      * @see NoPlayer
      */
     public PlayerBuilder withWidevineClassicDrm() {
-        return withDrm(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM);
+        return withDrm(DrmType.WIDEVINE_CLASSIC, DrmHandler.NO_DRM, null);
     }
 
     /**
@@ -61,7 +67,7 @@ public class PlayerBuilder {
      * @see NoPlayer
      */
     public PlayerBuilder withWidevineModularStreamingDrm(KeyRequestExecutor keyRequestExecutor) {
-        return withDrm(DrmType.WIDEVINE_MODULAR_STREAM, keyRequestExecutor);
+        return withDrm(DrmType.WIDEVINE_MODULAR_STREAM, keyRequestExecutor, null);
     }
 
     /**
@@ -71,8 +77,15 @@ public class PlayerBuilder {
      * @return {@link PlayerBuilder}
      * @see NoPlayer
      */
-    public PlayerBuilder withWidevineModularDownloadDrm(DownloadedModularDrm downloadedModularDrm) {
-        return withDrm(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm);
+    public PlayerBuilder withWidevineModularDownloadDrm(final DownloadedModularDrm downloadedModularDrm) {
+        KeyRequestExecutor keyRequestExecutor = new KeyRequestExecutor() {
+            @Override
+            public byte[] executeKeyRequest(ModularDrmKeyRequest request) throws DrmRequestException {
+                return downloadedModularDrm.getKeySetId().asBytes();
+            }
+        };
+
+        return withDrm(DrmType.WIDEVINE_MODULAR_DOWNLOAD, keyRequestExecutor, downloadedModularDrm.getKeySetId());
     }
 
     /**
@@ -83,9 +96,10 @@ public class PlayerBuilder {
      * @return {@link PlayerBuilder}
      * @see NoPlayer
      */
-    public PlayerBuilder withDrm(DrmType drmType, DrmHandler drmHandler) {
+    public PlayerBuilder withDrm(DrmType drmType, DrmHandler drmHandler, KeySetId keySetId) {
         this.drmType = drmType;
         this.drmHandler = drmHandler;
+        this.keySetId = keySetId;
         return this;
     }
 
@@ -162,7 +176,7 @@ public class PlayerBuilder {
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
-        return noPlayerCreator.create(drmType, drmHandler, allowFallbackDecoder, allowCrossProtocolRedirects);
+        return noPlayerCreator.create(drmType, drmHandler, keySetId, allowFallbackDecoder, allowCrossProtocolRedirects);
     }
 
     private NoPlayerExoPlayerCreator createExoPlayerCreator(Handler handler) {
