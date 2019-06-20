@@ -6,7 +6,7 @@ import com.novoda.noplayer.UnableToCreatePlayerException;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
-import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 
@@ -38,7 +38,7 @@ public class DrmSessionCreatorFactoryTest {
     @Mock
     private DownloadedModularDrm downloadedModularDrm;
     @Mock
-    private StreamingModularDrm streamingModularDrm;
+    private KeyRequestExecutor keyRequestExecutor;
     @Mock
     private ProvisionExecutorCreator provisionExecutorCreator;
 
@@ -65,7 +65,7 @@ public class DrmSessionCreatorFactoryTest {
 
     @Test
     public void givenDrmTypeWidevineModularStream_whenCreatingDrmSessionCreator_thenReturnsStreaming() throws DrmSessionCreatorException {
-        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, streamingModularDrm);
+        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, keyRequestExecutor);
 
         assertThat(drmSessionCreator).isInstanceOf(StreamingDrmSessionCreator.class);
     }

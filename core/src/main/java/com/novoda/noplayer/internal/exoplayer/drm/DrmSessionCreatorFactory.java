@@ -7,7 +7,7 @@ import com.novoda.noplayer.UnableToCreatePlayerException;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
-import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
@@ -32,7 +32,7 @@ public class DrmSessionCreatorFactory {
                 return new NoDrmSessionCreator();
             case WIDEVINE_MODULAR_STREAM:
                 assertThatApiLevelIsJellyBeanEighteenOrAbove(drmType);
-                return createModularStream((StreamingModularDrm) drmHandler);
+                return createModularStream((KeyRequestExecutor) drmHandler);
             case WIDEVINE_MODULAR_DOWNLOAD:
                 assertThatApiLevelIsJellyBeanEighteenOrAbove(drmType);
                 return createModularDownload((DownloadedModularDrm) drmHandler);
@@ -52,7 +52,7 @@ public class DrmSessionCreatorFactory {
         );
     }
 
-    private DrmSessionCreator createModularStream(StreamingModularDrm drmHandler) {
+    private DrmSessionCreator createModularStream(KeyRequestExecutor drmHandler) {
         ProvisionExecutor provisionExecutor = provisionExecutorCreator.create();
         ProvisioningModularDrmCallback mediaDrmCallback = new ProvisioningModularDrmCallback(
                 drmHandler,

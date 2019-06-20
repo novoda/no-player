@@ -5,7 +5,7 @@ import android.content.Context;
 import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
-import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorException;
@@ -36,7 +36,7 @@ public class NoPlayerCreatorTest {
 
         static final boolean USE_SECURE_CODEC = false;
         static final boolean ALLOW_CROSS_PROTOCOL_REDIRECTS = false;
-        static final StreamingModularDrm STREAMING_MODULAR_DRM = mock(StreamingModularDrm.class);
+        static final KeyRequestExecutor STREAMING_MODULAR_DRM = mock(KeyRequestExecutor.class);
         static final DownloadedModularDrm DOWNLOADED_MODULAR_DRM = mock(DownloadedModularDrm.class);
         static final NoPlayer EXO_PLAYER = mock(NoPlayer.class);
         static final NoPlayer MEDIA_PLAYER = mock(NoPlayer.class);
