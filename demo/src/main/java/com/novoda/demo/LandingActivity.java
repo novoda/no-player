@@ -1,7 +1,6 @@
 package com.novoda.demo;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,14 +29,12 @@ public class LandingActivity extends AppCompatActivity {
         playUsingProperties.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String customUri = mpdAddress.getText().toString();
+                PlaybackParameters playbackParameters = PlaybackParameters.INSTANCE;
+                playbackParameters.setMpdAddress(mpdAddress.getText().toString());
+                playbackParameters.setLicenseServerAddress(licenseAddress.getText().toString());
+                playbackParameters.setDownloadLicense(downloadLicense.isChecked());
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class)
-                        .putExtra(KEY_MPD_ADDRESS, mpdAddress.getText().toString())
-                        .putExtra(KEY_LICENSE_SERVER_ADDRESS, licenseAddress.getText().toString())
-                        .putExtra(KEY_DOWNLOAD_LICENSE, downloadLicense.isChecked())
-                        .setData(Uri.parse(customUri));
-
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
         });
