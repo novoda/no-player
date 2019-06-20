@@ -2,7 +2,6 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
@@ -178,17 +177,12 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     @Override
     public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-        Log.d("TAG", "timelineChanged: " + reason);
         if (reason == Player.TIMELINE_CHANGE_REASON_RESET || player == null || adPlaybackState == null || advertsDisabled) {
             // The player is being reset and this source will be released.
             return;
         }
 
         updateState();
-
-        if (!playingAdvert) {
-            Log.d("TAG", "Continue Main Content");
-        }
     }
 
     private void updateState() {
@@ -241,7 +235,6 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     @Override
     public void onPositionDiscontinuity(int reason) {
-        Log.d("TAG", "positionDiscontinuity: " + reason);
         if (player == null || adPlaybackState == null || advertsDisabled) {
             // We need all of the above to be able to respond to advert events.
             return;
