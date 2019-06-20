@@ -4,7 +4,6 @@ import android.os.Build;
 import android.os.Handler;
 
 import com.novoda.noplayer.UnableToCreatePlayerException;
-import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.KeyRequestExecutor;
@@ -51,18 +50,6 @@ public class DrmSessionCreatorFactory {
                 Build.VERSION_CODES.JELLY_BEAN_MR2,
                 androidDeviceVersion
         );
-    }
-
-    private DrmSessionCreator createModularStream(KeyRequestExecutor drmHandler) {
-        ProvisionExecutor provisionExecutor = provisionExecutorCreator.create();
-        FrameworkMediaDrmCreator mediaDrmCreator = new FrameworkMediaDrmCreator();
-        return new StreamingDrmSessionCreator(drmHandler, provisionExecutor, mediaDrmCreator, handler);
-    }
-
-    private DownloadDrmSessionCreator createModularDownload(DownloadedModularDrm drmHandler) {
-        FrameworkMediaDrmCreator mediaDrmCreator = new FrameworkMediaDrmCreator();
-        ProvisionExecutor provisionExecutor = provisionExecutorCreator.create();
-        return new DownloadDrmSessionCreator(drmHandler, provisionExecutor, mediaDrmCreator, handler);
     }
 
     private DrmSessionCreatorWithFallback createReworkedDrm(KeyRequestExecutor keyRequestExecutor, @Nullable KeySetId keySetId) {

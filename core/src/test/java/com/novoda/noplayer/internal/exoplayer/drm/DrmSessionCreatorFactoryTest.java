@@ -3,7 +3,6 @@ package com.novoda.noplayer.internal.exoplayer.drm;
 import android.os.Handler;
 
 import com.novoda.noplayer.UnableToCreatePlayerException;
-import com.novoda.noplayer.drm.DownloadedModularDrm;
 import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.KeyRequestExecutor;
@@ -36,8 +35,6 @@ public class DrmSessionCreatorFactoryTest {
     @Mock
     private Handler handler;
     @Mock
-    private DownloadedModularDrm downloadedModularDrm;
-    @Mock
     private KeyRequestExecutor keyRequestExecutor;
     @Mock
     private ProvisionExecutorCreator provisionExecutorCreator;
@@ -51,23 +48,23 @@ public class DrmSessionCreatorFactoryTest {
 
     @Test
     public void givenDrmTypeNone_whenCreatingDrmSessionCreator_thenReturnsNoDrmSession() throws DrmSessionCreatorException {
-        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.NONE, IGNORED_DRM_HANDLER);
+        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.NONE, IGNORED_DRM_HANDLER, null);
 
         assertThat(drmSessionCreator).isInstanceOf(NoDrmSessionCreator.class);
     }
 
     @Test
     public void givenDrmTypeWidevineClassic_whenCreatingDrmSessionCreator_thenReturnsNoDrmSession() throws DrmSessionCreatorException {
-        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_CLASSIC, IGNORED_DRM_HANDLER);
+        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_CLASSIC, IGNORED_DRM_HANDLER, null);
 
         assertThat(drmSessionCreator).isInstanceOf(NoDrmSessionCreator.class);
     }
 
     @Test
     public void givenDrmTypeWidevineModularStream_whenCreatingDrmSessionCreator_thenReturnsStreaming() throws DrmSessionCreatorException {
-        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, keyRequestExecutor);
+        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, keyRequestExecutor, null);
 
-        assertThat(drmSessionCreator).isInstanceOf(StreamingDrmSessionCreator.class);
+        assertThat(drmSessionCreator).isInstanceOf(DrmSessionCreatorWithFallback.class);
     }
 
     @Test
@@ -77,14 +74,14 @@ public class DrmSessionCreatorFactoryTest {
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_STREAM";
         thrown.expect(ExceptionMatcher.matches(message, UnableToCreatePlayerException.class));
 
-        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, IGNORED_DRM_HANDLER);
+        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_STREAM, IGNORED_DRM_HANDLER, null);
     }
 
     @Test
     public void givenDrmTypeWidevineModularDownload_whenCreatingDrmSessionCreator_thenReturnsDownload() throws DrmSessionCreatorException {
-        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, downloadedModularDrm);
+        DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, keyRequestExecutor, null);
 
-        assertThat(drmSessionCreator).isInstanceOf(DownloadDrmSessionCreator.class);
+        assertThat(drmSessionCreator).isInstanceOf(DrmSessionCreatorWithFallback.class);
     }
 
     @Test
@@ -94,6 +91,6 @@ public class DrmSessionCreatorFactoryTest {
         String message = "Device must be target: 18 but was: 17 for DRM type: WIDEVINE_MODULAR_DOWNLOAD";
         thrown.expect(ExceptionMatcher.matches(message, UnableToCreatePlayerException.class));
 
-        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, IGNORED_DRM_HANDLER);
+        drmSessionCreatorFactory.createFor(DrmType.WIDEVINE_MODULAR_DOWNLOAD, IGNORED_DRM_HANDLER, null);
     }
 }
