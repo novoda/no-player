@@ -87,7 +87,7 @@ public class MainActivity extends Activity {
             drmHandler = new DownloadedModularDrm() {
                 @Override
                 public KeySetId getKeySetId() {
-                    return KeySetId.of(offlineKeySetId);
+                    return offlineKeySetId == null ? null : KeySetId.of(offlineKeySetId);
                 }
             };
             drmType = DrmType.WIDEVINE_MODULAR_DOWNLOAD;
