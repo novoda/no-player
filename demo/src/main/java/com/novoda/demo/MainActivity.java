@@ -1,7 +1,6 @@
 package com.novoda.demo;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,25 +42,27 @@ public class MainActivity extends Activity {
     private DialogCreator dialogCreator;
     private CheckBox hdSelectionCheckBox;
 
-    private Uri mpdAddress;
-    private String licenseServerAddress;
-    private boolean downloadLicense;
-
     private OfflineLicense offlineLicense;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        extractFromIntent();
+        PlaybackParameters playbackParameters = PlaybackParameters.INSTANCE;
+        playbackParameters.toastMissingParameters(this);
 
         DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory("no-player");
         try {
             OfflineLicenseHelper offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance(
-                    licenseServerAddress,
+                    playbackParameters.licenseServerAddress(),
                     httpDataSourceFactory
             );
-            offlineLicense = new OfflineLicense(getApplicationContext(), offlineLicenseHelper, httpDataSourceFactory, mpdAddress);
+            offlineLicense = new OfflineLicense(
+                    getApplicationContext(),
+                    offlineLicenseHelper,
+                    httpDataSourceFactory,
+                    Uri.parse(playbackParameters.mpdAddress())
+            );
         } catch (UnsupportedDrmException e) {
             Log.e(getClass().getSimpleName(), "UnsupportedDrmException", e);
             Toast.makeText(this, "UnsupportedDrmException: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -83,7 +84,7 @@ public class MainActivity extends Activity {
 
         DrmHandler drmHandler;
         DrmType drmType;
-        if (downloadLicense) {
+        if (playbackParameters.shouldDownloadLicense()) {
             drmHandler = new DownloadedModularDrm() {
                 @Override
                 public KeySetId getKeySetId() {
@@ -92,7 +93,7 @@ public class MainActivity extends Activity {
             };
             drmType = DrmType.WIDEVINE_MODULAR_DOWNLOAD;
         } else {
-            drmHandler = new DataPostingModularDrm(licenseServerAddress);
+            drmHandler = new DataPostingModularDrm(playbackParameters.licenseServerAddress());
             drmType = DrmType.WIDEVINE_MODULAR_STREAM;
         }
 
@@ -139,25 +140,6 @@ public class MainActivity extends Activity {
         });
     }
 
-    private void extractFromIntent() {
-        Intent intent = getIntent();
-        if (intent != null) {
-            String rawMpdAddress = intent.getStringExtra(LandingActivity.KEY_MPD_ADDRESS);
-            if (rawMpdAddress == null || rawMpdAddress.isEmpty()) {
-                Toast.makeText(this, "MPD address not specified", Toast.LENGTH_SHORT).show();
-            } else {
-                mpdAddress = Uri.parse(rawMpdAddress);
-            }
-
-            licenseServerAddress = intent.getStringExtra(LandingActivity.KEY_LICENSE_SERVER_ADDRESS);
-            if (licenseServerAddress == null || licenseServerAddress.isEmpty()) {
-                Toast.makeText(this, "License server address not specified", Toast.LENGTH_SHORT).show();
-            }
-
-            downloadLicense = intent.getBooleanExtra(LandingActivity.KEY_DOWNLOAD_LICENSE, false);
-        }
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -171,7 +153,7 @@ public class MainActivity extends Activity {
                         .withMaxInitialBitrate(TWO_MEGABITS)
                         .withMaxVideoBitrate(getMaxVideoBitrate())
                         .build();
-                demoPresenter.startPresenting(mpdAddress, options);
+                demoPresenter.startPresenting(Uri.parse(PlaybackParameters.INSTANCE.mpdAddress()), options);
             }
         });
     }
