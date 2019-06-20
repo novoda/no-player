@@ -204,7 +204,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
         boolean advertStarted = isPlayingAdvert && advertIndexInAdvertGroup != previousAdvertIndexInAdvertGroup;
         if (advertStarted) {
-            notifyAdvertStart(advertBreaks.get(advertGroupIndex));
+            notifyAdvertStart(advertGroupIndex, advertIndexInAdvertGroup);
         }
     }
 
@@ -225,7 +225,9 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         isPlayingAdvert = false;
     }
 
-    private void notifyAdvertStart(AdvertBreak advertBreak) {
+    private void notifyAdvertStart(int advertGroupIndex, int advertIndexInAdvertGroup) {
+        AdvertBreak advertBreak = advertBreaks.get(advertGroupIndex);
+
         if (advertIndexInAdvertGroup == 0) {
             advertListener.onAdvertBreakStart(advertBreak);
         }
