@@ -258,6 +258,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         }
     }
 
+    // Rather than this if we can check for `AdvertState` being present. 
     void disableAdverts() {
         if (adPlaybackState == null || player == null || advertsDisabled) {
             return;

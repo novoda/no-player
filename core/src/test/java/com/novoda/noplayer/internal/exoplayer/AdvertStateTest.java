@@ -55,12 +55,13 @@ public class AdvertStateTest {
 
     private final AdvertState advertState = new AdvertState(
             ADVERT_BREAKS,
-            advertListener
+            advertListener,
+            callback
     );
 
     @Test
-    public void emitsNoCalls_whenNotPlayingAdvert() {
-        advertState.update(IS_NOT_PLAYING_ADVERT, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX, callback);
+    public void emitsNoEvents_whenNotPlayingAdvert() {
+        advertState.update(IS_NOT_PLAYING_ADVERT, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
 
         then(advertListener).shouldHaveZeroInteractions();
         then(callback).shouldHaveZeroInteractions();
@@ -68,7 +69,7 @@ public class AdvertStateTest {
 
     @Test
     public void notifiesStartOfAdvertBreak_andAdvert_whenPlayingAdvert() {
-        advertState.update(IS_PLAYING_ADVERT, 0, 0, callback);
+        advertState.update(IS_PLAYING_ADVERT, 0, 0);
 
         InOrder inOrder = Mockito.inOrder(advertListener);
         then(advertListener).should(inOrder).onAdvertBreakStart(FIRST_ADVERT_BREAK);
@@ -78,10 +79,10 @@ public class AdvertStateTest {
     }
 
     @Test
-    public void emitsNoAdditionalEmits_whenCallingWithSameAdvertIndex() {
-        advertState.update(IS_PLAYING_ADVERT, 0, 0, callback);
+    public void emitsNoAdditionalEvents_whenCallingWithSameAdvertIndex() {
+        advertState.update(IS_PLAYING_ADVERT, 0, 0);
         Mockito.reset(advertListener, callback);
-        advertState.update(IS_PLAYING_ADVERT, 0, 0, callback);
+        advertState.update(IS_PLAYING_ADVERT, 0, 0);
 
         then(advertListener).shouldHaveZeroInteractions();
         then(callback).shouldHaveZeroInteractions();
@@ -89,9 +90,9 @@ public class AdvertStateTest {
 
     @Test
     public void notifiesEndAdvertBreak_andAdvert_whenPlayingContent() {
-        advertState.update(IS_PLAYING_ADVERT, 0, 0, callback);
+        advertState.update(IS_PLAYING_ADVERT, 0, 0);
         Mockito.reset(advertListener, callback);
-        advertState.update(IS_NOT_PLAYING_ADVERT, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX, callback);
+        advertState.update(IS_NOT_PLAYING_ADVERT, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
 
         InOrder inOrder = Mockito.inOrder(advertListener, callback);
         then(callback).should(inOrder).onAdvertPlayed(0, 0);
@@ -103,9 +104,9 @@ public class AdvertStateTest {
 
     @Test
     public void transitionsBetweenAdverts() {
-        advertState.update(IS_PLAYING_ADVERT, 1, 0, callback);
+        advertState.update(IS_PLAYING_ADVERT, 1, 0);
         Mockito.reset(advertListener, callback);
-        advertState.update(IS_PLAYING_ADVERT, 1, 1, callback);
+        advertState.update(IS_PLAYING_ADVERT, 1, 1);
 
         InOrder inOrder = Mockito.inOrder(advertListener, callback);
         then(callback).should(inOrder).onAdvertPlayed(1, 0);
@@ -113,5 +114,26 @@ public class AdvertStateTest {
         then(advertListener).should(inOrder).onAdvertStart(SECOND_ADVERT);
         then(callback).shouldHaveNoMoreInteractions();
         then(advertListener).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    public void notifiesAdvertsDisabled_whenAlreadyDisabled() {
+        advertState.disableAdverts();
+
+        InOrder inOrder = Mockito.inOrder(advertListener, callback);
+        then(callback).should(inOrder).onAdvertsDisabled();
+        then(advertListener).should(inOrder).onAdvertsDisabled();
+        then(callback).shouldHaveNoMoreInteractions();
+        then(advertListener).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    public void emitsNoEvents_whenAlreadyDisabled() {
+        advertState.disableAdverts();
+        Mockito.reset(advertListener, callback);
+        advertState.disableAdverts();
+
+        then(advertListener).shouldHaveZeroInteractions();
+        then(callback).shouldHaveZeroInteractions();
     }
 }

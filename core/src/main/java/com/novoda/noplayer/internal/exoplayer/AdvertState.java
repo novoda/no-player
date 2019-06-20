@@ -13,20 +13,24 @@ class AdvertState {
 
         void onAdvertPlayed(int advertBreakIndex, int advertIndex);
 
+        void onAdvertsDisabled();
     }
 
+    private boolean advertsDisabled;
     private boolean playingAdvert;
     private int advertIndex = -1;
     private int advertBreakIndex = -1;
     private final List<AdvertBreak> advertBreaks;
     private final NoPlayer.AdvertListener advertListener;
+    private final Callback callback;
 
-    AdvertState(List<AdvertBreak> advertBreaks, NoPlayer.AdvertListener advertListener) {
+    AdvertState(List<AdvertBreak> advertBreaks, NoPlayer.AdvertListener advertListener, Callback callback) {
         this.advertBreaks = advertBreaks;
         this.advertListener = advertListener;
+        this.callback = callback;
     }
 
-    void update(boolean isPlayingAdvert, int currentAdvertBreakIndex, int currentAdvertIndex, Callback callback) {
+    void update(boolean isPlayingAdvert, int currentAdvertBreakIndex, int currentAdvertIndex) {
         boolean wasPlayingAdvert = playingAdvert;
         playingAdvert = isPlayingAdvert;
 
@@ -71,6 +75,17 @@ class AdvertState {
         advertBreakIndex = -1;
         advertIndex = -1;
         playingAdvert = false;
+    }
+
+    void disableAdverts() {
+        if (advertsDisabled) {
+            return;
+        }
+
+        resetState();
+        advertsDisabled = true;
+        callback.onAdvertsDisabled();
+        advertListener.onAdvertsDisabled();
     }
 
 }
