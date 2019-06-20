@@ -1,7 +1,6 @@
 package com.novoda.demo;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +9,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import com.google.android.exoplayer2.drm.OfflineLicenseHelper;
+import com.google.android.exoplayer2.drm.UnsupportedDrmException;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
@@ -33,27 +35,48 @@ public class MainActivity extends Activity {
     private static final int TWO_MEGABITS = 2000000;
     private static final int MAX_VIDEO_BITRATE = 800000;
 
+    private byte[] offlineKeySetId;
+
     private NoPlayer player;
     private DemoPresenter demoPresenter;
     private DialogCreator dialogCreator;
+    private View videoSelectionButton;
+    private View audioSelectionButton;
+    private View subtitleSelectionButton;
     private CheckBox hdSelectionCheckBox;
 
-    private Uri mpdAddress;
-    private String licenseServerAddress;
-    private boolean downloadLicense;
+    private OfflineLicense offlineLicense;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        extractFromIntent();
+        PlaybackParameters playbackParameters = PlaybackParameters.INSTANCE;
+        playbackParameters.toastMissingParameters(this);
+
+        DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory("no-player");
+        try {
+            OfflineLicenseHelper offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance(
+                    playbackParameters.licenseServerAddress(),
+                    httpDataSourceFactory
+            );
+            offlineLicense = new OfflineLicense(
+                    getApplicationContext(),
+                    offlineLicenseHelper,
+                    httpDataSourceFactory,
+                    Uri.parse(playbackParameters.mpdAddress())
+            );
+        } catch (UnsupportedDrmException e) {
+            Log.e(getClass().getSimpleName(), "UnsupportedDrmException", e);
+            Toast.makeText(this, "UnsupportedDrmException: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
         PlayerView playerView = findViewById(R.id.player_view);
-        final View videoSelectionButton = findViewById(R.id.button_video_selection);
-        final View audioSelectionButton = findViewById(R.id.button_audio_selection);
-        final View subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
+        videoSelectionButton = findViewById(R.id.button_video_selection);
+        audioSelectionButton = findViewById(R.id.button_audio_selection);
+        subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
         hdSelectionCheckBox = findViewById(R.id.button_hd_selection);
         ControllerView controllerView = findViewById(R.id.controller_view);
 
@@ -64,16 +87,16 @@ public class MainActivity extends Activity {
 
         DrmHandler drmHandler;
         DrmType drmType;
-        if (downloadLicense) {
+        if (playbackParameters.shouldDownloadLicense()) {
             drmHandler = new DownloadedModularDrm() {
                 @Override
                 public KeySetId getKeySetId() {
-                    return null; //TODO: Actually download the keyset id.
+                    return offlineKeySetId == null ? null : KeySetId.of(offlineKeySetId);
                 }
             };
             drmType = DrmType.WIDEVINE_MODULAR_DOWNLOAD;
         } else {
-            drmHandler = new DataPostingModularDrm(licenseServerAddress);
+            drmHandler = new DataPostingModularDrm(playbackParameters.licenseServerAddress());
             drmType = DrmType.WIDEVINE_MODULAR_STREAM;
         }
 
@@ -93,62 +116,51 @@ public class MainActivity extends Activity {
                 Log.v(getClass().toString(), "dropped frames: " + droppedFrames + " since: " + elapsedMsSinceLastDroppedFrames + "ms");
             }
         });
-        player.getListeners().addTracksChangedListener(new NoPlayer.TracksChangedListener() {
-            @Override
-            public void onTracksChanged() {
-                AudioTracks audioTracks = player.getAudioTracks();
-                if (audioTracks.size() > 1) {
-                    audioSelectionButton.setVisibility(View.VISIBLE);
-                } else {
-                    audioSelectionButton.setVisibility(View.GONE);
-                }
-
-                List<PlayerVideoTrack> videoTracks = player.getVideoTracks();
-                if (videoTracks.size() > 1) {
-                    videoSelectionButton.setVisibility(View.VISIBLE);
-                } else {
-                    videoSelectionButton.setVisibility(View.GONE);
-                }
-
-                List<PlayerSubtitleTrack> subtitleTracks = player.getSubtitleTracks();
-                if (subtitleTracks.size() > 1) {
-                    subtitleSelectionButton.setVisibility(View.VISIBLE);
-                } else {
-                    subtitleSelectionButton.setVisibility(View.GONE);
-                }
-            }
-        });
+        player.getListeners().addTracksChangedListener(tracksChangedListener);
     }
 
-    private void extractFromIntent() {
-        Intent intent = getIntent();
-        if (intent != null) {
-            String rawMpdAddress = intent.getStringExtra(LandingActivity.KEY_MPD_ADDRESS);
-            if (rawMpdAddress == null || rawMpdAddress.isEmpty()) {
-                Toast.makeText(this, "MPD address not specified", Toast.LENGTH_SHORT).show();
+    private final NoPlayer.TracksChangedListener tracksChangedListener = new NoPlayer.TracksChangedListener() {
+        @Override
+        public void onTracksChanged() {
+            AudioTracks audioTracks = player.getAudioTracks();
+            if (audioTracks.size() > 1) {
+                audioSelectionButton.setVisibility(View.VISIBLE);
             } else {
-                mpdAddress = Uri.parse(rawMpdAddress);
+                audioSelectionButton.setVisibility(View.GONE);
             }
 
-            licenseServerAddress = intent.getStringExtra(LandingActivity.KEY_LICENSE_SERVER_ADDRESS);
-            if (licenseServerAddress == null || licenseServerAddress.isEmpty()) {
-                Toast.makeText(this, "License server address not specified", Toast.LENGTH_SHORT).show();
+            List<PlayerVideoTrack> videoTracks = player.getVideoTracks();
+            if (videoTracks.size() > 1) {
+                videoSelectionButton.setVisibility(View.VISIBLE);
+            } else {
+                videoSelectionButton.setVisibility(View.GONE);
             }
 
-            downloadLicense = intent.getBooleanExtra(LandingActivity.KEY_DOWNLOAD_LICENSE, false);
+            List<PlayerSubtitleTrack> subtitleTracks = player.getSubtitleTracks();
+            if (subtitleTracks.size() > 1) {
+                subtitleSelectionButton.setVisibility(View.VISIBLE);
+            } else {
+                subtitleSelectionButton.setVisibility(View.GONE);
+            }
         }
-    }
+    };
 
     @Override
     protected void onStart() {
         super.onStart();
-        Options options = new OptionsBuilder()
-                .withContentType(ContentType.DASH)
-                .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
-                .withMaxInitialBitrate(TWO_MEGABITS)
-                .withMaxVideoBitrate(getMaxVideoBitrate())
-                .build();
-        demoPresenter.startPresenting(mpdAddress, options);
+        offlineLicense.download(new OfflineLicense.OfflineLicenseCallback() {
+            @Override
+            public void onLicenseDownloaded(byte[] license) {
+                offlineKeySetId = license;
+                Options options = new OptionsBuilder()
+                        .withContentType(ContentType.DASH)
+                        .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
+                        .withMaxInitialBitrate(TWO_MEGABITS)
+                        .withMaxVideoBitrate(getMaxVideoBitrate())
+                        .build();
+                demoPresenter.startPresenting(Uri.parse(PlaybackParameters.INSTANCE.mpdAddress()), options);
+            }
+        });
     }
 
     private int getMaxVideoBitrate() {
