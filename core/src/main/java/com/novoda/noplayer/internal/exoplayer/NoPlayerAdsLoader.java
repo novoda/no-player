@@ -41,7 +41,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     private NoPlayer.AdvertListener advertListener = NoOpAdvertListener.INSTANCE;
     private List<AdvertBreak> advertBreaks = Collections.emptyList();
-    private boolean playingAdvert;
+    private boolean isPlayingAdvert;
     private int advertIndexInAdvertGroup = -1;
     private int advertGroupIndex = -1;
     private boolean advertsDisabled;
@@ -186,14 +186,14 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     }
 
     private void updateState() {
-        boolean wasPlayingAd = playingAdvert;
-        playingAdvert = player.isPlayingAd();
+        boolean wasPlayingAd = isPlayingAdvert;
+        isPlayingAdvert = player.isPlayingAd();
 
         int previousAdvertGroupIndex = advertGroupIndex;
         int previousAdvertIndexInAdvertGroup = advertIndexInAdvertGroup;
 
-        advertGroupIndex = playingAdvert ? player.getCurrentAdGroupIndex() : C.INDEX_UNSET;
-        advertIndexInAdvertGroup = playingAdvert ? player.getCurrentAdIndexInAdGroup() : C.INDEX_UNSET;
+        advertGroupIndex = isPlayingAdvert ? player.getCurrentAdGroupIndex() : C.INDEX_UNSET;
+        advertIndexInAdvertGroup = isPlayingAdvert ? player.getCurrentAdIndexInAdGroup() : C.INDEX_UNSET;
         boolean advertFinished = wasPlayingAd && advertIndexInAdvertGroup != previousAdvertIndexInAdvertGroup;
 
         if (advertFinished) {
@@ -202,7 +202,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             notifyAdvertEnd(previousAdvertGroupIndex, previousAdvertIndexInAdvertGroup);
         }
 
-        if (playingAdvert && advertIndexInAdvertGroup != previousAdvertIndexInAdvertGroup) {
+        if (isPlayingAdvert && advertIndexInAdvertGroup != previousAdvertIndexInAdvertGroup) {
             notifyAdvertStart(advertBreaks.get(advertGroupIndex));
         }
     }
@@ -221,7 +221,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private void resetState() {
         advertGroupIndex = -1;
         advertIndexInAdvertGroup = -1;
-        playingAdvert = false;
+        isPlayingAdvert = false;
     }
 
     private void notifyAdvertStart(AdvertBreak advertBreak) {
@@ -245,7 +245,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     @Override
     public void onAdvertClicked() {
-        if (playingAdvert) {
+        if (isPlayingAdvert) {
             Advert advert = advertBreaks.get(advertGroupIndex).adverts().get(advertIndexInAdvertGroup);
             advertListener.onAdvertClicked(advert);
         }
