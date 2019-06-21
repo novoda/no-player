@@ -1,9 +1,9 @@
 package com.novoda.demo;
 
 import com.novoda.noplayer.drm.ModularDrmKeyRequest;
-import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.drm.KeyRequestExecutor;
 
-class DataPostingModularDrm implements StreamingModularDrm {
+class DataPostingModularDrm implements KeyRequestExecutor {
 
     private final String url;
 

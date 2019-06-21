@@ -1,6 +1,13 @@
 package com.novoda.noplayer.drm;
 
-public interface StreamingModularDrm extends DrmHandler {
+public interface KeyRequestExecutor {
+
+    KeyRequestExecutor NOT_REQUIRED = new KeyRequestExecutor() {
+        @Override
+        public byte[] executeKeyRequest(ModularDrmKeyRequest request) throws DrmRequestException {
+            throw new IllegalStateException("No key request execution expected.");
+        }
+    };
 
     byte[] executeKeyRequest(ModularDrmKeyRequest request) throws DrmRequestException;
 
