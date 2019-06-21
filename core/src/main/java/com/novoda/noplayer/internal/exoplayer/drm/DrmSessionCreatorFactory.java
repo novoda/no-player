@@ -4,13 +4,14 @@ import android.os.Build;
 import android.os.Handler;
 
 import com.novoda.noplayer.UnableToCreatePlayerException;
-import com.novoda.noplayer.drm.DownloadedModularDrm;
-import com.novoda.noplayer.drm.DrmHandler;
 import com.novoda.noplayer.drm.DrmType;
-import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutorCreator;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
+import com.novoda.noplayer.model.KeySetId;
+
+import androidx.annotation.Nullable;
 
 public class DrmSessionCreatorFactory {
 
@@ -24,18 +25,18 @@ public class DrmSessionCreatorFactory {
         this.handler = handler;
     }
 
-    public DrmSessionCreator createFor(DrmType drmType, DrmHandler drmHandler) throws DrmSessionCreatorException {
+    public DrmSessionCreator createFor(DrmType drmType,
+                                       KeyRequestExecutor keyRequestExecutor,
+                                       @Nullable KeySetId keySetId) throws DrmSessionCreatorException {
         switch (drmType) {
             case NONE:
                 // Fall-through.
             case WIDEVINE_CLASSIC:
                 return new NoDrmSessionCreator();
             case WIDEVINE_MODULAR_STREAM:
-                assertThatApiLevelIsJellyBeanEighteenOrAbove(drmType);
-                return createModularStream((StreamingModularDrm) drmHandler);
             case WIDEVINE_MODULAR_DOWNLOAD:
                 assertThatApiLevelIsJellyBeanEighteenOrAbove(drmType);
-                return createModularDownload((DownloadedModularDrm) drmHandler);
+                return createDrmSessionCreator(keyRequestExecutor, keySetId);
             default:
                 throw DrmSessionCreatorException.noDrmHandlerFor(drmType);
         }
@@ -52,18 +53,9 @@ public class DrmSessionCreatorFactory {
         );
     }
 
-    private DrmSessionCreator createModularStream(StreamingModularDrm drmHandler) {
+    private ExoPlayerDrmSessionCreator createDrmSessionCreator(KeyRequestExecutor keyRequestExecutor, @Nullable KeySetId keySetId) {
         ProvisionExecutor provisionExecutor = provisionExecutorCreator.create();
-        ProvisioningModularDrmCallback mediaDrmCallback = new ProvisioningModularDrmCallback(
-                drmHandler,
-                provisionExecutor
-        );
         FrameworkMediaDrmCreator mediaDrmCreator = new FrameworkMediaDrmCreator();
-        return new StreamingDrmSessionCreator(mediaDrmCallback, mediaDrmCreator, handler);
-    }
-
-    private DownloadDrmSessionCreator createModularDownload(DownloadedModularDrm drmHandler) {
-        FrameworkMediaDrmCreator mediaDrmCreator = new FrameworkMediaDrmCreator();
-        return new DownloadDrmSessionCreator(drmHandler, mediaDrmCreator, handler);
+        return new ExoPlayerDrmSessionCreator(keyRequestExecutor, provisionExecutor, keySetId, mediaDrmCreator, handler);
     }
 }
