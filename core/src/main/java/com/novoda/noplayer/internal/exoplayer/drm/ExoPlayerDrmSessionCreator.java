@@ -16,6 +16,7 @@ import com.novoda.noplayer.internal.drm.provision.ProvisionExecutor;
 import com.novoda.noplayer.model.KeySetId;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
 
@@ -80,9 +81,8 @@ class ExoPlayerDrmSessionCreator implements DrmSessionCreator {
 
             byte[] rawKeySetId = keySetId.asBytes();
             Pair<Long, Long> licenseDurationRemainingSec = offlineLicenseHelper.getLicenseDurationRemainingSec(rawKeySetId);
-            Long remainingLicenseTimeInSeconds = licenseDurationRemainingSec.first;
-            Long playbackTimeInSeconds = licenseDurationRemainingSec.second;
-            if (remainingLicenseTimeInSeconds > playbackTimeInSeconds) {
+            Long licenseDurationRemainingInSeconds = licenseDurationRemainingSec.first;
+            if (licenseDurationRemainingInSeconds > TimeUnit.HOURS.toSeconds(1)) {
                 drmSessionManager.setMode(DefaultDrmSessionManager.MODE_QUERY, rawKeySetId);
             }
 
