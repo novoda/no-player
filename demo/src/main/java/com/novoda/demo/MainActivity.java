@@ -18,9 +18,6 @@ import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
-import com.novoda.noplayer.drm.DownloadedModularDrm;
-import com.novoda.noplayer.drm.DrmHandler;
-import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.KeySetId;
@@ -35,9 +32,9 @@ public class MainActivity extends Activity {
     private static final int TWO_MEGABITS = 2000000;
     private static final int MAX_VIDEO_BITRATE = 800000;
 
-    private byte[] offlineKeySetId;
-
     private NoPlayer player;
+    private ControllerView controllerView;
+    private PlayerView playerView;
     private DemoPresenter demoPresenter;
     private DialogCreator dialogCreator;
     private View videoSelectionButton;
@@ -73,50 +70,17 @@ public class MainActivity extends Activity {
 
         NoPlayerLog.setLoggingEnabled(true);
         setContentView(R.layout.activity_main);
-        PlayerView playerView = findViewById(R.id.player_view);
+        playerView = findViewById(R.id.player_view);
         videoSelectionButton = findViewById(R.id.button_video_selection);
         audioSelectionButton = findViewById(R.id.button_audio_selection);
         subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
         hdSelectionCheckBox = findViewById(R.id.button_hd_selection);
-        ControllerView controllerView = findViewById(R.id.controller_view);
+        controllerView = findViewById(R.id.controller_view);
 
         videoSelectionButton.setOnClickListener(showVideoSelectionDialog);
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
         hdSelectionCheckBox.setOnCheckedChangeListener(toggleHdSelection);
-
-        DrmHandler drmHandler;
-        DrmType drmType;
-        if (playbackParameters.shouldDownloadLicense()) {
-            drmHandler = new DownloadedModularDrm() {
-                @Override
-                public KeySetId getKeySetId() {
-                    return offlineKeySetId == null ? null : KeySetId.of(offlineKeySetId);
-                }
-            };
-            drmType = DrmType.WIDEVINE_MODULAR_DOWNLOAD;
-        } else {
-            drmHandler = new DataPostingModularDrm(playbackParameters.licenseServerAddress());
-            drmType = DrmType.WIDEVINE_MODULAR_STREAM;
-        }
-
-        player = new PlayerBuilder()
-                .withDrm(drmType, drmHandler)
-                .allowFallbackDecoders()
-                .withUserAgent("Android/Linux")
-                .allowCrossProtocolRedirects()
-                .build(this);
-
-        demoPresenter = new DemoPresenter(controllerView, player, player.getListeners(), playerView);
-        dialogCreator = new DialogCreator(this, player);
-
-        player.getListeners().addDroppedVideoFrames(new NoPlayer.DroppedVideoFramesListener() {
-            @Override
-            public void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames) {
-                Log.v(getClass().toString(), "dropped frames: " + droppedFrames + " since: " + elapsedMsSinceLastDroppedFrames + "ms");
-            }
-        });
-        player.getListeners().addTracksChangedListener(tracksChangedListener);
     }
 
     private final NoPlayer.TracksChangedListener tracksChangedListener = new NoPlayer.TracksChangedListener() {
@@ -151,14 +115,40 @@ public class MainActivity extends Activity {
         offlineLicense.download(new OfflineLicense.OfflineLicenseCallback() {
             @Override
             public void onLicenseDownloaded(byte[] license) {
-                offlineKeySetId = license;
+                PlaybackParameters playbackParameters = PlaybackParameters.INSTANCE;
+
+                PlayerBuilder playerBuilder = new PlayerBuilder()
+                        .allowFallbackDecoders()
+                        .withUserAgent("Android/Linux")
+                        .allowCrossProtocolRedirects();
+
+                if (playbackParameters.shouldDownloadLicense()) {
+                    playerBuilder = playerBuilder.withWidevineModularDownloadDrm(KeySetId.of(license));
+                } else {
+                    DataPostingModularDrm keyRequestExecutor = new DataPostingModularDrm(playbackParameters.licenseServerAddress());
+                    playerBuilder = playerBuilder.withWidevineModularStreamingDrm(keyRequestExecutor);
+                }
+
+                player = playerBuilder.build(getApplicationContext());
+
+                demoPresenter = new DemoPresenter(controllerView, player, player.getListeners(), playerView);
+                dialogCreator = new DialogCreator(getApplicationContext(), player);
+
+                player.getListeners().addDroppedVideoFrames(new NoPlayer.DroppedVideoFramesListener() {
+                    @Override
+                    public void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames) {
+                        Log.v(getClass().toString(), "dropped frames: " + droppedFrames + " since: " + elapsedMsSinceLastDroppedFrames + "ms");
+                    }
+                });
+                player.getListeners().addTracksChangedListener(tracksChangedListener);
+
                 Options options = new OptionsBuilder()
                         .withContentType(ContentType.DASH)
                         .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
                         .withMaxInitialBitrate(TWO_MEGABITS)
                         .withMaxVideoBitrate(getMaxVideoBitrate())
                         .build();
-                demoPresenter.startPresenting(Uri.parse(PlaybackParameters.INSTANCE.mpdAddress()), options);
+                demoPresenter.startPresenting(Uri.parse(playbackParameters.mpdAddress()), options);
             }
         });
     }
