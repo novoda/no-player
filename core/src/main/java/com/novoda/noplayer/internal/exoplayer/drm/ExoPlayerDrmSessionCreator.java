@@ -81,8 +81,8 @@ class ExoPlayerDrmSessionCreator implements DrmSessionCreator {
 
             byte[] rawKeySetId = keySetId.asBytes();
             Pair<Long, Long> licenseDurationRemainingSec = offlineLicenseHelper.getLicenseDurationRemainingSec(rawKeySetId);
-            Long first = licenseDurationRemainingSec.first;
-            if (first > TimeUnit.HOURS.toSeconds(1)) {
+            Long licenseDurationRemainingInSeconds = licenseDurationRemainingSec.first;
+            if (licenseDurationRemainingInSeconds > TimeUnit.HOURS.toSeconds(1)) {
                 drmSessionManager.setMode(DefaultDrmSessionManager.MODE_QUERY, rawKeySetId);
             }
 
