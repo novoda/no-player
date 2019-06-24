@@ -24,7 +24,7 @@ import androidx.annotation.Nullable;
  * Relaxes the Drm requirement so that a secure decoder is selected in the event that `DrmInitData` is present.
  * <p>
  * Also contains a workaround for sorting codecs which can be reverted once
- * https://github.com/google/ExoPlayer/blob/dev-v2/library/core/src/main/java/com/google/android/exoplayer2/video/MediaCodecVideoRenderer.java#L385
+ * https://github.com/google/ExoPlayer/blob/dev-v2/library/core/src/main/java/com/google/android/exoplayer2/audio/MediaCodecAudioRenderer.java#L342-L364
  * hits the release branch.
  */
 class MediaCodecAudioRendererWithSimplifiedDrmRequirement extends MediaCodecAudioRenderer {
