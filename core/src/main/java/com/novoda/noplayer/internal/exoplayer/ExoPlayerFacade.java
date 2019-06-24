@@ -207,9 +207,11 @@ class ExoPlayerFacade {
 
         if (adsLoader.isPresent()) {
             long advertBreakInitialPositionMillis = options.getInitialAdvertBreakPositionInMillis().or(NO_RESUME_POSITION);
+            long playbackResumePositionMillis = options.getInitialPositionInMillis().or(NO_RESUME_POSITION);
             adsLoader.get().bind(
                     forwarder.advertListener(),
-                    advertBreakInitialPositionMillis
+                    advertBreakInitialPositionMillis,
+                    playbackResumePositionMillis
             );
         }
 

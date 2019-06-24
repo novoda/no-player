@@ -46,6 +46,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     private int advertGroupIndex = -1;
     private boolean advertsDisabled;
     private long advertBreakResumePosition;
+    private long playbackResumePositionMillis;
 
     static NoPlayerAdsLoader create(AdvertsLoader loader) {
         return new NoPlayerAdsLoader(loader, new Handler(Looper.getMainLooper()));
@@ -58,10 +59,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
     public void bind(
             Optional<NoPlayer.AdvertListener> advertListener,
-            long advertBreakResumePositionMillis
-    ) {
+            long advertBreakResumePositionMillis,
+            long playbackResumePositionMillis) {
         this.advertListener = advertListener.isPresent() ? advertListener.get() : NoOpAdvertListener.INSTANCE;
         this.advertBreakResumePosition = advertBreakResumePositionMillis;
+        this.playbackResumePositionMillis = playbackResumePositionMillis;
     }
 
     @Override
@@ -89,7 +91,11 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             loadingAds = null;
             AdvertPlaybackState advertPlaybackState = AdvertPlaybackState.from(breaks);
             advertBreaks = advertPlaybackState.advertBreaks();
-            adPlaybackState = ResumeableAdverts.markAsResumeableFrom(advertPlaybackState.adPlaybackState(), advertBreakResumePosition);
+            adPlaybackState = ResumeableAdverts.markAsResumeableFrom(
+                    advertPlaybackState.adPlaybackState(),
+                    advertBreakResumePosition,
+                    playbackResumePositionMillis
+            );
 
             handler.post(new Runnable() {
                 @Override
