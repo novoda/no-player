@@ -29,6 +29,7 @@ class InternalMediaCodecUtil {
      * Returns a copy of the provided decoder list sorted such that decoders with format support are
      * listed first. The returned list is modifiable for convenience.
      */
+    @SuppressWarnings({"PMD.AvoidReassigningParameters"})
     @CheckResult
     public static List<MediaCodecInfo> getDecoderInfosSortedByFormatSupport(
             List<MediaCodecInfo> decoderInfos, final Format format) {

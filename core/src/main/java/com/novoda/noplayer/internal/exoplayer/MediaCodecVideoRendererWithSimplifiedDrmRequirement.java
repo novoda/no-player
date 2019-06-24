@@ -28,6 +28,10 @@ import androidx.annotation.Nullable;
  */
 class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVideoRenderer {
 
+    private static final int LEVEL_FOUR = 4;
+    private static final int LEVEL_EIGHT = 8;
+    private static final int LEVEL_NINE = 9;
+
     // Extension from MediaCodecVideoRenderer, we can't do anything about this.
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
     MediaCodecVideoRendererWithSimplifiedDrmRequirement(Context context,
@@ -59,6 +63,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
         return getDecoderInfos(mediaCodecSelector, format, format.drmInitData != null, getCodecNeedsEosPropagation());
     }
 
+    @SuppressWarnings({"PMD.AvoidDeeplyNestedIfStmts"})
     private static List<MediaCodecInfo> getDecoderInfos(
             MediaCodecSelector mediaCodecSelector,
             Format format,
@@ -75,11 +80,11 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                     MediaCodecUtil.getCodecProfileAndLevel(format.codecs);
             if (codecProfileAndLevel != null) {
                 int profile = codecProfileAndLevel.first;
-                if (profile == 4 || profile == 8) {
+                if (profile == LEVEL_FOUR || profile == LEVEL_EIGHT) {
                     decoderInfos.addAll(
                             mediaCodecSelector.getDecoderInfos(
                                     MimeTypes.VIDEO_H265, requiresSecureDecoder, requiresTunnelingDecoder));
-                } else if (profile == 9) {
+                } else if (profile == LEVEL_NINE) {
                     decoderInfos.addAll(
                             mediaCodecSelector.getDecoderInfos(
                                     MimeTypes.VIDEO_H264, requiresSecureDecoder, requiresTunnelingDecoder));
