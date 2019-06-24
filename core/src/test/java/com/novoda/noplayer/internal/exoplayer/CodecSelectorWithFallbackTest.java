@@ -2,7 +2,6 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
-import com.novoda.noplayer.internal.exoplayer.CodecSelectorWithFallback.InternalMediaCodecUtil;
 
 import java.util.Arrays;
 import java.util.Collection;
