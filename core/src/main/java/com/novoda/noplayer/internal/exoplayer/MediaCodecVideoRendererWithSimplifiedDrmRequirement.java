@@ -24,7 +24,7 @@ import androidx.annotation.Nullable;
  * <p>
  * Also contains a workaround for sorting codecs which can be reverted once
  * https://github.com/google/ExoPlayer/blob/dev-v2/library/core/src/main/java/com/google/android/exoplayer2/video/MediaCodecVideoRenderer.java#L385
- * hits the release branch.
+ * hits the release branch. See https://github.com/novoda/no-player/pull/265.
  */
 class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVideoRenderer {
 
