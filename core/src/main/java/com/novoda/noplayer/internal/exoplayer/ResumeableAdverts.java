@@ -9,25 +9,27 @@ final class ResumeableAdverts {
         // Utility class.
     }
 
-    static AdPlaybackState markAsResumeableFrom(AdPlaybackState adPlaybackState, long positionInMillis) {
-        if (adPlaybackState.adGroupCount <= 0 || adPlaybackState.adGroups[0].count <= 0) {
+    static AdPlaybackState markAsResumeableFrom(AdPlaybackState adPlaybackState, long advertResumePositionInMillis, long playbackPositionInMillis) {
+        int adGroupIndex = adPlaybackState.getAdGroupIndexForPositionUs(C.msToUs(playbackPositionInMillis));
+
+        if (adGroupIndex == C.INDEX_UNSET || adPlaybackState.adGroupCount <= 0 || adPlaybackState.adGroups[adGroupIndex].count <= 0) {
             return adPlaybackState;
         }
-        long groupResumePosition = C.msToUs(positionInMillis);
-        AdPlaybackState.AdGroup firstAdGroup = adPlaybackState.adGroups[0];
+        long groupResumePosition = C.msToUs(advertResumePositionInMillis);
+        AdPlaybackState.AdGroup advertGroup = adPlaybackState.adGroups[adGroupIndex];
 
         AdPlaybackState updatedState = adPlaybackState;
         long playedAdvertDuration = 0;
-        for (int index = 0; index < firstAdGroup.count; index++) {
-            long durationWithCurrentAd = playedAdvertDuration + firstAdGroup.durationsUs[index];
+        for (int index = 0; index < advertGroup.count; index++) {
+            long durationWithCurrentAd = playedAdvertDuration + advertGroup.durationsUs[index];
             if (groupResumePosition >= durationWithCurrentAd) {
-                updatedState = updatedState.withPlayedAd(0, index);
-                playedAdvertDuration += firstAdGroup.durationsUs[index];
+                updatedState = updatedState.withPlayedAd(adGroupIndex, index);
+                playedAdvertDuration += advertGroup.durationsUs[index];
             } else {
                 break;
             }
         }
-        if (updatedState.adGroups[0].hasUnplayedAds()) {
+        if (updatedState.adGroups[adGroupIndex].hasUnplayedAds()) {
             updatedState = updatedState.withAdResumePositionUs(groupResumePosition - playedAdvertDuration);
         }
 
