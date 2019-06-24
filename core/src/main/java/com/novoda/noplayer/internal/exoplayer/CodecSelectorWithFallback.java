@@ -65,18 +65,4 @@ class CodecSelectorWithFallback implements MediaCodecSelector {
         return internalMediaCodecUtil.getPassthroughDecoderInfo();
     }
 
-    static class InternalMediaCodecUtil {
-
-        List<MediaCodecInfo> getDecoderInfos(
-                String mimeType,
-                boolean requiresSecureDecoder,
-                boolean requiresTunnelingDecoder
-        ) throws MediaCodecUtil.DecoderQueryException {
-            return MediaCodecUtil.getDecoderInfos(mimeType, requiresSecureDecoder, requiresTunnelingDecoder);
-        }
-
-        MediaCodecInfo getPassthroughDecoderInfo() throws MediaCodecUtil.DecoderQueryException {
-            return MediaCodecUtil.getPassthroughDecoderInfo();
-        }
-    }
 }
