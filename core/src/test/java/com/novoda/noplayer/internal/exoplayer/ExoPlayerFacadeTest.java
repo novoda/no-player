@@ -205,7 +205,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, allowFallbackDecoder);
 
-            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION, NO_RESUME_POSITION);
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION, TWENTY_FIVE_SECONDS_IN_MILLIS);
         }
 
         @Test
