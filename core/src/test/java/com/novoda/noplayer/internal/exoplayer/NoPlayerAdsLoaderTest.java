@@ -52,6 +52,7 @@ public class NoPlayerAdsLoaderTest {
             .withAdvert(anAdvert().withDurationInMillis(6000).build())
             .build();
     private static final long NO_AD_RESUME_POSITION = 0;
+    private static final long NO_CONTENT_RESUME_POSITION = 0;
 
     private final AdvertsLoader advertsLoader = mock(AdvertsLoader.class);
     private final Handler handler = mock(Handler.class);
@@ -80,7 +81,7 @@ public class NoPlayerAdsLoaderTest {
     @Test
     public void notifiesAdvertListenerWhenAdvertLoadingFails() {
         IOException error = new IOException("some error");
-        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION);
+        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION, NO_CONTENT_RESUME_POSITION);
         noPlayerAdsLoader.start(eventListener, adViewProvider);
 
         invokeCallback().onAdvertsError(error);
@@ -90,7 +91,7 @@ public class NoPlayerAdsLoaderTest {
 
     @Test
     public void notifiesAdvertListenerWhenAdvertLoadingSucceeds() {
-        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION);
+        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION, NO_CONTENT_RESUME_POSITION);
 
         noPlayerAdsLoader.start(eventListener, adViewProvider);
         invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
@@ -148,7 +149,7 @@ public class NoPlayerAdsLoaderTest {
 
     @Test
     public void notifiesAdvertListenerWhenAdvertPreparingFails() {
-        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION);
+        noPlayerAdsLoader.bind(Optional.of(advertListener), NO_AD_RESUME_POSITION, NO_CONTENT_RESUME_POSITION);
         noPlayerAdsLoader.start(eventListener, adViewProvider);
         invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
 

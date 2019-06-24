@@ -131,7 +131,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
-            verify(adsLoader).bind(optionalAdvertListener, NO_RESUME_POSITION);
+            verify(adsLoader).bind(optionalAdvertListener, NO_RESUME_POSITION, NO_RESUME_POSITION);
         }
 
         @Test
@@ -142,7 +142,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
-            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION, NO_RESUME_POSITION);
         }
 
         @Test
@@ -171,7 +171,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
-            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
+            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION, NO_RESUME_POSITION);
         }
 
         @Test
@@ -179,7 +179,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder);
 
-            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
+            verify(adsLoader, never()).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION, NO_RESUME_POSITION);
         }
 
         @Test
@@ -192,7 +192,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, allowFallbackDecoder);
 
-            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), TWENTY_FIVE_SECONDS_IN_MILLIS);
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), TWENTY_FIVE_SECONDS_IN_MILLIS, NO_RESUME_POSITION);
         }
 
         @Test
@@ -205,7 +205,7 @@ public class ExoPlayerFacadeTest {
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, allowFallbackDecoder);
 
-            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION);
+            verify(adsLoader).bind(exoPlayerForwarder.advertListener(), NO_RESUME_POSITION, TWENTY_FIVE_SECONDS_IN_MILLIS);
         }
 
         @Test
