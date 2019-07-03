@@ -13,7 +13,7 @@ public class PlayerVideoTrackFixture {
     private int fps = 30;
     private int bitrate = 180000;
     private String codecName = "codec-name";
-    private RendererCapability rendererCapability = RendererCapability.FORMAT_UNKNOWN;
+    private RendererSupport rendererCapability = RendererSupport.FORMAT_UNKNOWN;
 
     public static PlayerVideoTrackFixture aPlayerVideoTrack() {
         return new PlayerVideoTrackFixture();

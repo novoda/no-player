@@ -10,7 +10,7 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.PlayerVideoTrack;
-import com.novoda.noplayer.model.RendererCapability;
+import com.novoda.noplayer.model.RendererSupport;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -34,7 +34,7 @@ public class ExoPlayerVideoTrackSelectorTest {
 
     private static final Format VIDEO_FORMAT = aVideoFormat().withId("id1").build();
     private static final String CODEC_NAME = null;
-    private static final RendererCapability RENDERER_CAPABILITY = null;
+    private static final RendererSupport RENDERER_CAPABILITY = null;
     private static final PlayerVideoTrack PLAYER_VIDEO_TRACK = new PlayerVideoTrack(
             0,
             0,
