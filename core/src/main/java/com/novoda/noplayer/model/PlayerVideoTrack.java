@@ -13,7 +13,7 @@ public class PlayerVideoTrack {
     private final int fps;
     private final int bitrate;
     private final String codecName;
-    private final RendererCapability rendererCapability;
+    private final RendererSupport rendererCapability;
 
     @SuppressWarnings("checkstyle:ParameterNumber") // TODO group parameters into classes
     public PlayerVideoTrack(int groupIndex,
@@ -25,7 +25,7 @@ public class PlayerVideoTrack {
                             int fps,
                             int bitrate,
                             String codecName,
-                            RendererCapability rendererCapability) {
+                            RendererSupport rendererCapability) {
         this.groupIndex = groupIndex;
         this.formatIndex = formatIndex;
         this.id = id;
@@ -70,7 +70,7 @@ public class PlayerVideoTrack {
         return bitrate;
     }
 
-    public RendererCapability rendererCapability() {
+    public RendererSupport rendererCapability() {
         return rendererCapability;
     }
 
@@ -137,17 +137,17 @@ public class PlayerVideoTrack {
 
     @Override
     public String toString() {
-        return "PlayerVideoTrack{" +
-                "groupIndex=" + groupIndex +
-                ", formatIndex=" + formatIndex +
-                ", id='" + id + '\'' +
-                ", contentType=" + contentType +
-                ", width=" + width +
-                ", height=" + height +
-                ", fps=" + fps +
-                ", bitrate=" + bitrate +
-                ", codecName='" + codecName + '\'' +
-                ", rendererCapability=" + rendererCapability +
-                '}';
+        return "PlayerVideoTrack{"
+                + "groupIndex=" + groupIndex
+                + ", formatIndex=" + formatIndex
+                + ", id='" + id + '\''
+                + ", contentType=" + contentType
+                + ", width=" + width
+                + ", height=" + height
+                + ", fps=" + fps
+                + ", bitrate=" + bitrate
+                + ", codecName='" + codecName + '\''
+                + ", rendererCapability=" + rendererCapability
+                + '}';
     }
 }
