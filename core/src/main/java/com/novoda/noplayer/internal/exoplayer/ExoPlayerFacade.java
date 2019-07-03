@@ -87,6 +87,11 @@ class ExoPlayerFacade {
         return exoPlayer.getDuration();
     }
 
+    long contentDurationInMillis() throws IllegalStateException {
+        assertVideoLoaded();
+        return exoPlayer.getContentDuration();
+    }
+
     long playheadPositionInMillis() throws IllegalStateException {
         assertVideoLoaded();
         return exoPlayer.getCurrentPosition();

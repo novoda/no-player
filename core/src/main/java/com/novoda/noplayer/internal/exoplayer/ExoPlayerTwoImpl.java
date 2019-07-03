@@ -144,6 +144,11 @@ class ExoPlayerTwoImpl implements NoPlayer {
     }
 
     @Override
+    public long contentDurationInMillis() {
+        return exoPlayer.contentDurationInMillis();
+    }
+
+    @Override
     public int bufferPercentage() throws IllegalStateException {
         return exoPlayer.bufferPercentage();
     }

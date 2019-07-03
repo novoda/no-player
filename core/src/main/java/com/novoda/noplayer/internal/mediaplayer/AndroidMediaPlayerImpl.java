@@ -295,6 +295,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
+    public long contentDurationInMillis() {
+        return mediaPlayer.mediaDurationInMillis();
+    }
+
+    @Override
     public int bufferPercentage() throws IllegalStateException {
         return mediaPlayer.getBufferPercentage();
     }

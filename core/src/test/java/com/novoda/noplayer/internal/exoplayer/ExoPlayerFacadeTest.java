@@ -326,6 +326,13 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
+        public void whenQueryingContentDuration_thenThrowsIllegalStateException() {
+            thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
+
+            facade.contentDurationInMillis();
+        }
+
+        @Test
         public void whenQueryingAdvertBreakDuration_thenThrowsIllegalStateException() {
             thrown.expect(ExceptionMatcher.matches("Video must be loaded before trying to interact with the player", IllegalStateException.class));
 
@@ -509,6 +516,15 @@ public class ExoPlayerFacadeTest {
             long videoDurationInMillis = facade.mediaDurationInMillis();
 
             assertThat(videoDurationInMillis).isEqualTo(TEN_MINUTES_IN_MILLIS);
+        }
+
+        @Test
+        public void whenGettingContentDuration_thenReturnsDuration() {
+            given(exoPlayer.getContentDuration()).willReturn(TEN_MINUTES_IN_MILLIS);
+
+            long contentDurationInMillis = facade.contentDurationInMillis();
+
+            assertThat(contentDurationInMillis).isEqualTo(TEN_MINUTES_IN_MILLIS);
         }
 
         @Test

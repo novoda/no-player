@@ -300,6 +300,14 @@ public class AndroidMediaPlayerImplTest {
         }
 
         @Test
+        public void whenGettingContentDuration_thenReturnsMediaPlayerDuration() {
+            given(mediaPlayer.contentDurationInMillis()).willReturn(ONE_SECOND_IN_MILLIS);
+            long videoDurationInMillis = player.contentDurationInMillis();
+
+            assertThat(videoDurationInMillis).isEqualTo(ONE_SECOND_IN_MILLIS);
+        }
+
+        @Test
         public void whenGettingBufferPercentage_thenReturnsMediaPlayerBufferPercentage() {
             int mediaPlayerBufferPercentage = 10;
             given(mediaPlayer.getBufferPercentage()).willReturn(mediaPlayerBufferPercentage);

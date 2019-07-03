@@ -86,6 +86,14 @@ public interface PlayerState {
     long mediaDurationInMillis();
 
     /**
+     * Duration of the content that is being played.
+     * Use {@link PlayerState#mediaDurationInMillis} for duration of an advert when one is playing.
+     *
+     * @return duration of the content that is being played.
+     */
+    long contentDurationInMillis();
+
+    /**
      * Buffered percentage of the video that is being played.
      * <p>
      * If the player is playing an advert break then this value will represent a buffer of each individual advert
