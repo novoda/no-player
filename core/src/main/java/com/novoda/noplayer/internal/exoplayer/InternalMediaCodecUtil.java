@@ -31,10 +31,7 @@ class InternalMediaCodecUtil {
      */
     @SuppressWarnings({"PMD.AvoidReassigningParameters"})
     @CheckResult
-    static List<MediaCodecInfo> getDecoderInfosSortedByFormatSupport(
-            List<MediaCodecInfo> decoderInfos,
-            final Format format
-    ) {
+    static List<MediaCodecInfo> getDecoderInfosSortedByFormatSupport(List<MediaCodecInfo> decoderInfos, final Format format) {
         decoderInfos = new ArrayList<>(decoderInfos);
         sortByScore(
                 decoderInfos,
