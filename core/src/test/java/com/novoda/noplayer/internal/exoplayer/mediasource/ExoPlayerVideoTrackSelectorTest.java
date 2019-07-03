@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 public class ExoPlayerVideoTrackSelectorTest {
 
     private static final Format VIDEO_FORMAT = aVideoFormat().withId("id1").build();
-    private static final String CODEC_NAME = null;
+    private static final String CODEC_NAME = "codecs";
     private static final RendererSupport RENDERER_CAPABILITY = null;
     private static final PlayerVideoTrack PLAYER_VIDEO_TRACK = new PlayerVideoTrack(
             0,
