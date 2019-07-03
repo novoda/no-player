@@ -1,7 +1,7 @@
 package com.novoda.demo;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.ArrayAdapter;
 
@@ -21,20 +21,18 @@ class DialogCreator {
     private static final String AUDIO_TRACK_MESSAGE_FORMAT = "ID: %s Type: %s";
     private static final int AUTO_TRACK_POSITION = 0;
 
-    private final Context context;
     private final NoPlayer noPlayer;
 
-    DialogCreator(Context context, NoPlayer noPlayer) {
-        this.context = context;
+    DialogCreator(NoPlayer noPlayer) {
         this.noPlayer = noPlayer;
     }
 
-    void showVideoSelectionDialog() {
+    void showVideoSelectionDialog(Activity activity) {
         final List<PlayerVideoTrack> videoTracks = noPlayer.getVideoTracks();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, R.layout.list_item);
         adapter.addAll(mapVideoTrackToLabel(videoTracks));
-        new AlertDialog.Builder(context)
+        new AlertDialog.Builder(activity)
                 .setTitle("Select Video track")
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
@@ -61,11 +59,11 @@ class DialogCreator {
         return labels;
     }
 
-    void showAudioSelectionDialog() {
+    void showAudioSelectionDialog(Activity activity) {
         final AudioTracks audioTracks = noPlayer.getAudioTracks();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, R.layout.list_item);
         adapter.addAll(mapAudioTrackToLabel(audioTracks));
-        new AlertDialog.Builder(context)
+        new AlertDialog.Builder(activity)
                 .setTitle("Select audio track")
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
@@ -97,11 +95,11 @@ class DialogCreator {
         return labels;
     }
 
-    void showSubtitleSelectionDialog() {
+    void showSubtitleSelectionDialog(Activity activity) {
         final List<PlayerSubtitleTrack> subtitleTracks = noPlayer.getSubtitleTracks();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.list_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, R.layout.list_item);
         adapter.addAll(mapSubtitleTrackToLabel(subtitleTracks));
-        new AlertDialog.Builder(context)
+        new AlertDialog.Builder(activity)
                 .setTitle("Select subtitle track")
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
