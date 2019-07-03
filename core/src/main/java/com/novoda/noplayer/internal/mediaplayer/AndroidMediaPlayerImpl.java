@@ -280,6 +280,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         return isSeeking() ? seekToPositionInMillis : mediaPlayer.currentPositionInMillis();
     }
 
+    @Override
+    public long contentPositionInMillis() {
+        return isSeeking() ? seekToPositionInMillis : mediaPlayer.currentPositionInMillis();
+    }
+
     private boolean isSeeking() {
         return seekToPositionInMillis != NO_SEEK_TO_POSITION;
     }

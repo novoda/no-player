@@ -92,6 +92,11 @@ class ExoPlayerFacade {
         return exoPlayer.getCurrentPosition();
     }
 
+    long contentPositionInMillis() throws IllegalStateException {
+        assertVideoLoaded();
+        return exoPlayer.getContentPosition();
+    }
+
     long advertBreakDurationInMillis() throws IllegalStateException {
         assertVideoLoaded();
         Timeline currentTimeline = exoPlayer.getCurrentTimeline();

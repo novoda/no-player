@@ -66,6 +66,16 @@ public interface PlayerState {
     long playheadPositionInMillis();
 
     /**
+     * Position in the content that is being played in milliseconds.
+     * <p>
+     * If the player is playing an advert then this value will be the position that will be played
+     * when the advert ends.
+     *
+     * @return position in the content that is being played.
+     */
+    long contentPositionInMillis();
+
+    /**
      * Duration of the video that is being played in milliseconds.
      * <p>
      * If the player is playing an advert then this value will be a duration of a single advert.

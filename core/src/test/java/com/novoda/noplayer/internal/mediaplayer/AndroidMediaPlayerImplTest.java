@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
+
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
@@ -24,6 +25,9 @@ import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.Timeout;
+
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,8 +41,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
-
-import java.util.Collections;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -267,6 +269,24 @@ public class AndroidMediaPlayerImplTest {
             player.seekTo(seekPositionInMillis);
 
             long videoPositionInMillis = player.playheadPositionInMillis();
+
+            assertThat(videoPositionInMillis).isEqualTo(seekPositionInMillis);
+        }
+
+        @Test
+        public void givenPlayerIsNotSeeking_whenGettingContentPosition_thenReturnsCurrentMediaPlayerPosition() {
+            given(mediaPlayer.currentPositionInMillis()).willReturn(ONE_SECOND_IN_MILLIS);
+            long playheadPositionInMillis = player.contentPositionInMillis();
+
+            assertThat(playheadPositionInMillis).isEqualTo(ONE_SECOND_IN_MILLIS);
+        }
+
+        @Test
+        public void givenPlayerIsSeeking_whenGettingContentPosition_thenReturnsSeekPosition() {
+            long seekPositionInMillis = TEN_SECONDS;
+            player.seekTo(seekPositionInMillis);
+
+            long videoPositionInMillis = player.contentPositionInMillis();
 
             assertThat(videoPositionInMillis).isEqualTo(seekPositionInMillis);
         }
