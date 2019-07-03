@@ -296,7 +296,7 @@ class AndroidMediaPlayerImpl implements NoPlayer {
 
     @Override
     public long contentDurationInMillis() {
-        return mediaPlayer.mediaDurationInMillis();
+        return mediaPlayer.contentDurationInMillis();
     }
 
     @Override
