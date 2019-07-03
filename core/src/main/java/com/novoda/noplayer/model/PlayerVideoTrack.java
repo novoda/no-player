@@ -93,6 +93,8 @@ public class PlayerVideoTrack {
         if (bitrate != that.bitrate) return false;
         if (!id.equals(that.id)) return false;
         if (contentType != that.contentType) return false;
+        if (codecName != null ? !codecName.equals(that.codecName) : that.codecName != null)
+            return false;
         return rendererCapability == that.rendererCapability;
     }
 
@@ -106,7 +108,8 @@ public class PlayerVideoTrack {
         result = 31 * result + height;
         result = 31 * result + fps;
         result = 31 * result + bitrate;
-        result = 31 * result + rendererCapability.hashCode();
+        result = 31 * result + (codecName != null ? codecName.hashCode() : 0);
+        result = 31 * result + (rendererCapability != null ? rendererCapability.hashCode() : 0);
         return result;
     }
 
@@ -121,6 +124,7 @@ public class PlayerVideoTrack {
                 ", height=" + height +
                 ", fps=" + fps +
                 ", bitrate=" + bitrate +
+                ", codecName='" + codecName + '\'' +
                 ", rendererCapability=" + rendererCapability +
                 '}';
     }
