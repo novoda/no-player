@@ -25,7 +25,6 @@ import java.util.Map;
 
 import androidx.annotation.Nullable;
 
-
 // Not much we can do, wrapping MediaPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
 class AndroidMediaPlayerFacade {
@@ -209,6 +208,11 @@ class AndroidMediaPlayerFacade {
     }
 
     int mediaDurationInMillis() throws IllegalStateException {
+        assertIsInPlaybackState();
+        return mediaPlayer.getDuration();
+    }
+
+    int contentDurationInMillis() throws IllegalStateException {
         assertIsInPlaybackState();
         return mediaPlayer.getDuration();
     }
