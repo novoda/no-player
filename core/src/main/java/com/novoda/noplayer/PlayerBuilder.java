@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.Nullable;
+
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.drm.ModularDrmKeyRequest;
@@ -18,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.annotation.Nullable;
-
 /**
  * Builds instances of {@link NoPlayer} for given configurations.
  */
@@ -31,6 +31,7 @@ public class PlayerBuilder {
     private KeySetId keySetId;
     private List<PlayerType> prioritizedPlayerTypes = Arrays.asList(PlayerType.EXO_PLAYER, PlayerType.MEDIA_PLAYER);
     private boolean allowFallbackDecoder; /* initialised to false by default */
+    private boolean requiresSecureDecoder;  /* initialised to false by default */
     private boolean allowCrossProtocolRedirects; /* initialised to false by default */
     private String userAgent = "user-agent";
     private AdvertsLoader advertsLoader;
@@ -129,6 +130,16 @@ public class PlayerBuilder {
     }
 
     /**
+     * Will indicate the engine that it requires secure decoders.
+     *
+     * @return {@link PlayerBuilder}
+     */
+    public PlayerBuilder requiresSecureDecoder() {
+        requiresSecureDecoder = true;
+        return this;
+    }
+
+    /**
      * @param userAgent The application's user-agent value
      * @return {@link PlayerBuilder}
      */
@@ -174,7 +185,14 @@ public class PlayerBuilder {
                 NoPlayerMediaPlayerCreator.newInstance(handler),
                 drmSessionCreatorFactory
         );
-        return noPlayerCreator.create(drmType, keyRequestExecutor, keySetId, allowFallbackDecoder, allowCrossProtocolRedirects);
+        return noPlayerCreator.create(
+                drmType,
+                keyRequestExecutor,
+                keySetId,
+                allowFallbackDecoder,
+                requiresSecureDecoder,
+                allowCrossProtocolRedirects
+        );
     }
 
     private NoPlayerExoPlayerCreator createExoPlayerCreator(Handler handler) {

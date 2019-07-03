@@ -32,6 +32,8 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
     private static final int LEVEL_EIGHT = 8;
     private static final int LEVEL_NINE = 9;
 
+    private final boolean requiresSecureDecoder;
+
     // Extension from MediaCodecVideoRenderer, we can't do anything about this.
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
     MediaCodecVideoRendererWithSimplifiedDrmRequirement(Context context,
@@ -40,6 +42,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                                                         @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
                                                         boolean playClearSamplesWithoutKeys,
                                                         boolean enableDecoderFallback,
+                                                        boolean requiresSecureDecoder,
                                                         @Nullable Handler eventHandler,
                                                         @Nullable VideoRendererEventListener eventListener,
                                                         int maxDroppedFramesToNotify) {
@@ -54,13 +57,18 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                 eventListener,
                 maxDroppedFramesToNotify
         );
+        this.requiresSecureDecoder = requiresSecureDecoder;
     }
 
     @Override
     protected List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector,
                                                    Format format,
                                                    boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
-        return getDecoderInfos(mediaCodecSelector, format, format.drmInitData != null, getCodecNeedsEosPropagation());
+        return getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder(format), getCodecNeedsEosPropagation());
+    }
+
+    private boolean requiresSecureDecoder(Format format) {
+        return format.drmInitData != null && requiresSecureDecoder;
     }
 
     @SuppressWarnings({"PMD.AvoidDeeplyNestedIfStmts"})
@@ -101,6 +109,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                 }
             }
         }
+
         return Collections.unmodifiableList(decoderInfos);
     }
 }

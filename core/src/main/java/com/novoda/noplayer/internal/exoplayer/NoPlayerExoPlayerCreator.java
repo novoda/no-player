@@ -52,8 +52,15 @@ public class NoPlayerExoPlayerCreator {
     public NoPlayer createExoPlayer(Context context,
                                     DrmSessionCreator drmSessionCreator,
                                     boolean allowFallbackDecoder,
+                                    boolean requiresSecureDecoder,
                                     boolean allowCrossProtocolRedirects) {
-        ExoPlayerTwoImpl player = internalCreator.create(context, drmSessionCreator, allowFallbackDecoder, allowCrossProtocolRedirects);
+        ExoPlayerTwoImpl player = internalCreator.create(
+                context,
+                drmSessionCreator,
+                allowFallbackDecoder,
+                requiresSecureDecoder,
+                allowCrossProtocolRedirects
+        );
         player.initialise();
         return player;
     }
@@ -75,6 +82,7 @@ public class NoPlayerExoPlayerCreator {
         ExoPlayerTwoImpl create(Context context,
                                 DrmSessionCreator drmSessionCreator,
                                 boolean allowFallbackDecoder,
+                                boolean requiresSecureDecoder,
                                 boolean allowCrossProtocolRedirects) {
             Optional<NoPlayerAdsLoader> adsLoader = createAdsLoaderFrom(advertsLoader);
 
@@ -114,7 +122,8 @@ public class NoPlayerExoPlayerCreator {
                     loadTimeout,
                     heart,
                     drmSessionCreator,
-                    allowFallbackDecoder
+                    allowFallbackDecoder,
+                    requiresSecureDecoder
             );
         }
 

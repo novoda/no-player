@@ -53,6 +53,7 @@ public class ExoPlayerVideoTrackSelector {
                         format.height,
                         (int) format.frameRate,
                         format.bitrate,
+                        format.codecs,
                         trackSelector.rendererCapability(VIDEO, groupIndex, trackIndex, rendererTypeRequester)
                 );
 

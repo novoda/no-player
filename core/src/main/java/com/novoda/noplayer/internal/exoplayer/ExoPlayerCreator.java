@@ -2,6 +2,8 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.RenderersFactory;
@@ -13,8 +15,6 @@ import com.google.android.exoplayer2.text.SubtitleDecoderFactory;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.text.NoPlayerSubtitleDecoderFactory;
-
-import androidx.annotation.NonNull;
 
 import static com.novoda.noplayer.internal.exoplayer.SimpleRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
 
@@ -32,6 +32,7 @@ class ExoPlayerCreator {
     public SimpleExoPlayer create(DrmSessionCreator drmSessionCreator,
                                   DefaultDrmSessionEventListener drmSessionEventListener,
                                   boolean allowFallbackDecoder,
+                                  boolean requiresSecureDecoder,
                                   TrackSelector trackSelector) {
         DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
         SubtitleDecoderFactory subtitleDecoderFactory = new NoPlayerSubtitleDecoderFactory();
@@ -40,6 +41,7 @@ class ExoPlayerCreator {
                 EXTENSION_RENDERER_MODE_OFF,
                 DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS,
                 allowFallbackDecoder,
+                requiresSecureDecoder,
                 subtitleDecoderFactory
         );
 

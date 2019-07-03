@@ -12,6 +12,7 @@ public class PlayerVideoTrack {
     private final int height;
     private final int fps;
     private final int bitrate;
+    private final String codecName;
     private final RendererCapability rendererCapability;
 
     @SuppressWarnings("checkstyle:ParameterNumber") // TODO group parameters into classes
@@ -23,6 +24,7 @@ public class PlayerVideoTrack {
                             int height,
                             int fps,
                             int bitrate,
+                            String codecName,
                             RendererCapability rendererCapability) {
         this.groupIndex = groupIndex;
         this.formatIndex = formatIndex;
@@ -32,6 +34,7 @@ public class PlayerVideoTrack {
         this.height = height;
         this.fps = fps;
         this.bitrate = bitrate;
+        this.codecName = codecName;
         this.rendererCapability = rendererCapability;
     }
 
@@ -69,6 +72,10 @@ public class PlayerVideoTrack {
 
     public RendererCapability rendererCapability() {
         return rendererCapability;
+    }
+
+    public String codecName() {
+        return codecName;
     }
 
     @Override

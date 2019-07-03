@@ -23,9 +23,6 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.TextCues;
 import com.novoda.noplayer.model.Timeout;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,6 +35,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static android.provider.CalendarContract.CalendarCache.URI;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -220,7 +220,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, OPTIONS);
 
-            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, allowFallbackDecoder);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, allowFallbackDecoder, requiresSecureDecoders);
         }
 
         @Test
@@ -229,7 +229,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, allowFallbackDecoder);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, allowFallbackDecoder, requiresSecureDecoders);
         }
 
         @Test
@@ -572,6 +572,7 @@ public class ExoPlayerTwoImplTest {
     public abstract static class Base {
 
         static final boolean allowFallbackDecoder = true;
+        static final boolean requiresSecureDecoders = true;
 
         @Rule
         public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -640,7 +641,8 @@ public class ExoPlayerTwoImplTest {
                     loadTimeout,
                     heart,
                     drmSessionCreator,
-                    allowFallbackDecoder
+                    allowFallbackDecoder,
+                    requiresSecureDecoders
             );
         }
     }

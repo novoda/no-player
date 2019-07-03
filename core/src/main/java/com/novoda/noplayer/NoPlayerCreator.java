@@ -2,6 +2,8 @@ package com.novoda.noplayer;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
@@ -12,8 +14,6 @@ import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
 import com.novoda.noplayer.model.KeySetId;
 
 import java.util.List;
-
-import androidx.annotation.Nullable;
 
 class NoPlayerCreator {
 
@@ -39,10 +39,19 @@ class NoPlayerCreator {
                     KeyRequestExecutor keyRequestExecutor,
                     @Nullable KeySetId keySetId,
                     boolean allowFallbackDecoder,
+                    boolean requiresSecureDecoder,
                     boolean allowCrossProtocolRedirects) {
         for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
-                return createPlayerForType(player, drmType, keyRequestExecutor, keySetId, allowFallbackDecoder, allowCrossProtocolRedirects);
+                return createPlayerForType(
+                        player,
+                        drmType,
+                        keyRequestExecutor,
+                        keySetId,
+                        allowFallbackDecoder,
+                        requiresSecureDecoder,
+                        allowCrossProtocolRedirects
+                );
             }
         }
         throw UnableToCreatePlayerException.unhandledDrmType(drmType);
@@ -53,6 +62,7 @@ class NoPlayerCreator {
                                          KeyRequestExecutor keyRequestExecutor,
                                          @Nullable KeySetId keySetId,
                                          boolean allowFallbackDecoder,
+                                         boolean requiresSecureDecoder,
                                          boolean allowCrossProtocolRedirects) {
         switch (playerType) {
             case MEDIA_PLAYER:
@@ -64,6 +74,7 @@ class NoPlayerCreator {
                             context,
                             drmSessionCreator,
                             allowFallbackDecoder,
+                            requiresSecureDecoder,
                             allowCrossProtocolRedirects
                     );
                 } catch (DrmSessionCreatorException exception) {
