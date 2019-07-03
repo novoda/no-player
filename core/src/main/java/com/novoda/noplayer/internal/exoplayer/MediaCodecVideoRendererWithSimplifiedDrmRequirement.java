@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Pair;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
@@ -16,8 +18,6 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.util.Collections;
 import java.util.List;
-
-import androidx.annotation.Nullable;
 
 /**
  * Relaxes the Drm requirement so that a secure decoder is selected in the event that `DrmInitData` is present.
@@ -70,24 +70,34 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
             boolean requiresSecureDecoder,
             boolean requiresTunnelingDecoder)
             throws MediaCodecUtil.DecoderQueryException {
-        List<MediaCodecInfo> decoderInfos =
-                mediaCodecSelector.getDecoderInfos(
-                        format.sampleMimeType, requiresSecureDecoder, requiresTunnelingDecoder);
+        List<MediaCodecInfo> decoderInfos = mediaCodecSelector.getDecoderInfos(
+                format.sampleMimeType,
+                requiresSecureDecoder,
+                requiresTunnelingDecoder
+        );
+
         decoderInfos = InternalMediaCodecUtil.getDecoderInfosSortedByFormatSupport(decoderInfos, format);
+
         if (MimeTypes.VIDEO_DOLBY_VISION.equals(format.sampleMimeType)) {
             // Fallback to primary decoders for H.265/HEVC or H.264/AVC for the relevant DV profiles.
-            Pair<Integer, Integer> codecProfileAndLevel =
-                    MediaCodecUtil.getCodecProfileAndLevel(format.codecs);
+            Pair<Integer, Integer> codecProfileAndLevel = MediaCodecUtil.getCodecProfileAndLevel(format.codecs);
+
             if (codecProfileAndLevel != null) {
                 int profile = codecProfileAndLevel.first;
                 if (profile == LEVEL_FOUR || profile == LEVEL_EIGHT) {
-                    decoderInfos.addAll(
-                            mediaCodecSelector.getDecoderInfos(
-                                    MimeTypes.VIDEO_H265, requiresSecureDecoder, requiresTunnelingDecoder));
+                    List<MediaCodecInfo> infos = mediaCodecSelector.getDecoderInfos(
+                            MimeTypes.VIDEO_H265,
+                            requiresSecureDecoder,
+                            requiresTunnelingDecoder
+                    );
+                    decoderInfos.addAll(infos);
                 } else if (profile == LEVEL_NINE) {
-                    decoderInfos.addAll(
-                            mediaCodecSelector.getDecoderInfos(
-                                    MimeTypes.VIDEO_H264, requiresSecureDecoder, requiresTunnelingDecoder));
+                    List<MediaCodecInfo> infos = mediaCodecSelector.getDecoderInfos(
+                            MimeTypes.VIDEO_H264,
+                            requiresSecureDecoder,
+                            requiresTunnelingDecoder
+                    );
+                    decoderInfos.addAll(infos);
                 }
             }
         }

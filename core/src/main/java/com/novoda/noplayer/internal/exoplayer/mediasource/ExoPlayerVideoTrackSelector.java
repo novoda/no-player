@@ -41,18 +41,19 @@ public class ExoPlayerVideoTrackSelector {
         for (int groupIndex = 0; groupIndex < trackGroups.length; groupIndex++) {
             TrackGroup trackGroup = trackGroups.get(groupIndex);
 
-            for (int formatIndex = 0; formatIndex < trackGroup.length; formatIndex++) {
-                Format format = trackGroup.getFormat(formatIndex);
+            for (int trackIndex = 0; trackIndex < trackGroup.length; trackIndex++) {
+                Format format = trackGroup.getFormat(trackIndex);
 
                 PlayerVideoTrack playerVideoTrack = new PlayerVideoTrack(
                         groupIndex,
-                        formatIndex,
+                        trackIndex,
                         format.id,
                         contentType,
                         format.width,
                         format.height,
                         (int) format.frameRate,
-                        format.bitrate
+                        format.bitrate,
+                        trackSelector.rendererCapability(VIDEO, groupIndex, trackIndex, rendererTypeRequester)
                 );
 
                 videoTracks.add(playerVideoTrack);

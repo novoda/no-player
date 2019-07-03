@@ -6,6 +6,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.internal.utils.Optional;
+import com.novoda.noplayer.model.RendererCapability;
 
 // We cannot make it final as we need to mock it in tests
 @SuppressWarnings({"checkstyle:FinalClass", "PMD.ClassWithOnlyPrivateConstructorsShouldBeFinal"})
@@ -25,8 +26,26 @@ public class ExoPlayerTrackSelector {
     }
 
     TrackGroupArray trackGroups(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
-        Optional<Integer> audioRendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
-        return audioRendererIndex.isAbsent() ? TrackGroupArray.EMPTY : trackInfo().getTrackGroups(audioRendererIndex.get());
+        Optional<Integer> rendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
+        return rendererIndex.isAbsent() ? TrackGroupArray.EMPTY : trackInfo().getTrackGroups(rendererIndex.get());
+    }
+
+    RendererCapability rendererCapability(TrackType trackType, int groupIndex, int trackIndex, RendererTypeRequester rendererTypeRequester) {
+        Optional<Integer> rendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
+        if (rendererIndex.isAbsent()) {
+            return RendererCapability.FORMAT_UNKNOWN;
+        }
+
+        MappingTrackSelector.MappedTrackInfo currentMappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+        if (currentMappedTrackInfo == null) {
+            return RendererCapability.FORMAT_UNKNOWN;
+        }
+        try {
+            int internalRendererCapability = currentMappedTrackInfo.getTrackSupport(rendererIndex.get(), groupIndex, trackIndex);
+            return RendererCapability.from(internalRendererCapability);
+        } catch(Exception e) {
+            return RendererCapability.FORMAT_UNKNOWN;
+        }
     }
 
     boolean clearSelectionOverrideFor(TrackType trackType, RendererTypeRequester rendererTypeRequester) {
@@ -44,6 +63,7 @@ public class ExoPlayerTrackSelector {
 
     private ExoPlayerMappedTrackInfo trackInfo() {
         MappingTrackSelector.MappedTrackInfo trackInfo = trackSelector.getCurrentMappedTrackInfo();
+
 
         if (trackInfo == null) {
             throw new IllegalStateException("Track info is not available.");

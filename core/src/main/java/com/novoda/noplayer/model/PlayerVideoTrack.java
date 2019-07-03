@@ -12,9 +12,18 @@ public class PlayerVideoTrack {
     private final int height;
     private final int fps;
     private final int bitrate;
+    private final RendererCapability rendererCapability;
 
     @SuppressWarnings("checkstyle:ParameterNumber") // TODO group parameters into classes
-    public PlayerVideoTrack(int groupIndex, int formatIndex, String id, ContentType contentType, int width, int height, int fps, int bitrate) {
+    public PlayerVideoTrack(int groupIndex,
+                            int formatIndex,
+                            String id,
+                            ContentType contentType,
+                            int width,
+                            int height,
+                            int fps,
+                            int bitrate,
+                            RendererCapability rendererCapability) {
         this.groupIndex = groupIndex;
         this.formatIndex = formatIndex;
         this.id = id;
@@ -23,6 +32,7 @@ public class PlayerVideoTrack {
         this.height = height;
         this.fps = fps;
         this.bitrate = bitrate;
+        this.rendererCapability = rendererCapability;
     }
 
     public int groupIndex() {
@@ -57,65 +67,54 @@ public class PlayerVideoTrack {
         return bitrate;
     }
 
+    public RendererCapability rendererCapability() {
+        return rendererCapability;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof PlayerVideoTrack)) return false;
 
         PlayerVideoTrack that = (PlayerVideoTrack) o;
 
-        if (groupIndex != that.groupIndex) {
-            return false;
-        }
-        if (formatIndex != that.formatIndex) {
-            return false;
-        }
-        if (width != that.width) {
-            return false;
-        }
-        if (height != that.height) {
-            return false;
-        }
-        if (fps != that.fps) {
-            return false;
-        }
-        if (bitrate != that.bitrate) {
-            return false;
-        }
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
-        }
-        return contentType == that.contentType;
+        if (groupIndex != that.groupIndex) return false;
+        if (formatIndex != that.formatIndex) return false;
+        if (width != that.width) return false;
+        if (height != that.height) return false;
+        if (fps != that.fps) return false;
+        if (bitrate != that.bitrate) return false;
+        if (!id.equals(that.id)) return false;
+        if (contentType != that.contentType) return false;
+        return rendererCapability == that.rendererCapability;
     }
 
     @Override
     public int hashCode() {
         int result = groupIndex;
         result = 31 * result + formatIndex;
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
+        result = 31 * result + id.hashCode();
+        result = 31 * result + contentType.hashCode();
         result = 31 * result + width;
         result = 31 * result + height;
         result = 31 * result + fps;
         result = 31 * result + bitrate;
+        result = 31 * result + rendererCapability.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "PlayerVideoTrack{"
-                + "groupIndex=" + groupIndex
-                + ", formatIndex=" + formatIndex
-                + ", id='" + id + '\''
-                + ", contentType=" + contentType
-                + ", width=" + width
-                + ", height=" + height
-                + ", fps=" + fps
-                + ", bitrate=" + bitrate
-                + '}';
+        return "PlayerVideoTrack{" +
+                "groupIndex=" + groupIndex +
+                ", formatIndex=" + formatIndex +
+                ", id='" + id + '\'' +
+                ", contentType=" + contentType +
+                ", width=" + width +
+                ", height=" + height +
+                ", fps=" + fps +
+                ", bitrate=" + bitrate +
+                ", rendererCapability=" + rendererCapability +
+                '}';
     }
 }

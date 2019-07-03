@@ -17,7 +17,7 @@ import java.util.Locale;
 
 class DialogCreator {
 
-    private static final String VIDEO_TRACK_MESSAGE_FORMAT = "ID: %s Quality: %s";
+    private static final String VIDEO_TRACK_MESSAGE_FORMAT = "ID: %s Quality: %s Renderer Capability: %s";
     private static final String AUDIO_TRACK_MESSAGE_FORMAT = "ID: %s Type: %s";
     private static final int AUTO_TRACK_POSITION = 0;
 
@@ -55,7 +55,7 @@ class DialogCreator {
         List<String> labels = new ArrayList<>();
         labels.add("Auto");
         for (PlayerVideoTrack videoTrack : videoTracks) {
-            String message = String.format(VIDEO_TRACK_MESSAGE_FORMAT, videoTrack.id(), videoTrack.height());
+            String message = String.format(VIDEO_TRACK_MESSAGE_FORMAT, videoTrack.id(), videoTrack.height(), videoTrack.rendererCapability());
             labels.add(message);
         }
         return labels;

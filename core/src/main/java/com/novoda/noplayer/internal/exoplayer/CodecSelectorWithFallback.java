@@ -1,5 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
+import android.util.Log;
+
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
@@ -43,6 +45,12 @@ class CodecSelectorWithFallback implements MediaCodecSelector {
                         requiresTunnelingDecoder
                 )
         );
+
+        for (MediaCodecInfo decoderInfo : decoderInfos) {
+            for (android.media.MediaCodecInfo.CodecProfileLevel profileLevel : decoderInfo.getProfileLevels()) {
+                Log.v("Ferran", "Ferran, profile: " + profileLevel.profile + ", level: " + profileLevel.level);
+            }
+        }
 
         return decoderInfos;
     }

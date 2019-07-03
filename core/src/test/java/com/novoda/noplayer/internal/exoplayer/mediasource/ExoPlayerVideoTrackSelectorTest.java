@@ -40,8 +40,8 @@ public class ExoPlayerVideoTrackSelectorTest {
             VIDEO_FORMAT.width,
             VIDEO_FORMAT.height,
             (int) VIDEO_FORMAT.frameRate,
-            VIDEO_FORMAT.bitrate
-    );
+            VIDEO_FORMAT.bitrate,
+            rendererCapability);
 
     private static final Format ADDITIONAL_VIDEO_FORMAT = aVideoFormat().withId("id2").build();
     private static final int FIRST_GROUP = 0;
@@ -54,8 +54,8 @@ public class ExoPlayerVideoTrackSelectorTest {
             ADDITIONAL_VIDEO_FORMAT.width,
             ADDITIONAL_VIDEO_FORMAT.height,
             (int) ADDITIONAL_VIDEO_FORMAT.frameRate,
-            ADDITIONAL_VIDEO_FORMAT.bitrate
-    );
+            ADDITIONAL_VIDEO_FORMAT.bitrate,
+            rendererCapability);
 
     private static final List<PlayerVideoTrack> EXPECTED_TRACKS = Arrays.asList(PLAYER_VIDEO_TRACK, ADDITIONAL_PLAYER_VIDEO_TRACK);
 

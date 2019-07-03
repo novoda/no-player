@@ -62,6 +62,6 @@ public class PlayerVideoTrackFixture {
     }
 
     public PlayerVideoTrack build() {
-        return new PlayerVideoTrack(groupIndex, formatIndex, id, contentType, width, height, fps, bitrate);
+        return new PlayerVideoTrack(groupIndex, formatIndex, id, contentType, width, height, fps, bitrate, rendererCapability);
     }
 }
