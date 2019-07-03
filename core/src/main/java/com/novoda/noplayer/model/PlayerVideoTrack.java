@@ -15,7 +15,7 @@ public class PlayerVideoTrack {
     private final String codecName;
     private final RendererSupport rendererCapability;
 
-    @SuppressWarnings("checkstyle:ParameterNumber") // TODO group parameters into classes
+    @SuppressWarnings({"checkstyle:parameternumber", "PMD.ExcessiveParameterList"}) // We need all this parameters as a bundle
     public PlayerVideoTrack(int groupIndex,
                             int formatIndex,
                             String id,

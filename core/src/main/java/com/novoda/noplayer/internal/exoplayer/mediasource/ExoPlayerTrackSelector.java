@@ -43,7 +43,7 @@ public class ExoPlayerTrackSelector {
         try {
             int internalRendererCapability = currentMappedTrackInfo.getTrackSupport(rendererIndex.get(), groupIndex, trackIndex);
             return RendererSupport.from(internalRendererCapability);
-        } catch (Exception e) {
+        } catch (IndexOutOfBoundsException e) {
             return RendererSupport.FORMAT_UNKNOWN;
         }
     }
