@@ -80,21 +80,43 @@ public class PlayerVideoTrack {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PlayerVideoTrack)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PlayerVideoTrack)) {
+            return false;
+        }
 
         PlayerVideoTrack that = (PlayerVideoTrack) o;
 
-        if (groupIndex != that.groupIndex) return false;
-        if (formatIndex != that.formatIndex) return false;
-        if (width != that.width) return false;
-        if (height != that.height) return false;
-        if (fps != that.fps) return false;
-        if (bitrate != that.bitrate) return false;
-        if (!id.equals(that.id)) return false;
-        if (contentType != that.contentType) return false;
-        if (codecName != null ? !codecName.equals(that.codecName) : that.codecName != null)
+        if (groupIndex != that.groupIndex) {
             return false;
+        }
+        if (formatIndex != that.formatIndex) {
+            return false;
+        }
+        if (width != that.width) {
+            return false;
+        }
+        if (height != that.height) {
+            return false;
+        }
+        if (fps != that.fps) {
+            return false;
+        }
+        if (bitrate != that.bitrate) {
+            return false;
+        }
+        if (!id.equals(that.id)) {
+            return false;
+        }
+        if (contentType != that.contentType) {
+            return false;
+        }
+        if (codecName != null ? !codecName.equals(that.codecName) : that.codecName != null) {
+            return false;
+        }
+
         return rendererCapability == that.rendererCapability;
     }
 

@@ -27,7 +27,7 @@ import com.novoda.noplayer.model.Timeout;
 import java.util.List;
 
 // Not much we can do, wrapping ExoPlayer is a lot of work
-@SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount"})
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount", "PMD.ExcessiveParameterList", "checkstyle:parameternumber"})
 class ExoPlayerTwoImpl implements NoPlayer {
 
     private final ExoPlayerFacade exoPlayer;
