@@ -64,7 +64,6 @@ public class ExoPlayerTrackSelector {
     private ExoPlayerMappedTrackInfo trackInfo() {
         MappingTrackSelector.MappedTrackInfo trackInfo = trackSelector.getCurrentMappedTrackInfo();
 
-
         if (trackInfo == null) {
             throw new IllegalStateException("Track info is not available.");
         }
