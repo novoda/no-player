@@ -20,6 +20,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.audio.AudioCapabilities;
@@ -44,9 +47,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.IntDef;
-import androidx.annotation.Nullable;
 
 /**
  * Default {@link RenderersFactory} implementation.
@@ -99,6 +99,7 @@ class SimpleRenderersFactory implements RenderersFactory {
 
     private final long allowedVideoJoiningTimeMs;
     private final boolean allowFallbackDecoder;
+    private final boolean requiresSecureDecoder;
     private final SubtitleDecoderFactory subtitleDecoderFactory;
 
     /**
@@ -115,11 +116,13 @@ class SimpleRenderersFactory implements RenderersFactory {
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,
                            boolean allowFallbackDecoder,
+                           boolean requiresSecureDecoder,
                            SubtitleDecoderFactory subtitleDecoderFactory) {
         this.context = context;
         this.extensionRendererMode = extensionRendererMode;
         this.allowedVideoJoiningTimeMs = allowedVideoJoiningTimeMs;
         this.allowFallbackDecoder = allowFallbackDecoder;
+        this.requiresSecureDecoder = requiresSecureDecoder;
         this.subtitleDecoderFactory = subtitleDecoderFactory;
     }
 
@@ -174,6 +177,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                     drmSessionManager,
                     DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
                     ENABLE_DECODER_FALLBACK,
+                    requiresSecureDecoder,
                     eventHandler,
                     eventListener,
                     MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY

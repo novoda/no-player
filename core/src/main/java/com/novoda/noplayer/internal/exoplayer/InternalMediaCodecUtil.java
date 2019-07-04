@@ -1,5 +1,7 @@
 package com.novoda.noplayer.internal.exoplayer;
 
+import androidx.annotation.CheckResult;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
@@ -8,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import androidx.annotation.CheckResult;
 
 class InternalMediaCodecUtil {
 
@@ -31,8 +31,7 @@ class InternalMediaCodecUtil {
      */
     @SuppressWarnings({"PMD.AvoidReassigningParameters"})
     @CheckResult
-    public static List<MediaCodecInfo> getDecoderInfosSortedByFormatSupport(
-            List<MediaCodecInfo> decoderInfos, final Format format) {
+    static List<MediaCodecInfo> getDecoderInfosSortedByFormatSupport(List<MediaCodecInfo> decoderInfos, final Format format) {
         decoderInfos = new ArrayList<>(decoderInfos);
         sortByScore(
                 decoderInfos,

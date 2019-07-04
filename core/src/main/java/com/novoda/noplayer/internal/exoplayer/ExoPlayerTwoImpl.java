@@ -3,6 +3,8 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.net.Uri;
 import android.view.View;
 
+import androidx.annotation.Nullable;
+
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
@@ -24,10 +26,8 @@ import com.novoda.noplayer.model.Timeout;
 
 import java.util.List;
 
-import androidx.annotation.Nullable;
-
 // Not much we can do, wrapping ExoPlayer is a lot of work
-@SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount"})
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount", "PMD.ExcessiveParameterList", "checkstyle:parameternumber"})
 class ExoPlayerTwoImpl implements NoPlayer {
 
     private final ExoPlayerFacade exoPlayer;
@@ -36,6 +36,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
     private final Heart heart;
     private final DrmSessionCreator drmSessionCreator;
     private final boolean allowFallbackDecoder;
+    private final boolean requiresSecureDecoder;
     private final LoadTimeout loadTimeout;
 
     @Nullable
@@ -51,7 +52,8 @@ class ExoPlayerTwoImpl implements NoPlayer {
                      LoadTimeout loadTimeoutParam,
                      Heart heart,
                      DrmSessionCreator drmSessionCreator,
-                     boolean allowFallbackDecoder) {
+                     boolean allowFallbackDecoder,
+                     boolean requiresSecureDecoder) {
         this.exoPlayer = exoPlayer;
         this.listenersHolder = listenersHolder;
         this.loadTimeout = loadTimeoutParam;
@@ -59,6 +61,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
         this.heart = heart;
         this.drmSessionCreator = drmSessionCreator;
         this.allowFallbackDecoder = allowFallbackDecoder;
+        this.requiresSecureDecoder = requiresSecureDecoder;
     }
 
     void initialise() {
@@ -243,7 +246,15 @@ class ExoPlayerTwoImpl implements NoPlayer {
             stop();
         }
         assertPlayerViewIsAttached();
-        exoPlayer.loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, options, forwarder, allowFallbackDecoder);
+        exoPlayer.loadVideo(
+                playerView.getPlayerSurfaceHolder(),
+                drmSessionCreator,
+                uri,
+                options,
+                forwarder,
+                allowFallbackDecoder,
+                requiresSecureDecoder
+        );
         createSurfaceByShowingVideoContainer();
     }
 

@@ -12,9 +12,20 @@ public class PlayerVideoTrack {
     private final int height;
     private final int fps;
     private final int bitrate;
+    private final String codecName;
+    private final Support support;
 
-    @SuppressWarnings("checkstyle:ParameterNumber") // TODO group parameters into classes
-    public PlayerVideoTrack(int groupIndex, int formatIndex, String id, ContentType contentType, int width, int height, int fps, int bitrate) {
+    @SuppressWarnings({"checkstyle:parameternumber", "PMD.ExcessiveParameterList"}) // We need all this parameters as a bundle
+    public PlayerVideoTrack(int groupIndex,
+                            int formatIndex,
+                            String id,
+                            ContentType contentType,
+                            int width,
+                            int height,
+                            int fps,
+                            int bitrate,
+                            String codecName,
+                            Support support) {
         this.groupIndex = groupIndex;
         this.formatIndex = formatIndex;
         this.id = id;
@@ -23,6 +34,8 @@ public class PlayerVideoTrack {
         this.height = height;
         this.fps = fps;
         this.bitrate = bitrate;
+        this.codecName = codecName;
+        this.support = support;
     }
 
     public int groupIndex() {
@@ -57,12 +70,20 @@ public class PlayerVideoTrack {
         return bitrate;
     }
 
+    public Support support() {
+        return support;
+    }
+
+    public String codecName() {
+        return codecName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof PlayerVideoTrack)) {
             return false;
         }
 
@@ -86,22 +107,31 @@ public class PlayerVideoTrack {
         if (bitrate != that.bitrate) {
             return false;
         }
-        if (id != null ? !id.equals(that.id) : that.id != null) {
+        if (!id.equals(that.id)) {
             return false;
         }
-        return contentType == that.contentType;
+        if (contentType != that.contentType) {
+            return false;
+        }
+        if (codecName != null ? !codecName.equals(that.codecName) : that.codecName != null) {
+            return false;
+        }
+
+        return support == that.support;
     }
 
     @Override
     public int hashCode() {
         int result = groupIndex;
         result = 31 * result + formatIndex;
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
+        result = 31 * result + id.hashCode();
+        result = 31 * result + contentType.hashCode();
         result = 31 * result + width;
         result = 31 * result + height;
         result = 31 * result + fps;
         result = 31 * result + bitrate;
+        result = 31 * result + (codecName != null ? codecName.hashCode() : 0);
+        result = 31 * result + (support != null ? support.hashCode() : 0);
         return result;
     }
 
@@ -116,6 +146,8 @@ public class PlayerVideoTrack {
                 + ", height=" + height
                 + ", fps=" + fps
                 + ", bitrate=" + bitrate
+                + ", codecName='" + codecName + '\''
+                + ", support=" + support
                 + '}';
     }
 }

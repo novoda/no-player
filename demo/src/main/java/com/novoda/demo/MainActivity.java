@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
                 player = playerBuilder.build(getApplicationContext());
 
                 demoPresenter = new DemoPresenter(controllerView, player, player.getListeners(), playerView);
-                dialogCreator = new DialogCreator(getApplicationContext(), player);
+                dialogCreator = new DialogCreator(player);
 
                 player.getListeners().addDroppedVideoFrames(new NoPlayer.DroppedVideoFramesListener() {
                     @Override
@@ -163,7 +163,7 @@ public class MainActivity extends Activity {
     private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dialogCreator.showVideoSelectionDialog();
+            dialogCreator.showVideoSelectionDialog(MainActivity.this);
         }
     };
 
@@ -171,14 +171,14 @@ public class MainActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-            dialogCreator.showAudioSelectionDialog();
+            dialogCreator.showAudioSelectionDialog(MainActivity.this);
         }
     };
 
     private final View.OnClickListener showSubtitleSelectionDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dialogCreator.showSubtitleSelectionDialog();
+            dialogCreator.showSubtitleSelectionDialog(MainActivity.this);
         }
     };
 

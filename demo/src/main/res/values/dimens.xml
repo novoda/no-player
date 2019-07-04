@@ -12,7 +12,7 @@
   <dimen name="seekbar_thumb_offset">6dp</dimen>
 
   <dimen name="use_weight">0dp</dimen>
-  <dimen name="list_item_text">20sp</dimen>
-  <dimen name="list_item_padding">8dp</dimen>
+  <dimen name="list_item_text">12sp</dimen>
+  <dimen name="list_item_padding">6dp</dimen>
 
 </resources>
