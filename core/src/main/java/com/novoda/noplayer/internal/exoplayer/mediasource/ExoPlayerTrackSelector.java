@@ -4,9 +4,10 @@ import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.novoda.noplayer.internal.SupportMapper;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.internal.utils.Optional;
-import com.novoda.noplayer.model.RendererSupport;
+import com.novoda.noplayer.model.Support;
 
 // We cannot make it final as we need to mock it in tests
 @SuppressWarnings({"checkstyle:FinalClass", "PMD.ClassWithOnlyPrivateConstructorsShouldBeFinal"})
@@ -30,21 +31,21 @@ public class ExoPlayerTrackSelector {
         return rendererIndex.isAbsent() ? TrackGroupArray.EMPTY : trackInfo().getTrackGroups(rendererIndex.get());
     }
 
-    RendererSupport rendererCapability(TrackType trackType, int groupIndex, int trackIndex, RendererTypeRequester rendererTypeRequester) {
+    Support rendererCapability(TrackType trackType, int groupIndex, int trackIndex, RendererTypeRequester rendererTypeRequester) {
         Optional<Integer> rendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
         if (rendererIndex.isAbsent()) {
-            return RendererSupport.FORMAT_UNKNOWN;
+            return Support.FORMAT_UNKNOWN;
         }
 
         MappingTrackSelector.MappedTrackInfo currentMappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
         if (currentMappedTrackInfo == null) {
-            return RendererSupport.FORMAT_UNKNOWN;
+            return Support.FORMAT_UNKNOWN;
         }
         try {
             int internalRendererCapability = currentMappedTrackInfo.getTrackSupport(rendererIndex.get(), groupIndex, trackIndex);
-            return RendererSupport.from(internalRendererCapability);
+            return SupportMapper.from(internalRendererCapability);
         } catch (IndexOutOfBoundsException e) {
-            return RendererSupport.FORMAT_UNKNOWN;
+            return Support.FORMAT_UNKNOWN;
         }
     }
 

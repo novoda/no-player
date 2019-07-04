@@ -13,7 +13,7 @@ public class PlayerVideoTrack {
     private final int fps;
     private final int bitrate;
     private final String codecName;
-    private final RendererSupport rendererCapability;
+    private final Support rendererCapability;
 
     @SuppressWarnings({"checkstyle:parameternumber", "PMD.ExcessiveParameterList"}) // We need all this parameters as a bundle
     public PlayerVideoTrack(int groupIndex,
@@ -25,7 +25,7 @@ public class PlayerVideoTrack {
                             int fps,
                             int bitrate,
                             String codecName,
-                            RendererSupport rendererCapability) {
+                            Support rendererCapability) {
         this.groupIndex = groupIndex;
         this.formatIndex = formatIndex;
         this.id = id;
@@ -70,7 +70,7 @@ public class PlayerVideoTrack {
         return bitrate;
     }
 
-    public RendererSupport rendererCapability() {
+    public Support rendererCapability() {
         return rendererCapability;
     }
 
