@@ -13,6 +13,7 @@ public class PlayerVideoTrackFixture {
     private int fps = 30;
     private int bitrate = 180000;
     private String codecName = "codec-name";
+    private String associatedDecoderName = "intel-decoder-name";
     private Support support = Support.FORMAT_UNKNOWN;
 
     public static PlayerVideoTrackFixture aPlayerVideoTrack() {
@@ -64,6 +65,18 @@ public class PlayerVideoTrackFixture {
     }
 
     public PlayerVideoTrack build() {
-        return new PlayerVideoTrack(groupIndex, formatIndex, id, contentType, width, height, fps, bitrate, codecName, support);
+        return new PlayerVideoTrack(
+                groupIndex,
+                formatIndex,
+                id,
+                contentType,
+                width,
+                height,
+                fps,
+                bitrate,
+                codecName,
+                associatedDecoderName,
+                support
+        );
     }
 }

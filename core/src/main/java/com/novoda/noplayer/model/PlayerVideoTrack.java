@@ -13,6 +13,7 @@ public class PlayerVideoTrack {
     private final int fps;
     private final int bitrate;
     private final String codecName;
+    private final String associatedDecoderName;
     private final Support support;
 
     @SuppressWarnings({"checkstyle:parameternumber", "PMD.ExcessiveParameterList"}) // We need all this parameters as a bundle
@@ -25,6 +26,7 @@ public class PlayerVideoTrack {
                             int fps,
                             int bitrate,
                             String codecName,
+                            String associatedDecoderName,
                             Support support) {
         this.groupIndex = groupIndex;
         this.formatIndex = formatIndex;
@@ -35,6 +37,7 @@ public class PlayerVideoTrack {
         this.fps = fps;
         this.bitrate = bitrate;
         this.codecName = codecName;
+        this.associatedDecoderName = associatedDecoderName;
         this.support = support;
     }
 
@@ -76,6 +79,10 @@ public class PlayerVideoTrack {
 
     public String codecName() {
         return codecName;
+    }
+
+    public String associatedDecoderName() {
+        return associatedDecoderName;
     }
 
     @Override

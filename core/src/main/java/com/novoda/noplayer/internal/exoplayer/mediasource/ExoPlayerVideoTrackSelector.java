@@ -9,6 +9,7 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.PlayerVideoTrack;
+import com.novoda.noplayer.model.PlayerVideoTrackCodecMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,8 @@ public class ExoPlayerVideoTrackSelector {
 
         List<PlayerVideoTrack> videoTracks = new ArrayList<>();
 
+        PlayerVideoTrackCodecMapping trackCodecMapping = PlayerVideoTrackCodecMapping.getInstance();
+
         for (int groupIndex = 0; groupIndex < trackGroups.length; groupIndex++) {
             TrackGroup trackGroup = trackGroups.get(groupIndex);
 
@@ -54,6 +57,7 @@ public class ExoPlayerVideoTrackSelector {
                         (int) format.frameRate,
                         format.bitrate,
                         format.codecs,
+                        trackCodecMapping.getCodecFor(format.codecs),
                         trackSelector.trackSupport(VIDEO, groupIndex, trackIndex, rendererTypeRequester)
                 );
 

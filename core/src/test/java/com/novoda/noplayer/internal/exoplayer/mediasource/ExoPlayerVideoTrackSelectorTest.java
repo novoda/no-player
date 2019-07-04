@@ -34,6 +34,7 @@ public class ExoPlayerVideoTrackSelectorTest {
 
     private static final Format VIDEO_FORMAT = aVideoFormat().withId("id1").build();
     private static final String CODEC_NAME = "codecs";
+    private static final String ASSOCIATED_DECODER_NAME = "intel-decoder";
     private static final Support SUPPORT = null;
     private static final PlayerVideoTrack PLAYER_VIDEO_TRACK = new PlayerVideoTrack(
             0,
@@ -45,6 +46,7 @@ public class ExoPlayerVideoTrackSelectorTest {
             (int) VIDEO_FORMAT.frameRate,
             VIDEO_FORMAT.bitrate,
             CODEC_NAME,
+            ASSOCIATED_DECODER_NAME,
             SUPPORT
     );
 
@@ -61,6 +63,7 @@ public class ExoPlayerVideoTrackSelectorTest {
             (int) ADDITIONAL_VIDEO_FORMAT.frameRate,
             ADDITIONAL_VIDEO_FORMAT.bitrate,
             CODEC_NAME,
+            ASSOCIATED_DECODER_NAME,
             SUPPORT
     );
 
