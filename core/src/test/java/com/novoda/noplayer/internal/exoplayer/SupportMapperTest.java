@@ -1,4 +1,4 @@
-package com.novoda.noplayer.internal;
+package com.novoda.noplayer.internal.exoplayer;
 
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.novoda.noplayer.model.Support;
