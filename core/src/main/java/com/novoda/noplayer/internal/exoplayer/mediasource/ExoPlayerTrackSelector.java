@@ -31,7 +31,7 @@ public class ExoPlayerTrackSelector {
         return rendererIndex.isAbsent() ? TrackGroupArray.EMPTY : trackInfo().getTrackGroups(rendererIndex.get());
     }
 
-    Support rendererCapability(TrackType trackType, int groupIndex, int trackIndex, RendererTypeRequester rendererTypeRequester) {
+    Support trackSupport(TrackType trackType, int groupIndex, int trackIndex, RendererTypeRequester rendererTypeRequester) {
         Optional<Integer> rendererIndex = rendererTrackIndexExtractor.extract(trackType, mappedTrackInfoLength(), rendererTypeRequester);
         if (rendererIndex.isAbsent()) {
             return Support.FORMAT_UNKNOWN;
@@ -42,8 +42,8 @@ public class ExoPlayerTrackSelector {
             return Support.FORMAT_UNKNOWN;
         }
         try {
-            int internalRendererCapability = currentMappedTrackInfo.getTrackSupport(rendererIndex.get(), groupIndex, trackIndex);
-            return SupportMapper.from(internalRendererCapability);
+            int trackSupport = currentMappedTrackInfo.getTrackSupport(rendererIndex.get(), groupIndex, trackIndex);
+            return SupportMapper.from(trackSupport);
         } catch (IndexOutOfBoundsException e) {
             return Support.FORMAT_UNKNOWN;
         }

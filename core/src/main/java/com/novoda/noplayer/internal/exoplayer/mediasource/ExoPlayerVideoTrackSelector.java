@@ -54,7 +54,7 @@ public class ExoPlayerVideoTrackSelector {
                         (int) format.frameRate,
                         format.bitrate,
                         format.codecs,
-                        trackSelector.rendererCapability(VIDEO, groupIndex, trackIndex, rendererTypeRequester)
+                        trackSelector.trackSupport(VIDEO, groupIndex, trackIndex, rendererTypeRequester)
                 );
 
                 videoTracks.add(playerVideoTrack);

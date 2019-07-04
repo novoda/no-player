@@ -53,7 +53,7 @@ class DialogCreator {
         List<String> labels = new ArrayList<>();
         labels.add("Auto");
         for (PlayerVideoTrack videoTrack : videoTracks) {
-            String message = String.format(VIDEO_TRACK_MESSAGE_FORMAT, videoTrack.id(), videoTrack.height(), videoTrack.rendererCapability());
+            String message = String.format(VIDEO_TRACK_MESSAGE_FORMAT, videoTrack.id(), videoTrack.height(), videoTrack.support());
             labels.add(message);
         }
         return labels;

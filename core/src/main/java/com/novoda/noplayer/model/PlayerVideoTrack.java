@@ -13,7 +13,7 @@ public class PlayerVideoTrack {
     private final int fps;
     private final int bitrate;
     private final String codecName;
-    private final Support rendererCapability;
+    private final Support support;
 
     @SuppressWarnings({"checkstyle:parameternumber", "PMD.ExcessiveParameterList"}) // We need all this parameters as a bundle
     public PlayerVideoTrack(int groupIndex,
@@ -25,7 +25,7 @@ public class PlayerVideoTrack {
                             int fps,
                             int bitrate,
                             String codecName,
-                            Support rendererCapability) {
+                            Support support) {
         this.groupIndex = groupIndex;
         this.formatIndex = formatIndex;
         this.id = id;
@@ -35,7 +35,7 @@ public class PlayerVideoTrack {
         this.fps = fps;
         this.bitrate = bitrate;
         this.codecName = codecName;
-        this.rendererCapability = rendererCapability;
+        this.support = support;
     }
 
     public int groupIndex() {
@@ -70,8 +70,8 @@ public class PlayerVideoTrack {
         return bitrate;
     }
 
-    public Support rendererCapability() {
-        return rendererCapability;
+    public Support support() {
+        return support;
     }
 
     public String codecName() {
@@ -117,7 +117,7 @@ public class PlayerVideoTrack {
             return false;
         }
 
-        return rendererCapability == that.rendererCapability;
+        return support == that.support;
     }
 
     @Override
@@ -131,7 +131,7 @@ public class PlayerVideoTrack {
         result = 31 * result + fps;
         result = 31 * result + bitrate;
         result = 31 * result + (codecName != null ? codecName.hashCode() : 0);
-        result = 31 * result + (rendererCapability != null ? rendererCapability.hashCode() : 0);
+        result = 31 * result + (support != null ? support.hashCode() : 0);
         return result;
     }
 
@@ -147,7 +147,7 @@ public class PlayerVideoTrack {
                 + ", fps=" + fps
                 + ", bitrate=" + bitrate
                 + ", codecName='" + codecName + '\''
-                + ", rendererCapability=" + rendererCapability
+                + ", support=" + support
                 + '}';
     }
 }
