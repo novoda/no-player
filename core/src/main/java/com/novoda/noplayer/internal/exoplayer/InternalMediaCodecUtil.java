@@ -50,6 +50,25 @@ class InternalMediaCodecUtil {
     }
 
     /**
+     *
+     * Returns a list of decoders that supports the provided format
+     */
+    static List<MediaCodecInfo> getOnlySupportedDecoderInfos(List<MediaCodecInfo> decoderInfos, Format format) {
+        List<MediaCodecInfo> onlySupported = new ArrayList<>();
+        for (MediaCodecInfo decoderInfo : decoderInfos) {
+            try {
+                if (decoderInfo.isFormatSupported(format)) {
+                    onlySupported.add(decoderInfo);
+                }
+            } catch (MediaCodecUtil.DecoderQueryException e) {
+                // ignore, decoder will not be added in this case
+            }
+        }
+
+        return onlySupported;
+    }
+
+    /**
      * Stably sorts the provided {@code list} in-place, in order of decreasing score.
      */
     private static <T> void sortByScore(List<T> list, final ScoreProvider<T> scoreProvider) {

@@ -13,6 +13,6 @@
 
   <dimen name="use_weight">0dp</dimen>
   <dimen name="list_item_text">12sp</dimen>
-  <dimen name="list_item_padding">6dp</dimen>
+  <dimen name="list_item_padding">4dp</dimen>
 
 </resources>

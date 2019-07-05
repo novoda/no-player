@@ -2,6 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.Nullable;
@@ -15,6 +16,7 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.novoda.noplayer.model.PlayerVideoTrackCodecMapping;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +33,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
     private static final int LEVEL_FOUR = 4;
     private static final int LEVEL_EIGHT = 8;
     private static final int LEVEL_NINE = 9;
+    private static final String TAG = MediaCodecVideoRendererWithSimplifiedDrmRequirement.class.getSimpleName();
 
     private final boolean requiresSecureDecoder;
 
@@ -84,7 +87,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                 requiresTunnelingDecoder
         );
 
-        decoderInfos = InternalMediaCodecUtil.getDecoderInfosSortedByFormatSupport(decoderInfos, format);
+        decoderInfos = InternalMediaCodecUtil.getOnlySupportedDecoderInfos(decoderInfos, format);
 
         if (MimeTypes.VIDEO_DOLBY_VISION.equals(format.sampleMimeType)) {
             // Fallback to primary decoders for H.265/HEVC or H.264/AVC for the relevant DV profiles.
@@ -110,6 +113,26 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
             }
         }
 
+        saveTrackCodecMapping(format.codecs, decoderInfos);
+
+        printDecoderInfos(format.codecs, decoderInfos);
+
         return Collections.unmodifiableList(decoderInfos);
+    }
+
+    private static void saveTrackCodecMapping(String trackCodecName, List<MediaCodecInfo> decoderInfos) {
+        new PlayerVideoTrackCodecMapping().addTrackCodec(trackCodecName, codecName(decoderInfos));
+    }
+
+    private static String codecName(List<MediaCodecInfo> decoderInfos) {
+        return decoderInfos.isEmpty() ? "no codec available" : decoderInfos.get(0).name;
+
+    }
+
+    private static void printDecoderInfos(String codecs, List<MediaCodecInfo> decoderInfos) {
+        Log.v(TAG, "track with codec: " + codecs + ", has " + decoderInfos.size() + " available decoders");
+        for (MediaCodecInfo decoderInfo : decoderInfos) {
+            Log.v(TAG, "- decoder name: " + decoderInfo.name);
+        }
     }
 }
