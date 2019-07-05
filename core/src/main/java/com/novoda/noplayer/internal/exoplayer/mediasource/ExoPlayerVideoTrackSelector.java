@@ -39,7 +39,7 @@ public class ExoPlayerVideoTrackSelector {
 
         List<PlayerVideoTrack> videoTracks = new ArrayList<>();
 
-        PlayerVideoTrackCodecMapping trackCodecMapping = PlayerVideoTrackCodecMapping.getInstance();
+        PlayerVideoTrackCodecMapping trackCodecMapping = new PlayerVideoTrackCodecMapping();
 
         for (int groupIndex = 0; groupIndex < trackGroups.length; groupIndex++) {
             TrackGroup trackGroup = trackGroups.get(groupIndex);

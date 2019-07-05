@@ -121,7 +121,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
     }
 
     private static void saveTrackCodecMapping(String trackCodecName, List<MediaCodecInfo> decoderInfos) {
-        PlayerVideoTrackCodecMapping.getInstance().addTrackCodec(trackCodecName, codecName(decoderInfos));
+        new PlayerVideoTrackCodecMapping().addTrackCodec(trackCodecName, codecName(decoderInfos));
     }
 
     private static String codecName(List<MediaCodecInfo> decoderInfos) {
