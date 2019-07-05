@@ -51,7 +51,7 @@ class InternalMediaCodecUtil {
 
     /**
      *
-     * Returns a list of decoders that supports the procided format
+     * Returns a list of decoders that supports the provided format
      */
     static List<MediaCodecInfo> getOnlySupportedDecoderInfos(List<MediaCodecInfo> decoderInfos, Format format) {
         List<MediaCodecInfo> onlySupported = new ArrayList<>();
