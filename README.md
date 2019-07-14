@@ -69,12 +69,12 @@ compileOptions {
  3. Attach to a `PlayerView`:
 
     ```java
-    PlayerView playerView = findViewById(R.id.player_view);
+    NoPlayerView playerView = findViewById(R.id.player_view);
     player.attach(playerView);
     ```
     
     ```kotlin
-    val playerView: PlayerView = findViewById(R.id.player_view)
+    val playerView = findViewById<NoPlayerView>(R.id.player_view)
     player.attach(playerView)
     ```
 
