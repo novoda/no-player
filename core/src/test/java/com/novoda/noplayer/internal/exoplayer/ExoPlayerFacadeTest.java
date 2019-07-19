@@ -187,6 +187,7 @@ public class ExoPlayerFacadeTest {
             Options options = OPTIONS.toOptionsBuilder()
                     .withInitialAdvertBreakPositionInMillis(TWENTY_FIVE_SECONDS_IN_MILLIS)
                     .build();
+            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, allowFallbackDecoder, requiresSecureDecoder, options, trackSelector.trackSelector())).willReturn(exoPlayer);
             given(optionalAdsLoader.isPresent()).willReturn(true);
             given(optionalAdsLoader.get()).willReturn(adsLoader);
 
@@ -200,6 +201,7 @@ public class ExoPlayerFacadeTest {
             Options options = OPTIONS.toOptionsBuilder()
                     .withInitialPositionInMillis(TWENTY_FIVE_SECONDS_IN_MILLIS)
                     .build();
+            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, allowFallbackDecoder, requiresSecureDecoder, options, trackSelector.trackSelector())).willReturn(exoPlayer);
             given(optionalAdsLoader.isPresent()).willReturn(true);
             given(optionalAdsLoader.get()).willReturn(adsLoader);
 
@@ -275,6 +277,7 @@ public class ExoPlayerFacadeTest {
             Options options = OPTIONS.toOptionsBuilder()
                     .withInitialPositionInMillis(TWENTY_FIVE_SECONDS_IN_MILLIS)
                     .build();
+            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, allowFallbackDecoder, requiresSecureDecoder, options, trackSelector.trackSelector())).willReturn(exoPlayer);
             MediaSource mediaSource = givenMediaSource(options);
 
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, options, exoPlayerForwarder, allowFallbackDecoder, requiresSecureDecoder);
@@ -424,6 +427,7 @@ public class ExoPlayerFacadeTest {
 
         private void givenPlayerIsLoaded() {
             givenMediaSource(OPTIONS);
+            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, allowFallbackDecoder, requiresSecureDecoder, OPTIONS, trackSelector.trackSelector())).willReturn(exoPlayer);
             facade.loadVideo(surfaceViewHolder, drmSessionCreator, uri, OPTIONS, exoPlayerForwarder, allowFallbackDecoder, requiresSecureDecoder);
         }
 
@@ -837,6 +841,8 @@ public class ExoPlayerFacadeTest {
         SurfaceView surfaceView;
         @Mock
         TextureView textureView;
+        @Mock
+        ExoPlayerCreator exoPlayerCreator;
         PlayerSurfaceHolder surfaceViewHolder;
         PlayerSurfaceHolder textureViewHolder;
 
@@ -844,7 +850,6 @@ public class ExoPlayerFacadeTest {
 
         @Before
         public void setUp() {
-            ExoPlayerCreator exoPlayerCreator = mock(ExoPlayerCreator.class);
             given(exoPlayerForwarder.drmSessionEventListener()).willReturn(drmSessionEventListener);
             given(exoPlayerForwarder.mediaSourceEventListener()).willReturn(mediaSourceEventListener);
             given(exoPlayerForwarder.advertListener()).willReturn(optionalAdvertListener);
