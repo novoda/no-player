@@ -103,6 +103,8 @@ public class OptionsBuilder {
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} with the given unsupported video decoders,
      * which will be removed from the codec selection.
+     * <p>
+     * NOTE: This will do nothing unless {@link PlayerBuilder#allowFallbackDecoders()} is enabled.
      *
      * @param unsupportedVideoDecoders that should be removed when selecting codecs.
      * @return {@link OptionsBuilder}.
@@ -112,8 +114,17 @@ public class OptionsBuilder {
         return this;
     }
 
-    public OptionsBuilder withSecureDecoderRequiredForHD(int hdQualityThreshold) {
-        this.hdQualityThreshold = Optional.fromNullable(hdQualityThreshold);
+    /**
+     * Sets {@link OptionsBuilder} to build {@link Options} with the given HD quality bitrate threshold,
+     * which will remove all non-secure codecs from HD tracks.
+     * <p>
+     * NOTE: This will do nothing unless {@link PlayerBuilder#allowFallbackDecoders()} is enabled.
+     *
+     * @param hdQualityBitrateThreshold at which tracks will be considered HD.
+     * @return {@link OptionsBuilder}.
+     */
+    public OptionsBuilder withSecureDecoderRequiredForHD(int hdQualityBitrateThreshold) {
+        this.hdQualityThreshold = Optional.fromNullable(hdQualityBitrateThreshold);
         return this;
     }
 
