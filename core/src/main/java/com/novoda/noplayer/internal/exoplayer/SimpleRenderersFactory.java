@@ -117,6 +117,8 @@ class SimpleRenderersFactory implements RenderersFactory {
      * @param hdQualityBitrateThreshold The threshold over which secure decoders must be present.
      * @param subtitleDecoderFactory    A factory from which to obtain {@link SubtitleDecoder} instances.
      */
+    // Lots of customisation here.
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     SimpleRenderersFactory(Context context,
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,

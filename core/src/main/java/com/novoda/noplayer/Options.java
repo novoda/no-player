@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * Options to customise the underlying player.
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class Options {
 
     private final ContentType contentType;
@@ -39,6 +40,8 @@ public class Options {
         return optionsBuilder;
     }
 
+    // There's a lot of customisation here.
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     Options(ContentType contentType,
             int minDurationBeforeQualityIncreaseInMillis,
             int maxInitialBitrate,
@@ -112,16 +115,20 @@ public class Options {
         if (contentType != options.contentType) {
             return false;
         }
-        if (initialPositionInMillis != null ? !initialPositionInMillis.equals(options.initialPositionInMillis) : options.initialPositionInMillis != null) {
+        if (initialPositionInMillis != null ? !initialPositionInMillis.equals(options.initialPositionInMillis)
+                : options.initialPositionInMillis != null) {
             return false;
         }
-        if (initialAdvertBreakPositionInMillis != null ? !initialAdvertBreakPositionInMillis.equals(options.initialAdvertBreakPositionInMillis) : options.initialAdvertBreakPositionInMillis != null) {
+        if (initialAdvertBreakPositionInMillis != null ? !initialAdvertBreakPositionInMillis.equals(options.initialAdvertBreakPositionInMillis)
+                : options.initialAdvertBreakPositionInMillis != null) {
             return false;
         }
-        if (unsupportedVideoDecoders != null ? !unsupportedVideoDecoders.equals(options.unsupportedVideoDecoders) : options.unsupportedVideoDecoders != null) {
+        if (unsupportedVideoDecoders != null ? !unsupportedVideoDecoders.equals(options.unsupportedVideoDecoders)
+                : options.unsupportedVideoDecoders != null) {
             return false;
         }
-        return hdQualityBitrateThreshold != null ? hdQualityBitrateThreshold.equals(options.hdQualityBitrateThreshold) : options.hdQualityBitrateThreshold == null;
+        return hdQualityBitrateThreshold != null ? hdQualityBitrateThreshold.equals(options.hdQualityBitrateThreshold)
+                : options.hdQualityBitrateThreshold == null;
     }
 
     @Override
