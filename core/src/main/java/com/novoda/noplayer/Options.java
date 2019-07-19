@@ -41,7 +41,7 @@ public class Options {
     }
 
     // There's a lot of customisation here.
-    @SuppressWarnings("PMD.ExcessiveParameterList")
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
     Options(ContentType contentType,
             int minDurationBeforeQualityIncreaseInMillis,
             int maxInitialBitrate,

@@ -52,7 +52,13 @@ import androidx.annotation.Nullable;
 /**
  * Default {@link RenderersFactory} implementation.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.StdCyclomaticComplexity", "PMD.ModifiedCyclomaticComplexity", "PMD.NPathComplexity"})
+@SuppressWarnings({
+        "PMD.CyclomaticComplexity",
+        "PMD.StdCyclomaticComplexity",
+        "PMD.ModifiedCyclomaticComplexity",
+        "PMD.NPathComplexity",
+        "PMD.ExcessiveImports"
+})
 class SimpleRenderersFactory implements RenderersFactory {
 
     private static final boolean DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS = false;
@@ -117,8 +123,7 @@ class SimpleRenderersFactory implements RenderersFactory {
      * @param hdQualityBitrateThreshold The threshold over which secure decoders must be present.
      * @param subtitleDecoderFactory    A factory from which to obtain {@link SubtitleDecoder} instances.
      */
-    // Lots of customisation here.
-    @SuppressWarnings("PMD.ExcessiveParameterList")
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
     SimpleRenderersFactory(Context context,
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,
