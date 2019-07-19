@@ -16,7 +16,7 @@ public class Options {
     private final Optional<Long> initialPositionInMillis;
     private final Optional<Long> initialAdvertBreakPositionInMillis;
     private final List<String> unsupportedVideoDecoders;
-    private final Optional<Integer> hdQualityThreshold;
+    private final Optional<Integer> hdQualityBitrateThreshold;
 
     /**
      * Creates a {@link OptionsBuilder} from this Options.
@@ -46,7 +46,7 @@ public class Options {
             Optional<Long> initialPositionInMillis,
             Optional<Long> initialAdvertBreakPositionInMillis,
             List<String> unsupportedVideoDecoders,
-            Optional<Integer> hdQualityThreshold) {
+            Optional<Integer> hdQualityBitrateThreshold) {
         this.contentType = contentType;
         this.minDurationBeforeQualityIncreaseInMillis = minDurationBeforeQualityIncreaseInMillis;
         this.maxInitialBitrate = maxInitialBitrate;
@@ -54,7 +54,7 @@ public class Options {
         this.initialPositionInMillis = initialPositionInMillis;
         this.initialAdvertBreakPositionInMillis = initialAdvertBreakPositionInMillis;
         this.unsupportedVideoDecoders = unsupportedVideoDecoders;
-        this.hdQualityThreshold = hdQualityThreshold;
+        this.hdQualityBitrateThreshold = hdQualityBitrateThreshold;
     }
 
     public ContentType contentType() {
@@ -85,8 +85,8 @@ public class Options {
         return unsupportedVideoDecoders;
     }
 
-    public Optional<Integer> getHdQualityThreshold() {
-        return hdQualityThreshold;
+    public Optional<Integer> getHdQualityBitrateThreshold() {
+        return hdQualityBitrateThreshold;
     }
 
     @Override
@@ -121,7 +121,7 @@ public class Options {
         if (unsupportedVideoDecoders != null ? !unsupportedVideoDecoders.equals(options.unsupportedVideoDecoders) : options.unsupportedVideoDecoders != null) {
             return false;
         }
-        return hdQualityThreshold != null ? hdQualityThreshold.equals(options.hdQualityThreshold) : options.hdQualityThreshold == null;
+        return hdQualityBitrateThreshold != null ? hdQualityBitrateThreshold.equals(options.hdQualityBitrateThreshold) : options.hdQualityBitrateThreshold == null;
     }
 
     @Override
@@ -133,7 +133,7 @@ public class Options {
         result = 31 * result + (initialPositionInMillis != null ? initialPositionInMillis.hashCode() : 0);
         result = 31 * result + (initialAdvertBreakPositionInMillis != null ? initialAdvertBreakPositionInMillis.hashCode() : 0);
         result = 31 * result + (unsupportedVideoDecoders != null ? unsupportedVideoDecoders.hashCode() : 0);
-        result = 31 * result + (hdQualityThreshold != null ? hdQualityThreshold.hashCode() : 0);
+        result = 31 * result + (hdQualityBitrateThreshold != null ? hdQualityBitrateThreshold.hashCode() : 0);
         return result;
     }
 
@@ -147,7 +147,7 @@ public class Options {
                 + ", initialPositionInMillis=" + initialPositionInMillis
                 + ", initialAdvertBreakPositionInMillis=" + initialAdvertBreakPositionInMillis
                 + ", unsupportedVideoDecoders=" + unsupportedVideoDecoders
-                + ", hdQualityThreshold=" + hdQualityThreshold
+                + ", hdQualityBitrateThreshold=" + hdQualityBitrateThreshold
                 + '}';
     }
 }

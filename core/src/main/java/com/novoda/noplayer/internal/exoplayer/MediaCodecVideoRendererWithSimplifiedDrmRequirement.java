@@ -38,7 +38,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
 
     private final boolean requiresSecureDecoder;
     private final List<String> unsupportedVideoDecoders;
-    private final Optional<Integer> hdQualityThreshold;
+    private final Optional<Integer> hdQualityBitrateThreshold;
 
     // Extension from MediaCodecVideoRenderer, we can't do anything about this.
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
@@ -50,7 +50,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                                                         boolean enableDecoderFallback,
                                                         boolean requiresSecureDecoder,
                                                         List<String> unsupportedVideoDecoders,
-                                                        Optional<Integer> hdQualityThreshold,
+                                                        Optional<Integer> hdQualityBitrateThreshold,
                                                         @Nullable Handler eventHandler,
                                                         @Nullable VideoRendererEventListener eventListener,
                                                         int maxDroppedFramesToNotify) {
@@ -67,7 +67,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
         );
         this.requiresSecureDecoder = requiresSecureDecoder;
         this.unsupportedVideoDecoders = unsupportedVideoDecoders;
-        this.hdQualityThreshold = hdQualityThreshold;
+        this.hdQualityBitrateThreshold = hdQualityBitrateThreshold;
     }
 
     @Override
@@ -80,7 +80,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                 requiresSecureDecoder(format),
                 getCodecNeedsEosPropagation(),
                 unsupportedVideoDecoders,
-                hdQualityThreshold
+                hdQualityBitrateThreshold
         );
     }
 
@@ -95,7 +95,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
             boolean requiresSecureDecoder,
             boolean requiresTunnelingDecoder,
             List<String> unsupportedVideoDecoders,
-            Optional<Integer> hdQualityThreshold)
+            Optional<Integer> hdQualityBitrateThreshold)
             throws MediaCodecUtil.DecoderQueryException {
         List<MediaCodecInfo> decoderInfos = mediaCodecSelector.getDecoderInfos(
                 format.sampleMimeType,
@@ -130,8 +130,8 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
         }
 
         decoderInfos = InternalMediaCodecUtil.removeUnsupportedVideoDecoders(decoderInfos, unsupportedVideoDecoders);
-        if (hdQualityThreshold.isPresent()) {
-            decoderInfos = InternalMediaCodecUtil.removeAllUnsecureDecodersFromHdTrack(format, decoderInfos, hdQualityThreshold.get());
+        if (hdQualityBitrateThreshold.isPresent()) {
+            decoderInfos = InternalMediaCodecUtil.removeAllUnsecureDecodersFromHdTrack(format, decoderInfos, hdQualityBitrateThreshold.get());
         }
 
         saveTrackCodecMapping(format.codecs, decoderInfos);

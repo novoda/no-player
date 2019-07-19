@@ -45,7 +45,7 @@ class ExoPlayerCreator {
                 allowFallbackDecoder,
                 requiresSecureDecoder,
                 options.getUnsupportedVideoDecoders(),
-                options.getHdQualityThreshold(),
+                options.getHdQualityBitrateThreshold(),
                 subtitleDecoderFactory
         );
 

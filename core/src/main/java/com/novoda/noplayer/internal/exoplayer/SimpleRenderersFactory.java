@@ -102,7 +102,7 @@ class SimpleRenderersFactory implements RenderersFactory {
     private final boolean allowFallbackDecoder;
     private final boolean requiresSecureDecoder;
     private final List<String> unsupportedVideoDecoders;
-    private final Optional<Integer> hdQualityThreshold;
+    private final Optional<Integer> hdQualityBitrateThreshold;
     private final SubtitleDecoderFactory subtitleDecoderFactory;
 
     /**
@@ -113,8 +113,8 @@ class SimpleRenderersFactory implements RenderersFactory {
      * @param allowedVideoJoiningTimeMs The maximum duration for which video renderers can attempt
      *                                  to seamlessly join an ongoing playback.
      * @param allowFallbackDecoder      Used for selecting the codec for the video renderer.
-     * @param unsupportedVideoDecoders
-     * @param hdQualityThreshold
+     * @param unsupportedVideoDecoders  The decoders to remove from the list of supported codecs.
+     * @param hdQualityBitrateThreshold The threshold over which secure decoders must be present.
      * @param subtitleDecoderFactory    A factory from which to obtain {@link SubtitleDecoder} instances.
      */
     SimpleRenderersFactory(Context context,
@@ -123,7 +123,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                            boolean allowFallbackDecoder,
                            boolean requiresSecureDecoder,
                            List<String> unsupportedVideoDecoders,
-                           Optional<Integer> hdQualityThreshold,
+                           Optional<Integer> hdQualityBitrateThreshold,
                            SubtitleDecoderFactory subtitleDecoderFactory) {
         this.context = context;
         this.extensionRendererMode = extensionRendererMode;
@@ -131,7 +131,7 @@ class SimpleRenderersFactory implements RenderersFactory {
         this.allowFallbackDecoder = allowFallbackDecoder;
         this.requiresSecureDecoder = requiresSecureDecoder;
         this.unsupportedVideoDecoders = unsupportedVideoDecoders;
-        this.hdQualityThreshold = hdQualityThreshold;
+        this.hdQualityBitrateThreshold = hdQualityBitrateThreshold;
         this.subtitleDecoderFactory = subtitleDecoderFactory;
     }
 
@@ -188,7 +188,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                     ENABLE_DECODER_FALLBACK,
                     requiresSecureDecoder,
                     unsupportedVideoDecoders,
-                    hdQualityThreshold,
+                    hdQualityBitrateThreshold,
                     eventHandler,
                     eventListener,
                     MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
