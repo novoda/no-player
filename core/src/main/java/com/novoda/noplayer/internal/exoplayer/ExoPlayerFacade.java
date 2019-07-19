@@ -208,7 +208,7 @@ class ExoPlayerFacade {
                 forwarder.drmSessionEventListener(),
                 allowFallbackDecoder,
                 requiresSecureDecoder,
-                options.getUnsupportedVideoDecoders(),
+                options,
                 compositeTrackSelector.trackSelector()
         );
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);

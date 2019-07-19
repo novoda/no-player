@@ -80,6 +80,20 @@ class InternalMediaCodecUtil {
         return onlySupported;
     }
 
+    static List<MediaCodecInfo> removeAllUnsecureDecodersFromHdTrack(Format format, List<MediaCodecInfo> decoderInfos, int hdQualityThreshold) {
+        if (format.bitrate < hdQualityThreshold) {
+            return decoderInfos;
+        }
+
+        List<MediaCodecInfo> onlySupported = new ArrayList<>(decoderInfos);
+        for (MediaCodecInfo decoderInfo : decoderInfos) {
+            if (!decoderInfo.secure) {
+                onlySupported.remove(decoderInfo);
+            }
+        }
+        return onlySupported;
+    }
+
     /**
      * Stably sorts the provided {@code list} in-place, in order of decreasing score.
      */

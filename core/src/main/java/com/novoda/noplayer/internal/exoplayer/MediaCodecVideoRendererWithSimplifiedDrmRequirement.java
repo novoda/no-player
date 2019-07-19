@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.PlayerVideoTrackCodecMapping;
 
 import java.util.Collections;
@@ -37,6 +38,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
 
     private final boolean requiresSecureDecoder;
     private final List<String> unsupportedVideoDecoders;
+    private final Optional<Integer> hdQualityThreshold;
 
     // Extension from MediaCodecVideoRenderer, we can't do anything about this.
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
@@ -48,6 +50,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                                                         boolean enableDecoderFallback,
                                                         boolean requiresSecureDecoder,
                                                         List<String> unsupportedVideoDecoders,
+                                                        Optional<Integer> hdQualityThreshold,
                                                         @Nullable Handler eventHandler,
                                                         @Nullable VideoRendererEventListener eventListener,
                                                         int maxDroppedFramesToNotify) {
@@ -64,13 +67,21 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
         );
         this.requiresSecureDecoder = requiresSecureDecoder;
         this.unsupportedVideoDecoders = unsupportedVideoDecoders;
+        this.hdQualityThreshold = hdQualityThreshold;
     }
 
     @Override
     protected List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector,
                                                    Format format,
                                                    boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
-        return getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder(format), getCodecNeedsEosPropagation(), unsupportedVideoDecoders);
+        return getDecoderInfos(
+                mediaCodecSelector,
+                format,
+                requiresSecureDecoder(format),
+                getCodecNeedsEosPropagation(),
+                unsupportedVideoDecoders,
+                hdQualityThreshold
+        );
     }
 
     private boolean requiresSecureDecoder(Format format) {
@@ -83,7 +94,8 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
             Format format,
             boolean requiresSecureDecoder,
             boolean requiresTunnelingDecoder,
-            List<String> unsupportedVideoDecoders)
+            List<String> unsupportedVideoDecoders,
+            Optional<Integer> hdQualityThreshold)
             throws MediaCodecUtil.DecoderQueryException {
         List<MediaCodecInfo> decoderInfos = mediaCodecSelector.getDecoderInfos(
                 format.sampleMimeType,
@@ -118,6 +130,10 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
         }
 
         decoderInfos = InternalMediaCodecUtil.removeUnsupportedVideoDecoders(decoderInfos, unsupportedVideoDecoders);
+        if (hdQualityThreshold.isPresent()) {
+            decoderInfos = InternalMediaCodecUtil.removeAllUnsecureDecodersFromHdTrack(format, decoderInfos, hdQualityThreshold.get());
+        }
+
         saveTrackCodecMapping(format.codecs, decoderInfos);
 
         printDecoderInfos(format.codecs, decoderInfos);

@@ -793,7 +793,6 @@ public class ExoPlayerFacadeTest {
         static final float ANY_VOLUME = 0.5f;
         static final boolean allowFallbackDecoder = true;
         static final boolean requiresSecureDecoder = true;
-        static final List<String> unsupportedVideoDecoders = Collections.emptyList();
 
         @Rule
         public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -851,7 +850,7 @@ public class ExoPlayerFacadeTest {
             given(exoPlayerForwarder.advertListener()).willReturn(optionalAdvertListener);
             given(bandwidthMeterCreator.create(anyLong())).willReturn(defaultBandwidthMeter);
             given(trackSelectorCreator.create(any(Options.class), eq(defaultBandwidthMeter))).willReturn(trackSelector);
-            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, allowFallbackDecoder, requiresSecureDecoder, unsupportedVideoDecoders, trackSelector.trackSelector())).willReturn(exoPlayer);
+            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, allowFallbackDecoder, requiresSecureDecoder, OPTIONS, trackSelector.trackSelector())).willReturn(exoPlayer);
             willDoNothing().given(exoPlayer).seekTo(anyInt());
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(

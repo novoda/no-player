@@ -11,10 +11,9 @@ import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.text.SubtitleDecoderFactory;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.novoda.noplayer.Options;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.text.NoPlayerSubtitleDecoderFactory;
-
-import java.util.List;
 
 import androidx.annotation.NonNull;
 
@@ -35,7 +34,7 @@ class ExoPlayerCreator {
                                   DefaultDrmSessionEventListener drmSessionEventListener,
                                   boolean allowFallbackDecoder,
                                   boolean requiresSecureDecoder,
-                                  List<String> unsupportedVideoDecoders,
+                                  Options options,
                                   TrackSelector trackSelector) {
         DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = drmSessionCreator.create(drmSessionEventListener);
         SubtitleDecoderFactory subtitleDecoderFactory = new NoPlayerSubtitleDecoderFactory();
@@ -45,7 +44,8 @@ class ExoPlayerCreator {
                 DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS,
                 allowFallbackDecoder,
                 requiresSecureDecoder,
-                unsupportedVideoDecoders,
+                options.getUnsupportedVideoDecoders(),
+                options.getHdQualityThreshold(),
                 subtitleDecoderFactory
         );
 
