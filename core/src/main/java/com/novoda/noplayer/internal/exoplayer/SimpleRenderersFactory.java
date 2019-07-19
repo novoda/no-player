@@ -20,9 +20,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import androidx.annotation.IntDef;
-import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.audio.AudioCapabilities;
@@ -47,6 +44,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
 
 /**
  * Default {@link RenderersFactory} implementation.
@@ -100,6 +100,7 @@ class SimpleRenderersFactory implements RenderersFactory {
     private final long allowedVideoJoiningTimeMs;
     private final boolean allowFallbackDecoder;
     private final boolean requiresSecureDecoder;
+    private final List<String> unsupportedVideoDecoders;
     private final SubtitleDecoderFactory subtitleDecoderFactory;
 
     /**
@@ -110,6 +111,7 @@ class SimpleRenderersFactory implements RenderersFactory {
      * @param allowedVideoJoiningTimeMs The maximum duration for which video renderers can attempt
      *                                  to seamlessly join an ongoing playback.
      * @param allowFallbackDecoder      Used for selecting the codec for the video renderer.
+     * @param unsupportedVideoDecoders
      * @param subtitleDecoderFactory    A factory from which to obtain {@link SubtitleDecoder} instances.
      */
     SimpleRenderersFactory(Context context,
@@ -117,12 +119,14 @@ class SimpleRenderersFactory implements RenderersFactory {
                            long allowedVideoJoiningTimeMs,
                            boolean allowFallbackDecoder,
                            boolean requiresSecureDecoder,
+                           List<String> unsupportedVideoDecoders,
                            SubtitleDecoderFactory subtitleDecoderFactory) {
         this.context = context;
         this.extensionRendererMode = extensionRendererMode;
         this.allowedVideoJoiningTimeMs = allowedVideoJoiningTimeMs;
         this.allowFallbackDecoder = allowFallbackDecoder;
         this.requiresSecureDecoder = requiresSecureDecoder;
+        this.unsupportedVideoDecoders = unsupportedVideoDecoders;
         this.subtitleDecoderFactory = subtitleDecoderFactory;
     }
 
@@ -178,6 +182,7 @@ class SimpleRenderersFactory implements RenderersFactory {
                     DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
                     ENABLE_DECODER_FALLBACK,
                     requiresSecureDecoder,
+                    unsupportedVideoDecoders,
                     eventHandler,
                     eventListener,
                     MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY

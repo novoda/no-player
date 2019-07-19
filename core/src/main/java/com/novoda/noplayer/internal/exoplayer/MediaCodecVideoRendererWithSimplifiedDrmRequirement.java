@@ -5,8 +5,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
 
-import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
@@ -20,6 +18,8 @@ import com.novoda.noplayer.model.PlayerVideoTrackCodecMapping;
 
 import java.util.Collections;
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 /**
  * Relaxes the Drm requirement so that a secure decoder is selected in the event that `DrmInitData` is present.
@@ -36,6 +36,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
     private static final String TAG = MediaCodecVideoRendererWithSimplifiedDrmRequirement.class.getSimpleName();
 
     private final boolean requiresSecureDecoder;
+    private final List<String> unsupportedVideoDecoders;
 
     // Extension from MediaCodecVideoRenderer, we can't do anything about this.
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
@@ -46,6 +47,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                                                         boolean playClearSamplesWithoutKeys,
                                                         boolean enableDecoderFallback,
                                                         boolean requiresSecureDecoder,
+                                                        List<String> unsupportedVideoDecoders,
                                                         @Nullable Handler eventHandler,
                                                         @Nullable VideoRendererEventListener eventListener,
                                                         int maxDroppedFramesToNotify) {
@@ -61,6 +63,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                 maxDroppedFramesToNotify
         );
         this.requiresSecureDecoder = requiresSecureDecoder;
+        this.unsupportedVideoDecoders = unsupportedVideoDecoders;
     }
 
     @Override

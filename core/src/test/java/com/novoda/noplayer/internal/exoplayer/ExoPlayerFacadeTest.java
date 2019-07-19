@@ -35,6 +35,9 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,9 +48,6 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-
-import java.util.Collections;
-import java.util.List;
 
 import utils.ExceptionMatcher;
 
@@ -793,6 +793,7 @@ public class ExoPlayerFacadeTest {
         static final float ANY_VOLUME = 0.5f;
         static final boolean allowFallbackDecoder = true;
         static final boolean requiresSecureDecoder = true;
+        static final List<String> unsupportedVideoDecoders = Collections.emptyList();
 
         @Rule
         public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -850,7 +851,7 @@ public class ExoPlayerFacadeTest {
             given(exoPlayerForwarder.advertListener()).willReturn(optionalAdvertListener);
             given(bandwidthMeterCreator.create(anyLong())).willReturn(defaultBandwidthMeter);
             given(trackSelectorCreator.create(any(Options.class), eq(defaultBandwidthMeter))).willReturn(trackSelector);
-            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, allowFallbackDecoder, requiresSecureDecoder, trackSelector.trackSelector())).willReturn(exoPlayer);
+            given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, allowFallbackDecoder, requiresSecureDecoder, unsupportedVideoDecoders, trackSelector.trackSelector())).willReturn(exoPlayer);
             willDoNothing().given(exoPlayer).seekTo(anyInt());
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
             facade = new ExoPlayerFacade(
