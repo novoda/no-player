@@ -70,7 +70,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
     protected List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector,
                                                    Format format,
                                                    boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
-        return getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder(format), getCodecNeedsEosPropagation());
+        return getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder(format), getCodecNeedsEosPropagation(), unsupportedVideoDecoders);
     }
 
     private boolean requiresSecureDecoder(Format format) {
@@ -82,7 +82,8 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
             MediaCodecSelector mediaCodecSelector,
             Format format,
             boolean requiresSecureDecoder,
-            boolean requiresTunnelingDecoder)
+            boolean requiresTunnelingDecoder,
+            List<String> unsupportedVideoDecoders)
             throws MediaCodecUtil.DecoderQueryException {
         List<MediaCodecInfo> decoderInfos = mediaCodecSelector.getDecoderInfos(
                 format.sampleMimeType,
@@ -116,6 +117,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
             }
         }
 
+        decoderInfos = InternalMediaCodecUtil.removeUnsupportedVideoDecoders(decoderInfos, unsupportedVideoDecoders);
         saveTrackCodecMapping(format.codecs, decoderInfos);
 
         printDecoderInfos(format.codecs, decoderInfos);
