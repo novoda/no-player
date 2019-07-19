@@ -106,7 +106,7 @@ public class OptionsBuilder {
      * <p>
      * NOTE: This will do nothing unless {@link PlayerBuilder#allowFallbackDecoders()} is enabled.
      *
-     * @param unsupportedVideoDecoders that should be removed when selecting codecs.
+     * @param unsupportedVideoDecoders The names of the codecs that should be removed when selecting codecs.
      * @return {@link OptionsBuilder}.
      */
     public OptionsBuilder withUnsupportedVideoDecoders(List<String> unsupportedVideoDecoders) {
