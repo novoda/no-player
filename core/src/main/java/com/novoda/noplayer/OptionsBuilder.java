@@ -23,6 +23,7 @@ public class OptionsBuilder {
     private Optional<Long> initialPositionInMillis = Optional.absent();
     private Optional<Long> initialAdvertBreakPositionInMillis = Optional.absent();
     private List<String> unsupportedVideoDecoders = Collections.emptyList();
+    private Optional<Integer> hdQualityThreshold = Optional.absent();
 
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} with a given {@link ContentType}.
@@ -111,6 +112,11 @@ public class OptionsBuilder {
         return this;
     }
 
+    public OptionsBuilder withSecureDecoderRequiredForHD(int hdQualityThreshold) {
+        this.hdQualityThreshold = Optional.fromNullable(hdQualityThreshold);
+        return this;
+    }
+
     /**
      * Builds a new {@link Options} instance.
      *
@@ -124,7 +130,8 @@ public class OptionsBuilder {
                 maxVideoBitrate,
                 initialPositionInMillis,
                 initialAdvertBreakPositionInMillis,
-                unsupportedVideoDecoders
+                unsupportedVideoDecoders,
+                hdQualityThreshold
         );
     }
 }
