@@ -20,9 +20,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import androidx.annotation.IntDef;
-import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.audio.AudioCapabilities;
@@ -41,6 +38,7 @@ import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.novoda.noplayer.internal.utils.Optional;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -48,10 +46,19 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
+
 /**
  * Default {@link RenderersFactory} implementation.
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.StdCyclomaticComplexity", "PMD.ModifiedCyclomaticComplexity", "PMD.NPathComplexity"})
+@SuppressWarnings({
+        "PMD.CyclomaticComplexity",
+        "PMD.StdCyclomaticComplexity",
+        "PMD.ModifiedCyclomaticComplexity",
+        "PMD.NPathComplexity",
+        "PMD.ExcessiveImports"
+})
 class SimpleRenderersFactory implements RenderersFactory {
 
     private static final boolean DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS = false;
@@ -100,6 +107,8 @@ class SimpleRenderersFactory implements RenderersFactory {
     private final long allowedVideoJoiningTimeMs;
     private final boolean allowFallbackDecoder;
     private final boolean requiresSecureDecoder;
+    private final List<String> unsupportedVideoDecoders;
+    private final Optional<Integer> hdQualityBitrateThreshold;
     private final SubtitleDecoderFactory subtitleDecoderFactory;
 
     /**
@@ -110,19 +119,26 @@ class SimpleRenderersFactory implements RenderersFactory {
      * @param allowedVideoJoiningTimeMs The maximum duration for which video renderers can attempt
      *                                  to seamlessly join an ongoing playback.
      * @param allowFallbackDecoder      Used for selecting the codec for the video renderer.
+     * @param unsupportedVideoDecoders  The decoders to remove from the list of supported codecs.
+     * @param hdQualityBitrateThreshold The threshold over which secure decoders must be present.
      * @param subtitleDecoderFactory    A factory from which to obtain {@link SubtitleDecoder} instances.
      */
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
     SimpleRenderersFactory(Context context,
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,
                            boolean allowFallbackDecoder,
                            boolean requiresSecureDecoder,
+                           List<String> unsupportedVideoDecoders,
+                           Optional<Integer> hdQualityBitrateThreshold,
                            SubtitleDecoderFactory subtitleDecoderFactory) {
         this.context = context;
         this.extensionRendererMode = extensionRendererMode;
         this.allowedVideoJoiningTimeMs = allowedVideoJoiningTimeMs;
         this.allowFallbackDecoder = allowFallbackDecoder;
         this.requiresSecureDecoder = requiresSecureDecoder;
+        this.unsupportedVideoDecoders = unsupportedVideoDecoders;
+        this.hdQualityBitrateThreshold = hdQualityBitrateThreshold;
         this.subtitleDecoderFactory = subtitleDecoderFactory;
     }
 
@@ -178,6 +194,8 @@ class SimpleRenderersFactory implements RenderersFactory {
                     DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
                     ENABLE_DECODER_FALLBACK,
                     requiresSecureDecoder,
+                    unsupportedVideoDecoders,
+                    hdQualityBitrateThreshold,
                     eventHandler,
                     eventListener,
                     MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY

@@ -2,8 +2,6 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 
-import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -27,6 +25,8 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 // Not much we can do, wrapping ExoPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
@@ -208,6 +208,7 @@ class ExoPlayerFacade {
                 forwarder.drmSessionEventListener(),
                 allowFallbackDecoder,
                 requiresSecureDecoder,
+                options,
                 compositeTrackSelector.trackSelector()
         );
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);

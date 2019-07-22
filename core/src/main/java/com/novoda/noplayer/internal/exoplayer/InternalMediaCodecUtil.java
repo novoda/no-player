@@ -1,7 +1,5 @@
 package com.novoda.noplayer.internal.exoplayer;
 
-import androidx.annotation.CheckResult;
-
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
@@ -10,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import androidx.annotation.CheckResult;
 
 class InternalMediaCodecUtil {
 
@@ -50,7 +50,6 @@ class InternalMediaCodecUtil {
     }
 
     /**
-     *
      * Returns a list of decoders that supports the provided format
      */
     static List<MediaCodecInfo> getOnlySupportedDecoderInfos(List<MediaCodecInfo> decoderInfos, Format format) {
@@ -65,6 +64,33 @@ class InternalMediaCodecUtil {
             }
         }
 
+        return onlySupported;
+    }
+
+    static List<MediaCodecInfo> removeUnsupportedVideoDecoders(List<MediaCodecInfo> decoderInfos, List<String> unsupportedDecoders) {
+        List<MediaCodecInfo> onlySupported = new ArrayList<>(decoderInfos);
+        for (MediaCodecInfo decoderInfo : decoderInfos) {
+            for (String unsupportedDecoder : unsupportedDecoders) {
+                if (decoderInfo.name.equalsIgnoreCase(unsupportedDecoder)) {
+                    onlySupported.remove(decoderInfo);
+                    break;
+                }
+            }
+        }
+        return onlySupported;
+    }
+
+    static List<MediaCodecInfo> removeAllUnsecureDecodersFromHdTrack(Format format, List<MediaCodecInfo> decoderInfos, int hdQualityThreshold) {
+        if (format.bitrate < hdQualityThreshold) {
+            return decoderInfos;
+        }
+
+        List<MediaCodecInfo> onlySupported = new ArrayList<>(decoderInfos);
+        for (MediaCodecInfo decoderInfo : decoderInfos) {
+            if (!decoderInfo.secure) {
+                onlySupported.remove(decoderInfo);
+            }
+        }
         return onlySupported;
     }
 

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import androidx.annotation.Nullable;
-
 import com.novoda.noplayer.drm.DrmType;
 import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.drm.ModularDrmKeyRequest;
@@ -19,6 +17,8 @@ import com.novoda.noplayer.model.KeySetId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 /**
  * Builds instances of {@link NoPlayer} for given configurations.
@@ -131,6 +131,8 @@ public class PlayerBuilder {
 
     /**
      * Will indicate the engine that it requires secure decoders.
+     * <p>
+     * NOTE: This will do nothing unless {@link PlayerBuilder#allowFallbackDecoders()} is enabled.
      *
      * @return {@link PlayerBuilder}
      */

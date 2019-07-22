@@ -4,6 +4,9 @@ import android.net.Uri;
 
 import com.novoda.noplayer.internal.utils.Optional;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Builds instances of {@link Options} for {@link NoPlayer#loadVideo(Uri, Options)}.
  */
@@ -19,6 +22,8 @@ public class OptionsBuilder {
     private int maxVideoBitrate = DEFAULT_MAX_VIDEO_BITRATE;
     private Optional<Long> initialPositionInMillis = Optional.absent();
     private Optional<Long> initialAdvertBreakPositionInMillis = Optional.absent();
+    private List<String> unsupportedVideoDecoders = Collections.emptyList();
+    private Optional<Integer> hdQualityThreshold = Optional.absent();
 
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} with a given {@link ContentType}.
@@ -96,6 +101,34 @@ public class OptionsBuilder {
     }
 
     /**
+     * Sets {@link OptionsBuilder} to build {@link Options} with the given unsupported video decoders,
+     * which will be removed from the codec selection.
+     * <p>
+     * NOTE: This will do nothing unless {@link PlayerBuilder#allowFallbackDecoders()} is enabled.
+     *
+     * @param unsupportedVideoDecoders The names of the codecs that should be removed when selecting codecs.
+     * @return {@link OptionsBuilder}.
+     */
+    public OptionsBuilder withUnsupportedVideoDecoders(List<String> unsupportedVideoDecoders) {
+        this.unsupportedVideoDecoders = unsupportedVideoDecoders;
+        return this;
+    }
+
+    /**
+     * Sets {@link OptionsBuilder} to build {@link Options} with the given HD quality bitrate threshold,
+     * which will remove all non-secure codecs from HD tracks.
+     * <p>
+     * NOTE: This will do nothing unless {@link PlayerBuilder#allowFallbackDecoders()} is enabled.
+     *
+     * @param hdQualityBitrateThreshold at which tracks will be considered HD.
+     * @return {@link OptionsBuilder}.
+     */
+    public OptionsBuilder withSecureDecoderRequiredForHD(int hdQualityBitrateThreshold) {
+        this.hdQualityThreshold = Optional.fromNullable(hdQualityBitrateThreshold);
+        return this;
+    }
+
+    /**
      * Builds a new {@link Options} instance.
      *
      * @return a {@link Options} instance.
@@ -107,6 +140,9 @@ public class OptionsBuilder {
                 maxInitialBitrate,
                 maxVideoBitrate,
                 initialPositionInMillis,
-                initialAdvertBreakPositionInMillis);
+                initialAdvertBreakPositionInMillis,
+                unsupportedVideoDecoders,
+                hdQualityThreshold
+        );
     }
 }

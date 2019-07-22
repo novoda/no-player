@@ -5,8 +5,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
 
-import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
@@ -16,10 +14,13 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.PlayerVideoTrackCodecMapping;
 
 import java.util.Collections;
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 /**
  * Relaxes the Drm requirement so that a secure decoder is selected in the event that `DrmInitData` is present.
@@ -36,6 +37,8 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
     private static final String TAG = MediaCodecVideoRendererWithSimplifiedDrmRequirement.class.getSimpleName();
 
     private final boolean requiresSecureDecoder;
+    private final List<String> unsupportedVideoDecoders;
+    private final Optional<Integer> hdQualityBitrateThreshold;
 
     // Extension from MediaCodecVideoRenderer, we can't do anything about this.
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
@@ -46,6 +49,8 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                                                         boolean playClearSamplesWithoutKeys,
                                                         boolean enableDecoderFallback,
                                                         boolean requiresSecureDecoder,
+                                                        List<String> unsupportedVideoDecoders,
+                                                        Optional<Integer> hdQualityBitrateThreshold,
                                                         @Nullable Handler eventHandler,
                                                         @Nullable VideoRendererEventListener eventListener,
                                                         int maxDroppedFramesToNotify) {
@@ -61,13 +66,22 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                 maxDroppedFramesToNotify
         );
         this.requiresSecureDecoder = requiresSecureDecoder;
+        this.unsupportedVideoDecoders = unsupportedVideoDecoders;
+        this.hdQualityBitrateThreshold = hdQualityBitrateThreshold;
     }
 
     @Override
     protected List<MediaCodecInfo> getDecoderInfos(MediaCodecSelector mediaCodecSelector,
                                                    Format format,
                                                    boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
-        return getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder(format), getCodecNeedsEosPropagation());
+        return getDecoderInfos(
+                mediaCodecSelector,
+                format,
+                requiresSecureDecoder(format),
+                getCodecNeedsEosPropagation(),
+                unsupportedVideoDecoders,
+                hdQualityBitrateThreshold
+        );
     }
 
     private boolean requiresSecureDecoder(Format format) {
@@ -79,7 +93,9 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
             MediaCodecSelector mediaCodecSelector,
             Format format,
             boolean requiresSecureDecoder,
-            boolean requiresTunnelingDecoder)
+            boolean requiresTunnelingDecoder,
+            List<String> unsupportedVideoDecoders,
+            Optional<Integer> hdQualityBitrateThreshold)
             throws MediaCodecUtil.DecoderQueryException {
         List<MediaCodecInfo> decoderInfos = mediaCodecSelector.getDecoderInfos(
                 format.sampleMimeType,
@@ -111,6 +127,11 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
                     decoderInfos.addAll(infos);
                 }
             }
+        }
+
+        decoderInfos = InternalMediaCodecUtil.removeUnsupportedVideoDecoders(decoderInfos, unsupportedVideoDecoders);
+        if (hdQualityBitrateThreshold.isPresent()) {
+            decoderInfos = InternalMediaCodecUtil.removeAllUnsecureDecodersFromHdTrack(format, decoderInfos, hdQualityBitrateThreshold.get());
         }
 
         saveTrackCodecMapping(format.codecs, decoderInfos);
