@@ -4,11 +4,14 @@ import com.google.android.exoplayer2.C;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 
+import java.io.IOException;
 import java.util.List;
 
 class AdvertState {
 
     interface Callback {
+
+        void onHandledPrepareError(int currentAdvertBreakIndex, int currentAdvertIndex, Advert advert, IOException exception);
 
         void onAdvertBreakStart(AdvertBreak advertBreak);
 
@@ -29,6 +32,8 @@ class AdvertState {
         void onAdvertSkipped(int advertBreakIndex, int advertIndex, Advert advert);
 
         void onAdvertClicked(Advert advert);
+
+        void markAdvertResumePosition(long stopPositionInMillis);
     }
 
     private static final int INVALID_INDEX = -1;
@@ -44,6 +49,13 @@ class AdvertState {
     AdvertState(List<AdvertBreak> advertBreaks, Callback callback) {
         this.advertBreaks = advertBreaks;
         this.callback = callback;
+    }
+
+    void handlePrepareError(int currentAdvertBreakIndex, int currentAdvertIndex, IOException exception) {
+        AdvertBreak advertBreak = advertBreaks.get(currentAdvertBreakIndex);
+        Advert advert = advertBreak.adverts().get(currentAdvertIndex);
+        callback.onHandledPrepareError(currentAdvertBreakIndex, currentAdvertIndex, advert, exception);
+        resetState();
     }
 
     void update(boolean isPlayingAdvert, int currentAdvertBreakIndex, int currentAdvertIndex) {
@@ -159,5 +171,13 @@ class AdvertState {
         }
 
         return C.msToUs(advertBreak.adverts().get(advertIndex).durationInMillis());
+    }
+
+    void stop(long stopPositionInMillis) {
+        resetState();
+
+        if (playingAdvert) {
+            callback.markAdvertResumePosition(stopPositionInMillis);
+        }
     }
 }
