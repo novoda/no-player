@@ -135,4 +135,13 @@ class AdvertState {
         resetState();
     }
 
+    void clickAdvert() {
+        if (advertBreakIndex < 0 || advertIndex < 0) {
+            return;
+        }
+
+        Advert advert = advertBreaks.get(advertBreakIndex).adverts().get(advertIndex);
+        advertListener.onAdvertClicked(advert);
+    }
+
 }

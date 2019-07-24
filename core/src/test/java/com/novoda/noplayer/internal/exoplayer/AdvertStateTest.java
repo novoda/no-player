@@ -253,4 +253,34 @@ public class AdvertStateTest {
         then(callback).shouldHaveNoMoreInteractions();
         then(advertListener).shouldHaveNoMoreInteractions();
     }
+
+    @Test
+    public void doesNotClickAdvert_whenPlayingContent() {
+        advertState.update(false, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
+        Mockito.reset(advertListener, callback);
+        advertState.clickAdvert();
+
+        then(advertListener).shouldHaveZeroInteractions();
+        then(callback).shouldHaveZeroInteractions();
+    }
+
+    @Test
+    public void doesNotClickAdvert_whenNotPlaying() {
+        advertState.clickAdvert();
+
+        then(advertListener).shouldHaveZeroInteractions();
+        then(callback).shouldHaveZeroInteractions();
+    }
+
+    @Test
+    public void clicksAdvert_whenPlayingAdverts() {
+        advertState.update(true, 0, 0);
+        Mockito.reset(advertListener, callback);
+        advertState.clickAdvert();
+
+        InOrder inOrder = Mockito.inOrder(advertListener, callback);
+        then(advertListener).should(inOrder).onAdvertClicked(FIRST_ADVERT);
+        then(callback).shouldHaveNoMoreInteractions();
+        then(advertListener).shouldHaveNoMoreInteractions();
+    }
 }
