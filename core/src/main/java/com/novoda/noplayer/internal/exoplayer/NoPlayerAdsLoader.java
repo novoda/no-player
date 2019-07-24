@@ -143,7 +143,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             loadingAds.cancel();
             loadingAds = null;
         }
-        if (adPlaybackState != null && player != null) {
+        if (adPlaybackState != null && player != null && advertState != null) {
             advertState.stop(player.getCurrentPosition());
         }
         eventListener = null;
