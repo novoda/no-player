@@ -1,5 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer;
 
+import com.google.android.exoplayer2.C;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.NoPlayer;
@@ -144,4 +145,16 @@ class AdvertState {
         advertListener.onAdvertClicked(advert);
     }
 
+    long advertDurationBy(int advertBreakIndex, int advertIndex) {
+        if (advertBreakIndex >= advertBreaks.size()) {
+            throw new IllegalStateException("Advert is being played but no data about advert breaks is cached.");
+        }
+
+        AdvertBreak advertBreak = advertBreaks.get(advertBreakIndex);
+        if (advertIndex >= advertBreak.adverts().size()) {
+            throw new IllegalStateException("Cached advert break data contains less adverts than current index.");
+        }
+
+        return C.msToUs(advertBreak.adverts().get(advertIndex).durationInMillis());
+    }
 }

@@ -1,5 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer;
 
+import com.google.android.exoplayer2.C;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 import com.novoda.noplayer.NoPlayer;
@@ -7,12 +8,17 @@ import com.novoda.noplayer.NoPlayer;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
+import utils.ExceptionMatcher;
+
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
 import static com.novoda.noplayer.AdvertFixtures.anAdvert;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 
@@ -48,6 +54,9 @@ public class AdvertStateTest {
             .withStartTimeInMillis(THREE_SECONDS_IN_MILLIS)
             .withAdverts(FIRST_ADVERT, SECOND_ADVERT, THIRD_ADVERT)
             .build();
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private final List<AdvertBreak> ADVERT_BREAKS = Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK, THIRD_ADVERT_BREAK);
     private final NoPlayer.AdvertListener advertListener = mock(NoPlayer.AdvertListener.class);
@@ -282,5 +291,26 @@ public class AdvertStateTest {
         then(advertListener).should(inOrder).onAdvertClicked(FIRST_ADVERT);
         then(callback).shouldHaveNoMoreInteractions();
         then(advertListener).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    public void advertDurationThrows_whenAdvertBreakIndexIsInvalid() {
+        thrown.expect(ExceptionMatcher.matches("Advert is being played but no data about advert breaks is cached.", IllegalStateException.class));
+
+        advertState.advertDurationBy(3, 0);
+    }
+
+    @Test
+    public void advertDurationThrows_whenAdvertIndexIsInvalid() {
+        thrown.expect(ExceptionMatcher.matches("Cached advert break data contains less adverts than current index.", IllegalStateException.class));
+
+        advertState.advertDurationBy(0, 1);
+    }
+
+    @Test
+    public void returnsAdvertDurationInMicros() {
+        long advertDuration = advertState.advertDurationBy(0, 0);
+
+        assertThat(advertDuration).isEqualTo(C.msToUs(ONE_SECOND_IN_MILLIS));
     }
 }
