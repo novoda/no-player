@@ -198,4 +198,59 @@ public class AdvertStateTest {
         then(callback).shouldHaveNoMoreInteractions();
         then(advertListener).shouldHaveNoMoreInteractions();
     }
+
+    @Test
+    public void doesNotSkipAdvert_whenDisabled() {
+        advertState.disableAdverts();
+        Mockito.reset(advertListener, callback);
+        advertState.skipAdvert();
+
+        then(advertListener).shouldHaveZeroInteractions();
+        then(callback).shouldHaveZeroInteractions();
+    }
+
+    @Test
+    public void doesNotSkipAdvert_whenNotPlaying() {
+        advertState.skipAdvert();
+
+        then(advertListener).shouldHaveZeroInteractions();
+        then(callback).shouldHaveZeroInteractions();
+    }
+
+    @Test
+    public void doesNotSkipAdvert_whenPlayingContent() {
+        advertState.update(false, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
+        Mockito.reset(advertListener, callback);
+        advertState.skipAdvert();
+
+        then(advertListener).shouldHaveZeroInteractions();
+        then(callback).shouldHaveZeroInteractions();
+    }
+
+    @Test
+    public void skipsAdvert_whenPlayingAdverts() {
+        advertState.update(true, 1, 0);
+        Mockito.reset(advertListener, callback);
+        advertState.skipAdvert();
+
+        InOrder inOrder = Mockito.inOrder(advertListener, callback);
+        then(callback).should(inOrder).onAdvertSkipped(1, 0);
+        then(advertListener).should(inOrder).onAdvertSkipped(FIRST_ADVERT);
+        then(callback).shouldHaveNoMoreInteractions();
+        then(advertListener).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    public void notifiesBreakEnd_whenSkippingLastAdvertInBreak() {
+        advertState.update(true, 1, 1);
+        Mockito.reset(advertListener, callback);
+        advertState.skipAdvert();
+
+        InOrder inOrder = Mockito.inOrder(advertListener, callback);
+        then(callback).should(inOrder).onAdvertSkipped(1, 1);
+        then(advertListener).should(inOrder).onAdvertSkipped(SECOND_ADVERT);
+        then(advertListener).should(inOrder).onAdvertBreakEnd(SECOND_ADVERT_BREAK);
+        then(callback).shouldHaveNoMoreInteractions();
+        then(advertListener).shouldHaveNoMoreInteractions();
+    }
 }

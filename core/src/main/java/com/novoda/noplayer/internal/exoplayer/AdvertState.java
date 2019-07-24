@@ -17,6 +17,8 @@ class AdvertState {
         void onAdvertsEnabled();
 
         void onAdvertBreakSkipped(int advertBreakIndex);
+
+        void onAdvertSkipped(int advertBreakIndex, int advertIndex);
     }
 
     private static final int INVALID_INDEX = -1;
@@ -91,10 +93,10 @@ class AdvertState {
             return;
         }
 
-        resetState();
         advertsDisabled = true;
         callback.onAdvertsDisabled();
         advertListener.onAdvertsDisabled();
+        resetState();
     }
 
     void enableAdverts() {
@@ -102,10 +104,10 @@ class AdvertState {
             return;
         }
 
-        resetState();
         advertsDisabled = false;
         callback.onAdvertsEnabled();
         advertListener.onAdvertsEnabled(advertBreaks);
+        resetState();
     }
 
     void skipAdvertBreak() {
@@ -115,6 +117,21 @@ class AdvertState {
 
         callback.onAdvertBreakSkipped(advertBreakIndex);
         advertListener.onAdvertBreakSkipped(advertBreaks.get(advertBreakIndex));
+        resetState();
+    }
+
+    void skipAdvert() {
+        if (advertsDisabled || advertBreakIndex < 0 || advertIndex < 0) {
+            return;
+        }
+
+        callback.onAdvertSkipped(advertBreakIndex, advertIndex);
+        AdvertBreak advertBreak = advertBreaks.get(advertBreakIndex);
+        List<Advert> adverts = advertBreak.adverts();
+        advertListener.onAdvertSkipped(adverts.get(advertIndex));
+        if (advertIndex == adverts.size() - 1) {
+            advertListener.onAdvertBreakEnd(advertBreak);
+        }
         resetState();
     }
 
