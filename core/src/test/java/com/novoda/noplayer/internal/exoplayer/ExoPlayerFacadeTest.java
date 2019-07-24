@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -34,10 +33,6 @@ import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackFixture;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,8 +43,10 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-
 import utils.ExceptionMatcher;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -487,6 +484,16 @@ public class ExoPlayerFacadeTest {
         }
 
         @Test
+        public void givenExoPlayerTimelineIsEmpty_whenQueryingVideoType_thenReturnsUndefined() {
+            given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
+            given(timeline.isEmpty()).willReturn(true);
+
+            PlayerState.VideoType videoType = facade.videoType();
+
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.UNDEFINED);
+        }
+
+        @Test
         public void givenExoPlayerIsPlayingAd_whenQueryingVideoType_thenReturnsAdvert() {
             given(exoPlayer.isPlayingAd()).willReturn(IS_PLAYING);
 
@@ -843,6 +850,8 @@ public class ExoPlayerFacadeTest {
         TextureView textureView;
         @Mock
         ExoPlayerCreator exoPlayerCreator;
+        @Mock
+        Timeline timeline;
         PlayerSurfaceHolder surfaceViewHolder;
         PlayerSurfaceHolder textureViewHolder;
 
@@ -858,6 +867,7 @@ public class ExoPlayerFacadeTest {
             given(exoPlayerCreator.create(drmSessionCreator, drmSessionEventListener, allowFallbackDecoder, requiresSecureDecoder, OPTIONS, trackSelector.trackSelector())).willReturn(exoPlayer);
             willDoNothing().given(exoPlayer).seekTo(anyInt());
             given(rendererTypeRequesterCreator.createfrom(exoPlayer)).willReturn(rendererTypeRequester);
+            given(exoPlayer.getCurrentTimeline()).willReturn(timeline);
             facade = new ExoPlayerFacade(
                     bandwidthMeterCreator,
                     androidDeviceVersion,
