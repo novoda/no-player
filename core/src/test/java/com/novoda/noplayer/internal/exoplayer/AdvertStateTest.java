@@ -10,7 +10,6 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import utils.ExceptionMatcher;
@@ -96,7 +95,6 @@ public class AdvertStateTest {
         Mockito.reset(callback);
         advertState.update(IS_NOT_PLAYING_ADVERT, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
 
-        InOrder inOrder = Mockito.inOrder(callback);
         then(callback).should().onAdvertPlayed(0, 0);
         then(callback).should().onAdvertEnd(FIRST_ADVERT);
         then(callback).should().onAdvertBreakEnd(FIRST_ADVERT_BREAK);
@@ -118,8 +116,7 @@ public class AdvertStateTest {
     public void disablesAdverts() {
         advertState.disableAdverts();
 
-        then(callback).should().onAdvertsDisabled(advertBreaks);
-        then(callback).should().onAdvertsDisabled(advertBreaks);
+        then(callback).should().onAdvertsDisabled(ADVERT_BREAKS);
         then(callback).shouldHaveNoMoreInteractions();
     }
 
