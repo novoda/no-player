@@ -4,6 +4,7 @@ import com.google.android.exoplayer2.C;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,6 +64,15 @@ public class AdvertStateTest {
             ADVERT_BREAKS,
             callback
     );
+
+    @Test
+    public void handlesPrepareError() {
+        IOException ioException = new IOException("prepare error");
+
+        advertState.handlePrepareError(0, 0, ioException);
+
+        then(callback).should().onHandledPrepareError(0, 0, FIRST_ADVERT, ioException);
+    }
 
     @Test
     public void emitsNoEvents_whenNotTransitioningToAdverts() {
