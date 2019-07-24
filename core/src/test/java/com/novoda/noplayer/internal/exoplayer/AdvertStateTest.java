@@ -164,7 +164,7 @@ public class AdvertStateTest {
 
     @Test
     public void doesNotSkipAdvertBreak_whenPlayingContent() {
-        advertState.update(false, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
+        advertState.update(IS_NOT_PLAYING_ADVERT, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
         Mockito.reset(callback);
         advertState.skipAdvertBreak();
 
@@ -173,7 +173,7 @@ public class AdvertStateTest {
 
     @Test
     public void skipsAdvertBreak_whenPlayingAdverts() {
-        advertState.update(true, 0, 0);
+        advertState.update(IS_PLAYING_ADVERT, 0, 0);
         Mockito.reset(callback);
         advertState.skipAdvertBreak();
 
@@ -199,7 +199,7 @@ public class AdvertStateTest {
 
     @Test
     public void doesNotSkipAdvert_whenPlayingContent() {
-        advertState.update(false, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
+        advertState.update(IS_NOT_PLAYING_ADVERT, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
         Mockito.reset(callback);
         advertState.skipAdvert();
 
@@ -208,7 +208,7 @@ public class AdvertStateTest {
 
     @Test
     public void skipsAdvert_whenPlayingAdverts() {
-        advertState.update(true, 1, 0);
+        advertState.update(IS_PLAYING_ADVERT, 1, 0);
         Mockito.reset(callback);
         advertState.skipAdvert();
 
@@ -218,7 +218,7 @@ public class AdvertStateTest {
 
     @Test
     public void notifiesBreakEnd_whenSkippingLastAdvertInBreak() {
-        advertState.update(true, 1, 1);
+        advertState.update(IS_PLAYING_ADVERT, 1, 1);
         Mockito.reset(callback);
         advertState.skipAdvert();
 
@@ -229,7 +229,7 @@ public class AdvertStateTest {
 
     @Test
     public void doesNotClickAdvert_whenPlayingContent() {
-        advertState.update(false, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
+        advertState.update(IS_NOT_PLAYING_ADVERT, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
         Mockito.reset(callback);
         advertState.clickAdvert();
 
@@ -245,7 +245,7 @@ public class AdvertStateTest {
 
     @Test
     public void clicksAdvert_whenPlayingAdverts() {
-        advertState.update(true, 0, 0);
+        advertState.update(IS_PLAYING_ADVERT, 0, 0);
         Mockito.reset(callback);
         advertState.clickAdvert();
 
@@ -272,5 +272,26 @@ public class AdvertStateTest {
         long advertDuration = advertState.advertDurationBy(0, 0);
 
         assertThat(advertDuration).isEqualTo(C.msToUs(ONE_SECOND_IN_MILLIS));
+    }
+
+    @Test
+    public void marksAdvertResumePosition_whenStoppingWhilstPlayingAnAdvert() {
+        advertState.update(IS_PLAYING_ADVERT, 0, 0);
+        Mockito.reset(callback);
+
+        advertState.stop(0);
+
+        then(callback).should().markAdvertResumePosition(0);
+        then(callback).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    public void doesNotMarkAdvertResumePosition_whenStoppingWhilstPlayingContent() {
+        advertState.update(IS_NOT_PLAYING_ADVERT, 0, 0);
+        Mockito.reset(callback);
+
+        advertState.stop(0);
+
+        then(callback).shouldHaveZeroInteractions();
     }
 }

@@ -174,10 +174,10 @@ class AdvertState {
     }
 
     void stop(long stopPositionInMillis) {
-        resetState();
-
         if (playingAdvert) {
             callback.markAdvertResumePosition(stopPositionInMillis);
         }
+
+        resetState();
     }
 }
