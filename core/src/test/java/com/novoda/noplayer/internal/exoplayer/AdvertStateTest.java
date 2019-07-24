@@ -118,8 +118,8 @@ public class AdvertStateTest {
     public void disablesAdverts() {
         advertState.disableAdverts();
 
-        then(callback).should().onAdvertsDisabled();
-        then(callback).should().onAdvertsDisabled();
+        then(callback).should().onAdvertsDisabled(advertBreaks);
+        then(callback).should().onAdvertsDisabled(advertBreaks);
         then(callback).shouldHaveNoMoreInteractions();
     }
 

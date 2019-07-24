@@ -20,7 +20,7 @@ class AdvertState {
 
         void onAdvertPlayed(int advertBreakIndex, int advertIndex);
 
-        void onAdvertsDisabled();
+        void onAdvertsDisabled(List<AdvertBreak> advertBreaks);
 
         void onAdvertsEnabled(List<AdvertBreak> advertBreaks);
 
@@ -102,7 +102,7 @@ class AdvertState {
         }
 
         advertsDisabled = true;
-        callback.onAdvertsDisabled();
+        callback.onAdvertsDisabled(advertBreaks);
         resetState();
     }
 
