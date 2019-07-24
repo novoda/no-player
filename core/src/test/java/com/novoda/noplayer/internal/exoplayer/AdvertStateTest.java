@@ -136,4 +136,25 @@ public class AdvertStateTest {
         then(advertListener).shouldHaveZeroInteractions();
         then(callback).shouldHaveZeroInteractions();
     }
+
+    @Test
+    public void notifiesAdvertsEnabled() {
+        advertState.disableAdverts();
+        Mockito.reset(advertListener, callback);
+        advertState.enableAdverts();
+
+        InOrder inOrder = Mockito.inOrder(advertListener, callback);
+        then(callback).should(inOrder).onAdvertsEnabled();
+        then(advertListener).should(inOrder).onAdvertsEnabled(ADVERT_BREAKS);
+        then(callback).shouldHaveNoMoreInteractions();
+        then(advertListener).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    public void emitsNoEvents_whenAlreadyEnabled() {
+        advertState.enableAdverts();
+
+        then(advertListener).shouldHaveZeroInteractions();
+        then(callback).shouldHaveZeroInteractions();
+    }
 }

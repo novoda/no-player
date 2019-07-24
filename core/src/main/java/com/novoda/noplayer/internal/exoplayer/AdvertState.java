@@ -13,6 +13,8 @@ class AdvertState {
         void onAdvertPlayed(int advertBreakIndex, int advertIndex);
 
         void onAdvertsDisabled();
+
+        void onAdvertsEnabled();
     }
 
     private static final int INVALID_INDEX = -1;
@@ -94,7 +96,14 @@ class AdvertState {
     }
 
     void enableAdverts() {
+        if (!advertsDisabled) {
+            return;
+        }
 
+        resetState();
+        advertsDisabled = false;
+        callback.onAdvertsEnabled();
+        advertListener.onAdvertsEnabled(advertBreaks);
     }
 
 }
