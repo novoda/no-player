@@ -3,7 +3,6 @@ package com.novoda.noplayer.internal.exoplayer;
 import com.google.android.exoplayer2.C;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
-import com.novoda.noplayer.NoPlayer;
 
 import java.util.List;
 
@@ -11,21 +10,30 @@ class AdvertState {
 
     interface Callback {
 
+        void onAdvertBreakStart(AdvertBreak advertBreak);
+
+        void onAdvertStart(Advert advert);
+
+        void onAdvertEnd(Advert advert);
+
+        void onAdvertBreakEnd(AdvertBreak advertBreak);
+
         void onAdvertPlayed(int advertBreakIndex, int advertIndex);
 
         void onAdvertsDisabled();
 
-        void onAdvertsEnabled();
+        void onAdvertsEnabled(List<AdvertBreak> advertBreaks);
 
-        void onAdvertBreakSkipped(int advertBreakIndex);
+        void onAdvertBreakSkipped(int advertBreakIndex, AdvertBreak advertBreak);
 
-        void onAdvertSkipped(int advertBreakIndex, int advertIndex);
+        void onAdvertSkipped(int advertBreakIndex, int advertIndex, Advert advert);
+
+        void onAdvertClicked(Advert advert);
     }
 
     private static final int INVALID_INDEX = -1;
 
     private final List<AdvertBreak> advertBreaks;
-    private final NoPlayer.AdvertListener advertListener;
     private final Callback callback;
 
     private int advertIndex = -1;
@@ -33,9 +41,8 @@ class AdvertState {
     private boolean playingAdvert;
     private boolean advertsDisabled;
 
-    AdvertState(List<AdvertBreak> advertBreaks, NoPlayer.AdvertListener advertListener, Callback callback) {
+    AdvertState(List<AdvertBreak> advertBreaks, Callback callback) {
         this.advertBreaks = advertBreaks;
-        this.advertListener = advertListener;
         this.callback = callback;
     }
 
@@ -64,10 +71,10 @@ class AdvertState {
     private void notifyAdvertEnd(int playedAdvertBreakIndex, int playedAdvertIndex) {
         AdvertBreak advertBreak = advertBreaks.get(playedAdvertBreakIndex);
         List<Advert> adverts = advertBreak.adverts();
-        advertListener.onAdvertEnd(adverts.get(playedAdvertIndex));
+        callback.onAdvertEnd(adverts.get(playedAdvertIndex));
 
         if (advertBreakIndex != playedAdvertBreakIndex) {
-            advertListener.onAdvertBreakEnd(advertBreak);
+            callback.onAdvertBreakEnd(advertBreak);
             resetState();
         }
     }
@@ -82,11 +89,11 @@ class AdvertState {
         AdvertBreak advertBreak = advertBreaks.get(advertBreakIndex);
 
         if (advertIndex == 0) {
-            advertListener.onAdvertBreakStart(advertBreak);
+            callback.onAdvertBreakStart(advertBreak);
         }
 
         Advert advert = advertBreak.adverts().get(advertIndex);
-        advertListener.onAdvertStart(advert);
+        callback.onAdvertStart(advert);
     }
 
     void disableAdverts() {
@@ -96,7 +103,6 @@ class AdvertState {
 
         advertsDisabled = true;
         callback.onAdvertsDisabled();
-        advertListener.onAdvertsDisabled();
         resetState();
     }
 
@@ -106,8 +112,7 @@ class AdvertState {
         }
 
         advertsDisabled = false;
-        callback.onAdvertsEnabled();
-        advertListener.onAdvertsEnabled(advertBreaks);
+        callback.onAdvertsEnabled(advertBreaks);
         resetState();
     }
 
@@ -116,8 +121,7 @@ class AdvertState {
             return;
         }
 
-        callback.onAdvertBreakSkipped(advertBreakIndex);
-        advertListener.onAdvertBreakSkipped(advertBreaks.get(advertBreakIndex));
+        callback.onAdvertBreakSkipped(advertBreakIndex, advertBreaks.get(advertBreakIndex));
         resetState();
     }
 
@@ -126,12 +130,11 @@ class AdvertState {
             return;
         }
 
-        callback.onAdvertSkipped(advertBreakIndex, advertIndex);
         AdvertBreak advertBreak = advertBreaks.get(advertBreakIndex);
         List<Advert> adverts = advertBreak.adverts();
-        advertListener.onAdvertSkipped(adverts.get(advertIndex));
+        callback.onAdvertSkipped(advertBreakIndex, advertIndex, adverts.get(advertIndex));
         if (advertIndex == adverts.size() - 1) {
-            advertListener.onAdvertBreakEnd(advertBreak);
+            callback.onAdvertBreakEnd(advertBreak);
         }
         resetState();
     }
@@ -142,7 +145,7 @@ class AdvertState {
         }
 
         Advert advert = advertBreaks.get(advertBreakIndex).adverts().get(advertIndex);
-        advertListener.onAdvertClicked(advert);
+        callback.onAdvertClicked(advert);
     }
 
     long advertDurationBy(int advertBreakIndex, int advertIndex) {

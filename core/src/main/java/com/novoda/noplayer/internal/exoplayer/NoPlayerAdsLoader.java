@@ -35,6 +35,8 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
     @Nullable
     private AdPlaybackState adPlaybackState;
     @Nullable
+    private AdvertState advertState;
+    @Nullable
     private EventListener eventListener;
     @Nullable
     private AdvertsLoader.Cancellable loadingAds;
