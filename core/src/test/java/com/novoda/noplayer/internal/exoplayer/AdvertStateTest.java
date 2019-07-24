@@ -60,7 +60,7 @@ public class AdvertStateTest {
     );
 
     @Test
-    public void emitsNoEvents_whenNotPlayingAdvert() {
+    public void emitsNoEvents_whenNotTransitioningToAdverts() {
         advertState.update(IS_NOT_PLAYING_ADVERT, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
 
         then(advertListener).shouldHaveZeroInteractions();
@@ -68,7 +68,7 @@ public class AdvertStateTest {
     }
 
     @Test
-    public void notifiesStartOfAdvertBreak_andAdvert_whenPlayingAdvert() {
+    public void notifiesStartOfAdvertBreak_andAdvert_whenTransitioningToAdverts() {
         advertState.update(IS_PLAYING_ADVERT, 0, 0);
 
         InOrder inOrder = Mockito.inOrder(advertListener);
@@ -79,7 +79,7 @@ public class AdvertStateTest {
     }
 
     @Test
-    public void emitsNoAdditionalEvents_whenCallingWithSameAdvertIndex() {
+    public void emitsNoAdditionalEvents_whenCallingWithTheSameIndices() {
         advertState.update(IS_PLAYING_ADVERT, 0, 0);
         Mockito.reset(advertListener, callback);
         advertState.update(IS_PLAYING_ADVERT, 0, 0);
@@ -89,7 +89,7 @@ public class AdvertStateTest {
     }
 
     @Test
-    public void notifiesEndAdvertBreak_andAdvert_whenPlayingContent() {
+    public void notifiesEndOfAdvertBreak_andAdvert_whenTransitioningToContent() {
         advertState.update(IS_PLAYING_ADVERT, 0, 0);
         Mockito.reset(advertListener, callback);
         advertState.update(IS_NOT_PLAYING_ADVERT, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
@@ -117,7 +117,7 @@ public class AdvertStateTest {
     }
 
     @Test
-    public void notifiesAdvertsDisabled() {
+    public void disablesAdverts() {
         advertState.disableAdverts();
 
         InOrder inOrder = Mockito.inOrder(advertListener, callback);
@@ -128,7 +128,7 @@ public class AdvertStateTest {
     }
 
     @Test
-    public void emitsNoEvents_whenAlreadyDisabled() {
+    public void doesNotDisableAdverts_whenAlreadyDisabled() {
         advertState.disableAdverts();
         Mockito.reset(advertListener, callback);
         advertState.disableAdverts();
@@ -138,7 +138,7 @@ public class AdvertStateTest {
     }
 
     @Test
-    public void notifiesAdvertsEnabled() {
+    public void enablesAdverts() {
         advertState.disableAdverts();
         Mockito.reset(advertListener, callback);
         advertState.enableAdverts();
@@ -151,10 +151,51 @@ public class AdvertStateTest {
     }
 
     @Test
-    public void emitsNoEvents_whenAlreadyEnabled() {
+    public void doesNotEnableAdverts_whenAlreadyEnabled() {
         advertState.enableAdverts();
 
         then(advertListener).shouldHaveZeroInteractions();
         then(callback).shouldHaveZeroInteractions();
+    }
+
+    @Test
+    public void doesNotSkipAdvertBreak_whenDisabled() {
+        advertState.disableAdverts();
+        Mockito.reset(advertListener, callback);
+        advertState.skipAdvertBreak();
+
+        then(advertListener).shouldHaveZeroInteractions();
+        then(callback).shouldHaveZeroInteractions();
+    }
+
+    @Test
+    public void doesNotSkipAdvertBreak_whenNotPlaying() {
+        advertState.skipAdvertBreak();
+
+        then(advertListener).shouldHaveZeroInteractions();
+        then(callback).shouldHaveZeroInteractions();
+    }
+
+    @Test
+    public void doesNotSkipAdvertBreak_whenPlayingContent() {
+        advertState.update(false, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
+        Mockito.reset(advertListener, callback);
+        advertState.skipAdvertBreak();
+
+        then(advertListener).shouldHaveZeroInteractions();
+        then(callback).shouldHaveZeroInteractions();
+    }
+
+    @Test
+    public void skipsAdvertBreak_whenPlayingAdverts() {
+        advertState.update(true, 0, 0);
+        Mockito.reset(advertListener, callback);
+        advertState.skipAdvertBreak();
+
+        InOrder inOrder = Mockito.inOrder(advertListener, callback);
+        then(callback).should(inOrder).onAdvertBreakSkipped(0);
+        then(advertListener).should(inOrder).onAdvertBreakSkipped(FIRST_ADVERT_BREAK);
+        then(callback).shouldHaveNoMoreInteractions();
+        then(advertListener).shouldHaveNoMoreInteractions();
     }
 }

@@ -15,6 +15,8 @@ class AdvertState {
         void onAdvertsDisabled();
 
         void onAdvertsEnabled();
+
+        void onAdvertBreakSkipped(int advertBreakIndex);
     }
 
     private static final int INVALID_INDEX = -1;
@@ -104,6 +106,16 @@ class AdvertState {
         advertsDisabled = false;
         callback.onAdvertsEnabled();
         advertListener.onAdvertsEnabled(advertBreaks);
+    }
+
+    void skipAdvertBreak() {
+        if (advertsDisabled || advertBreakIndex < 0) {
+            return;
+        }
+
+        callback.onAdvertBreakSkipped(advertBreakIndex);
+        advertListener.onAdvertBreakSkipped(advertBreaks.get(advertBreakIndex));
+        resetState();
     }
 
 }
