@@ -24,7 +24,7 @@ import androidx.annotation.Nullable;
 
 // Not much we can do, orchestrating adverts is a lot of work.
 @SuppressWarnings("PMD.GodClass")
-public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, AdvertView.AdvertInteractionListener, AdvertState.Callback {
+public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, AdvertView.AdvertInteractionListener {
 
     private final AdvertsLoader loader;
     private final Handler handler;
@@ -95,7 +95,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
             advertState = new AdvertState(
                     advertBreaks,
-                    NoPlayerAdsLoader.this
+                    advertStateCallback
             );
 
             handler.post(new Runnable() {
@@ -113,7 +113,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             List<AdvertBreak> advertBreaks = Collections.emptyList();
             advertState = new AdvertState(
                     advertBreaks,
-                    NoPlayerAdsLoader.this
+                    advertStateCallback
             );
             adPlaybackState = new AdPlaybackState();
 
@@ -228,77 +228,79 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         advertState.enableAdverts();
     }
 
-    @Override
-    public void onHandledPrepareError(int currentAdvertBreakIndex, int currentAdvertIndex, Advert advert, IOException exception) {
-        if (adPlaybackState == null) {
-            return;
+    private final AdvertState.Callback advertStateCallback = new AdvertState.Callback() {
+        @Override
+        public void onHandledPrepareError(int currentAdvertBreakIndex, int currentAdvertIndex, Advert advert, IOException exception) {
+            if (adPlaybackState == null) {
+                return;
+            }
+            adPlaybackState = adPlaybackState.withAdLoadError(currentAdvertBreakIndex, currentAdvertIndex);
+            updateAdPlaybackState();
+            advertListener.onAdvertPrepareError(advert, exception);
         }
-        adPlaybackState = adPlaybackState.withAdLoadError(currentAdvertBreakIndex, currentAdvertIndex);
-        updateAdPlaybackState();
-        advertListener.onAdvertPrepareError(advert, exception);
-    }
 
-    @Override
-    public void onAdvertBreakStart(AdvertBreak advertBreak) {
-        advertListener.onAdvertBreakStart(advertBreak);
-    }
+        @Override
+        public void onAdvertBreakStart(AdvertBreak advertBreak) {
+            advertListener.onAdvertBreakStart(advertBreak);
+        }
 
-    @Override
-    public void onAdvertStart(Advert advert) {
-        advertListener.onAdvertStart(advert);
-    }
+        @Override
+        public void onAdvertStart(Advert advert) {
+            advertListener.onAdvertStart(advert);
+        }
 
-    @Override
-    public void onAdvertEnd(Advert advert) {
-        advertListener.onAdvertEnd(advert);
-    }
+        @Override
+        public void onAdvertEnd(Advert advert) {
+            advertListener.onAdvertEnd(advert);
+        }
 
-    @Override
-    public void onAdvertBreakEnd(AdvertBreak advertBreak) {
-        advertListener.onAdvertBreakEnd(advertBreak);
-    }
+        @Override
+        public void onAdvertBreakEnd(AdvertBreak advertBreak) {
+            advertListener.onAdvertBreakEnd(advertBreak);
+        }
 
-    @Override
-    public void onAdvertPlayed(int advertBreakIndex, int advertIndex) {
-        adPlaybackState = adPlaybackState.withPlayedAd(advertBreakIndex, advertIndex);
-        updateAdPlaybackState();
-    }
+        @Override
+        public void onAdvertPlayed(int advertBreakIndex, int advertIndex) {
+            adPlaybackState = adPlaybackState.withPlayedAd(advertBreakIndex, advertIndex);
+            updateAdPlaybackState();
+        }
 
-    @Override
-    public void onAdvertsDisabled(List<AdvertBreak> advertBreaks) {
-        adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreaks, adPlaybackState);
-        updateAdPlaybackState();
-        advertListener.onAdvertsDisabled();
-    }
+        @Override
+        public void onAdvertsDisabled(List<AdvertBreak> advertBreaks) {
+            adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreaks, adPlaybackState);
+            updateAdPlaybackState();
+            advertListener.onAdvertsDisabled();
+        }
 
-    @Override
-    public void onAdvertsEnabled(List<AdvertBreak> advertBreaks) {
-        AvailableAdverts.markSkippedAdvertsAsAvailable(advertBreaks, adPlaybackState);
-        updateAdPlaybackState();
-        advertListener.onAdvertsEnabled(advertBreaks);
-    }
+        @Override
+        public void onAdvertsEnabled(List<AdvertBreak> advertBreaks) {
+            AvailableAdverts.markSkippedAdvertsAsAvailable(advertBreaks, adPlaybackState);
+            updateAdPlaybackState();
+            advertListener.onAdvertsEnabled(advertBreaks);
+        }
 
-    @Override
-    public void onAdvertBreakSkipped(int advertBreakIndex, AdvertBreak advertBreak) {
-        adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreakIndex, adPlaybackState);
-        updateAdPlaybackState();
-        advertListener.onAdvertBreakSkipped(advertBreak);
-    }
+        @Override
+        public void onAdvertBreakSkipped(int advertBreakIndex, AdvertBreak advertBreak) {
+            adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreakIndex, adPlaybackState);
+            updateAdPlaybackState();
+            advertListener.onAdvertBreakSkipped(advertBreak);
+        }
 
-    @Override
-    public void onAdvertSkipped(int advertBreakIndex, int advertIndex, Advert advert) {
-        adPlaybackState = SkippedAdverts.markAdvertAsSkipped(advertIndex, advertBreakIndex, adPlaybackState);
-        updateAdPlaybackState();
-        advertListener.onAdvertSkipped(advert);
-    }
+        @Override
+        public void onAdvertSkipped(int advertBreakIndex, int advertIndex, Advert advert) {
+            adPlaybackState = SkippedAdverts.markAdvertAsSkipped(advertIndex, advertBreakIndex, adPlaybackState);
+            updateAdPlaybackState();
+            advertListener.onAdvertSkipped(advert);
+        }
 
-    @Override
-    public void onAdvertClicked(Advert advert) {
-        advertListener.onAdvertClicked(advert);
-    }
+        @Override
+        public void onAdvertClicked(Advert advert) {
+            advertListener.onAdvertClicked(advert);
+        }
 
-    @Override
-    public void markAdvertResumePosition(long stopPositionInMillis) {
-        adPlaybackState = adPlaybackState.withAdResumePositionUs(TimeUnit.MILLISECONDS.toMicros(player.getCurrentPosition()));
-    }
+        @Override
+        public void markAdvertResumePosition(long stopPositionInMillis) {
+            adPlaybackState = adPlaybackState.withAdResumePositionUs(TimeUnit.MILLISECONDS.toMicros(player.getCurrentPosition()));
+        }
+    };
 }
