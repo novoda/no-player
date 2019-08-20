@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import utils.ExceptionMatcher;
@@ -85,8 +86,9 @@ public class AdvertStateTest {
     public void notifiesStartOfAdvertBreak_andAdvert_whenTransitioningToAdverts() {
         advertState.update(IS_PLAYING_ADVERT, 0, 0);
 
-        then(callback).should().onAdvertBreakStart(FIRST_ADVERT_BREAK);
-        then(callback).should().onAdvertStart(FIRST_ADVERT);
+        InOrder inOrder = Mockito.inOrder(callback);
+        then(callback).should(inOrder).onAdvertBreakStart(FIRST_ADVERT_BREAK);
+        then(callback).should(inOrder).onAdvertStart(FIRST_ADVERT);
         then(callback).shouldHaveNoMoreInteractions();
     }
 
@@ -105,9 +107,10 @@ public class AdvertStateTest {
         Mockito.reset(callback);
         advertState.update(IS_NOT_PLAYING_ADVERT, UNSET_ADVERT_BREAK_INDEX, UNSET_ADVERT_INDEX);
 
-        then(callback).should().onAdvertPlayed(0, 0);
-        then(callback).should().onAdvertEnd(FIRST_ADVERT);
-        then(callback).should().onAdvertBreakEnd(FIRST_ADVERT_BREAK);
+        InOrder inOrder = Mockito.inOrder(callback);
+        then(callback).should(inOrder).onAdvertPlayed(0, 0);
+        then(callback).should(inOrder).onAdvertEnd(FIRST_ADVERT);
+        then(callback).should(inOrder).onAdvertBreakEnd(FIRST_ADVERT_BREAK);
         then(callback).shouldHaveNoMoreInteractions();
     }
 
@@ -117,9 +120,10 @@ public class AdvertStateTest {
         Mockito.reset(callback);
         advertState.update(IS_PLAYING_ADVERT, 1, 1);
 
-        then(callback).should().onAdvertPlayed(1, 0);
-        then(callback).should().onAdvertEnd(FIRST_ADVERT);
-        then(callback).should().onAdvertStart(SECOND_ADVERT);
+        InOrder inOrder = Mockito.inOrder(callback);
+        then(callback).should(inOrder).onAdvertPlayed(1, 0);
+        then(callback).should(inOrder).onAdvertEnd(FIRST_ADVERT);
+        then(callback).should(inOrder).onAdvertStart(SECOND_ADVERT);
     }
 
     @Test
@@ -232,8 +236,9 @@ public class AdvertStateTest {
         Mockito.reset(callback);
         advertState.skipAdvert();
 
-        then(callback).should().onAdvertSkipped(1, 1, SECOND_ADVERT);
-        then(callback).should().onAdvertBreakEnd(SECOND_ADVERT_BREAK);
+        InOrder inOrder = Mockito.inOrder(callback);
+        then(callback).should(inOrder).onAdvertSkipped(1, 1, SECOND_ADVERT);
+        then(callback).should(inOrder).onAdvertBreakEnd(SECOND_ADVERT_BREAK);
         then(callback).shouldHaveNoMoreInteractions();
     }
 
