@@ -3,14 +3,14 @@ package com.novoda.noplayer.internal.exoplayer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -24,8 +24,8 @@ public class CodecSelectorWithFallbackTest {
     private static final boolean DOES_NOT_REQUIRE_TUNNELING_DECODER = false;
 
     private static final String MIMETYPE = "mimetype";
-    private static final MediaCodecInfo SECURE_CODEC = MediaCodecInfo.newInstance("secure-codec", MIMETYPE, null);
-    private static final MediaCodecInfo UNSECURE_CODEC = MediaCodecInfo.newInstance("unsecure-codec", "mimetype", null);
+    private static final MediaCodecInfo SECURE_CODEC = MediaCodecInfo.newInstance("secure-codec", MIMETYPE, "", null, false, false);
+    private static final MediaCodecInfo UNSECURE_CODEC = MediaCodecInfo.newInstance("unsecure-codec", "mimetype", "", null, false, false);
 
     private static final List<MediaCodecInfo> SECURE_CODECS = Collections.singletonList(SECURE_CODEC);
     private static final List<MediaCodecInfo> UNSECURE_CODECS = Collections.singletonList(UNSECURE_CODEC);
