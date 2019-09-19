@@ -28,13 +28,15 @@ public class SystemCaptionPreferences {
 
         int foregroundColorOr(int fallbackColor);
 
+        float scaleTextSize(float textSize);
     }
 
     private static Style getStyle(Context context) {
         if (VERSION.SDK_INT >= KITKAT) {
             final CaptioningManager captioningManager = requireCaptionManager(context);
             CaptionStyle systemStyle = captioningManager.getUserStyle();
-            return new KitkatStyle(systemStyle);
+            float fontScale = captioningManager.getFontScale();
+            return new KitkatStyle(systemStyle, fontScale);
         } else {
             return new NoStyle();
         }
@@ -59,15 +61,22 @@ public class SystemCaptionPreferences {
             return fallbackColor;
         }
 
+        @Override
+        public float scaleTextSize(float textSize) {
+            return textSize;
+        }
+
     }
 
     @RequiresApi(api = KITKAT)
     private static class KitkatStyle implements Style {
 
-        final CaptionStyle captionStyle;
+        private final CaptionStyle captionStyle;
+        private final float fontScale;
 
-        KitkatStyle(CaptionStyle captionStyle) {
+        KitkatStyle(CaptionStyle captionStyle, float fontScale) {
             this.captionStyle = captionStyle;
+            this.fontScale = fontScale;
         }
 
         @Override
@@ -78,6 +87,11 @@ public class SystemCaptionPreferences {
         @Override
         public int foregroundColorOr(int fallbackColor) {
             return captionStyle.foregroundColor;
+        }
+
+        @Override
+        public float scaleTextSize(float textSize) {
+            return textSize * fontScale;
         }
 
     }
