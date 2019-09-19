@@ -40,6 +40,7 @@ import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.util.Util;
 import com.novoda.noplayer.model.NoPlayerCue;
+import com.novoda.noplayer.subtitles.SubtitlesStyle;
 import com.novoda.noplayer.subtitles.SystemCaptionPreferences;
 
 // Adopted code, could use some refactoring but it's a complex job
@@ -167,7 +168,7 @@ final class SubtitlePainter {
             return;
         }
 
-        SystemCaptionPreferences.Style captionsSystemStyle = captionPreferences.getStyle();
+        SubtitlesStyle subtitlesStyle = captionPreferences.getStyle();
 
         this.cueText = cue.text();
         this.cueTextAlignment = cue.textAlignment();
@@ -181,13 +182,13 @@ final class SubtitlePainter {
         this.cueBitmapHeight = cue.bitmapHeight();
         this.applyEmbeddedStyles = applyEmbeddedStyles;
         this.applyEmbeddedFontSizes = applyEmbeddedFontSizes;
-        this.foregroundColor = captionsSystemStyle.foregroundColorOr(Color.WHITE);
-        this.backgroundColor = captionsSystemStyle.backgroundColorOr(Color.BLACK);
+        this.foregroundColor = subtitlesStyle.foregroundColorOr(Color.WHITE);
+        this.backgroundColor = subtitlesStyle.backgroundColorOr(Color.BLACK);
         this.windowColor = windowColor;
         this.edgeType = 0;
         this.edgeColor = Color.WHITE;
         textPaint.setTypeface(null);
-        this.textSizePx = captionsSystemStyle.scaleTextSize(textSizePx);
+        this.textSizePx = subtitlesStyle.scaleTextSize(textSizePx);
         this.bottomPaddingFraction = bottomPaddingFraction;
         this.parentLeft = cueBoxLeft;
         this.parentTop = cueBoxTop;
