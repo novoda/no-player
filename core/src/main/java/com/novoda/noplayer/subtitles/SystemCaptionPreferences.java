@@ -38,7 +38,7 @@ public class SystemCaptionPreferences {
             float fontScale = captioningManager.getFontScale();
             return new KitkatStyle(systemStyle, fontScale);
         } else {
-            return new NoStyle();
+            return NO_STYLE;
         }
     }
 
@@ -49,7 +49,7 @@ public class SystemCaptionPreferences {
         return requireNonNull((CaptioningManager) service);
     }
 
-    private static class NoStyle implements Style {
+    private static final Style NO_STYLE = new Style() {
 
         @Override
         public int backgroundColorOr(int fallbackColor) {
@@ -66,7 +66,7 @@ public class SystemCaptionPreferences {
             return textSize;
         }
 
-    }
+    };
 
     @RequiresApi(api = KITKAT)
     private static class KitkatStyle implements Style {
