@@ -40,6 +40,7 @@ import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.util.Util;
 import com.novoda.noplayer.model.NoPlayerCue;
+import com.novoda.noplayer.subtitles.SystemCaptionPreferences;
 
 // Adopted code, could use some refactoring but it's a complex job
 @SuppressWarnings({"PMD.GodClass", "PMD.CyclomaticComplexity", "PMD.StdCyclomaticComplexity", "PMD.ModifiedCyclomaticComplexity"})
@@ -64,6 +65,7 @@ final class SubtitlePainter {
 
     private final TextPaint textPaint;
     private final Paint paint;
+    private final SystemCaptionPreferences captionPreferences;
 
     // Previous input variables.
     private CharSequence cueText;
@@ -124,6 +126,8 @@ final class SubtitlePainter {
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setStyle(Style.FILL);
+
+        captionPreferences = new SystemCaptionPreferences(context);
     }
 
     @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"}) // TODO group parameters into classes
@@ -163,6 +167,8 @@ final class SubtitlePainter {
             return;
         }
 
+        SystemCaptionPreferences.Style captionsSystemStyle = captionPreferences.getStyle();
+
         this.cueText = cue.text();
         this.cueTextAlignment = cue.textAlignment();
         this.cueBitmap = cue.bitmap();
@@ -175,8 +181,8 @@ final class SubtitlePainter {
         this.cueBitmapHeight = cue.bitmapHeight();
         this.applyEmbeddedStyles = applyEmbeddedStyles;
         this.applyEmbeddedFontSizes = applyEmbeddedFontSizes;
-        this.foregroundColor = Color.WHITE;
-        this.backgroundColor = Color.BLACK;
+        this.foregroundColor = captionsSystemStyle.foregroundColorOr(Color.WHITE);
+        this.backgroundColor = captionsSystemStyle.backgroundColorOr(Color.BLACK);
         this.windowColor = windowColor;
         this.edgeType = 0;
         this.edgeColor = Color.WHITE;
