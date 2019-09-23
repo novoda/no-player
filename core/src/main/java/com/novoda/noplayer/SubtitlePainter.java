@@ -36,13 +36,12 @@ import android.text.style.RelativeSizeSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.util.Util;
 import com.novoda.noplayer.model.NoPlayerCue;
 import com.novoda.noplayer.subtitles.SubtitlesStyle;
 import com.novoda.noplayer.subtitles.SystemCaptionPreferences;
-
-import static com.google.android.exoplayer2.text.CaptionStyleCompat.*;
 
 // Adopted code, could use some refactoring but it's a complex job
 @SuppressWarnings({"PMD.GodClass", "PMD.CyclomaticComplexity", "PMD.StdCyclomaticComplexity", "PMD.ModifiedCyclomaticComplexity"})
@@ -89,7 +88,7 @@ final class SubtitlePainter {
     private int backgroundColor;
     private int windowColor;
     private int edgeColor;
-    @EdgeType
+    @CaptionStyleCompat.EdgeType
     private int edgeType;
     private float textSizePx;
     private float bottomPaddingFraction;
@@ -186,7 +185,7 @@ final class SubtitlePainter {
         this.foregroundColor = subtitlesStyle.foregroundColorOr(Color.WHITE);
         this.backgroundColor = subtitlesStyle.backgroundColorOr(Color.BLACK);
         this.windowColor = subtitlesStyle.windowColorOr(windowColor);
-        this.edgeType = subtitlesStyle.edgeTypeOr(EDGE_TYPE_NONE);
+        this.edgeType = subtitlesStyle.edgeTypeOr(CaptionStyleCompat.EDGE_TYPE_NONE);
         this.edgeColor = subtitlesStyle.edgeColorOr(Color.WHITE);
         textPaint.setTypeface(subtitlesStyle.typeface());
         this.textSizePx = subtitlesStyle.scaleTextSize(textSizePx);
@@ -413,17 +412,17 @@ final class SubtitlePainter {
             }
         }
 
-        if (edgeType == EDGE_TYPE_OUTLINE) {
+        if (edgeType == CaptionStyleCompat.EDGE_TYPE_OUTLINE) {
             textPaint.setStrokeJoin(Join.ROUND);
             textPaint.setStrokeWidth(outlineWidth);
             textPaint.setColor(edgeColor);
             textPaint.setStyle(Style.FILL_AND_STROKE);
             layout.draw(canvas);
-        } else if (edgeType == EDGE_TYPE_DROP_SHADOW) {
+        } else if (edgeType == CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW) {
             textPaint.setShadowLayer(shadowRadius, shadowOffset, shadowOffset, edgeColor);
-        } else if (edgeType == EDGE_TYPE_RAISED
-                || edgeType == EDGE_TYPE_DEPRESSED) {
-            boolean raised = edgeType == EDGE_TYPE_RAISED;
+        } else if (edgeType == CaptionStyleCompat.EDGE_TYPE_RAISED
+                || edgeType == CaptionStyleCompat.EDGE_TYPE_DEPRESSED) {
+            boolean raised = edgeType == CaptionStyleCompat.EDGE_TYPE_RAISED;
             int colorUp = raised ? Color.WHITE : edgeColor;
             int colorDown = raised ? edgeColor : Color.WHITE;
             float offset = shadowRadius / 2;
