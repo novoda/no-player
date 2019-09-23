@@ -22,17 +22,17 @@ class KitkatSubtitlesStyle implements SubtitlesStyle {
 
     @Override
     public int backgroundColorOr(int fallbackColor) {
-        return colorOr(captionStyle.backgroundColor, fallbackColor);
+        return captionStyle.backgroundColor;
     }
 
     @Override
     public int foregroundColorOr(int fallbackColor) {
-        return colorOr(captionStyle.foregroundColor, fallbackColor);
+        return captionStyle.foregroundColor;
     }
 
     @Override
     public int windowColorOr(int fallbackColor) {
-        return colorOr(captionStyle.windowColor, fallbackColor);
+        return captionStyle.windowColor;
     }
 
     @Override
@@ -46,19 +46,14 @@ class KitkatSubtitlesStyle implements SubtitlesStyle {
         return captionStyle.typeface;
     }
 
-    private static int colorOr(int color, int fallback) {
-        return hasColor(color) ? color : fallback;
+    @Override
+    public int edgeTypeOr(int fallbackEdgeType) {
+        return captionStyle.edgeType;
     }
 
-    /**
-     * Copied from API 21 version of CaptionStyle
-     */
-    @SuppressWarnings("MagicNumber")
-    private static boolean hasColor(int packedColor) {
-        // Matches the color packing code from Settings. "Default" packed
-        // colors are indicated by zero alpha and non-zero red/blue. The
-        // cached alpha value used by Settings is stored in green.
-        return (packedColor >>> 24) != 0 || (packedColor & 0xFFFF00) == 0;
+    @Override
+    public int edgeColorOr(int fallbackColor) {
+        return captionStyle.edgeColor;
     }
 
 }

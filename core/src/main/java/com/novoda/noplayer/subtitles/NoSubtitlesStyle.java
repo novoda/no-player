@@ -32,4 +32,14 @@ class NoSubtitlesStyle implements SubtitlesStyle {
         return null;
     }
 
+    @Override
+    public int edgeTypeOr(int fallbackEdgeType) {
+        return fallbackEdgeType;
+    }
+
+    @Override
+    public int edgeColorOr(int fallbackColor) {
+        return fallbackColor;
+    }
+
 }

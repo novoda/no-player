@@ -16,4 +16,8 @@ public interface SubtitlesStyle {
 
     @Nullable
     Typeface typeface();
+
+    int edgeTypeOr(int fallbackEdgeType);
+
+    int edgeColorOr(int fallbackColor);
 }

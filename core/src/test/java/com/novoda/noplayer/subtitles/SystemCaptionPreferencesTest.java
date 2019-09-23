@@ -22,6 +22,7 @@ import static android.content.Context.*;
 import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
 import static android.os.Build.VERSION_CODES.KITKAT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static com.google.android.exoplayer2.text.CaptionStyleCompat.*;
 import static com.novoda.noplayer.test.utils.RelectionFinalMutationUtils.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -34,6 +35,8 @@ public class SystemCaptionPreferencesTest {
     private static final int SYSTEM_BACKGROUND_COLOR = Color.RED;
     private static final int SYSTEM_FOREGROUND_COLOR = Color.GREEN;
     private static final int SYSTEM_WINDOW_COLOR = Color.GRAY;
+    private static final int SYSTEM_EDGE_TYPE = EDGE_TYPE_OUTLINE;
+    private static final int SYSTEM_EDGE_COLOR = Color.MAGENTA;
     private static final float SYSTEM_TEXT_SCALE_RATIO = 2f;
     private static final Typeface SYSTEM_TYPEFACE = mock(Typeface.class);
     private static final Typeface NO_TYPEFACE = null;
@@ -93,18 +96,36 @@ public class SystemCaptionPreferencesTest {
     public void shouldProvideTextSize() {
         SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
 
-        float actualTextSize = preferences.getStyle().scaleTextSize(TEXT_SIZE);
+        float textSize = preferences.getStyle().scaleTextSize(TEXT_SIZE);
 
-        assertThat(actualTextSize).isEqualTo(testCase.expectedTextSize);
+        assertThat(textSize).isEqualTo(testCase.expectedTextSize);
     }
 
     @Test
     public void shouldProvideTypeface() {
         SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
 
-        Typeface actualTextSize = preferences.getStyle().typeface();
+        Typeface typeface = preferences.getStyle().typeface();
 
-        assertThat(actualTextSize).isEqualTo(testCase.expectedTypeface);
+        assertThat(typeface).isEqualTo(testCase.expectedTypeface);
+    }
+
+    @Test
+    public void shouldProvideEdgeType() {
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+
+        int edgeType = preferences.getStyle().edgeTypeOr(EDGE_TYPE_NONE);
+
+        assertThat(edgeType).isEqualTo(testCase.expectedEdgeType);
+    }
+
+    @Test
+    public void shouldProvideEdgeColor() {
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+
+        int color = preferences.getStyle().edgeColorOr(FALLBACK_COLOR);
+
+        assertThat(color).isEqualTo(testCase.expectedEdgeColor);
     }
 
     private static final TestCase PRE_KITKAT_TEST_CASE = new TestCase(JELLY_BEAN_MR2, "PRE_KITKAT")
@@ -112,21 +133,27 @@ public class SystemCaptionPreferencesTest {
         .expectedForegroundColor(FALLBACK_COLOR)
         .expectedWindowColor(FALLBACK_COLOR)
         .expectedTextSize(TEXT_SIZE)
-        .expectedTypeface(NO_TYPEFACE);
+        .expectedTypeface(NO_TYPEFACE)
+        .expectedEdgeType(EDGE_TYPE_NONE)
+        .expectedEdgeColor(FALLBACK_COLOR);
 
     private static final TestCase KITKAT_TEST_CASE = new TestCase(KITKAT, "KITKAT")
         .expectedBackgroundColor(SYSTEM_BACKGROUND_COLOR)
         .expectedForegroundColor(SYSTEM_FOREGROUND_COLOR)
         .expectedWindowColor(Color.TRANSPARENT)
         .expectedTextSize(TEXT_SIZE * SYSTEM_TEXT_SCALE_RATIO)
-        .expectedTypeface(SYSTEM_TYPEFACE);
+        .expectedTypeface(SYSTEM_TYPEFACE)
+        .expectedEdgeType(SYSTEM_EDGE_TYPE)
+        .expectedEdgeColor(SYSTEM_EDGE_COLOR);
 
     private static final TestCase POST_LOLLIPOP_TEST_CASE = new TestCase(LOLLIPOP, "POST_LOLLIPOP")
         .expectedBackgroundColor(SYSTEM_BACKGROUND_COLOR)
         .expectedForegroundColor(SYSTEM_FOREGROUND_COLOR)
         .expectedWindowColor(SYSTEM_WINDOW_COLOR)
         .expectedTextSize(TEXT_SIZE * SYSTEM_TEXT_SCALE_RATIO)
-        .expectedTypeface(SYSTEM_TYPEFACE);
+        .expectedTypeface(SYSTEM_TYPEFACE)
+        .expectedEdgeType(SYSTEM_EDGE_TYPE)
+        .expectedEdgeColor(SYSTEM_EDGE_COLOR);
 
     private static class TestCase {
 
@@ -137,6 +164,8 @@ public class SystemCaptionPreferencesTest {
         float expectedTextSize;
         int expectedWindowColor;
         Typeface expectedTypeface;
+        int expectedEdgeColor;
+        int expectedEdgeType;
 
         private TestCase(int sdkLevel, String name) {
             this.sdkLevel = sdkLevel;
@@ -165,6 +194,16 @@ public class SystemCaptionPreferencesTest {
 
         TestCase expectedTypeface(Typeface expectedTypeface) {
             this.expectedTypeface = expectedTypeface;
+            return this;
+        }
+
+        TestCase expectedEdgeType(int expectedEdgeType) {
+            this.expectedEdgeType = expectedEdgeType;
+            return this;
+        }
+
+        TestCase expectedEdgeColor(int expectedEdgeColor) {
+            this.expectedEdgeColor = expectedEdgeColor;
             return this;
         }
 
@@ -198,12 +237,16 @@ public class SystemCaptionPreferencesTest {
         try {
             CaptionStyle style = mock(CaptionStyle.class);
             when(style.hasForegroundColor()).thenReturn(true);
-            when(style.hasBackgroundColor()).thenReturn(true);
-            when(style.hasWindowColor()).thenReturn(true);
-            when(style.getTypeface()).thenReturn(SYSTEM_TYPEFACE);
             setFinalField(style, "foregroundColor", SYSTEM_FOREGROUND_COLOR);
+            when(style.hasBackgroundColor()).thenReturn(true);
             setFinalField(style, "backgroundColor", SYSTEM_BACKGROUND_COLOR);
+            when(style.hasWindowColor()).thenReturn(true);
             setFinalField(style, "windowColor", SYSTEM_WINDOW_COLOR);
+            when(style.hasEdgeColor()).thenReturn(true);
+            setFinalField(style, "edgeType", SYSTEM_EDGE_TYPE);
+            when(style.hasEdgeType()).thenReturn(true);
+            setFinalField(style, "edgeColor", SYSTEM_EDGE_COLOR);
+            when(style.getTypeface()).thenReturn(SYSTEM_TYPEFACE);
             return style;
         } catch (Exception e) {
             throw new RuntimeException(e);
