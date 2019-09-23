@@ -9,6 +9,7 @@ enum PlaybackParameters {
     private String mpdAddress;
     private String licenseServerAddress;
     private boolean downloadLicense;
+    private boolean useContentProtection;
 
     public void setMpdAddress(String mpdAddress) {
         this.mpdAddress = mpdAddress;
@@ -22,6 +23,10 @@ enum PlaybackParameters {
         this.downloadLicense = downloadLicense;
     }
 
+    public void setUseContentProtection(boolean useContentProtection) {
+        this.useContentProtection = useContentProtection;
+    }
+
     public String mpdAddress() {
         return mpdAddress;
     }
@@ -32,6 +37,10 @@ enum PlaybackParameters {
 
     public boolean shouldDownloadLicense() {
         return downloadLicense;
+    }
+
+    public boolean useContentProtection() {
+        return useContentProtection;
     }
 
     public void toastMissingParameters(Context context) {

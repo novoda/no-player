@@ -14,6 +14,7 @@
   <string name="default_mpd_url">https://storage.googleapis.com/wvmedia/cenc/hevc/tears/tears.mpd</string>
   <string name="default_licence_url">https://proxy.uat.widevine.com/proxy?provider=widevine_test</string>
   <string name="download_license">Download license</string>
+  <string name="use_content_protection">Use content protection</string>
   <string name="play">Play</string>
   <string name="title_activity_landing">LandingActivity</string>
 

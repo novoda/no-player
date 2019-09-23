@@ -9,6 +9,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.drm.OfflineLicenseHelper;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
@@ -43,6 +45,8 @@ public class MainActivity extends Activity {
     private CheckBox hdSelectionCheckBox;
 
     private OfflineLicense offlineLicense;
+
+    private final PlaybackParameters playbackParameters = PlaybackParameters.INSTANCE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,45 +116,54 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        offlineLicense.download(new OfflineLicense.OfflineLicenseCallback() {
-            @Override
-            public void onLicenseDownloaded(byte[] license) {
-                PlaybackParameters playbackParameters = PlaybackParameters.INSTANCE;
-
-                PlayerBuilder playerBuilder = new PlayerBuilder()
-                        .allowFallbackDecoders()
-                        .withUserAgent("Android/Linux")
-                        .allowCrossProtocolRedirects();
-
-                if (playbackParameters.shouldDownloadLicense()) {
-                    playerBuilder = playerBuilder.withWidevineModularDownloadDrm(KeySetId.of(license));
-                } else {
-                    DataPostingModularDrm keyRequestExecutor = new DataPostingModularDrm(playbackParameters.licenseServerAddress());
-                    playerBuilder = playerBuilder.withWidevineModularStreamingDrm(keyRequestExecutor);
+        if (playbackParameters.useContentProtection()) {
+            offlineLicense.download(new OfflineLicense.OfflineLicenseCallback() {
+                @Override
+                public void onLicenseDownloaded(byte[] license) {
+                    load(license);
                 }
+            });
+        } else {
+            load(null);
+        }
+    }
 
-                player = playerBuilder.build(getApplicationContext());
+    private void load(@Nullable byte[] license) {
 
-                demoPresenter = new DemoPresenter(controllerView, player, player.getListeners(), playerView);
-                dialogCreator = new DialogCreator(player);
+        PlayerBuilder playerBuilder = new PlayerBuilder()
+            .allowFallbackDecoders()
+            .withUserAgent("Android/Linux")
+            .allowCrossProtocolRedirects();
 
-                player.getListeners().addDroppedVideoFrames(new NoPlayer.DroppedVideoFramesListener() {
-                    @Override
-                    public void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames) {
-                        Log.v(getClass().toString(), "dropped frames: " + droppedFrames + " since: " + elapsedMsSinceLastDroppedFrames + "ms");
-                    }
-                });
-                player.getListeners().addTracksChangedListener(tracksChangedListener);
+        if (license != null) {
+            if (playbackParameters.shouldDownloadLicense()) {
+                playerBuilder = playerBuilder.withWidevineModularDownloadDrm(KeySetId.of(license));
+            } else {
+                DataPostingModularDrm keyRequestExecutor = new DataPostingModularDrm(playbackParameters.licenseServerAddress());
+                playerBuilder = playerBuilder.withWidevineModularStreamingDrm(keyRequestExecutor);
+            }
+        }
 
-                Options options = new OptionsBuilder()
-                        .withContentType(ContentType.DASH)
-                        .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
-                        .withMaxInitialBitrate(TWO_MEGABITS)
-                        .withMaxVideoBitrate(getMaxVideoBitrate())
-                        .build();
-                demoPresenter.startPresenting(Uri.parse(playbackParameters.mpdAddress()), options);
+        player = playerBuilder.build(getApplicationContext());
+
+        demoPresenter = new DemoPresenter(controllerView, player, player.getListeners(), playerView);
+        dialogCreator = new DialogCreator(player);
+
+        player.getListeners().addDroppedVideoFrames(new NoPlayer.DroppedVideoFramesListener() {
+            @Override
+            public void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames) {
+                Log.v(getClass().toString(), "dropped frames: " + droppedFrames + " since: " + elapsedMsSinceLastDroppedFrames + "ms");
             }
         });
+        player.getListeners().addTracksChangedListener(tracksChangedListener);
+
+        Options options = new OptionsBuilder()
+            .withContentType(ContentType.DASH)
+            .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
+            .withMaxInitialBitrate(TWO_MEGABITS)
+            .withMaxVideoBitrate(getMaxVideoBitrate())
+            .build();
+        demoPresenter.startPresenting(Uri.parse(playbackParameters.mpdAddress()), options);
     }
 
     private int getMaxVideoBitrate() {

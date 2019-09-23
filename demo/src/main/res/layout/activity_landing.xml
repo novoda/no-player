@@ -26,11 +26,18 @@
     android:text="@string/default_licence_url" />
 
   <CheckBox
-    android:id="@+id/download_license"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:checked="false"
-    android:text="@string/download_license" />
+      android:id="@+id/download_license"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:checked="false"
+      android:text="@string/download_license" />
+
+  <CheckBox
+      android:id="@+id/use_content_proteciton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:checked="true"
+      android:text="@string/use_content_protection" />
 
   <Button
     android:id="@+id/button_custom_uri"
