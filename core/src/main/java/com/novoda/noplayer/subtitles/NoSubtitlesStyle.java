@@ -4,7 +4,7 @@ import android.graphics.Typeface;
 
 import androidx.annotation.Nullable;
 
-class PreKitkatSubtytlesStyle implements SubtitlesStyle {
+class NoSubtitlesStyle implements SubtitlesStyle {
 
     @Override
     public int backgroundColorOr(int fallbackColor) {

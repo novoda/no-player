@@ -28,7 +28,7 @@ public class SystemCaptionPreferences {
                 captioningManager.getFontScale()
             );
         } else {
-            return new PreKitkatSubtytlesStyle();
+            return new NoSubtitlesStyle();
         }
     }
 
