@@ -55,7 +55,8 @@ public class SystemCaptionPreferencesTest {
             PRE_KITKAT_TEST_CASE,
             KITKAT_TEST_CASE,
             POST_LOLLIPOP_TEST_CASE,
-            DISABLED_TEST_CASE
+            DISABLED_TEST_CASE,
+            LOCALLY_DISABLED_TEST_CASE
         };
     }
 
@@ -159,7 +160,17 @@ public class SystemCaptionPreferencesTest {
         .expectedEdgeColor(SYSTEM_EDGE_COLOR);
 
     private static final TestCase DISABLED_TEST_CASE = new TestCase(LOLLIPOP, "DISABLED")
-        .disabled()
+        .captionsManagerDisabled()
+        .expectedBackgroundColor(FALLBACK_COLOR)
+        .expectedForegroundColor(FALLBACK_COLOR)
+        .expectedWindowColor(FALLBACK_COLOR)
+        .expectedTextSize(TEXT_SIZE)
+        .expectedTypeface(NO_TYPEFACE)
+        .expectedEdgeType(EDGE_TYPE_NONE)
+        .expectedEdgeColor(FALLBACK_COLOR);
+
+    private static final TestCase LOCALLY_DISABLED_TEST_CASE = new TestCase(LOLLIPOP, "LOCALLY DISABLED")
+        .captionsLocallyDisabled()
         .expectedBackgroundColor(FALLBACK_COLOR)
         .expectedForegroundColor(FALLBACK_COLOR)
         .expectedWindowColor(FALLBACK_COLOR)
@@ -172,7 +183,8 @@ public class SystemCaptionPreferencesTest {
 
         final int sdkLevel;
         final String name;
-        boolean captionasAreEnabled = true;
+        boolean captionsManagerIsEnabled = true;
+        boolean captionsLocallyEnabled = true;
         int expectedBackgroundColor;
         int expectedForegroundColor;
         float expectedTextSize;
@@ -221,8 +233,13 @@ public class SystemCaptionPreferencesTest {
             return this;
         }
 
-        TestCase disabled() {
-            this.captionasAreEnabled = false;
+        TestCase captionsManagerDisabled() {
+            this.captionsManagerIsEnabled = false;
+            return this;
+        }
+
+        TestCase captionsLocallyDisabled() {
+            this.captionsLocallyEnabled = false;
             return this;
         }
 
@@ -239,12 +256,14 @@ public class SystemCaptionPreferencesTest {
         CaptioningManager manager = mock(CaptioningManager.class);
         when(manager.getUserStyle()).thenReturn(captionStyle);
         when(manager.getFontScale()).thenReturn(SYSTEM_TEXT_SCALE_RATIO);
-        when(manager.isEnabled()).thenReturn(testCase.captionasAreEnabled);
+        when(manager.isEnabled()).thenReturn(testCase.captionsManagerIsEnabled);
 
         Context context = mock(Context.class);
         when(context.getSystemService(CAPTIONING_SERVICE)).thenReturn(manager);
 
-        return new SystemCaptionPreferences(context);
+        SystemCaptionPreferences systemCaptionPreferences = new SystemCaptionPreferences(context);
+        systemCaptionPreferences.setAccessibilityCaptionsStyleEnabled(testCase.captionsLocallyEnabled);
+        return systemCaptionPreferences;
     }
 
     private static CaptionStyle systemCaptionStyle() {

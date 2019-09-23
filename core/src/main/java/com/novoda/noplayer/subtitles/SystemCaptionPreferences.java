@@ -15,13 +15,15 @@ public class SystemCaptionPreferences {
 
     private final Context context;
 
+    private boolean enabled = true;
+
     public SystemCaptionPreferences(Context context) {
         this.context = context;
     }
 
     @NonNull
     public SubtitlesStyle getStyle() {
-        if (Build.VERSION.SDK_INT >= KITKAT) {
+        if (enabled && Build.VERSION.SDK_INT >= KITKAT) {
             final CaptioningManager captioningManager = requireCaptionManager();
             if (captioningManager.isEnabled()) {
                 return new KitkatSubtitlesStyle(
@@ -40,4 +42,7 @@ public class SystemCaptionPreferences {
         return requireNonNull((CaptioningManager) service);
     }
 
+    public void setAccessibilityCaptionsStyleEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }
