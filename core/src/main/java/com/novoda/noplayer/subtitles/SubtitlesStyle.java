@@ -1,5 +1,9 @@
 package com.novoda.noplayer.subtitles;
 
+import android.graphics.Typeface;
+
+import androidx.annotation.Nullable;
+
 public interface SubtitlesStyle {
 
     int backgroundColorOr(int fallbackColor);
@@ -10,4 +14,6 @@ public interface SubtitlesStyle {
 
     float scaleTextSize(float textSize);
 
+    @Nullable
+    Typeface typeface();
 }

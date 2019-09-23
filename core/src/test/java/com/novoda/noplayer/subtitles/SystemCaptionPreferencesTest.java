@@ -2,6 +2,7 @@ package com.novoda.noplayer.subtitles;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.view.accessibility.CaptioningManager;
 import android.view.accessibility.CaptioningManager.CaptionStyle;
@@ -34,6 +35,8 @@ public class SystemCaptionPreferencesTest {
     private static final int SYSTEM_FOREGROUND_COLOR = Color.GREEN;
     private static final int SYSTEM_WINDOW_COLOR = Color.GRAY;
     private static final float SYSTEM_TEXT_SCALE_RATIO = 2f;
+    private static final Typeface SYSTEM_TYPEFACE = mock(Typeface.class);
+    private static final Typeface NO_TYPEFACE = null;
 
     private final TestCase testCase;
 
@@ -95,21 +98,35 @@ public class SystemCaptionPreferencesTest {
         assertThat(actualTextSize).isEqualTo(testCase.expectedTextSize);
     }
 
+    @Test
+    public void shouldProvideTypeface() {
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+
+        Typeface actualTextSize = preferences.getStyle().typeface();
+
+        assertThat(actualTextSize).isEqualTo(testCase.expectedTypeface);
+    }
+
     private static final TestCase PRE_KITKAT_TEST_CASE = new TestCase(JELLY_BEAN_MR2, "PRE_KITKAT")
         .expectedBackgroundColor(FALLBACK_COLOR)
         .expectedForegroundColor(FALLBACK_COLOR)
         .expectedWindowColor(FALLBACK_COLOR)
-        .expectedTextSize(TEXT_SIZE);
+        .expectedTextSize(TEXT_SIZE)
+        .expectedTypeface(NO_TYPEFACE);
+
     private static final TestCase KITKAT_TEST_CASE = new TestCase(KITKAT, "KITKAT")
         .expectedBackgroundColor(SYSTEM_BACKGROUND_COLOR)
         .expectedForegroundColor(SYSTEM_FOREGROUND_COLOR)
         .expectedWindowColor(Color.TRANSPARENT)
-        .expectedTextSize(TEXT_SIZE * SYSTEM_TEXT_SCALE_RATIO);
+        .expectedTextSize(TEXT_SIZE * SYSTEM_TEXT_SCALE_RATIO)
+        .expectedTypeface(SYSTEM_TYPEFACE);
+
     private static final TestCase POST_LOLLIPOP_TEST_CASE = new TestCase(LOLLIPOP, "POST_LOLLIPOP")
         .expectedBackgroundColor(SYSTEM_BACKGROUND_COLOR)
         .expectedForegroundColor(SYSTEM_FOREGROUND_COLOR)
         .expectedWindowColor(SYSTEM_WINDOW_COLOR)
-        .expectedTextSize(TEXT_SIZE * SYSTEM_TEXT_SCALE_RATIO);
+        .expectedTextSize(TEXT_SIZE * SYSTEM_TEXT_SCALE_RATIO)
+        .expectedTypeface(SYSTEM_TYPEFACE);
 
     private static class TestCase {
 
@@ -119,6 +136,7 @@ public class SystemCaptionPreferencesTest {
         int expectedForegroundColor;
         float expectedTextSize;
         int expectedWindowColor;
+        Typeface expectedTypeface;
 
         private TestCase(int sdkLevel, String name) {
             this.sdkLevel = sdkLevel;
@@ -142,6 +160,11 @@ public class SystemCaptionPreferencesTest {
 
         TestCase expectedWindowColor(int expectedWindowColor) {
             this.expectedWindowColor = expectedWindowColor;
+            return this;
+        }
+
+        TestCase expectedTypeface(Typeface expectedTypeface) {
+            this.expectedTypeface = expectedTypeface;
             return this;
         }
 
@@ -177,6 +200,7 @@ public class SystemCaptionPreferencesTest {
             when(style.hasForegroundColor()).thenReturn(true);
             when(style.hasBackgroundColor()).thenReturn(true);
             when(style.hasWindowColor()).thenReturn(true);
+            when(style.getTypeface()).thenReturn(SYSTEM_TYPEFACE);
             setFinalField(style, "foregroundColor", SYSTEM_FOREGROUND_COLOR);
             setFinalField(style, "backgroundColor", SYSTEM_BACKGROUND_COLOR);
             setFinalField(style, "windowColor", SYSTEM_WINDOW_COLOR);

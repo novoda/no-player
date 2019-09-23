@@ -1,5 +1,9 @@
 package com.novoda.noplayer.subtitles;
 
+import android.graphics.Typeface;
+
+import androidx.annotation.Nullable;
+
 class PreKitkatSubtytlesStyle implements SubtitlesStyle {
 
     @Override
@@ -20,6 +24,12 @@ class PreKitkatSubtytlesStyle implements SubtitlesStyle {
     @Override
     public float scaleTextSize(float textSize) {
         return textSize;
+    }
+
+    @Nullable
+    @Override
+    public Typeface typeface() {
+        return null;
     }
 
 }

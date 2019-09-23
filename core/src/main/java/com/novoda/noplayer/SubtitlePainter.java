@@ -187,7 +187,7 @@ final class SubtitlePainter {
         this.windowColor = subtitlesStyle.windowColorOr(windowColor);
         this.edgeType = 0;
         this.edgeColor = Color.WHITE;
-        textPaint.setTypeface(null);
+        textPaint.setTypeface(subtitlesStyle.typeface());
         this.textSizePx = subtitlesStyle.scaleTextSize(textSizePx);
         this.bottomPaddingFraction = bottomPaddingFraction;
         this.parentLeft = cueBoxLeft;
