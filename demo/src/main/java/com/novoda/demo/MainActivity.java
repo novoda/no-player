@@ -98,17 +98,17 @@ public class MainActivity extends Activity {
             }
 
             List<PlayerVideoTrack> videoTracks = player.getVideoTracks();
-            if (videoTracks.size() >= 1) {
-                videoSelectionButton.setVisibility(View.VISIBLE);
-            } else {
+            if (videoTracks.isEmpty()) {
                 videoSelectionButton.setVisibility(View.GONE);
+            } else {
+                videoSelectionButton.setVisibility(View.VISIBLE);
             }
 
             List<PlayerSubtitleTrack> subtitleTracks = player.getSubtitleTracks();
-            if (subtitleTracks.size() >= 1) {
-                subtitleSelectionButton.setVisibility(View.VISIBLE);
-            } else {
+            if (subtitleTracks.isEmpty()) {
                 subtitleSelectionButton.setVisibility(View.GONE);
+            } else {
+                subtitleSelectionButton.setVisibility(View.VISIBLE);
             }
         }
     };
