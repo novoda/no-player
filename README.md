@@ -93,6 +93,13 @@ repositories {
 
 You can find the latest snapshot version following this [link](https://bintray.com/novoda-oss/snapshots/no-player/_latestVersion).
 
+
+## Accesibility Captions
+
+Accessibility settings set by the user are taken into account when displaying Close Captions **by default**.
+
+It's possible to disable this behaviour by calling `setAccessibilityCaptionsStyleEnabled(false)` on `PlayerView`.
+
 ## Contributing
 
 We always welcome people to contribute new features or bug fixes, [here is how](https://github.com/novoda/novoda/blob/master/CONTRIBUTING.md).

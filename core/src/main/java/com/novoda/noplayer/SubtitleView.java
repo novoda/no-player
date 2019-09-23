@@ -23,6 +23,7 @@ public final class SubtitleView extends View {
     private final List<SubtitlePainter> painters;
 
     private TextCues textCues;
+    private boolean accessibilityCaptionsStyleEnabled;
 
     public SubtitleView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -38,7 +39,9 @@ public final class SubtitleView extends View {
         int cueCount = textCues.size();
 
         while (painters.size() < cueCount) {
-            painters.add(new SubtitlePainter(getContext()));
+            SubtitlePainter painter = new SubtitlePainter(getContext());
+            painter.setAccessibilityCaptionsStyleEnabled(accessibilityCaptionsStyleEnabled);
+            painters.add(painter);
         }
 
         invalidate();
@@ -82,6 +85,13 @@ public final class SubtitleView extends View {
                     right,
                     bottom
             );
+        }
+    }
+
+    public void setAccessibilityCaptionsStyleEnabled(boolean enabled) {
+        accessibilityCaptionsStyleEnabled = enabled;
+        for (SubtitlePainter painter : painters) {
+            painter.setAccessibilityCaptionsStyleEnabled(enabled);
         }
     }
 }
