@@ -23,7 +23,7 @@ public final class SubtitleView extends View {
     private final List<SubtitlePainter> painters;
 
     private TextCues textCues;
-    private boolean accessibilityCaptionsStyleEnabled;
+    private boolean accessibilityCaptionsStyleEnabled = true;
 
     public SubtitleView(Context context, AttributeSet attrs) {
         super(context, attrs);
