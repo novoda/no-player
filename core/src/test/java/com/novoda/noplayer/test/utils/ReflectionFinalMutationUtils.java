@@ -8,9 +8,9 @@ import java.lang.reflect.Modifier;
  * colaborators to production code.
  */
 @SuppressWarnings({"WeakerAccess", "JavaReflectionMemberAccess", "unused"})
-public class RelectionFinalMutationUtils {
+public class ReflectionFinalMutationUtils {
 
-    private RelectionFinalMutationUtils() {
+    private ReflectionFinalMutationUtils() {
         // Utils class
     }
 

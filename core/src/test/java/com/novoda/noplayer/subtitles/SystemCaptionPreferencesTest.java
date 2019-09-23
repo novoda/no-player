@@ -24,7 +24,7 @@ import static android.os.Build.VERSION_CODES.KITKAT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_NONE;
 import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_OUTLINE;
-import static com.novoda.noplayer.test.utils.RelectionFinalMutationUtils.setFinalField;
+import static com.novoda.noplayer.test.utils.ReflectionFinalMutationUtils.setFinalField;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

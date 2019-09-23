@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.novoda.noplayer.test.utils.RelectionFinalMutationUtils.*;
+import static com.novoda.noplayer.test.utils.ReflectionFinalMutationUtils.*;
 
 /**
  * Allows mutating constants which are restored after teh test is finished.
