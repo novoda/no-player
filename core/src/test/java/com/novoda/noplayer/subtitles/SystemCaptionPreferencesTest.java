@@ -54,7 +54,8 @@ public class SystemCaptionPreferencesTest {
         return new TestCase[]{
             PRE_KITKAT_TEST_CASE,
             KITKAT_TEST_CASE,
-            POST_LOLLIPOP_TEST_CASE
+            POST_LOLLIPOP_TEST_CASE,
+            DISABLED_TEST_CASE
         };
     }
 
@@ -69,7 +70,7 @@ public class SystemCaptionPreferencesTest {
 
     @Test
     public void shouldProvideBackgroundColor() {
-        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences(testCase);
 
         int color = preferences.getStyle().backgroundColorOr(FALLBACK_COLOR);
 
@@ -78,7 +79,7 @@ public class SystemCaptionPreferencesTest {
 
     @Test
     public void shouldProvideForegroundColor() {
-        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences(testCase);
 
         int color = preferences.getStyle().foregroundColorOr(FALLBACK_COLOR);
 
@@ -87,7 +88,7 @@ public class SystemCaptionPreferencesTest {
 
     @Test
     public void shouldProvideWindowColor() {
-        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences(testCase);
 
         int color = preferences.getStyle().windowColorOr(FALLBACK_COLOR);
 
@@ -96,7 +97,7 @@ public class SystemCaptionPreferencesTest {
 
     @Test
     public void shouldProvideTextSize() {
-        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences(testCase);
 
         float textSize = preferences.getStyle().scaleTextSize(TEXT_SIZE);
 
@@ -105,7 +106,7 @@ public class SystemCaptionPreferencesTest {
 
     @Test
     public void shouldProvideTypeface() {
-        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences(testCase);
 
         Typeface typeface = preferences.getStyle().typeface();
 
@@ -114,7 +115,7 @@ public class SystemCaptionPreferencesTest {
 
     @Test
     public void shouldProvideEdgeType() {
-        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences(testCase);
 
         int edgeType = preferences.getStyle().edgeTypeOr(EDGE_TYPE_NONE);
 
@@ -123,7 +124,7 @@ public class SystemCaptionPreferencesTest {
 
     @Test
     public void shouldProvideEdgeColor() {
-        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences(testCase);
 
         int color = preferences.getStyle().edgeColorOr(FALLBACK_COLOR);
 
@@ -157,10 +158,21 @@ public class SystemCaptionPreferencesTest {
         .expectedEdgeType(SYSTEM_EDGE_TYPE)
         .expectedEdgeColor(SYSTEM_EDGE_COLOR);
 
+    private static final TestCase DISABLED_TEST_CASE = new TestCase(LOLLIPOP, "DISABLED")
+        .disabled()
+        .expectedBackgroundColor(FALLBACK_COLOR)
+        .expectedForegroundColor(FALLBACK_COLOR)
+        .expectedWindowColor(FALLBACK_COLOR)
+        .expectedTextSize(TEXT_SIZE)
+        .expectedTypeface(NO_TYPEFACE)
+        .expectedEdgeType(EDGE_TYPE_NONE)
+        .expectedEdgeColor(FALLBACK_COLOR);
+
     private static class TestCase {
 
         final int sdkLevel;
         final String name;
+        boolean captionasAreEnabled = true;
         int expectedBackgroundColor;
         int expectedForegroundColor;
         float expectedTextSize;
@@ -209,6 +221,11 @@ public class SystemCaptionPreferencesTest {
             return this;
         }
 
+        TestCase disabled() {
+            this.captionasAreEnabled = false;
+            return this;
+        }
+
         @NonNull
         @Override
         public String toString() {
@@ -216,23 +233,18 @@ public class SystemCaptionPreferencesTest {
         }
     }
 
-    private static SystemCaptionPreferences givenSystemCaptionPreferences() {
-        return new SystemCaptionPreferences(contextWithCaptionManager());
-    }
-
-    private static Context contextWithCaptionManager() {
-        Context context = mock(Context.class);
-        CaptioningManager captioningManager = systemCaptioningManager();
-        when(context.getSystemService(CAPTIONING_SERVICE)).thenReturn(captioningManager);
-        return context;
-    }
-
-    private static CaptioningManager systemCaptioningManager() {
-        CaptioningManager manager = mock(CaptioningManager.class);
+    private static SystemCaptionPreferences givenSystemCaptionPreferences(TestCase testCase) {
         CaptionStyle captionStyle = systemCaptionStyle();
+
+        CaptioningManager manager = mock(CaptioningManager.class);
         when(manager.getUserStyle()).thenReturn(captionStyle);
         when(manager.getFontScale()).thenReturn(SYSTEM_TEXT_SCALE_RATIO);
-        return manager;
+        when(manager.isEnabled()).thenReturn(testCase.captionasAreEnabled);
+
+        Context context = mock(Context.class);
+        when(context.getSystemService(CAPTIONING_SERVICE)).thenReturn(manager);
+
+        return new SystemCaptionPreferences(context);
     }
 
     private static CaptionStyle systemCaptionStyle() {

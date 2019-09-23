@@ -23,13 +23,14 @@ public class SystemCaptionPreferences {
     public SubtitlesStyle getStyle() {
         if (Build.VERSION.SDK_INT >= KITKAT) {
             final CaptioningManager captioningManager = requireCaptionManager();
-            return new KitkatSubtitlesStyle(
-                createFromCaptionStyle(captioningManager.getUserStyle()),
-                captioningManager.getFontScale()
-            );
-        } else {
-            return new NoSubtitlesStyle();
+            if (captioningManager.isEnabled()) {
+                return new KitkatSubtitlesStyle(
+                    createFromCaptionStyle(captioningManager.getUserStyle()),
+                    captioningManager.getFontScale()
+                );
+            }
         }
+        return new NoSubtitlesStyle();
     }
 
     @NonNull
