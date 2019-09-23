@@ -4,9 +4,10 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
@@ -22,9 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState.IDLE;
-import static com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState.PAUSED;
-import static com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState.PLAYING;
+import androidx.annotation.Nullable;
 
 // Not much we can do, wrapping MediaPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
@@ -39,7 +38,7 @@ class AndroidMediaPlayerFacade {
     private final PlaybackStateChecker playbackStateChecker;
     private final MediaPlayerCreator mediaPlayerCreator;
 
-    private PlaybackState currentState = IDLE;
+    private PlaybackState currentState = PlaybackState.IDLE;
 
     private int currentBufferPercentage;
     private float volume = 1.0f;
@@ -172,14 +171,14 @@ class AndroidMediaPlayerFacade {
             mediaPlayer.reset();
             mediaPlayer.release();
             mediaPlayer = null;
-            currentState = IDLE;
+            currentState = PlaybackState.IDLE;
         }
     }
 
     void start(Either<Surface, SurfaceHolder> surface) throws IllegalStateException {
         assertIsInPlaybackState();
         attachSurface(mediaPlayer, surface);
-        currentState = PLAYING;
+        currentState = PlaybackState.PLAYING;
         mediaPlayer.start();
     }
 
@@ -204,11 +203,16 @@ class AndroidMediaPlayerFacade {
 
         if (isPlaying()) {
             mediaPlayer.pause();
-            currentState = PAUSED;
+            currentState = PlaybackState.PAUSED;
         }
     }
 
     int mediaDurationInMillis() throws IllegalStateException {
+        assertIsInPlaybackState();
+        return mediaPlayer.getDuration();
+    }
+
+    int contentDurationInMillis() throws IllegalStateException {
         assertIsInPlaybackState();
         return mediaPlayer.getDuration();
     }
@@ -333,5 +337,35 @@ class AndroidMediaPlayerFacade {
     void setMaxVideoBitrate(int maxVideoBitrate) {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to set max video bitrate but has not been implemented for MediaPlayer.");
+    }
+
+    void attach(AdvertView advertView) {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to attach advert view but has not been implemented for MediaPlayer.");
+    }
+
+    void detach(AdvertView advertView) {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to detach advert view but has not been implemented for MediaPlayer.");
+    }
+
+    void disableAdverts() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to disable adverts but has not been implemented for MediaPlayer.");
+    }
+
+    void enableAdverts() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to enable adverts but has not been implemented for MediaPlayer.");
+    }
+
+    void skipAdvertBreak() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to skip advert break but has not been implemented for MediaPlayer.");
+    }
+
+    void skipAdvert() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to skip advert break but has not been implemented for MediaPlayer.");
     }
 }

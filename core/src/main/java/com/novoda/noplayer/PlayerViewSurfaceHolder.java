@@ -1,10 +1,12 @@
 package com.novoda.noplayer;
 
 import android.graphics.SurfaceTexture;
-import android.support.annotation.Nullable;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.TextureView;
+
+import androidx.annotation.Nullable;
+
 import com.novoda.noplayer.model.Either;
 
 import java.util.ArrayList;

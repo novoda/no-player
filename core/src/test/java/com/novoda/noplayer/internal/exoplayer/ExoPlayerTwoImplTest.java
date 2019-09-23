@@ -2,8 +2,8 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
 import android.view.View;
+
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.text.Cue;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
@@ -22,6 +22,7 @@ import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.TextCues;
 import com.novoda.noplayer.model.Timeout;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -117,8 +118,8 @@ public class ExoPlayerTwoImplTest {
 
             ArgumentCaptor<NoPlayer.ErrorListener> argumentCaptor = ArgumentCaptor.forClass(NoPlayer.ErrorListener.class);
 
-            verify(listenersHolder).addErrorListener(argumentCaptor.capture());
-            NoPlayer.ErrorListener errorListener = argumentCaptor.getValue();
+            verify(forwarder, times(2)).bind(argumentCaptor.capture());
+            NoPlayer.ErrorListener errorListener = argumentCaptor.getAllValues().get(1);
             errorListener.onError(mock(NoPlayer.PlayerError.class));
 
             verify(listenersHolder).resetState();
@@ -219,7 +220,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideo(uri, OPTIONS);
 
-            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, allowFallbackDecoder, requiresSecureDecoders);
         }
 
         @Test
@@ -228,7 +229,7 @@ public class ExoPlayerTwoImplTest {
 
             player.loadVideoWithTimeout(uri, OPTIONS, ANY_TIMEOUT, ANY_LOAD_TIMEOUT_CALLBACK);
 
-            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, mediaCodecSelector);
+            verify(exoPlayerFacade).loadVideo(playerView.getPlayerSurfaceHolder(), drmSessionCreator, uri, OPTIONS, forwarder, allowFallbackDecoder, requiresSecureDecoders);
         }
 
         @Test
@@ -570,6 +571,9 @@ public class ExoPlayerTwoImplTest {
 
     public abstract static class Base {
 
+        static final boolean allowFallbackDecoder = true;
+        static final boolean requiresSecureDecoders = true;
+
         @Rule
         public MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -608,8 +612,6 @@ public class ExoPlayerTwoImplTest {
         @Mock
         DrmSessionCreator drmSessionCreator;
         @Mock
-        MediaCodecSelector mediaCodecSelector;
-        @Mock
         View containerView;
         @Mock
         PlayerSurfaceHolder playerSurfaceHolder;
@@ -639,7 +641,8 @@ public class ExoPlayerTwoImplTest {
                     loadTimeout,
                     heart,
                     drmSessionCreator,
-                    mediaCodecSelector
+                    allowFallbackDecoder,
+                    requiresSecureDecoders
             );
         }
     }

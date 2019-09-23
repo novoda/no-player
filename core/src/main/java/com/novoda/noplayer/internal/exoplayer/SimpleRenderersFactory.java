@@ -18,8 +18,6 @@ package com.novoda.noplayer.internal.exoplayer;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.exoplayer2.Renderer;
@@ -40,6 +38,7 @@ import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.novoda.noplayer.internal.utils.Optional;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -47,14 +46,25 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
+
 /**
  * Default {@link RenderersFactory} implementation.
  */
+@SuppressWarnings({
+        "PMD.CyclomaticComplexity",
+        "PMD.StdCyclomaticComplexity",
+        "PMD.ModifiedCyclomaticComplexity",
+        "PMD.NPathComplexity",
+        "PMD.ExcessiveImports"
+})
 class SimpleRenderersFactory implements RenderersFactory {
 
     private static final boolean DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS = false;
     private static final boolean INIT_ARGS = true;
     private static final boolean PLAY_CLEAR_SAMPLES_WITHOUT_KEYS = true;
+    private static final boolean ENABLE_DECODER_FALLBACK = true;
 
     /**
      * Modes for using extension renderers.
@@ -95,7 +105,10 @@ class SimpleRenderersFactory implements RenderersFactory {
     private final int extensionRendererMode;
 
     private final long allowedVideoJoiningTimeMs;
-    private final MediaCodecSelector mediaCodecSelector;
+    private final boolean allowFallbackDecoder;
+    private final boolean requiresSecureDecoder;
+    private final List<String> unsupportedVideoDecoders;
+    private final Optional<Integer> hdQualityBitrateThreshold;
     private final SubtitleDecoderFactory subtitleDecoderFactory;
 
     /**
@@ -105,18 +118,27 @@ class SimpleRenderersFactory implements RenderersFactory {
      *                                  application build for them to be considered available.
      * @param allowedVideoJoiningTimeMs The maximum duration for which video renderers can attempt
      *                                  to seamlessly join an ongoing playback.
-     * @param mediaCodecSelector        Used for selecting the codec for the video renderer.
+     * @param allowFallbackDecoder      Used for selecting the codec for the video renderer.
+     * @param unsupportedVideoDecoders  The decoders to remove from the list of supported codecs.
+     * @param hdQualityBitrateThreshold The threshold over which secure decoders must be present.
      * @param subtitleDecoderFactory    A factory from which to obtain {@link SubtitleDecoder} instances.
      */
+    @SuppressWarnings({"checkstyle:ParameterNumber", "PMD.ExcessiveParameterList"})
     SimpleRenderersFactory(Context context,
                            @ExtensionRendererMode int extensionRendererMode,
                            long allowedVideoJoiningTimeMs,
-                           MediaCodecSelector mediaCodecSelector,
+                           boolean allowFallbackDecoder,
+                           boolean requiresSecureDecoder,
+                           List<String> unsupportedVideoDecoders,
+                           Optional<Integer> hdQualityBitrateThreshold,
                            SubtitleDecoderFactory subtitleDecoderFactory) {
         this.context = context;
         this.extensionRendererMode = extensionRendererMode;
         this.allowedVideoJoiningTimeMs = allowedVideoJoiningTimeMs;
-        this.mediaCodecSelector = mediaCodecSelector;
+        this.allowFallbackDecoder = allowFallbackDecoder;
+        this.requiresSecureDecoder = requiresSecureDecoder;
+        this.unsupportedVideoDecoders = unsupportedVideoDecoders;
+        this.hdQualityBitrateThreshold = hdQualityBitrateThreshold;
         this.subtitleDecoderFactory = subtitleDecoderFactory;
     }
 
@@ -129,12 +151,15 @@ class SimpleRenderersFactory implements RenderersFactory {
                                       @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
         ArrayList<Renderer> renderersList = new ArrayList<>();
         buildVideoRenderers(context, drmSessionManager, allowedVideoJoiningTimeMs,
-                eventHandler, videoRendererEventListener, extensionRendererMode, renderersList);
+                            eventHandler, videoRendererEventListener, extensionRendererMode, renderersList
+        );
         buildAudioRenderers(context, drmSessionManager, buildAudioProcessors(),
-                eventHandler, audioRendererEventListener, extensionRendererMode, renderersList);
+                            eventHandler, audioRendererEventListener, extensionRendererMode, renderersList
+        );
         buildTextRenderers(textRendererOutput, eventHandler.getLooper(), renderersList, subtitleDecoderFactory);
         buildMetadataRenderers(metadataRendererOutput, eventHandler.getLooper(),
-                renderersList);
+                               renderersList
+        );
         buildMiscellaneousRenderers();
         return renderersList.toArray(new Renderer[renderersList.size()]);
     }
@@ -160,14 +185,34 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      VideoRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
-        outRenderers.add(new MediaCodecVideoRenderer(context,
-                mediaCodecSelector,
-                allowedVideoJoiningTimeMs,
-                drmSessionManager,
-                DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
-                eventHandler,
-                eventListener,
-                MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY));
+        if (allowFallbackDecoder) {
+            outRenderers.add(new MediaCodecVideoRendererWithSimplifiedDrmRequirement(
+                    context,
+                    CodecSelectorWithFallback.newInstance(),
+                    allowedVideoJoiningTimeMs,
+                    drmSessionManager,
+                    DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
+                    ENABLE_DECODER_FALLBACK,
+                    requiresSecureDecoder,
+                    unsupportedVideoDecoders,
+                    hdQualityBitrateThreshold,
+                    eventHandler,
+                    eventListener,
+                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
+            ));
+        } else {
+            outRenderers.add(new MediaCodecVideoRenderer(
+                    context,
+                    MediaCodecSelector.DEFAULT,
+                    allowedVideoJoiningTimeMs,
+                    drmSessionManager,
+                    DO_NOT_PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
+                    ENABLE_DECODER_FALLBACK,
+                    eventHandler,
+                    eventListener,
+                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
+            ));
+        }
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {
             return;
@@ -180,11 +225,13 @@ class SimpleRenderersFactory implements RenderersFactory {
         try {
             Class<?> clazz = Class.forName("com.google.android.exoplayer2.ext.vp9.LibvpxVideoRenderer");
             Constructor<?> constructor = clazz.getConstructor(boolean.class, long.class, Handler.class, VideoRendererEventListener.class, int.class);
-            Renderer renderer = (Renderer) constructor.newInstance(INIT_ARGS,
+            Renderer renderer = (Renderer) constructor.newInstance(
+                    INIT_ARGS,
                     allowedVideoJoiningTimeMs,
                     eventHandler,
                     eventListener,
-                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY);
+                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY
+            );
             outRenderers.add(extensionRendererIndex, renderer);
             Log.i(TAG, "Loaded LibvpxVideoRenderer.");
         } catch (ClassNotFoundException e) {
@@ -215,18 +262,29 @@ class SimpleRenderersFactory implements RenderersFactory {
                                      AudioRendererEventListener eventListener,
                                      @ExtensionRendererMode int extensionRendererMode,
                                      List<Renderer> outRenderers) {
-        MediaCodecAudioRenderer mediaCodecAudioRenderer = new MediaCodecAudioRenderer(
-                context,
-                mediaCodecSelector,
-                drmSessionManager,
-                PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
-                eventHandler,
-                eventListener,
-                AudioCapabilities.getCapabilities(context),
-                audioProcessors
-        );
-
-        outRenderers.add(mediaCodecAudioRenderer);
+        if (allowFallbackDecoder) {
+            outRenderers.add(new MediaCodecAudioRendererWithSimplifiedDrmRequirement(
+                    context,
+                    CodecSelectorWithFallback.newInstance(),
+                    drmSessionManager,
+                    PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
+                    eventHandler,
+                    eventListener,
+                    AudioCapabilities.getCapabilities(context),
+                    audioProcessors
+            ));
+        } else {
+            outRenderers.add(new MediaCodecAudioRenderer(
+                    context,
+                    MediaCodecSelector.DEFAULT,
+                    drmSessionManager,
+                    PLAY_CLEAR_SAMPLES_WITHOUT_KEYS,
+                    eventHandler,
+                    eventListener,
+                    AudioCapabilities.getCapabilities(context),
+                    audioProcessors
+            ));
+        }
 
         if (extensionRendererMode == EXTENSION_RENDERER_MODE_OFF) {
             return;
@@ -275,10 +333,11 @@ class SimpleRenderersFactory implements RenderersFactory {
 
     /**
      * Builds text renderers for use by the player.
-     *  @param output       An output for the renderers.
-     * @param outputLooper The looper associated with the thread on which the output should be
-     *                     called.
-     * @param outRenderers An array to which the built renderers should be appended.
+     *
+     * @param output         An output for the renderers.
+     * @param outputLooper   The looper associated with the thread on which the output should be
+     *                       called.
+     * @param outRenderers   An array to which the built renderers should be appended.
      * @param decoderFactory A factory from which to obtain {@link SubtitleDecoder} instances.
      */
     private void buildTextRenderers(TextOutput output, Looper outputLooper, List<Renderer> outRenderers, SubtitleDecoderFactory decoderFactory) {
@@ -317,4 +376,5 @@ class SimpleRenderersFactory implements RenderersFactory {
             super("Unable to instantiate renderer " + rendererName, cause);
         }
     }
+
 }

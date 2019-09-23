@@ -6,6 +6,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Listeners;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Not much we can do, wrapping MediaPlayer is a lot of work
-@SuppressWarnings("PMD.GodClass")
+@SuppressWarnings({"PMD.GodClass", "PMD.ExcessivePublicCount"})
 class AndroidMediaPlayerImpl implements NoPlayer {
 
     private static final long NO_SEEK_TO_POSITION = -1;
@@ -209,6 +210,14 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
+    public VideoType videoType() {
+        if (mediaPlayer.isPlaying()) {
+            return VideoType.CONTENT;
+        }
+        return VideoType.UNDEFINED;
+    }
+
+    @Override
     public void seekTo(long positionInMillis) throws IllegalStateException {
         seekToPositionInMillis = positionInMillis;
         mediaPlayer.seekTo(positionInMillis);
@@ -257,7 +266,22 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     }
 
     @Override
+    public long advertBreakDurationInMillis() {
+        return 0;
+    }
+
+    @Override
+    public long positionInAdvertBreakInMillis() {
+        return 0;
+    }
+
+    @Override
     public long playheadPositionInMillis() throws IllegalStateException {
+        return isSeeking() ? seekToPositionInMillis : mediaPlayer.currentPositionInMillis();
+    }
+
+    @Override
+    public long contentPositionInMillis() {
         return isSeeking() ? seekToPositionInMillis : mediaPlayer.currentPositionInMillis();
     }
 
@@ -268,6 +292,11 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     @Override
     public long mediaDurationInMillis() throws IllegalStateException {
         return mediaPlayer.mediaDurationInMillis();
+    }
+
+    @Override
+    public long contentDurationInMillis() {
+        return mediaPlayer.contentDurationInMillis();
     }
 
     @Override
@@ -308,6 +337,36 @@ class AndroidMediaPlayerImpl implements NoPlayer {
         buggyVideoDriverPreventer.clear(playerView.getContainerView());
         surfaceRequester = null;
         containerView = null;
+    }
+
+    @Override
+    public void attach(AdvertView advertView) {
+        mediaPlayer.attach(advertView);
+    }
+
+    @Override
+    public void detach(AdvertView advertView) {
+        mediaPlayer.detach(advertView);
+    }
+
+    @Override
+    public void disableAdverts() {
+        mediaPlayer.disableAdverts();
+    }
+
+    @Override
+    public void skipAdvertBreak() {
+        mediaPlayer.skipAdvertBreak();
+    }
+
+    @Override
+    public void skipAdvert() {
+        mediaPlayer.skipAdvert();
+    }
+
+    @Override
+    public void enableAdverts() {
+        mediaPlayer.enableAdverts();
     }
 
     private void clearSurfaceHolderCallbacks() {

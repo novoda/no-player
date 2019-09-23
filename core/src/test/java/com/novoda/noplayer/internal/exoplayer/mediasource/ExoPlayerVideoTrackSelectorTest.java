@@ -10,6 +10,7 @@ import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.PlayerVideoTrack;
+import com.novoda.noplayer.model.Support;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,6 +33,9 @@ import static org.mockito.Mockito.verify;
 public class ExoPlayerVideoTrackSelectorTest {
 
     private static final Format VIDEO_FORMAT = aVideoFormat().withId("id1").build();
+    private static final String CODEC_NAME = "codecs";
+    private static final String ASSOCIATED_DECODER_NAME = "intel-decoder";
+    private static final Support SUPPORT = null;
     private static final PlayerVideoTrack PLAYER_VIDEO_TRACK = new PlayerVideoTrack(
             0,
             0,
@@ -40,7 +44,10 @@ public class ExoPlayerVideoTrackSelectorTest {
             VIDEO_FORMAT.width,
             VIDEO_FORMAT.height,
             (int) VIDEO_FORMAT.frameRate,
-            VIDEO_FORMAT.bitrate
+            VIDEO_FORMAT.bitrate,
+            CODEC_NAME,
+            ASSOCIATED_DECODER_NAME,
+            SUPPORT
     );
 
     private static final Format ADDITIONAL_VIDEO_FORMAT = aVideoFormat().withId("id2").build();
@@ -54,7 +61,10 @@ public class ExoPlayerVideoTrackSelectorTest {
             ADDITIONAL_VIDEO_FORMAT.width,
             ADDITIONAL_VIDEO_FORMAT.height,
             (int) ADDITIONAL_VIDEO_FORMAT.frameRate,
-            ADDITIONAL_VIDEO_FORMAT.bitrate
+            ADDITIONAL_VIDEO_FORMAT.bitrate,
+            CODEC_NAME,
+            ASSOCIATED_DECODER_NAME,
+            SUPPORT
     );
 
     private static final List<PlayerVideoTrack> EXPECTED_TRACKS = Arrays.asList(PLAYER_VIDEO_TRACK, ADDITIONAL_PLAYER_VIDEO_TRACK);

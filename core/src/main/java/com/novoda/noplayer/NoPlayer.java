@@ -1,8 +1,8 @@
 package com.novoda.noplayer;
 
 import android.net.Uri;
-import android.support.annotation.FloatRange;
 
+import com.novoda.noplayer.internal.exoplayer.NoPlayerAdsLoader;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.Bitrate;
@@ -11,9 +11,14 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.Timeout;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.FloatRange;
+
+// There are a lot of features for playing and monitoring video.
+@SuppressWarnings("PMD.ExcessivePublicCount")
 public interface NoPlayer extends PlayerState {
 
     /**
@@ -113,6 +118,28 @@ public interface NoPlayer extends PlayerState {
      * @param playerView for displaying video content.
      */
     void detach(PlayerView playerView);
+
+    /**
+     * Attaches a given {@link AdvertView} to the Player.
+     *
+     * @param advertView for displaying advert indicators.
+     */
+    void attach(AdvertView advertView);
+
+    /**
+     * Detaches a given {@link AdvertView} from the Player.
+     *
+     * @param advertView for displaying advert indicators.
+     */
+    void detach(AdvertView advertView);
+
+    void disableAdverts();
+
+    void skipAdvertBreak();
+
+    void skipAdvert();
+
+    void enableAdverts();
 
     /**
      * Retrieves all of the available {@link PlayerVideoTrack} of a prepared Player.
@@ -289,6 +316,102 @@ public interface NoPlayer extends PlayerState {
         void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio);
     }
 
+    interface TracksChangedListener {
+        void onTracksChanged();
+    }
+
+    /**
+     * A listener for responding to advert events.
+     */
+    interface AdvertListener {
+
+        /**
+         * Called when adverts fail to load from {@link AdvertsLoader}. Content playback will
+         * trigger prior to this call being executed in the {@link NoPlayerAdsLoader}.
+         *
+         * @param cause of the advert load error that is emitted by {@link AdvertsLoader}.
+         */
+        void onAdvertsLoadError(Exception cause);
+
+        /**
+         * Called when adverts have successfully loaded from {@link AdvertsLoader}. The {@link NoPlayerAdsLoader}
+         * will map to a player implementation specific Advert representation and trigger playback.
+         *
+         * @param advertBreaks that should be used to display adverts.
+         */
+        void onAdvertsLoaded(List<AdvertBreak> advertBreaks);
+
+        /**
+         * Called when an {@link AdvertBreak}, a collection of {@link Advert}s, begins playback.
+         *
+         * @param advertBreak that is beginning playback.
+         */
+        void onAdvertBreakStart(AdvertBreak advertBreak);
+
+        /**
+         * Called when an {@link AdvertBreak} has finished playing all {@link Advert}s.
+         *
+         * @param advertBreak that has finished playback.
+         */
+        void onAdvertBreakEnd(AdvertBreak advertBreak);
+
+        /**
+         * Called when an {@link Advert} fails to prepare for playback. This could fail for a variety of
+         * reasons including: Invalid url, loss of connection etc.
+         *
+         * @param advert that failed to prepare.
+         * @param cause  of the advert prepare error, as emitted by the underlying player.
+         */
+        void onAdvertPrepareError(Advert advert, IOException cause);
+
+        /**
+         * Called when an {@link Advert} begins playback.
+         *
+         * @param advert that is beginning playback.
+         */
+        void onAdvertStart(Advert advert);
+
+        /**
+         * Called when an {@link Advert} has finished playback.
+         *
+         * @param advert that has finished playback.
+         */
+        void onAdvertEnd(Advert advert);
+
+        /**
+         * Called when a piece of UI associated to an {@link Advert} is interacted with.
+         *
+         * @param advert that has been interacted with.
+         */
+        void onAdvertClicked(Advert advert);
+
+        /**
+         * Called when the adverts have been disabled prior to being enabled.
+         */
+        void onAdvertsDisabled();
+
+        /**
+         * Called when adverts have been enabled prior to being disabled.
+         *
+         * @param advertBreaks that are remaining to play after re-enabling adverts.
+         */
+        void onAdvertsEnabled(List<AdvertBreak> advertBreaks);
+
+        /**
+         * Called when advert break is skipped or prior to being skipped
+         *
+         * @param advertBreak that is being skipped.
+         */
+        void onAdvertBreakSkipped(AdvertBreak advertBreak);
+
+        /**
+         * Called when advert is skipped or prior to being skipped
+         *
+         * @param advert that is being skipped.
+         */
+        void onAdvertSkipped(Advert advert);
+    }
+
     /**
      * A listener for debugging information.
      */
@@ -327,4 +450,5 @@ public interface NoPlayer extends PlayerState {
 
         void onDroppedVideoFrames(int droppedFrames, long elapsedMsSinceLastDroppedFrames);
     }
+
 }

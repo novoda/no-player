@@ -2,13 +2,16 @@ package com.novoda.noplayer;
 
 import android.content.Context;
 
-import com.novoda.noplayer.drm.DrmHandler;
+import androidx.annotation.Nullable;
+
 import com.novoda.noplayer.drm.DrmType;
+import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.exoplayer.NoPlayerExoPlayerCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorException;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreatorFactory;
 import com.novoda.noplayer.internal.mediaplayer.NoPlayerMediaPlayerCreator;
+import com.novoda.noplayer.model.KeySetId;
 
 import java.util.List;
 
@@ -32,10 +35,23 @@ class NoPlayerCreator {
         this.drmSessionCreatorFactory = drmSessionCreatorFactory;
     }
 
-    NoPlayer create(DrmType drmType, DrmHandler drmHandler, boolean downgradeSecureDecoder, boolean allowCrossProtocolRedirects) {
+    NoPlayer create(DrmType drmType,
+                    KeyRequestExecutor keyRequestExecutor,
+                    @Nullable KeySetId keySetId,
+                    boolean allowFallbackDecoder,
+                    boolean requiresSecureDecoder,
+                    boolean allowCrossProtocolRedirects) {
         for (PlayerType player : prioritizedPlayerTypes) {
             if (player.supports(drmType)) {
-                return createPlayerForType(player, drmType, drmHandler, downgradeSecureDecoder, allowCrossProtocolRedirects);
+                return createPlayerForType(
+                        player,
+                        drmType,
+                        keyRequestExecutor,
+                        keySetId,
+                        allowFallbackDecoder,
+                        requiresSecureDecoder,
+                        allowCrossProtocolRedirects
+                );
             }
         }
         throw UnableToCreatePlayerException.unhandledDrmType(drmType);
@@ -43,19 +59,22 @@ class NoPlayerCreator {
 
     private NoPlayer createPlayerForType(PlayerType playerType,
                                          DrmType drmType,
-                                         DrmHandler drmHandler,
-                                         boolean downgradeSecureDecoder,
+                                         KeyRequestExecutor keyRequestExecutor,
+                                         @Nullable KeySetId keySetId,
+                                         boolean allowFallbackDecoder,
+                                         boolean requiresSecureDecoder,
                                          boolean allowCrossProtocolRedirects) {
         switch (playerType) {
             case MEDIA_PLAYER:
                 return noPlayerMediaPlayerCreator.createMediaPlayer(context);
             case EXO_PLAYER:
                 try {
-                    DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, drmHandler);
+                    DrmSessionCreator drmSessionCreator = drmSessionCreatorFactory.createFor(drmType, keyRequestExecutor, keySetId);
                     return noPlayerExoPlayerCreator.createExoPlayer(
                             context,
                             drmSessionCreator,
-                            downgradeSecureDecoder,
+                            allowFallbackDecoder,
+                            requiresSecureDecoder,
                             allowCrossProtocolRedirects
                     );
                 } catch (DrmSessionCreatorException exception) {

@@ -86,7 +86,7 @@ To consume a snapshot build add an additional maven repo as follows:
 ```
 repositories {
     maven {
-        url 'https://dl.bintray.com/novoda-oss/snapshots/'
+        url 'https://dl.bintray.com/novoda-oss/snapshots'
     }
 }
 ```

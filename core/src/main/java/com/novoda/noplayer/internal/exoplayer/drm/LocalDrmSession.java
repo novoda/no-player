@@ -1,6 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer.drm;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.novoda.noplayer.model.KeySetId;

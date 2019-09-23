@@ -5,11 +5,13 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
+
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.Options;
 import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerInformation;
+import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.SurfaceRequester;
@@ -23,6 +25,9 @@ import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerAudioTrackFixture;
 import com.novoda.noplayer.model.Timeout;
+
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,8 +41,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
-
-import java.util.Collections;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -176,6 +179,24 @@ public class AndroidMediaPlayerImplTest {
         }
 
         @Test
+        public void givenAndroidMediaPlayerIsPlaying_whenQueryingVideoType_thenReturnsContent() {
+            given(mediaPlayer.isPlaying()).willReturn(IS_PLAYING);
+
+            PlayerState.VideoType videoType = player.videoType();
+
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.CONTENT);
+        }
+
+        @Test
+        public void givenAndroidMediaPlayerIsNotPlaying_whenQueryingVideoType_thenReturnsUndefined() {
+            given(mediaPlayer.isPlaying()).willReturn(false);
+
+            PlayerState.VideoType videoType = player.videoType();
+
+            assertThat(videoType).isEqualTo(PlayerState.VideoType.UNDEFINED);
+        }
+
+        @Test
         public void whenSeeking_thenSeeksToPosition() {
             long seekPositionInMillis = TWO_MINUTES_IN_MILLIS;
 
@@ -253,9 +274,35 @@ public class AndroidMediaPlayerImplTest {
         }
 
         @Test
+        public void givenPlayerIsNotSeeking_whenGettingContentPosition_thenReturnsCurrentMediaPlayerPosition() {
+            given(mediaPlayer.currentPositionInMillis()).willReturn(ONE_SECOND_IN_MILLIS);
+            long playheadPositionInMillis = player.contentPositionInMillis();
+
+            assertThat(playheadPositionInMillis).isEqualTo(ONE_SECOND_IN_MILLIS);
+        }
+
+        @Test
+        public void givenPlayerIsSeeking_whenGettingContentPosition_thenReturnsSeekPosition() {
+            long seekPositionInMillis = TEN_SECONDS;
+            player.seekTo(seekPositionInMillis);
+
+            long videoPositionInMillis = player.contentPositionInMillis();
+
+            assertThat(videoPositionInMillis).isEqualTo(seekPositionInMillis);
+        }
+
+        @Test
         public void whenGettingMediaDuration_thenReturnsMediaPlayerDuration() {
             given(mediaPlayer.mediaDurationInMillis()).willReturn(ONE_SECOND_IN_MILLIS);
             long videoDurationInMillis = player.mediaDurationInMillis();
+
+            assertThat(videoDurationInMillis).isEqualTo(ONE_SECOND_IN_MILLIS);
+        }
+
+        @Test
+        public void whenGettingContentDuration_thenReturnsMediaPlayerDuration() {
+            given(mediaPlayer.contentDurationInMillis()).willReturn(ONE_SECOND_IN_MILLIS);
+            long videoDurationInMillis = player.contentDurationInMillis();
 
             assertThat(videoDurationInMillis).isEqualTo(ONE_SECOND_IN_MILLIS);
         }

@@ -4,18 +4,18 @@ import com.google.android.exoplayer2.drm.ExoMediaDrm;
 import com.google.android.exoplayer2.drm.MediaDrmCallback;
 import com.novoda.noplayer.drm.ModularDrmKeyRequest;
 import com.novoda.noplayer.drm.ModularDrmProvisionRequest;
-import com.novoda.noplayer.drm.StreamingModularDrm;
+import com.novoda.noplayer.drm.KeyRequestExecutor;
 import com.novoda.noplayer.internal.drm.provision.ProvisionExecutor;
 
 import java.util.UUID;
 
 class ProvisioningModularDrmCallback implements MediaDrmCallback {
 
-    private final StreamingModularDrm streamingModularDrm;
+    private final KeyRequestExecutor keyRequestExecutor;
     private final ProvisionExecutor provisionExecutor;
 
-    ProvisioningModularDrmCallback(StreamingModularDrm streamingModularDrm, ProvisionExecutor provisionExecutor) {
-        this.streamingModularDrm = streamingModularDrm;
+    ProvisioningModularDrmCallback(KeyRequestExecutor keyRequestExecutor, ProvisionExecutor provisionExecutor) {
+        this.keyRequestExecutor = keyRequestExecutor;
         this.provisionExecutor = provisionExecutor;
     }
 
@@ -26,6 +26,6 @@ class ProvisioningModularDrmCallback implements MediaDrmCallback {
 
     @Override
     public byte[] executeKeyRequest(UUID uuid, ExoMediaDrm.KeyRequest request) throws Exception {
-        return streamingModularDrm.executeKeyRequest(new ModularDrmKeyRequest(request.getLicenseServerUrl(), request.getData()));
+        return keyRequestExecutor.executeKeyRequest(new ModularDrmKeyRequest(request.getLicenseServerUrl(), request.getData()));
     }
 }

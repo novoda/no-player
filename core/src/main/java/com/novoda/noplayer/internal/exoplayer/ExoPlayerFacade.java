@@ -1,16 +1,18 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
-import android.support.annotation.Nullable;
-
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ads.SinglePeriodAdTimeline;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.Options;
+import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.PlayerSurfaceHolder;
 import com.novoda.noplayer.internal.exoplayer.drm.DrmSessionCreator;
 import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
@@ -24,9 +26,12 @@ import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
 
+// Not much we can do, wrapping ExoPlayer is a lot of work
+@SuppressWarnings("PMD.GodClass")
 class ExoPlayerFacade {
 
     private static final boolean DO_NOT_RESET_STATE = false;
+    private static final long NO_RESUME_POSITION = 0L;
 
     private final BandwidthMeterCreator bandwidthMeterCreator;
     private final AndroidDeviceVersion androidDeviceVersion;
@@ -34,6 +39,7 @@ class ExoPlayerFacade {
     private final CompositeTrackSelectorCreator trackSelectorCreator;
     private final ExoPlayerCreator exoPlayerCreator;
     private final RendererTypeRequesterCreator rendererTypeRequesterCreator;
+    private final Optional<NoPlayerAdsLoader> adsLoader;
 
     @Nullable
     private SimpleExoPlayer exoPlayer;
@@ -49,17 +55,39 @@ class ExoPlayerFacade {
                     MediaSourceFactory mediaSourceFactory,
                     CompositeTrackSelectorCreator trackSelectorCreator,
                     ExoPlayerCreator exoPlayerCreator,
-                    RendererTypeRequesterCreator rendererTypeRequesterCreator) {
+                    RendererTypeRequesterCreator rendererTypeRequesterCreator,
+                    Optional<NoPlayerAdsLoader> adsLoader) {
         this.bandwidthMeterCreator = bandwidthMeterCreator;
         this.androidDeviceVersion = androidDeviceVersion;
         this.mediaSourceFactory = mediaSourceFactory;
         this.trackSelectorCreator = trackSelectorCreator;
         this.exoPlayerCreator = exoPlayerCreator;
         this.rendererTypeRequesterCreator = rendererTypeRequesterCreator;
+        this.adsLoader = adsLoader;
     }
 
     boolean isPlaying() {
         return exoPlayer != null && exoPlayer.getPlayWhenReady();
+    }
+
+    PlayerState.VideoType videoType() {
+        if (exoPlayer == null || exoPlayer.getCurrentTimeline().isEmpty()) {
+            return PlayerState.VideoType.UNDEFINED;
+        }
+        if (exoPlayer.isPlayingAd()) {
+            return PlayerState.VideoType.ADVERT;
+        }
+        return PlayerState.VideoType.CONTENT;
+    }
+
+    long mediaDurationInMillis() throws IllegalStateException {
+        assertVideoLoaded();
+        return exoPlayer.getDuration();
+    }
+
+    long contentDurationInMillis() throws IllegalStateException {
+        assertVideoLoaded();
+        return exoPlayer.getContentDuration();
     }
 
     long playheadPositionInMillis() throws IllegalStateException {
@@ -67,9 +95,62 @@ class ExoPlayerFacade {
         return exoPlayer.getCurrentPosition();
     }
 
-    long mediaDurationInMillis() throws IllegalStateException {
+    long contentPositionInMillis() throws IllegalStateException {
         assertVideoLoaded();
-        return exoPlayer.getDuration();
+        return exoPlayer.getContentPosition();
+    }
+
+    long advertBreakDurationInMillis() throws IllegalStateException {
+        assertVideoLoaded();
+        Timeline currentTimeline = exoPlayer.getCurrentTimeline();
+        if (isSetToPlayAdvert() && adsLoader.isPresent() && currentTimeline instanceof SinglePeriodAdTimeline) {
+            SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
+            Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
+
+            int currentAdGroupIndex = exoPlayer.getCurrentAdGroupIndex();
+            int advertCount = period.getAdCountInAdGroup(currentAdGroupIndex);
+
+            long advertBreakDurationInMicros = combinedAdvertDurationInGroup(period, advertCount);
+            return C.usToMs(advertBreakDurationInMicros);
+        }
+
+        return 0;
+    }
+
+    long positionInAdvertBreakInMillis() throws IllegalStateException {
+        assertVideoLoaded();
+        Timeline currentTimeline = exoPlayer.getCurrentTimeline();
+        if (isSetToPlayAdvert() && adsLoader.isPresent() && currentTimeline instanceof SinglePeriodAdTimeline) {
+            SinglePeriodAdTimeline adTimeline = (SinglePeriodAdTimeline) currentTimeline;
+            Timeline.Period period = adTimeline.getPeriod(0, new Timeline.Period());
+
+            int advertCount = exoPlayer.getCurrentAdIndexInAdGroup();
+
+            long playedAdvertBreakDurationInMicros = combinedAdvertDurationInGroup(period, advertCount);
+            return C.usToMs(playedAdvertBreakDurationInMicros) + playheadPositionInMillis();
+        }
+
+        return 0;
+    }
+
+    private boolean isSetToPlayAdvert() {
+        return videoType() == PlayerState.VideoType.ADVERT;
+    }
+
+    private long combinedAdvertDurationInGroup(Timeline.Period period, int numberOfAdvertsToInclude) {
+        int adGroupIndex = exoPlayer.getCurrentAdGroupIndex();
+        long advertBreakDurationInMicros = 0;
+        NoPlayerAdsLoader noPlayerAdsLoader = adsLoader.get();
+
+        for (int i = 0; i < numberOfAdvertsToInclude; i++) {
+            long advertDurationInMicros = period.getAdDurationUs(adGroupIndex, i);
+            if (advertDurationInMicros == C.TIME_UNSET) {
+                advertDurationInMicros = noPlayerAdsLoader.advertDurationBy(adGroupIndex, i);
+            }
+            advertBreakDurationInMicros += advertDurationInMicros;
+        }
+
+        return advertBreakDurationInMicros;
     }
 
     int bufferPercentage() throws IllegalStateException {
@@ -98,6 +179,10 @@ class ExoPlayerFacade {
     }
 
     void release() {
+        if (adsLoader.isPresent()) {
+            adsLoader.get().release();
+        }
+
         if (exoPlayer != null) {
             exoPlayer.release();
             exoPlayer = null;
@@ -109,7 +194,8 @@ class ExoPlayerFacade {
                    Uri uri,
                    Options options,
                    ExoPlayerForwarder forwarder,
-                   MediaCodecSelector mediaCodecSelector) {
+                   boolean allowFallbackDecoder,
+                   boolean requiresSecureDecoder) {
         this.options = options;
 
         DefaultBandwidthMeter bandwidthMeter = bandwidthMeterCreator.create(options.maxInitialBitrate());
@@ -118,7 +204,9 @@ class ExoPlayerFacade {
         exoPlayer = exoPlayerCreator.create(
                 drmSessionCreator,
                 forwarder.drmSessionEventListener(),
-                mediaCodecSelector,
+                allowFallbackDecoder,
+                requiresSecureDecoder,
+                options,
                 compositeTrackSelector.trackSelector()
         );
         rendererTypeRequester = rendererTypeRequesterCreator.createfrom(exoPlayer);
@@ -128,11 +216,22 @@ class ExoPlayerFacade {
 
         setMovieAudioAttributes(exoPlayer);
 
+        if (adsLoader.isPresent()) {
+            long advertBreakInitialPositionMillis = options.getInitialAdvertBreakPositionInMillis().or(NO_RESUME_POSITION);
+            long playbackResumePositionMillis = options.getInitialPositionInMillis().or(NO_RESUME_POSITION);
+            adsLoader.get().bind(
+                    forwarder.advertListener(),
+                    advertBreakInitialPositionMillis,
+                    playbackResumePositionMillis
+            );
+        }
+
         MediaSource mediaSource = mediaSourceFactory.create(
                 options,
                 uri,
                 forwarder.mediaSourceEventListener(),
-                bandwidthMeter
+                bandwidthMeter,
+                adsLoader
         );
         attachToSurface(playerSurfaceHolder);
 
@@ -143,6 +242,9 @@ class ExoPlayerFacade {
         }
 
         exoPlayer.prepare(mediaSource, !hasInitialPosition, DO_NOT_RESET_STATE);
+        if (adsLoader.isPresent()) {
+            adsLoader.get().setPlayer(exoPlayer);
+        }
     }
 
     private void setMovieAudioAttributes(SimpleExoPlayer exoPlayer) {
@@ -250,6 +352,48 @@ class ExoPlayerFacade {
     private void assertVideoLoaded() {
         if (exoPlayer == null) {
             throw new IllegalStateException("Video must be loaded before trying to interact with the player");
+        }
+    }
+
+    void attach(AdvertView advertView) {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            advertView.attach(adsLoader);
+        }
+    }
+
+    void detach(AdvertView advertView) {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            advertView.detach(adsLoader);
+        }
+    }
+
+    void disableAdverts() {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            adsLoader.disableAdverts();
+        }
+    }
+
+    void skipAdvertBreak() {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            adsLoader.skipAdvertBreak();
+        }
+    }
+
+    void skipAdvert() {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            adsLoader.skipAdvert();
+        }
+    }
+
+    void enableAdverts() {
+        if (adsLoader.isPresent()) {
+            NoPlayerAdsLoader adsLoader = this.adsLoader.get();
+            adsLoader.enableAdverts();
         }
     }
 }

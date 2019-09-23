@@ -144,4 +144,32 @@ public interface Listeners {
      * @param droppedVideoFramesListener to remove.
      */
     void removeDroppedVideoFrames(NoPlayer.DroppedVideoFramesListener droppedVideoFramesListener);
+
+    /**
+     * Add a given {@link com.novoda.noplayer.NoPlayer.AdvertListener} to be notified about advert events.
+     *
+     * @param advertListener to notify.
+     */
+    void addAdvertListener(NoPlayer.AdvertListener advertListener);
+
+    /**
+     * Remove a given {@link com.novoda.noplayer.NoPlayer.AdvertListener}.
+     *
+     * @param advertListener to remove.
+     */
+    void removeAdvertListener(NoPlayer.AdvertListener advertListener);
+
+    /**
+     * Add a given {@link com.novoda.noplayer.NoPlayer.TracksChangedListener} to be notified when track changes occur.
+     *
+     * @param tracksChangedListener to notify.
+     */
+    void addTracksChangedListener(NoPlayer.TracksChangedListener tracksChangedListener);
+
+    /**
+     * Remove a given {@link com.novoda.noplayer.NoPlayer.TracksChangedListener}.
+     *
+     * @param tracksChangedListener to remove.
+     */
+    void removeTracksChangedListener(NoPlayer.TracksChangedListener tracksChangedListener);
 }
