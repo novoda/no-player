@@ -186,7 +186,6 @@ final class SubtitlePainter {
         this.foregroundColor = subtitlesStyle.foregroundColorOr(Color.WHITE);
         this.backgroundColor = subtitlesStyle.backgroundColorOr(Color.BLACK);
         this.windowColor = subtitlesStyle.windowColorOr(windowColor);
-
         this.edgeType = subtitlesStyle.edgeTypeOr(EDGE_TYPE_NONE);
         this.edgeColor = subtitlesStyle.edgeColorOr(Color.WHITE);
         textPaint.setTypeface(subtitlesStyle.typeface());
