@@ -18,14 +18,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import static android.content.Context.*;
+import static android.content.Context.CAPTIONING_SERVICE;
 import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
 import static android.os.Build.VERSION_CODES.KITKAT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
-import static com.google.android.exoplayer2.text.CaptionStyleCompat.*;
-import static com.novoda.noplayer.test.utils.RelectionFinalMutationUtils.*;
+import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_NONE;
+import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_OUTLINE;
+import static com.novoda.noplayer.test.utils.RelectionFinalMutationUtils.setFinalField;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class SystemCaptionPreferencesTest {
@@ -48,11 +50,11 @@ public class SystemCaptionPreferencesTest {
     }
 
     @Parameterized.Parameters(name = "{0}")
-    public static TestCase[][] data() {
-        return new TestCase[][] {
-            { PRE_KITKAT_TEST_CASE },
-            { KITKAT_TEST_CASE },
-            { POST_LOLLIPOP_TEST_CASE }
+    public static TestCase[] data() {
+        return new TestCase[]{
+            PRE_KITKAT_TEST_CASE,
+            KITKAT_TEST_CASE,
+            POST_LOLLIPOP_TEST_CASE
         };
     }
 
