@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import static android.os.Build.VERSION_CODES.KITKAT;
+import static com.google.android.exoplayer2.text.CaptionStyleCompat.createFromCaptionStyle;
 import static java.util.Objects.requireNonNull;
 
 public class SystemCaptionPreferences {
@@ -22,11 +23,12 @@ public class SystemCaptionPreferences {
     public SubtitlesStyle getStyle() {
         if (Build.VERSION.SDK_INT >= KITKAT) {
             final CaptioningManager captioningManager = requireCaptionManager();
-            CaptioningManager.CaptionStyle systemStyle = captioningManager.getUserStyle();
-            float fontScale = captioningManager.getFontScale();
-            return new KitkatSubtitlesStyle(systemStyle, fontScale);
+            return new KitkatSubtitlesStyle(
+                createFromCaptionStyle(captioningManager.getUserStyle()),
+                captioningManager.getFontScale()
+            );
         } else {
-            return NO_STYLE;
+            return new PreKitkatSubtytlesStyle();
         }
     }
 
@@ -36,24 +38,5 @@ public class SystemCaptionPreferences {
         Object service = context.getSystemService(Context.CAPTIONING_SERVICE);
         return requireNonNull((CaptioningManager) service);
     }
-
-    private static final SubtitlesStyle NO_STYLE = new SubtitlesStyle() {
-
-        @Override
-        public int backgroundColorOr(int fallbackColor) {
-            return fallbackColor;
-        }
-
-        @Override
-        public int foregroundColorOr(int fallbackColor) {
-            return fallbackColor;
-        }
-
-        @Override
-        public float scaleTextSize(float textSize) {
-            return textSize;
-        }
-
-    };
 
 }

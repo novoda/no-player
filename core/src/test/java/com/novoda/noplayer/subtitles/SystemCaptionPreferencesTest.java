@@ -6,19 +6,26 @@ import android.os.Build;
 import android.view.accessibility.CaptioningManager;
 import android.view.accessibility.CaptioningManager.CaptionStyle;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.exoplayer2.util.Util;
 import com.novoda.noplayer.test.utils.StaticMutationRule;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import static android.content.Context.*;
 import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR2;
 import static android.os.Build.VERSION_CODES.KITKAT;
+import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static com.novoda.noplayer.test.utils.RelectionFinalMutationUtils.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+@RunWith(Parameterized.class)
 public class SystemCaptionPreferencesTest {
 
     private static final int FALLBACK_COLOR = Color.BLUE;
@@ -28,82 +35,121 @@ public class SystemCaptionPreferencesTest {
     private static final int SYSTEM_WINDOW_COLOR = Color.GRAY;
     private static final float SYSTEM_TEXT_SCALE_RATIO = 2f;
 
-    public static class PreKitKat {
+    private final TestCase testCase;
 
-        @Rule
-        public final StaticMutationRule mutations = new StaticMutationRule();
-
-        @Before
-        public void setUp() {
-            mutations.mutateStatic(Build.VERSION.class, "SDK_INT", JELLY_BEAN_MR2);
-        }
-
-        @Test
-        public void shouldProvideFallbackForBackgroundColor() {
-            SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
-
-            int color = preferences.getStyle().backgroundColorOr(FALLBACK_COLOR);
-
-            assertThat(color).isEqualTo(FALLBACK_COLOR);
-        }
-
-        @Test
-        public void shouldProvideFallbackForForegroundColor() {
-            SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
-
-            int color = preferences.getStyle().foregroundColorOr(FALLBACK_COLOR);
-
-            assertThat(color).isEqualTo(FALLBACK_COLOR);
-        }
-
-        @Test
-        public void shouldProvideTheSameTextSize() {
-            SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
-
-            float actualTextSize = preferences.getStyle().scaleTextSize(TEXT_SIZE);
-
-            assertThat(actualTextSize).isEqualTo(TEXT_SIZE);
-        }
-
+    public SystemCaptionPreferencesTest(TestCase testCase) {
+        this.testCase = testCase;
     }
 
-    public static class PostKitKat {
+    @Parameterized.Parameters(name = "{0}")
+    public static TestCase[][] data() {
+        return new TestCase[][] {
+            { PRE_KITKAT_TEST_CASE },
+            { KITKAT_TEST_CASE },
+            { POST_LOLLIPOP_TEST_CASE }
+        };
+    }
 
-        @Rule
-        public final StaticMutationRule mutations = new StaticMutationRule();
+    @Rule
+    public final StaticMutationRule mutations = new StaticMutationRule();
 
-        @Before
-        public void setUp() {
-            mutations.mutateStatic(Build.VERSION.class, "SDK_INT", KITKAT);
+    @Before
+    public void setUp() {
+        mutations.mutateStatic(Build.VERSION.class, "SDK_INT", testCase.sdkLevel);
+        mutations.mutateStatic(Util.class, "SDK_INT", testCase.sdkLevel);
+    }
+
+    @Test
+    public void shouldProvideBackgroundColor() {
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+
+        int color = preferences.getStyle().backgroundColorOr(FALLBACK_COLOR);
+
+        assertThat(color).isEqualTo(testCase.expectedBackgroundColor);
+    }
+
+    @Test
+    public void shouldProvideForegroundColor() {
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+
+        int color = preferences.getStyle().foregroundColorOr(FALLBACK_COLOR);
+
+        assertThat(color).isEqualTo(testCase.expectedForegroundColor);
+    }
+
+    @Test
+    public void shouldProvideWindowColor() {
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+
+        int color = preferences.getStyle().windowColorOr(FALLBACK_COLOR);
+
+        assertThat(color).isEqualTo(testCase.expectedWindowColor);
+    }
+
+    @Test
+    public void shouldProvideTextSize() {
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
+
+        float actualTextSize = preferences.getStyle().scaleTextSize(TEXT_SIZE);
+
+        assertThat(actualTextSize).isEqualTo(testCase.expectedTextSize);
+    }
+
+    private static final TestCase PRE_KITKAT_TEST_CASE = new TestCase(JELLY_BEAN_MR2, "PRE_KITKAT")
+        .expectedBackgroundColor(FALLBACK_COLOR)
+        .expectedForegroundColor(FALLBACK_COLOR)
+        .expectedWindowColor(FALLBACK_COLOR)
+        .expectedTextSize(TEXT_SIZE);
+    private static final TestCase KITKAT_TEST_CASE = new TestCase(KITKAT, "KITKAT")
+        .expectedBackgroundColor(SYSTEM_BACKGROUND_COLOR)
+        .expectedForegroundColor(SYSTEM_FOREGROUND_COLOR)
+        .expectedWindowColor(Color.TRANSPARENT)
+        .expectedTextSize(TEXT_SIZE * SYSTEM_TEXT_SCALE_RATIO);
+    private static final TestCase POST_LOLLIPOP_TEST_CASE = new TestCase(LOLLIPOP, "POST_LOLLIPOP")
+        .expectedBackgroundColor(SYSTEM_BACKGROUND_COLOR)
+        .expectedForegroundColor(SYSTEM_FOREGROUND_COLOR)
+        .expectedWindowColor(SYSTEM_WINDOW_COLOR)
+        .expectedTextSize(TEXT_SIZE * SYSTEM_TEXT_SCALE_RATIO);
+
+    private static class TestCase {
+
+        final int sdkLevel;
+        final String name;
+        int expectedBackgroundColor;
+        int expectedForegroundColor;
+        float expectedTextSize;
+        int expectedWindowColor;
+
+        private TestCase(int sdkLevel, String name) {
+            this.sdkLevel = sdkLevel;
+            this.name = name;
         }
 
-        @Test
-        public void shouldProvideFallbackForBackgroundColor() {
-            SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
-
-            int color = preferences.getStyle().backgroundColorOr(FALLBACK_COLOR);
-
-            assertThat(color).isEqualTo(SYSTEM_BACKGROUND_COLOR);
+        TestCase expectedBackgroundColor(int expectedBackgroundColor) {
+            this.expectedBackgroundColor = expectedBackgroundColor;
+            return this;
         }
 
-        @Test
-        public void shouldProvideFallbackForForegroundColor() {
-            SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
-
-            int color = preferences.getStyle().foregroundColorOr(FALLBACK_COLOR);
-
-            assertThat(color).isEqualTo(SYSTEM_FOREGROUND_COLOR);
+        TestCase expectedForegroundColor(int expectedForegroundColor) {
+            this.expectedForegroundColor = expectedForegroundColor;
+            return this;
         }
 
-        @Test
-        public void shouldProvideTheSameTextSize() {
-            SystemCaptionPreferences preferences = givenSystemCaptionPreferences();
-
-            float actualTextSize = preferences.getStyle().scaleTextSize(TEXT_SIZE);
-
-            assertThat(actualTextSize).isEqualTo(TEXT_SIZE * SYSTEM_TEXT_SCALE_RATIO);
+        TestCase expectedTextSize(float expectedTextSize) {
+            this.expectedTextSize = expectedTextSize;
+            return this;
         }
 
+        TestCase expectedWindowColor(int expectedWindowColor) {
+            this.expectedWindowColor = expectedWindowColor;
+            return this;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     private static SystemCaptionPreferences givenSystemCaptionPreferences() {
@@ -128,6 +174,9 @@ public class SystemCaptionPreferencesTest {
     private static CaptionStyle systemCaptionStyle() {
         try {
             CaptionStyle style = mock(CaptionStyle.class);
+            when(style.hasForegroundColor()).thenReturn(true);
+            when(style.hasBackgroundColor()).thenReturn(true);
+            when(style.hasWindowColor()).thenReturn(true);
             setFinalField(style, "foregroundColor", SYSTEM_FOREGROUND_COLOR);
             setFinalField(style, "backgroundColor", SYSTEM_BACKGROUND_COLOR);
             setFinalField(style, "windowColor", SYSTEM_WINDOW_COLOR);

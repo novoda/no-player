@@ -184,7 +184,7 @@ final class SubtitlePainter {
         this.applyEmbeddedFontSizes = applyEmbeddedFontSizes;
         this.foregroundColor = subtitlesStyle.foregroundColorOr(Color.WHITE);
         this.backgroundColor = subtitlesStyle.backgroundColorOr(Color.BLACK);
-        this.windowColor = windowColor;
+        this.windowColor = subtitlesStyle.windowColorOr(windowColor);
         this.edgeType = 0;
         this.edgeColor = Color.WHITE;
         textPaint.setTypeface(null);

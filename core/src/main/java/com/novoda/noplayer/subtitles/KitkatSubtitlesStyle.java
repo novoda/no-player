@@ -1,18 +1,18 @@
 package com.novoda.noplayer.subtitles;
 
-import android.view.accessibility.CaptioningManager;
-
 import androidx.annotation.RequiresApi;
+
+import com.google.android.exoplayer2.text.CaptionStyleCompat;
 
 import static android.os.Build.VERSION_CODES.KITKAT;
 
 @RequiresApi(api = KITKAT)
 class KitkatSubtitlesStyle implements SubtitlesStyle {
 
-    private final CaptioningManager.CaptionStyle captionStyle;
+    private final CaptionStyleCompat captionStyle;
     private final float fontScale;
 
-    KitkatSubtitlesStyle(CaptioningManager.CaptionStyle captionStyle, float fontScale) {
+    KitkatSubtitlesStyle(CaptionStyleCompat captionStyle, float fontScale) {
         this.captionStyle = captionStyle;
         this.fontScale = fontScale;
     }
@@ -25,6 +25,11 @@ class KitkatSubtitlesStyle implements SubtitlesStyle {
     @Override
     public int foregroundColorOr(int fallbackColor) {
         return colorOr(captionStyle.foregroundColor, fallbackColor);
+    }
+
+    @Override
+    public int windowColorOr(int fallbackColor) {
+        return colorOr(captionStyle.windowColor, fallbackColor);
     }
 
     @Override

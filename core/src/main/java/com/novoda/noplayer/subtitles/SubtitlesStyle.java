@@ -6,6 +6,8 @@ public interface SubtitlesStyle {
 
     int foregroundColorOr(int fallbackColor);
 
+    int windowColorOr(int fallbackColor);
+
     float scaleTextSize(float textSize);
 
 }
