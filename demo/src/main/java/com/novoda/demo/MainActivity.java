@@ -87,21 +87,21 @@ public class MainActivity extends Activity {
         @Override
         public void onTracksChanged() {
             AudioTracks audioTracks = player.getAudioTracks();
-            if (audioTracks.size() > 1) {
+            if (audioTracks.size() >= 1) {
                 audioSelectionButton.setVisibility(View.VISIBLE);
             } else {
                 audioSelectionButton.setVisibility(View.GONE);
             }
 
             List<PlayerVideoTrack> videoTracks = player.getVideoTracks();
-            if (videoTracks.size() > 1) {
+            if (videoTracks.size() >= 1) {
                 videoSelectionButton.setVisibility(View.VISIBLE);
             } else {
                 videoSelectionButton.setVisibility(View.GONE);
             }
 
             List<PlayerSubtitleTrack> subtitleTracks = player.getSubtitleTracks();
-            if (subtitleTracks.size() > 1) {
+            if (subtitleTracks.size() >= 1) {
                 subtitleSelectionButton.setVisibility(View.VISIBLE);
             } else {
                 subtitleSelectionButton.setVisibility(View.GONE);
