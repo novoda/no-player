@@ -1,7 +1,8 @@
 package com.novoda.noplayer.subtitles;
 
-import android.support.annotation.RequiresApi;
 import android.view.accessibility.CaptioningManager;
+
+import androidx.annotation.RequiresApi;
 
 import static android.os.Build.VERSION_CODES.KITKAT;
 
