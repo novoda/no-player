@@ -460,7 +460,7 @@ final class SubtitlePainter {
     }
 
 
-    public void setAccessibilityCaptionsStyleEnabled(boolean enabled) {
+    void setAccessibilityCaptionsStyleEnabled(boolean enabled) {
         captionPreferences.setAccessibilityCaptionsStyleEnabled(enabled);
     }
 }
