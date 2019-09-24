@@ -20,4 +20,6 @@ public interface SubtitlesStyle {
     int edgeTypeOr(int fallbackEdgeType);
 
     int edgeColorOr(int fallbackColor);
+
+    CharSequence formatText(CharSequence text);
 }

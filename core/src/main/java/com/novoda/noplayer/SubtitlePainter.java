@@ -170,7 +170,7 @@ final class SubtitlePainter {
 
         SubtitlesStyle subtitlesStyle = captionPreferences.getStyle();
 
-        this.cueText = cue.text();
+        this.cueText = subtitlesStyle.formatText(cue.text());
         this.cueTextAlignment = cue.textAlignment();
         this.cueBitmap = cue.bitmap();
         this.cueLine = cue.line();
@@ -458,7 +458,7 @@ final class SubtitlePainter {
     }
 
 
-    public void setAccessibilityCaptionsStyleEnabled(boolean enabled) {
+    void setAccessibilityCaptionsStyleEnabled(boolean enabled) {
         captionPreferences.setAccessibilityCaptionsStyleEnabled(enabled);
     }
 }
