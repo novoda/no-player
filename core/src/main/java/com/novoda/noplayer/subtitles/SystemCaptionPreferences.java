@@ -45,4 +45,8 @@ public class SystemCaptionPreferences {
     public void setAccessibilityCaptionsStyleEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+    public boolean isAccessibilityCaptionsStyleEnabled() {
+        return enabled;
+    }
 }

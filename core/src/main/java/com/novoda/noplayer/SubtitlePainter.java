@@ -258,7 +258,9 @@ final class SubtitlePainter {
 
         // Remove embedded styling or font size if requested.
         CharSequence cueText;
-        if (applyEmbeddedFontSizes && applyEmbeddedStyles) {
+        if (captionPreferences.isAccessibilityCaptionsStyleEnabled()) {
+            cueText = this.cueText.toString(); // Equivalent to erasing all spans.
+        } else if (applyEmbeddedFontSizes && applyEmbeddedStyles) {
             cueText = this.cueText;
         } else if (!applyEmbeddedStyles) {
             cueText = this.cueText.toString(); // Equivalent to erasing all spans.
