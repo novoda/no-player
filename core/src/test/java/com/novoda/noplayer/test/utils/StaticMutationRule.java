@@ -3,10 +3,12 @@ package com.novoda.noplayer.test.utils;
 import org.junit.rules.ExternalResource;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
-import static com.novoda.noplayer.test.utils.ReflectionFinalMutationUtils.*;
+import static com.novoda.noplayer.test.utils.ReflectionFinalMutationUtils.findField;
+import static com.novoda.noplayer.test.utils.ReflectionFinalMutationUtils.getFinalField;
+import static com.novoda.noplayer.test.utils.ReflectionFinalMutationUtils.setFinalField;
 
 /**
  * Allows mutating constants which are restored after the test is finished.
@@ -22,31 +24,23 @@ import static com.novoda.noplayer.test.utils.ReflectionFinalMutationUtils.*;
 @SuppressWarnings({"UseOfSystemOutOrSystemErr", "JavaDoc"})
 public class StaticMutationRule extends ExternalResource {
 
-    private final Map<Field, Object> fieldsMutated = new HashMap<>();
+    private final List<Mutation> mutations;
+
+    public StaticMutationRule(Mutation... mutations) {
+        this.mutations = Arrays.asList(mutations);
+    }
 
     @Override
-    protected void after() {
-        super.after();
-        for (Map.Entry<Field, Object> entry : fieldsMutated.entrySet()) {
-            try {
-                Field field = entry.getKey();
-                Object value = entry.getValue();
-                setFinalStatic(field, value);
-            } catch (Exception e) {
-                System.err.println("Could not restore field: " + e.getMessage());
-            }
+    protected void before() {
+        for (Mutation mutation : mutations) {
+            mutation.mutate();
         }
     }
 
-    public <T> void mutateStatic(Class<T> type, String name, Object newValue) {
-        try {
-            Field field = type.getField(name);
-            if (!fieldsMutated.containsKey(field)) {
-                fieldsMutated.put(field, getFinalStatic(field));
-            }
-            setFinalStatic(field, newValue);
-        } catch (Exception e) {
-            System.err.println("Could not mutate field: " + e.getMessage());
+    @Override
+    protected void after() {
+        for (Mutation mutation : mutations) {
+            mutation.restore();
         }
     }
 
@@ -56,6 +50,50 @@ public class StaticMutationRule extends ExternalResource {
 
     private static Object getFinalStatic(Field field) throws Exception {
         return getFinalField(null, field);
+    }
+
+    public static class Mutation<T> {
+
+        final Class<T> type;
+        final String name;
+        final Object newValue;
+        Field field;
+        Object oldValue;
+
+        public static <T> Mutation<T> mutation(Class<T> type, String name, Object newValue) {
+            return new Mutation<>(type, name, newValue);
+        }
+
+        private Mutation(Class<T> type, String name, Object newValue) {
+            this.type = type;
+            this.name = name;
+            this.newValue = newValue;
+        }
+
+        private void mutate() {
+            try {
+                oldValue = getFinalStatic(field());
+                setFinalStatic(field, newValue);
+            } catch (Exception e) {
+                System.err.println("Could not mutate field: " + e.getMessage());
+            }
+        }
+
+        private void restore() {
+            try {
+                setFinalStatic(field(), oldValue);
+            } catch (Exception e) {
+                System.err.println("Could not restore field: " + e.getMessage());
+            }
+        }
+
+        private Field field() throws Exception {
+            if (field == null) {
+                field = findField(type, name);
+            }
+            return field;
+        }
+
     }
 
 }

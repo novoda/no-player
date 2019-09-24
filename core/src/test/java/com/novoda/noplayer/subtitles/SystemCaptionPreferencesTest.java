@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import com.google.android.exoplayer2.util.Util;
 import com.novoda.noplayer.test.utils.StaticMutationRule;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +24,7 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_NONE;
 import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_OUTLINE;
 import static com.novoda.noplayer.test.utils.ReflectionFinalMutationUtils.setFinalField;
+import static com.novoda.noplayer.test.utils.StaticMutationRule.Mutation.mutation;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -45,8 +45,15 @@ public class SystemCaptionPreferencesTest {
 
     private final TestCase testCase;
 
+    @Rule
+    public final StaticMutationRule mutations;
+
     public SystemCaptionPreferencesTest(TestCase testCase) {
         this.testCase = testCase;
+        mutations = new StaticMutationRule(
+            mutation(Build.VERSION.class, "SDK_INT", testCase.sdkLevel),
+            mutation(Util.class, "SDK_INT", testCase.sdkLevel)
+        );
     }
 
     @Parameterized.Parameters(name = "{0}")
@@ -58,15 +65,6 @@ public class SystemCaptionPreferencesTest {
             DISABLED_TEST_CASE,
             LOCALLY_DISABLED_TEST_CASE
         };
-    }
-
-    @Rule
-    public final StaticMutationRule mutations = new StaticMutationRule();
-
-    @Before
-    public void setUp() {
-        mutations.mutateStatic(Build.VERSION.class, "SDK_INT", testCase.sdkLevel);
-        mutations.mutateStatic(Util.class, "SDK_INT", testCase.sdkLevel);
     }
 
     @Test
