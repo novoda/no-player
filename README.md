@@ -93,6 +93,16 @@ repositories {
 
 You can find the latest snapshot version following this [link](https://bintray.com/novoda-oss/snapshots/no-player/_latestVersion).
 
+
+## Accesibility Captions
+
+Accessibility settings set by the user are taken into account when displaying Closed Captions **by default**.
+
+This means that, by default, any style provided in the video (MPD) manifest will not be used when 
+the user specifies that they require a given style in the device's settings.
+
+It's possible to disable this behaviour by calling `setAccessibilityCaptionsStyleEnabled(false)` on `PlayerView`.
+
 ## Contributing
 
 We always welcome people to contribute new features or bug fixes, [here is how](https://github.com/novoda/novoda/blob/master/CONTRIBUTING.md).

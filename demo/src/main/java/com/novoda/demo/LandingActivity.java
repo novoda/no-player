@@ -23,6 +23,7 @@ public class LandingActivity extends AppCompatActivity {
         final EditText mpdAddress = findViewById(R.id.mpd_address);
         final EditText licenseAddress = findViewById(R.id.license_address);
         final CheckBox downloadLicense = findViewById(R.id.download_license);
+        final CheckBox useContentProtection = findViewById(R.id.use_content_proteciton);
 
         Button playUsingProperties = findViewById(R.id.button_custom_uri);
 
@@ -33,6 +34,7 @@ public class LandingActivity extends AppCompatActivity {
                 playbackParameters.setMpdAddress(mpdAddress.getText().toString());
                 playbackParameters.setLicenseServerAddress(licenseAddress.getText().toString());
                 playbackParameters.setDownloadLicense(downloadLicense.isChecked());
+                playbackParameters.setUseContentProtection(useContentProtection.isChecked());
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);

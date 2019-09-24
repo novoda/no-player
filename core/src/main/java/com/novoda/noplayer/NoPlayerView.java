@@ -78,6 +78,11 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
         subtitleView.setCues(textCues);
     }
 
+    @Override
+    public void setAccessibilityCaptionsStyleEnabled(boolean enabled) {
+        subtitleView.setAccessibilityCaptionsStyleEnabled(enabled);
+    }
+
     private final NoPlayer.VideoSizeChangedListener videoSizeChangedListener = new NoPlayer.VideoSizeChangedListener() {
         @Override
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {

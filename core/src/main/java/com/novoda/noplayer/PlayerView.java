@@ -19,4 +19,12 @@ public interface PlayerView {
 
     void setSubtitleCue(TextCues textCues);
 
+    /**
+     * Whether to use the styles set by the user in the accessibility settings instead of the style
+     * that comes from the video's subtitle cues.
+     *
+     * @param enabled Default: true
+     */
+    void setAccessibilityCaptionsStyleEnabled(boolean enabled);
+
 }
