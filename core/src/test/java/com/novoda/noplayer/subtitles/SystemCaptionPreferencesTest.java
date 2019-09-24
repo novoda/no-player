@@ -138,14 +138,11 @@ public class SystemCaptionPreferencesTest {
 
     @Test
     public void shouldFormatText() {
-
         SystemCaptionPreferences preferences = givenSystemCaptionPreferences(testCase);
 
         CharSequence text = preferences.getStyle().formatText(SPANNED_TEXT);
 
         assertThat(text).isEqualTo(testCase.expectedformattedText);
-
-
     }
 
     private static final TestCase PRE_KITKAT_TEST_CASE = new TestCase(JELLY_BEAN_MR2, "PRE_KITKAT")
