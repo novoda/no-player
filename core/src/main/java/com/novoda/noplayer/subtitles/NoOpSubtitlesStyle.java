@@ -4,7 +4,7 @@ import android.graphics.Typeface;
 
 import androidx.annotation.Nullable;
 
-class NoSubtitlesStyle implements SubtitlesStyle {
+class NoOpSubtitlesStyle implements SubtitlesStyle {
 
     @Override
     public int backgroundColorOr(int fallbackColor) {

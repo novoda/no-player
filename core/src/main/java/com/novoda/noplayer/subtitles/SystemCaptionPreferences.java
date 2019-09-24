@@ -32,7 +32,7 @@ public class SystemCaptionPreferences {
                 );
             }
         }
-        return new NoSubtitlesStyle();
+        return new NoOpSubtitlesStyle();
     }
 
     @NonNull
