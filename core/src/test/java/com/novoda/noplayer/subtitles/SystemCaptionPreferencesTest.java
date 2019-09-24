@@ -42,6 +42,12 @@ public class SystemCaptionPreferencesTest {
     private static final float SYSTEM_TEXT_SCALE_RATIO = 2f;
     private static final Typeface SYSTEM_TYPEFACE = mock(Typeface.class);
     private static final Typeface NO_TYPEFACE = null;
+    private static final CharSequence SPANNED_TEXT = mock(CharSequence.class);
+    private static final String CLEAN_TEXT = "clean text";
+
+    static {
+        when(SPANNED_TEXT.toString()).thenReturn(CLEAN_TEXT);
+    }
 
     private final TestCase testCase;
 
@@ -130,6 +136,18 @@ public class SystemCaptionPreferencesTest {
         assertThat(color).isEqualTo(testCase.expectedEdgeColor);
     }
 
+    @Test
+    public void shouldFormatText() {
+
+        SystemCaptionPreferences preferences = givenSystemCaptionPreferences(testCase);
+
+        CharSequence text = preferences.getStyle().formatText(SPANNED_TEXT);
+
+        assertThat(text).isEqualTo(testCase.expectedformattedText);
+
+
+    }
+
     private static final TestCase PRE_KITKAT_TEST_CASE = new TestCase(JELLY_BEAN_MR2, "PRE_KITKAT")
         .expectedBackgroundColor(FALLBACK_COLOR)
         .expectedForegroundColor(FALLBACK_COLOR)
@@ -137,7 +155,8 @@ public class SystemCaptionPreferencesTest {
         .expectedTextSize(TEXT_SIZE)
         .expectedTypeface(NO_TYPEFACE)
         .expectedEdgeType(EDGE_TYPE_NONE)
-        .expectedEdgeColor(FALLBACK_COLOR);
+        .expectedEdgeColor(FALLBACK_COLOR)
+        .expectedformattedText(SPANNED_TEXT);
 
     private static final TestCase KITKAT_TEST_CASE = new TestCase(KITKAT, "KITKAT")
         .expectedBackgroundColor(SYSTEM_BACKGROUND_COLOR)
@@ -146,7 +165,8 @@ public class SystemCaptionPreferencesTest {
         .expectedTextSize(TEXT_SIZE * SYSTEM_TEXT_SCALE_RATIO)
         .expectedTypeface(SYSTEM_TYPEFACE)
         .expectedEdgeType(SYSTEM_EDGE_TYPE)
-        .expectedEdgeColor(SYSTEM_EDGE_COLOR);
+        .expectedEdgeColor(SYSTEM_EDGE_COLOR)
+        .expectedformattedText(CLEAN_TEXT);
 
     private static final TestCase POST_LOLLIPOP_TEST_CASE = new TestCase(LOLLIPOP, "POST_LOLLIPOP")
         .expectedBackgroundColor(SYSTEM_BACKGROUND_COLOR)
@@ -155,7 +175,8 @@ public class SystemCaptionPreferencesTest {
         .expectedTextSize(TEXT_SIZE * SYSTEM_TEXT_SCALE_RATIO)
         .expectedTypeface(SYSTEM_TYPEFACE)
         .expectedEdgeType(SYSTEM_EDGE_TYPE)
-        .expectedEdgeColor(SYSTEM_EDGE_COLOR);
+        .expectedEdgeColor(SYSTEM_EDGE_COLOR)
+        .expectedformattedText(CLEAN_TEXT);
 
     private static final TestCase DISABLED_TEST_CASE = new TestCase(LOLLIPOP, "DISABLED")
         .captionsManagerDisabled()
@@ -165,7 +186,8 @@ public class SystemCaptionPreferencesTest {
         .expectedTextSize(TEXT_SIZE)
         .expectedTypeface(NO_TYPEFACE)
         .expectedEdgeType(EDGE_TYPE_NONE)
-        .expectedEdgeColor(FALLBACK_COLOR);
+        .expectedEdgeColor(FALLBACK_COLOR)
+        .expectedformattedText(SPANNED_TEXT);
 
     private static final TestCase LOCALLY_DISABLED_TEST_CASE = new TestCase(LOLLIPOP, "LOCALLY DISABLED")
         .captionsLocallyDisabled()
@@ -175,12 +197,14 @@ public class SystemCaptionPreferencesTest {
         .expectedTextSize(TEXT_SIZE)
         .expectedTypeface(NO_TYPEFACE)
         .expectedEdgeType(EDGE_TYPE_NONE)
-        .expectedEdgeColor(FALLBACK_COLOR);
+        .expectedEdgeColor(FALLBACK_COLOR)
+        .expectedformattedText(SPANNED_TEXT);
 
     private static class TestCase {
 
         final int sdkLevel;
         final String name;
+        CharSequence expectedformattedText;
         boolean captionsManagerIsEnabled = true;
         boolean captionsLocallyEnabled = true;
         int expectedBackgroundColor;
@@ -228,6 +252,11 @@ public class SystemCaptionPreferencesTest {
 
         TestCase expectedEdgeColor(int expectedEdgeColor) {
             this.expectedEdgeColor = expectedEdgeColor;
+            return this;
+        }
+
+        TestCase expectedformattedText(CharSequence expectedformattedText) {
+            this.expectedformattedText = expectedformattedText;
             return this;
         }
 

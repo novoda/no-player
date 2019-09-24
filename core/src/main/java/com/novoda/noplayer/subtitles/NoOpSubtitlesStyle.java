@@ -42,4 +42,9 @@ class NoOpSubtitlesStyle implements SubtitlesStyle {
         return fallbackColor;
     }
 
+    @Override
+    public CharSequence formatText(CharSequence text) {
+        return text;
+    }
+
 }

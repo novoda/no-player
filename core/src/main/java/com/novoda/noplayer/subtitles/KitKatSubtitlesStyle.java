@@ -56,4 +56,9 @@ class KitKatSubtitlesStyle implements SubtitlesStyle {
         return captionStyle.edgeColor;
     }
 
+    @Override
+    public CharSequence formatText(CharSequence text) {
+        return text.toString(); // removes any Spans in SpannableString
+    }
+
 }

@@ -170,7 +170,7 @@ final class SubtitlePainter {
 
         SubtitlesStyle subtitlesStyle = captionPreferences.getStyle();
 
-        this.cueText = cue.text();
+        this.cueText = subtitlesStyle.formatText(cue.text());
         this.cueTextAlignment = cue.textAlignment();
         this.cueBitmap = cue.bitmap();
         this.cueLine = cue.line();
@@ -258,9 +258,7 @@ final class SubtitlePainter {
 
         // Remove embedded styling or font size if requested.
         CharSequence cueText;
-        if (captionPreferences.isAccessibilityCaptionsStyleEnabled()) {
-            cueText = this.cueText.toString(); // Equivalent to erasing all spans.
-        } else if (applyEmbeddedFontSizes && applyEmbeddedStyles) {
+        if (applyEmbeddedFontSizes && applyEmbeddedStyles) {
             cueText = this.cueText;
         } else if (!applyEmbeddedStyles) {
             cueText = this.cueText.toString(); // Equivalent to erasing all spans.
