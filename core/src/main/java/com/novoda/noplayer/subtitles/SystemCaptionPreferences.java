@@ -26,7 +26,7 @@ public class SystemCaptionPreferences {
         if (enabled && Build.VERSION.SDK_INT >= KITKAT) {
             final CaptioningManager captioningManager = requireCaptionManager();
             if (captioningManager.isEnabled()) {
-                return new KitkatSubtitlesStyle(
+                return new KitKatSubtitlesStyle(
                     createFromCaptionStyle(captioningManager.getUserStyle()),
                     captioningManager.getFontScale()
                 );

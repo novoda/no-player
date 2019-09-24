@@ -10,12 +10,12 @@ import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import static android.os.Build.VERSION_CODES.KITKAT;
 
 @RequiresApi(api = KITKAT)
-class KitkatSubtitlesStyle implements SubtitlesStyle {
+class KitKatSubtitlesStyle implements SubtitlesStyle {
 
     private final CaptionStyleCompat captionStyle;
     private final float fontScale;
 
-    KitkatSubtitlesStyle(CaptionStyleCompat captionStyle, float fontScale) {
+    KitKatSubtitlesStyle(CaptionStyleCompat captionStyle, float fontScale) {
         this.captionStyle = captionStyle;
         this.fontScale = fontScale;
     }
