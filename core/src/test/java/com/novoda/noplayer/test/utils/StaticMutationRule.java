@@ -9,7 +9,7 @@ import java.util.Map;
 import static com.novoda.noplayer.test.utils.ReflectionFinalMutationUtils.*;
 
 /**
- * Allows mutating constants which are restored after teh test is finished.
+ * Allows mutating constants which are restored after the test is finished.
  * This makes sure that we can leave the static scope as it was before the test started.
  * <p>
  * To use it create a public static field in a test like:
