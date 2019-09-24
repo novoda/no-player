@@ -98,6 +98,9 @@ You can find the latest snapshot version following this [link](https://bintray.c
 
 Accessibility settings set by the user are taken into account when displaying Closed Captions **by default**.
 
+This means that, by default, any style provided in the video (MPD) manifest will not be used when 
+the user specifies that they require a given style in the device's settings.
+
 It's possible to disable this behaviour by calling `setAccessibilityCaptionsStyleEnabled(false)` on `PlayerView`.
 
 ## Contributing
