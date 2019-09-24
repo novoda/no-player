@@ -96,7 +96,7 @@ You can find the latest snapshot version following this [link](https://bintray.c
 
 ## Accesibility Captions
 
-Accessibility settings set by the user are taken into account when displaying Close Captions **by default**.
+Accessibility settings set by the user are taken into account when displaying Closed Captions **by default**.
 
 It's possible to disable this behaviour by calling `setAccessibilityCaptionsStyleEnabled(false)` on `PlayerView`.
 
