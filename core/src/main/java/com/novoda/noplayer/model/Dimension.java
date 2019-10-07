@@ -40,4 +40,12 @@ public class Dimension {
         result = 31 * result + heigh;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Dimension{" +
+                "width=" + width +
+                ", heigh=" + heigh +
+                '}';
+    }
 }
