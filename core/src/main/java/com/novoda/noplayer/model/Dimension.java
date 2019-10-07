@@ -1,6 +1,6 @@
 package com.novoda.noplayer.model;
 
-public class Dimension {
+public final class Dimension {
 
     private final int width;
     private final int heigh;
@@ -14,7 +14,6 @@ public class Dimension {
         this.heigh = heigh;
     }
 
-
     public int width() {
         return width;
     }
@@ -25,12 +24,18 @@ public class Dimension {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Dimension)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Dimension)) {
+            return false;
+        }
 
         Dimension dimension = (Dimension) o;
 
-        if (width != dimension.width) return false;
+        if (width != dimension.width) {
+            return false;
+        }
         return heigh == dimension.heigh;
     }
 
@@ -43,9 +48,9 @@ public class Dimension {
 
     @Override
     public String toString() {
-        return "Dimension{" +
-                "width=" + width +
-                ", heigh=" + heigh +
-                '}';
+        return "Dimension{"
+                + "width=" + width
+                + ", heigh=" + heigh
+                + '}';
     }
 }

@@ -102,21 +102,40 @@ public class Options {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Options)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Options)) {
+            return false;
+        }
 
         Options options = (Options) o;
 
-        if (minDurationBeforeQualityIncreaseInMillis != options.minDurationBeforeQualityIncreaseInMillis)
+        if (minDurationBeforeQualityIncreaseInMillis != options.minDurationBeforeQualityIncreaseInMillis) {
             return false;
-        if (maxInitialBitrate != options.maxInitialBitrate) return false;
-        if (maxVideoBitrate != options.maxVideoBitrate) return false;
-        if (contentType != options.contentType) return false;
-        if (!maxVideoSize.equals(options.maxVideoSize)) return false;
-        if (!initialPositionInMillis.equals(options.initialPositionInMillis)) return false;
-        if (!initialAdvertBreakPositionInMillis.equals(options.initialAdvertBreakPositionInMillis))
+        }
+
+        if (maxInitialBitrate != options.maxInitialBitrate) {
             return false;
-        if (!unsupportedVideoDecoders.equals(options.unsupportedVideoDecoders)) return false;
+        }
+        if (maxVideoBitrate != options.maxVideoBitrate) {
+            return false;
+        }
+        if (contentType != options.contentType) {
+            return false;
+        }
+        if (!maxVideoSize.equals(options.maxVideoSize)) {
+            return false;
+        }
+        if (!initialPositionInMillis.equals(options.initialPositionInMillis)) {
+            return false;
+        }
+        if (!initialAdvertBreakPositionInMillis.equals(options.initialAdvertBreakPositionInMillis)) {
+            return false;
+        }
+        if (!unsupportedVideoDecoders.equals(options.unsupportedVideoDecoders)) {
+            return false;
+        }
         return hdQualityBitrateThreshold.equals(options.hdQualityBitrateThreshold);
     }
 
@@ -136,16 +155,16 @@ public class Options {
 
     @Override
     public String toString() {
-        return "Options{" +
-                "contentType=" + contentType +
-                ", minDurationBeforeQualityIncreaseInMillis=" + minDurationBeforeQualityIncreaseInMillis +
-                ", maxInitialBitrate=" + maxInitialBitrate +
-                ", maxVideoBitrate=" + maxVideoBitrate +
-                ", maxVideoSize=" + maxVideoSize +
-                ", initialPositionInMillis=" + initialPositionInMillis +
-                ", initialAdvertBreakPositionInMillis=" + initialAdvertBreakPositionInMillis +
-                ", unsupportedVideoDecoders=" + unsupportedVideoDecoders +
-                ", hdQualityBitrateThreshold=" + hdQualityBitrateThreshold +
-                '}';
+        return "Options{"
+                + "contentType=" + contentType
+                + ", minDurationBeforeQualityIncreaseInMillis=" + minDurationBeforeQualityIncreaseInMillis
+                + ", maxInitialBitrate=" + maxInitialBitrate
+                + ", maxVideoBitrate=" + maxVideoBitrate
+                + ", maxVideoSize=" + maxVideoSize
+                + ", initialPositionInMillis=" + initialPositionInMillis
+                + ", initialAdvertBreakPositionInMillis=" + initialAdvertBreakPositionInMillis
+                + ", unsupportedVideoDecoders=" + unsupportedVideoDecoders
+                + ", hdQualityBitrateThreshold=" + hdQualityBitrateThreshold
+                + '}';
     }
 }
