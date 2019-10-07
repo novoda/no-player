@@ -1,6 +1,7 @@
 package com.novoda.noplayer;
 
 import com.novoda.noplayer.internal.utils.Optional;
+import com.novoda.noplayer.model.Dimension;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class Options {
     private final int minDurationBeforeQualityIncreaseInMillis;
     private final int maxInitialBitrate;
     private final int maxVideoBitrate;
+    private final Dimension maxVideoSize;
     private final Optional<Long> initialPositionInMillis;
     private final Optional<Long> initialAdvertBreakPositionInMillis;
     private final List<String> unsupportedVideoDecoders;
@@ -46,6 +48,7 @@ public class Options {
             int minDurationBeforeQualityIncreaseInMillis,
             int maxInitialBitrate,
             int maxVideoBitrate,
+            Dimension maxVideoSize,
             Optional<Long> initialPositionInMillis,
             Optional<Long> initialAdvertBreakPositionInMillis,
             List<String> unsupportedVideoDecoders,
@@ -54,6 +57,7 @@ public class Options {
         this.minDurationBeforeQualityIncreaseInMillis = minDurationBeforeQualityIncreaseInMillis;
         this.maxInitialBitrate = maxInitialBitrate;
         this.maxVideoBitrate = maxVideoBitrate;
+        this.maxVideoSize = maxVideoSize;
         this.initialPositionInMillis = initialPositionInMillis;
         this.initialAdvertBreakPositionInMillis = initialAdvertBreakPositionInMillis;
         this.unsupportedVideoDecoders = unsupportedVideoDecoders;
@@ -74,6 +78,10 @@ public class Options {
 
     public int maxVideoBitrate() {
         return maxVideoBitrate;
+    }
+
+    public Dimension maxVideoSize() {
+        return maxVideoSize;
     }
 
     public Optional<Long> getInitialPositionInMillis() {
@@ -97,7 +105,7 @@ public class Options {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Options)) {
             return false;
         }
 
@@ -106,6 +114,7 @@ public class Options {
         if (minDurationBeforeQualityIncreaseInMillis != options.minDurationBeforeQualityIncreaseInMillis) {
             return false;
         }
+
         if (maxInitialBitrate != options.maxInitialBitrate) {
             return false;
         }
@@ -115,32 +124,32 @@ public class Options {
         if (contentType != options.contentType) {
             return false;
         }
-        if (initialPositionInMillis != null ? !initialPositionInMillis.equals(options.initialPositionInMillis)
-                : options.initialPositionInMillis != null) {
+        if (!maxVideoSize.equals(options.maxVideoSize)) {
             return false;
         }
-        if (initialAdvertBreakPositionInMillis != null ? !initialAdvertBreakPositionInMillis.equals(options.initialAdvertBreakPositionInMillis)
-                : options.initialAdvertBreakPositionInMillis != null) {
+        if (!initialPositionInMillis.equals(options.initialPositionInMillis)) {
             return false;
         }
-        if (unsupportedVideoDecoders != null ? !unsupportedVideoDecoders.equals(options.unsupportedVideoDecoders)
-                : options.unsupportedVideoDecoders != null) {
+        if (!initialAdvertBreakPositionInMillis.equals(options.initialAdvertBreakPositionInMillis)) {
             return false;
         }
-        return hdQualityBitrateThreshold != null ? hdQualityBitrateThreshold.equals(options.hdQualityBitrateThreshold)
-                : options.hdQualityBitrateThreshold == null;
+        if (!unsupportedVideoDecoders.equals(options.unsupportedVideoDecoders)) {
+            return false;
+        }
+        return hdQualityBitrateThreshold.equals(options.hdQualityBitrateThreshold);
     }
 
     @Override
     public int hashCode() {
-        int result = contentType != null ? contentType.hashCode() : 0;
+        int result = contentType.hashCode();
         result = 31 * result + minDurationBeforeQualityIncreaseInMillis;
         result = 31 * result + maxInitialBitrate;
         result = 31 * result + maxVideoBitrate;
-        result = 31 * result + (initialPositionInMillis != null ? initialPositionInMillis.hashCode() : 0);
-        result = 31 * result + (initialAdvertBreakPositionInMillis != null ? initialAdvertBreakPositionInMillis.hashCode() : 0);
-        result = 31 * result + (unsupportedVideoDecoders != null ? unsupportedVideoDecoders.hashCode() : 0);
-        result = 31 * result + (hdQualityBitrateThreshold != null ? hdQualityBitrateThreshold.hashCode() : 0);
+        result = 31 * result + maxVideoSize.hashCode();
+        result = 31 * result + initialPositionInMillis.hashCode();
+        result = 31 * result + initialAdvertBreakPositionInMillis.hashCode();
+        result = 31 * result + unsupportedVideoDecoders.hashCode();
+        result = 31 * result + hdQualityBitrateThreshold.hashCode();
         return result;
     }
 
@@ -151,6 +160,7 @@ public class Options {
                 + ", minDurationBeforeQualityIncreaseInMillis=" + minDurationBeforeQualityIncreaseInMillis
                 + ", maxInitialBitrate=" + maxInitialBitrate
                 + ", maxVideoBitrate=" + maxVideoBitrate
+                + ", maxVideoSize=" + maxVideoSize
                 + ", initialPositionInMillis=" + initialPositionInMillis
                 + ", initialAdvertBreakPositionInMillis=" + initialAdvertBreakPositionInMillis
                 + ", unsupportedVideoDecoders=" + unsupportedVideoDecoders

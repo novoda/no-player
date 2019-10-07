@@ -6,7 +6,8 @@
   <string name="video">Video</string>
   <string name="audio">Audio</string>
   <string name="subtitle">Subtitle</string>
-  <string name="hd">HD</string>
+  <string name="bitrate">Max Bitrate: 800kbps</string>
+  <string name="maxVideoSize">Max Video Size: 1024x576p</string>
 
   <string name="content_description_play_pause">Play/pause</string>
   <string name="enter_mpd_address">Enter MPD address</string>

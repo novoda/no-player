@@ -9,6 +9,7 @@ import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrack
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSelector;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Dimension;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
@@ -84,5 +85,13 @@ class CompositeTrackSelector {
 
     void setMaxVideoBitrate(int maxVideoBitrate) {
         videoTrackSelector.setMaxVideoBitrate(maxVideoBitrate);
+    }
+
+    public void setMaxVideoSize(Dimension maxVideoSize) {
+        videoTrackSelector.setMaxVideoSize(maxVideoSize);
+    }
+
+    void clearMaxVideoSize() {
+        videoTrackSelector.clearMaxVideoSize();
     }
 }

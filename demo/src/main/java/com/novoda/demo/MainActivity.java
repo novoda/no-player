@@ -22,6 +22,7 @@ import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Dimension;
 import com.novoda.noplayer.model.KeySetId;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
@@ -33,6 +34,7 @@ public class MainActivity extends Activity {
     private static final int HALF_A_SECOND_IN_MILLIS = 500;
     private static final int TWO_MEGABITS = 2000000;
     private static final int MAX_VIDEO_BITRATE = 800000;
+    private static final Dimension MAX_VIDEO_SIZE = Dimension.from(1024, 576);
 
     private NoPlayer player;
     private ControllerView controllerView;
@@ -42,7 +44,8 @@ public class MainActivity extends Activity {
     private View videoSelectionButton;
     private View audioSelectionButton;
     private View subtitleSelectionButton;
-    private CheckBox hdSelectionCheckBox;
+    private CheckBox bitrateSelectionCheckBox;
+    private CheckBox maxVideoSizeSelectionCheckBox;
 
     private OfflineLicense offlineLicense;
 
@@ -78,13 +81,15 @@ public class MainActivity extends Activity {
         videoSelectionButton = findViewById(R.id.button_video_selection);
         audioSelectionButton = findViewById(R.id.button_audio_selection);
         subtitleSelectionButton = findViewById(R.id.button_subtitle_selection);
-        hdSelectionCheckBox = findViewById(R.id.button_hd_selection);
+        bitrateSelectionCheckBox = findViewById(R.id.button_bitrate_selection);
+        maxVideoSizeSelectionCheckBox = findViewById(R.id.button_maxsize_selection);
         controllerView = findViewById(R.id.controller_view);
 
         videoSelectionButton.setOnClickListener(showVideoSelectionDialog);
         audioSelectionButton.setOnClickListener(showAudioSelectionDialog);
         subtitleSelectionButton.setOnClickListener(showSubtitleSelectionDialog);
-        hdSelectionCheckBox.setOnCheckedChangeListener(toggleHdSelection);
+        bitrateSelectionCheckBox.setOnCheckedChangeListener(toggleBitrateSelection);
+        maxVideoSizeSelectionCheckBox.setOnCheckedChangeListener(toggleVideoSizeSelection);
     }
 
     private final NoPlayer.TracksChangedListener tracksChangedListener = new NoPlayer.TracksChangedListener() {
@@ -131,9 +136,9 @@ public class MainActivity extends Activity {
     private void load(@Nullable byte[] license) {
 
         PlayerBuilder playerBuilder = new PlayerBuilder()
-            .allowFallbackDecoders()
-            .withUserAgent("Android/Linux")
-            .allowCrossProtocolRedirects();
+                .allowFallbackDecoders()
+                .withUserAgent("Android/Linux")
+                .allowCrossProtocolRedirects();
 
         if (license != null) {
             if (playbackParameters.shouldDownloadLicense()) {
@@ -158,19 +163,21 @@ public class MainActivity extends Activity {
         player.getListeners().addTracksChangedListener(tracksChangedListener);
 
         Options options = new OptionsBuilder()
-            .withContentType(ContentType.DASH)
-            .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
-            .withMaxInitialBitrate(TWO_MEGABITS)
-            .withMaxVideoBitrate(getMaxVideoBitrate())
-            .build();
+                .withContentType(ContentType.DASH)
+                .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
+                .withMaxInitialBitrate(TWO_MEGABITS)
+                .withMaxVideoBitrate(getMaxVideoBitrate())
+                .withMaxVideoSize(getMaxVideoSize())
+                .build();
         demoPresenter.startPresenting(Uri.parse(playbackParameters.mpdAddress()), options);
     }
 
     private int getMaxVideoBitrate() {
-        if (hdSelectionCheckBox.isChecked()) {
-            return Integer.MAX_VALUE;
-        }
-        return MAX_VIDEO_BITRATE;
+        return bitrateSelectionCheckBox.isChecked() ? MAX_VIDEO_BITRATE : Integer.MAX_VALUE;
+    }
+
+    private Dimension getMaxVideoSize() {
+        return maxVideoSizeSelectionCheckBox.isChecked() ? MAX_VIDEO_SIZE : Dimension.from(Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
 
     private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {
@@ -195,13 +202,24 @@ public class MainActivity extends Activity {
         }
     };
 
-    private final CompoundButton.OnCheckedChangeListener toggleHdSelection = new CompoundButton.OnCheckedChangeListener() {
+    private final CompoundButton.OnCheckedChangeListener toggleBitrateSelection = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked) {
-                player.clearMaxVideoBitrate();
-            } else {
                 player.setMaxVideoBitrate(MAX_VIDEO_BITRATE);
+            } else {
+                player.clearMaxVideoBitrate();
+            }
+        }
+    };
+
+    private final CompoundButton.OnCheckedChangeListener toggleVideoSizeSelection = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                player.setMaxVideoSize(MAX_VIDEO_SIZE);
+            } else {
+                player.clearMaxVideoSize();
             }
         }
     };

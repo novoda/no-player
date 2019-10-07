@@ -20,6 +20,7 @@ import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Dimension;
 import com.novoda.noplayer.model.Either;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
@@ -434,6 +435,16 @@ class AndroidMediaPlayerImpl implements NoPlayer {
     @Override
     public void setMaxVideoBitrate(int maxVideoBitrate) {
         mediaPlayer.setMaxVideoBitrate(maxVideoBitrate);
+    }
+
+    @Override
+    public void setMaxVideoSize(Dimension maxVideoSize) {
+        mediaPlayer.setMaxVideoSize(maxVideoSize);
+    }
+
+    @Override
+    public void clearMaxVideoSize() {
+        mediaPlayer.clearMaxVideoSize();
     }
 
     @Override

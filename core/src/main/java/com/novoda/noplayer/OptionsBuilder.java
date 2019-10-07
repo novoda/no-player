@@ -3,6 +3,7 @@ package com.novoda.noplayer;
 import android.net.Uri;
 
 import com.novoda.noplayer.internal.utils.Optional;
+import com.novoda.noplayer.model.Dimension;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +16,7 @@ public class OptionsBuilder {
     private static final int DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS = 10000;
     private static final int DEFAULT_MAX_INITIAL_BITRATE = 800000;
     private static final int DEFAULT_MAX_VIDEO_BITRATE = Integer.MAX_VALUE;
+    private static final Dimension DEFAULT_MAX_INITIAL_VIDEO_SIZE = Dimension.from(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
     private ContentType contentType = ContentType.H264;
     private int minDurationBeforeQualityIncreaseInMillis = DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS;
@@ -24,6 +26,7 @@ public class OptionsBuilder {
     private Optional<Long> initialAdvertBreakPositionInMillis = Optional.absent();
     private List<String> unsupportedVideoDecoders = Collections.emptyList();
     private Optional<Integer> hdQualityThreshold = Optional.absent();
+    private Dimension maxVideoSize = DEFAULT_MAX_INITIAL_VIDEO_SIZE;
 
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} with a given {@link ContentType}.
@@ -72,6 +75,18 @@ public class OptionsBuilder {
      */
     public OptionsBuilder withMaxVideoBitrate(int maxVideoBitrate) {
         this.maxVideoBitrate = maxVideoBitrate;
+        return this;
+    }
+
+    /**
+     * Sets {@link OptionsBuilder} to build {@link Options} with given maximum video size.
+     *
+     * @param maxVideoSize maximum allowed video size.
+     * @return {@link OptionsBuilder}
+     */
+
+    public OptionsBuilder withMaxVideoSize(Dimension maxVideoSize) {
+        this.maxVideoSize = maxVideoSize;
         return this;
     }
 
@@ -139,6 +154,7 @@ public class OptionsBuilder {
                 minDurationBeforeQualityIncreaseInMillis,
                 maxInitialBitrate,
                 maxVideoBitrate,
+                maxVideoSize,
                 initialPositionInMillis,
                 initialAdvertBreakPositionInMillis,
                 unsupportedVideoDecoders,

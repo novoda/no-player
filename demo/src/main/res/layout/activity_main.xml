@@ -33,13 +33,25 @@
         android:layout_height="wrap_content"
         android:text="@string/subtitle" />
 
-      <CheckBox
-          android:id="@+id/button_hd_selection"
-          style="?android:attr/buttonBarButtonStyle"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="@string/hd"/>
+    </LinearLayout>
 
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+      <CheckBox
+        android:id="@+id/button_bitrate_selection"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bitrate" />
+
+      <CheckBox
+        android:id="@+id/button_maxsize_selection"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/maxVideoSize" />
     </LinearLayout>
 
     <com.novoda.noplayer.NoPlayerView

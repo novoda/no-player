@@ -18,6 +18,7 @@ import com.novoda.noplayer.internal.exoplayer.forwarder.ExoPlayerForwarder;
 import com.novoda.noplayer.internal.listeners.PlayerListenersHolder;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Dimension;
 import com.novoda.noplayer.model.LoadTimeout;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
@@ -179,6 +180,16 @@ class ExoPlayerTwoImpl implements NoPlayer {
     @Override
     public void setMaxVideoBitrate(int maxVideoBitrate) {
         exoPlayer.setMaxVideoBitrate(maxVideoBitrate);
+    }
+
+    @Override
+    public void setMaxVideoSize(Dimension maxVideoSize) {
+        exoPlayer.setMaxVideoSize(maxVideoSize);
+    }
+
+    @Override
+    public void clearMaxVideoSize() {
+        exoPlayer.clearMaxVideoSize();
     }
 
     @Override
