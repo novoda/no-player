@@ -10,6 +10,7 @@ import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerAudioTrackSel
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerSubtitleTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerTrackSelector;
 import com.novoda.noplayer.internal.exoplayer.mediasource.ExoPlayerVideoTrackSelector;
+import com.novoda.noplayer.model.Dimension;
 
 class CompositeTrackSelectorCreator {
 
@@ -25,8 +26,10 @@ class CompositeTrackSelectorCreator {
                 Clock.DEFAULT
         );
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
+        Dimension maxVideoSize = options.maxVideoSize();
         DefaultTrackSelector.Parameters trackSelectorParameters = trackSelector.buildUponParameters()
                 .setMaxVideoBitrate(options.maxVideoBitrate())
+                .setMaxVideoSize(maxVideoSize.width(), maxVideoSize.height())
                 .build();
         trackSelector.setParameters(trackSelectorParameters);
 

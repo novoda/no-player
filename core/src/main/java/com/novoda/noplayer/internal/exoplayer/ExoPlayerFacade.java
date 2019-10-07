@@ -1,7 +1,9 @@
 package com.novoda.noplayer.internal.exoplayer;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -20,6 +22,7 @@ import com.novoda.noplayer.internal.exoplayer.mediasource.MediaSourceFactory;
 import com.novoda.noplayer.internal.utils.AndroidDeviceVersion;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Dimension;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
@@ -347,6 +350,16 @@ class ExoPlayerFacade {
     void setMaxVideoBitrate(int maxVideoBitrate) {
         assertVideoLoaded();
         compositeTrackSelector.setMaxVideoBitrate(maxVideoBitrate);
+    }
+
+    public void setMaxVideoSize(Dimension maxVideoSize) {
+        assertVideoLoaded();
+        compositeTrackSelector.setMaxVideoSize(maxVideoSize);
+    }
+
+    void clearMaxVideoSize() {
+        assertVideoLoaded();
+        compositeTrackSelector.clearMaxVideoSize();
     }
 
     private void assertVideoLoaded() {

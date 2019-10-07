@@ -7,12 +7,15 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
+import androidx.annotation.Nullable;
+
 import com.novoda.noplayer.AdvertView;
 import com.novoda.noplayer.internal.mediaplayer.PlaybackStateChecker.PlaybackState;
 import com.novoda.noplayer.internal.mediaplayer.forwarder.MediaPlayerForwarder;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
+import com.novoda.noplayer.model.Dimension;
 import com.novoda.noplayer.model.Either;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
@@ -22,8 +25,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.Nullable;
 
 // Not much we can do, wrapping MediaPlayer is a lot of work
 @SuppressWarnings("PMD.GodClass")
@@ -367,5 +368,15 @@ class AndroidMediaPlayerFacade {
     void skipAdvert() {
         assertIsInPlaybackState();
         NoPlayerLog.w("Tried to skip advert break but has not been implemented for MediaPlayer.");
+    }
+
+    void setMaxVideoSize(Dimension maxVideoSize) {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to set maxVideoSize but has not been implemented for MediaPlayer.");
+    }
+
+    void clearMaxVideoSize() {
+        assertIsInPlaybackState();
+        NoPlayerLog.w("Tried to clear max video size but has not been implemented for MediaPlayer.");
     }
 }

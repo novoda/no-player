@@ -2,10 +2,13 @@ package com.novoda.noplayer;
 
 import android.net.Uri;
 
+import androidx.annotation.FloatRange;
+
 import com.novoda.noplayer.internal.exoplayer.NoPlayerAdsLoader;
 import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.Bitrate;
+import com.novoda.noplayer.model.Dimension;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
@@ -14,8 +17,6 @@ import com.novoda.noplayer.model.Timeout;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.FloatRange;
 
 // There are a lot of features for playing and monitoring video.
 @SuppressWarnings("PMD.ExcessivePublicCount")
@@ -265,6 +266,19 @@ public interface NoPlayer extends PlayerState {
      * @param maxVideoBitrate The maximum video bitrate in bit per second.
      */
     void setMaxVideoBitrate(int maxVideoBitrate);
+
+    /**
+     * Sets the maximum video size allowed. If the content contains tracks above the specified video size,
+     * those tracks will not be selected.
+     *
+     * @param maxVideoSize The maxium video size in pixels
+     */
+    void setMaxVideoSize(Dimension maxVideoSize);
+
+    /**
+     * Clears the maximum video size, if set.
+     */
+    void clearMaxVideoSize();
 
     interface PlayerError {
 

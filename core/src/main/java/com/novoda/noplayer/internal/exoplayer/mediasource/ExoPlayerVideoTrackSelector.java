@@ -8,6 +8,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.novoda.noplayer.ContentType;
 import com.novoda.noplayer.internal.exoplayer.RendererTypeRequester;
 import com.novoda.noplayer.internal.utils.Optional;
+import com.novoda.noplayer.model.Dimension;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 import com.novoda.noplayer.model.PlayerVideoTrackCodecMapping;
 
@@ -100,5 +101,13 @@ public class ExoPlayerVideoTrackSelector {
 
     public void setMaxVideoBitrate(int maxVideoBitrate) {
         trackSelector.setMaxVideoBitrate(maxVideoBitrate);
+    }
+
+    public void setMaxVideoSize(Dimension maxVideoSize) {
+        trackSelector.setMaxVideoSize(maxVideoSize);
+    }
+
+    public void clearMaxVideoSize() {
+        trackSelector.clearMaxVideoSize();
     }
 }
