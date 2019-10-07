@@ -136,9 +136,9 @@ public class MainActivity extends Activity {
     private void load(@Nullable byte[] license) {
 
         PlayerBuilder playerBuilder = new PlayerBuilder()
-            .allowFallbackDecoders()
-            .withUserAgent("Android/Linux")
-            .allowCrossProtocolRedirects();
+                .allowFallbackDecoders()
+                .withUserAgent("Android/Linux")
+                .allowCrossProtocolRedirects();
 
         if (license != null) {
             if (playbackParameters.shouldDownloadLicense()) {
@@ -163,16 +163,21 @@ public class MainActivity extends Activity {
         player.getListeners().addTracksChangedListener(tracksChangedListener);
 
         Options options = new OptionsBuilder()
-            .withContentType(ContentType.DASH)
-            .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
-            .withMaxInitialBitrate(TWO_MEGABITS)
-            .withMaxVideoBitrate(getMaxVideoBitrate())
-            .build();
+                .withContentType(ContentType.DASH)
+                .withMinDurationBeforeQualityIncreaseInMillis(HALF_A_SECOND_IN_MILLIS)
+                .withMaxInitialBitrate(TWO_MEGABITS)
+                .withMaxVideoBitrate(getMaxVideoBitrate())
+                .withMaxVideoSize(getMaxVideoSize())
+                .build();
         demoPresenter.startPresenting(Uri.parse(playbackParameters.mpdAddress()), options);
     }
 
     private int getMaxVideoBitrate() {
         return bitrateSelectionCheckBox.isChecked() ? MAX_VIDEO_BITRATE : Integer.MAX_VALUE;
+    }
+
+    private Dimension getMaxVideoSize() {
+        return maxVideoSizeSelectionCheckBox.isChecked() ? MAX_VIDEO_SIZE : Dimension.from(Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
 
     private final View.OnClickListener showVideoSelectionDialog = new View.OnClickListener() {

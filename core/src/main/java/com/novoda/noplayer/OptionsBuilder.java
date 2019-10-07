@@ -16,18 +16,17 @@ public class OptionsBuilder {
     private static final int DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS = 10000;
     private static final int DEFAULT_MAX_INITIAL_BITRATE = 800000;
     private static final int DEFAULT_MAX_VIDEO_BITRATE = Integer.MAX_VALUE;
-    private static final int DEFAULT_MAX_INITIAL_VIDEO_WIDTH = Integer.MAX_VALUE;
-    private static final int DEFAULT_MAX_INITIAL_VIDEO_HEIGH = Integer.MAX_VALUE;
+    private static final Dimension DEFAULT_MAX_INITIAL_VIDEO_SIZE = Dimension.from(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
     private ContentType contentType = ContentType.H264;
     private int minDurationBeforeQualityIncreaseInMillis = DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS;
     private int maxInitialBitrate = DEFAULT_MAX_INITIAL_BITRATE;
     private int maxVideoBitrate = DEFAULT_MAX_VIDEO_BITRATE;
-    private Dimension maxVideoSize = Dimension.from(DEFAULT_MAX_INITIAL_VIDEO_WIDTH, DEFAULT_MAX_INITIAL_VIDEO_HEIGH);
     private Optional<Long> initialPositionInMillis = Optional.absent();
     private Optional<Long> initialAdvertBreakPositionInMillis = Optional.absent();
     private List<String> unsupportedVideoDecoders = Collections.emptyList();
     private Optional<Integer> hdQualityThreshold = Optional.absent();
+    private Dimension maxVideoSize = DEFAULT_MAX_INITIAL_VIDEO_SIZE;
 
     /**
      * Sets {@link OptionsBuilder} to build {@link Options} with a given {@link ContentType}.
