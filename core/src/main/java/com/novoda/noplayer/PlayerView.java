@@ -2,6 +2,7 @@ package com.novoda.noplayer;
 
 import android.view.View;
 
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.novoda.noplayer.model.TextCues;
 
 public interface PlayerView {
@@ -30,8 +31,33 @@ public interface PlayerView {
 
     void setResizeMode(ResizeMode mode);
 
+    ResizeMode getResizeMode();
+
     enum ResizeMode {
-        FIT_ASPECT_RATIO, ZOOM
+        FIT(AspectRatioFrameLayout.RESIZE_MODE_FIT),
+        FIXED_WIDTH(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH),
+        FIXED_HEIGHT(AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT),
+        FILL(AspectRatioFrameLayout.RESIZE_MODE_FILL),
+        ZOOM(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+
+        private final int value;
+
+        ResizeMode(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        static ResizeMode fromValue(int value) {
+            for (ResizeMode resizeMode : values()) {
+                if (resizeMode.value == value) {
+                    return resizeMode;
+                }
+            }
+            throw new IllegalArgumentException("No " + ResizeMode.class.getSimpleName() + " found for value: " + value);
+        }
     }
 
 }

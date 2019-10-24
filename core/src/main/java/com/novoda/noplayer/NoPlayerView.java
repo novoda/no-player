@@ -86,16 +86,12 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
 
     @Override
     public void setResizeMode(ResizeMode mode) {
-        switch (mode) {
-            case FIT_ASPECT_RATIO:
-                videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-                break;
-            case ZOOM:
-                videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown resize mode: " + mode.name());
-        }
+        videoFrame.setResizeMode(mode.getValue());
+    }
+
+    @Override
+    public ResizeMode getResizeMode() {
+        return ResizeMode.fromValue(videoFrame.getResizeMode());
     }
 
     private final NoPlayer.VideoSizeChangedListener videoSizeChangedListener = new NoPlayer.VideoSizeChangedListener() {
