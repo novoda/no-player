@@ -30,16 +30,13 @@ class DemoPresenter {
         controllerView.setTogglePlayPauseAction(onTogglePlayPause);
         controllerView.setSeekAction(onSeekPerformed);
         controllerView.setToggleVolumeOnOffAction(onToggleVolume);
-        controllerView.setToggleZoomedInOutAction(new ControllerView.ToggleZoomedInOutAction() {
+        controllerView.setToggleResizeModeAction(new ControllerView.ToggleResizeModeAction() {
             @Override
             public void perform() {
-                if (playerView.getResizeMode() == PlayerView.ResizeMode.ZOOM) {
-                    playerView.setResizeMode(PlayerView.ResizeMode.FIT);
-                    controllerView.setZoomedOut();
-                } else {
-                    playerView.setResizeMode(PlayerView.ResizeMode.ZOOM);
-                    controllerView.setZoomedIn();
-                }
+                int nextIndex = (playerView.getResizeMode().ordinal() + 1) % PlayerView.ResizeMode.values().length;
+                PlayerView.ResizeMode resizeMode = PlayerView.ResizeMode.values()[nextIndex];
+                controllerView.announceResizeMode(resizeMode);
+                playerView.setResizeMode(resizeMode);
             }
         });
         noPlayer.attach(playerView);

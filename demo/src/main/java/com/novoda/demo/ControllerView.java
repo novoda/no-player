@@ -1,5 +1,7 @@
 package com.novoda.demo;
 
+import com.novoda.noplayer.PlayerView;
+
 interface ControllerView {
 
     void setPaused();
@@ -24,11 +26,9 @@ interface ControllerView {
 
     void setToggleVolumeOnOffAction(ToggleVolumeOnOffAction toggleVolumeOnOffAction);
 
-    void setZoomedIn();
+    void announceResizeMode(PlayerView.ResizeMode resizeMode);
 
-    void setZoomedOut();
-
-    void setToggleZoomedInOutAction(ToggleZoomedInOutAction zoomedInOutAction);
+    void setToggleResizeModeAction(ToggleResizeModeAction zoomedInOutAction);
 
     interface TogglePlayPauseAction {
 
@@ -45,7 +45,7 @@ interface ControllerView {
         void perform();
     }
 
-    interface ToggleZoomedInOutAction {
+    interface ToggleResizeModeAction {
 
         void perform();
     }

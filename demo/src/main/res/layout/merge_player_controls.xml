@@ -55,13 +55,13 @@
     android:src="@drawable/volume_on"/>
 
   <ImageView
-    android:id="@+id/player_controls_zoom"
+    android:id="@+id/player_controls_resize_mode"
     android:layout_width="@dimen/play_button_size"
     android:layout_height="@dimen/play_button_size"
     android:layout_marginLeft="@dimen/player_controls_padding_horizontal"
     android:layout_marginStart="@dimen/player_controls_padding_horizontal"
     android:layout_marginRight="@dimen/player_controls_play_button_margin_end"
     android:layout_marginEnd="@dimen/player_controls_play_button_margin_end"
-    android:src="@drawable/ic_fullscreen_off" />
+    android:src="@drawable/ic_resize_mode" />
 
 </merge>
