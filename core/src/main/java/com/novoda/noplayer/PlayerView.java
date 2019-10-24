@@ -1,6 +1,7 @@
 package com.novoda.noplayer;
 
 import android.view.View;
+
 import com.novoda.noplayer.model.TextCues;
 
 public interface PlayerView {
@@ -26,5 +27,11 @@ public interface PlayerView {
      * @param enabled Default: true
      */
     void setAccessibilityCaptionsStyleEnabled(boolean enabled);
+
+    void setResizeMode(ResizeMode mode);
+
+    enum ResizeMode {
+        FIT_ASPECT_RATIO, ZOOM
+    }
 
 }

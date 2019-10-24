@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
+
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.novoda.noplayer.model.TextCues;
 
@@ -81,6 +82,20 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     @Override
     public void setAccessibilityCaptionsStyleEnabled(boolean enabled) {
         subtitleView.setAccessibilityCaptionsStyleEnabled(enabled);
+    }
+
+    @Override
+    public void setResizeMode(ResizeMode mode) {
+        switch (mode) {
+            case FIT_ASPECT_RATIO:
+                videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+                break;
+            case ZOOM:
+                videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown resize mode: " + mode.name());
+        }
     }
 
     private final NoPlayer.VideoSizeChangedListener videoSizeChangedListener = new NoPlayer.VideoSizeChangedListener() {
