@@ -24,6 +24,12 @@ interface ControllerView {
 
     void setToggleVolumeOnOffAction(ToggleVolumeOnOffAction toggleVolumeOnOffAction);
 
+    void setZoomedIn();
+
+    void setZoomedOut();
+
+    void setToggleZoomedInOutAction(ToggleZoomedInOutAction zoomedInOutAction);
+
     interface TogglePlayPauseAction {
 
         void perform();
@@ -35,6 +41,11 @@ interface ControllerView {
     }
 
     interface ToggleVolumeOnOffAction {
+
+        void perform();
+    }
+
+    interface ToggleZoomedInOutAction {
 
         void perform();
     }

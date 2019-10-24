@@ -19,6 +19,7 @@ public class AndroidControllerView extends LinearLayout implements ControllerVie
     private SeekBar progressView;
     private TextView timeRemainingView;
     private ImageView volumeOnOffView;
+    private ImageView zoomedInOutView;
 
     public AndroidControllerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs, 0);
@@ -44,6 +45,7 @@ public class AndroidControllerView extends LinearLayout implements ControllerVie
         progressView = (SeekBar) findViewById(R.id.player_controls_progress);
         timeRemainingView = (TextView) findViewById(R.id.player_controls_time_remaining);
         volumeOnOffView = findViewById(R.id.player_controls_volume_on_off);
+        zoomedInOutView = findViewById(R.id.player_controls_zoom);
     }
 
     @Override
@@ -124,6 +126,26 @@ public class AndroidControllerView extends LinearLayout implements ControllerVie
             @Override
             public void onClick(View v) {
                 toggleVolumeOnOffAction.perform();
+            }
+        });
+    }
+
+    @Override
+    public void setZoomedIn() {
+        zoomedInOutView.setImageResource(R.drawable.ic_fullscreen_on);
+    }
+
+    @Override
+    public void setZoomedOut() {
+        zoomedInOutView.setImageResource(R.drawable.ic_fullscreen_off);
+    }
+
+    @Override
+    public void setToggleZoomedInOutAction(final ToggleZoomedInOutAction toggleZoomedInOutAction) {
+        zoomedInOutView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleZoomedInOutAction.perform();
             }
         });
     }
