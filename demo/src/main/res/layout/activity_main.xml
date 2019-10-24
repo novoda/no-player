@@ -67,6 +67,7 @@
       <com.novoda.demo.AndroidControllerView
         android:id="@+id/controller_view"
         android:layout_width="match_parent"
+        android:background="@color/black30alpha"
         android:layout_height="@dimen/controller_view_height"
         android:layout_gravity="bottom" />
     </FrameLayout>
