@@ -9,9 +9,12 @@ import android.widget.FrameLayout;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.novoda.noplayer.model.TextCues;
 
+import androidx.annotation.NonNull;
+
 public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalculator.Listener, PlayerView {
 
     private final AspectRatioChangeCalculator aspectRatioChangeCalculator;
+    private final ResizeModeMapper resizeModeMapper;
 
     private AspectRatioFrameLayout videoFrame;
     private SurfaceView surfaceView;
@@ -26,6 +29,7 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     public NoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         aspectRatioChangeCalculator = new AspectRatioChangeCalculator(this);
+        resizeModeMapper = new ResizeModeMapper();
     }
 
     @Override
@@ -85,13 +89,14 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
     }
 
     @Override
-    public void setResizeMode(ResizeMode mode) {
-        videoFrame.setResizeMode(mode.getValue());
+    public void setResizeMode(@NonNull ResizeMode mode) {
+        videoFrame.setResizeMode(resizeModeMapper.toValue(mode));
     }
 
     @Override
+    @NonNull
     public ResizeMode getResizeMode() {
-        return ResizeMode.fromValue(videoFrame.getResizeMode());
+        return resizeModeMapper.fromValue(videoFrame.getResizeMode());
     }
 
     private final NoPlayer.VideoSizeChangedListener videoSizeChangedListener = new NoPlayer.VideoSizeChangedListener() {
@@ -117,4 +122,5 @@ public class NoPlayerView extends FrameLayout implements AspectRatioChangeCalcul
             shutterView.setVisibility(VISIBLE);
         }
     };
+
 }
