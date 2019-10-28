@@ -54,17 +54,23 @@
         android:text="@string/maxVideoSize" />
     </LinearLayout>
 
-    <com.novoda.noplayer.NoPlayerView
-      android:id="@+id/player_view"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center" />
-
-    <com.novoda.demo.AndroidControllerView
-      android:id="@+id/controller_view"
+    <FrameLayout
       android:layout_width="match_parent"
-      android:layout_height="@dimen/controller_view_height"
-      android:layout_gravity="bottom" />
+      android:layout_height="wrap_content">
+
+      <com.novoda.noplayer.NoPlayerView
+        android:id="@+id/player_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+      <com.novoda.demo.AndroidControllerView
+        android:id="@+id/controller_view"
+        android:layout_width="match_parent"
+        android:background="@color/black30alpha"
+        android:layout_height="@dimen/controller_view_height"
+        android:layout_gravity="bottom" />
+    </FrameLayout>
 
   </LinearLayout>
 

@@ -8,6 +8,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.novoda.noplayer.PlayerView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +22,7 @@ public class AndroidControllerView extends LinearLayout implements ControllerVie
     private SeekBar progressView;
     private TextView timeRemainingView;
     private ImageView volumeOnOffView;
+    private ImageView zoomedInOutView;
 
     public AndroidControllerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs, 0);
@@ -44,6 +48,7 @@ public class AndroidControllerView extends LinearLayout implements ControllerVie
         progressView = (SeekBar) findViewById(R.id.player_controls_progress);
         timeRemainingView = (TextView) findViewById(R.id.player_controls_time_remaining);
         volumeOnOffView = findViewById(R.id.player_controls_volume_on_off);
+        zoomedInOutView = findViewById(R.id.player_controls_resize_mode);
     }
 
     @Override
@@ -124,6 +129,21 @@ public class AndroidControllerView extends LinearLayout implements ControllerVie
             @Override
             public void onClick(View v) {
                 toggleVolumeOnOffAction.perform();
+            }
+        });
+    }
+
+    @Override
+    public void announceResizeMode(PlayerView.ResizeMode resizeMode) {
+        Toast.makeText(getContext(), resizeMode.name(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setToggleResizeModeAction(final ToggleResizeModeAction toggleResizeModeAction) {
+        zoomedInOutView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleResizeModeAction.perform();
             }
         });
     }

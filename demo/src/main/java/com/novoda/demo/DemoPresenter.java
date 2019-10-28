@@ -30,7 +30,15 @@ class DemoPresenter {
         controllerView.setTogglePlayPauseAction(onTogglePlayPause);
         controllerView.setSeekAction(onSeekPerformed);
         controllerView.setToggleVolumeOnOffAction(onToggleVolume);
-
+        controllerView.setToggleResizeModeAction(new ControllerView.ToggleResizeModeAction() {
+            @Override
+            public void perform() {
+                int nextIndex = (playerView.getResizeMode().ordinal() + 1) % PlayerView.ResizeMode.values().length;
+                PlayerView.ResizeMode resizeMode = PlayerView.ResizeMode.values()[nextIndex];
+                controllerView.announceResizeMode(resizeMode);
+                playerView.setResizeMode(resizeMode);
+            }
+        });
         noPlayer.attach(playerView);
         noPlayer.loadVideo(uri, options);
     }
