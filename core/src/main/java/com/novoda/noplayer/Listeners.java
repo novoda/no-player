@@ -172,4 +172,18 @@ public interface Listeners {
      * @param tracksChangedListener to remove.
      */
     void removeTracksChangedListener(NoPlayer.TracksChangedListener tracksChangedListener);
+
+    /**
+     * Add a given {@link NoPlayer.MetadataChangedListener} to be notified when Metadata changes occur.
+     *
+     * @param metadataChangedListener to notify.
+     */
+    void addMetadataChangedListener(NoPlayer.MetadataChangedListener metadataChangedListener);
+
+    /**
+     * Remove a given {@link NoPlayer.MetadataChangedListener}.
+     *
+     * @param metadataChangedListener to remove.
+     */
+    void removeMetadataChangedListener(NoPlayer.MetadataChangedListener metadataChangedListener);
 }

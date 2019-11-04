@@ -17,6 +17,7 @@ public class PlayerListenersHolder implements Listeners {
     private final DroppedFramesListeners droppedFramesListeners;
     private final AdvertListeners advertListeners;
     private final TracksChangedListeners tracksChangedListeners;
+    private final MetadataChangedListeners metadataChangedListeners;
 
     private final HeartbeatCallbacks heartbeatCallbacks;
 
@@ -33,6 +34,7 @@ public class PlayerListenersHolder implements Listeners {
         droppedFramesListeners = new DroppedFramesListeners();
         advertListeners = new AdvertListeners();
         tracksChangedListeners = new TracksChangedListeners();
+        metadataChangedListeners = new MetadataChangedListeners();
     }
 
     @Override
@@ -155,6 +157,16 @@ public class PlayerListenersHolder implements Listeners {
         tracksChangedListeners.remove(tracksChangedListener);
     }
 
+    @Override
+    public void addMetadataChangedListener(NoPlayer.MetadataChangedListener metadataChangedListener) {
+        metadataChangedListeners.add(metadataChangedListener);
+    }
+
+    @Override
+    public void removeMetadataChangedListener(NoPlayer.MetadataChangedListener metadataChangedListener) {
+        metadataChangedListeners.remove(metadataChangedListener);
+    }
+
     public NoPlayer.ErrorListener getErrorListeners() {
         return errorListeners;
     }
@@ -203,6 +215,10 @@ public class PlayerListenersHolder implements Listeners {
         return tracksChangedListeners;
     }
 
+    public NoPlayer.MetadataChangedListener getMetadataChangedListeners() {
+        return metadataChangedListeners;
+    }
+
     public void resetState() {
         preparedListeners.resetPreparedState();
         completionListeners.resetCompletedState();
@@ -221,5 +237,6 @@ public class PlayerListenersHolder implements Listeners {
         droppedFramesListeners.clear();
         advertListeners.clear();
         tracksChangedListeners.clear();
+        metadataChangedListeners.clear();
     }
 }

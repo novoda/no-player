@@ -216,6 +216,7 @@ class ExoPlayerFacade {
         exoPlayer.addListener(forwarder.exoPlayerEventListener());
         exoPlayer.addAnalyticsListener(forwarder.analyticsListener());
         exoPlayer.addVideoListener(forwarder.videoListener());
+        exoPlayer.addMetadataOutput(forwarder.metadataListener());
 
         setMovieAudioAttributes(exoPlayer);
 

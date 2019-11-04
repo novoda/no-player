@@ -77,6 +77,7 @@ class ExoPlayerTwoImpl implements NoPlayer {
         forwarder.bind(listenersHolder.getDroppedVideoFramesListeners());
         forwarder.bind(listenersHolder.getAdvertListeners());
         forwarder.bind(listenersHolder.getTracksChangedListeners());
+        forwarder.bind(listenersHolder.getMetadataChangedListeners());
         forwarder.bind(resetOnErrorListener());
         listenersHolder.addPreparedListener(new PreparedListener() {
             @Override

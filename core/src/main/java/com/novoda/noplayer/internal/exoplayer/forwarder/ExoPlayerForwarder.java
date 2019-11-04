@@ -4,6 +4,7 @@ import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.video.VideoListener;
+import com.novoda.noplayer.metadata.MetadataParser;
 import com.novoda.noplayer.NoPlayer;
 import com.novoda.noplayer.PlayerState;
 import com.novoda.noplayer.internal.utils.Optional;
@@ -15,6 +16,8 @@ public class ExoPlayerForwarder {
     private final NoPlayerAnalyticsListener analyticsListener;
     private final ExoPlayerVideoListener videoListener;
     private final ExoPlayerDrmSessionEventListener drmSessionEventListener;
+    private final ExoPlayerMetadataListener exoplayerMetadataListener;
+    private final MetadataParser metadataParser;
     private Optional<NoPlayer.AdvertListener> advertListeners = Optional.absent();
 
     public ExoPlayerForwarder() {
@@ -23,6 +26,8 @@ public class ExoPlayerForwarder {
         videoListener = new ExoPlayerVideoListener();
         analyticsListener = new NoPlayerAnalyticsListener();
         drmSessionEventListener = new ExoPlayerDrmSessionEventListener();
+        exoplayerMetadataListener = new ExoPlayerMetadataListener();
+        metadataParser = new MetadataParser();
     }
 
     public EventListener exoPlayerEventListener() {
@@ -47,6 +52,10 @@ public class ExoPlayerForwarder {
 
     public Optional<NoPlayer.AdvertListener> advertListener() {
         return advertListeners;
+    }
+
+    public ExoPlayerMetadataListener metadataListener() {
+        return exoplayerMetadataListener;
     }
 
     public void bind(NoPlayer.PreparedListener preparedListener, PlayerState playerState) {
@@ -91,5 +100,9 @@ public class ExoPlayerForwarder {
 
     public void bind(NoPlayer.TracksChangedListener tracksChangedListeners) {
         exoPlayerEventListener.add(new TracksChangedForwarder(tracksChangedListeners));
+    }
+
+    public void bind(NoPlayer.MetadataChangedListener metadataChangedListener) {
+        exoplayerMetadataListener.add(new MetadataChangedForwarder(metadataChangedListener, metadataParser));
     }
 }
