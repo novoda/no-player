@@ -125,6 +125,9 @@ final class RendererErrorMapper {
                         DetailErrorType.LICENSE_POLICY_REQUIRED_NOT_SUPPORTED_BY_DEVICE_ERROR,
                         message
                 );
+            case MediaCodec.CryptoException.ERROR_INSUFFICIENT_SECURITY:
+            case MediaCodec.CryptoException.ERROR_FRAME_TOO_LARGE:
+            case MediaCodec.CryptoException.ERROR_LOST_STATE:
             default:
                 return new NoPlayerError(PlayerErrorType.CONTENT_DECRYPTION, DetailErrorType.UNKNOWN, message);
         }
