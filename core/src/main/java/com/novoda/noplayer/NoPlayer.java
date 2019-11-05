@@ -9,6 +9,7 @@ import com.novoda.noplayer.internal.utils.Optional;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.Bitrate;
 import com.novoda.noplayer.model.Dimension;
+import com.novoda.noplayer.metadata.Metadata;
 import com.novoda.noplayer.model.PlayerAudioTrack;
 import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
@@ -332,6 +333,10 @@ public interface NoPlayer extends PlayerState {
 
     interface TracksChangedListener {
         void onTracksChanged();
+    }
+
+    interface MetadataChangedListener {
+        void onMetadataChanged(Metadata metadata);
     }
 
     /**

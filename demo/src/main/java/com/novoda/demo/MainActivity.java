@@ -9,8 +9,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.drm.OfflineLicenseHelper;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
@@ -21,6 +19,7 @@ import com.novoda.noplayer.OptionsBuilder;
 import com.novoda.noplayer.PlayerBuilder;
 import com.novoda.noplayer.PlayerView;
 import com.novoda.noplayer.internal.utils.NoPlayerLog;
+import com.novoda.noplayer.metadata.Metadata;
 import com.novoda.noplayer.model.AudioTracks;
 import com.novoda.noplayer.model.Dimension;
 import com.novoda.noplayer.model.KeySetId;
@@ -28,6 +27,8 @@ import com.novoda.noplayer.model.PlayerSubtitleTrack;
 import com.novoda.noplayer.model.PlayerVideoTrack;
 
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 public class MainActivity extends Activity {
 
@@ -91,6 +92,13 @@ public class MainActivity extends Activity {
         bitrateSelectionCheckBox.setOnCheckedChangeListener(toggleBitrateSelection);
         maxVideoSizeSelectionCheckBox.setOnCheckedChangeListener(toggleVideoSizeSelection);
     }
+
+    private final NoPlayer.MetadataChangedListener onMetadataChanged = new NoPlayer.MetadataChangedListener() {
+        @Override
+        public void onMetadataChanged(Metadata metadata) {
+            Log.v(getClass().getSimpleName(), "onMetadata: " + metadata.getEntries().size());
+        }
+    };
 
     private final NoPlayer.TracksChangedListener tracksChangedListener = new NoPlayer.TracksChangedListener() {
         @Override
@@ -161,6 +169,7 @@ public class MainActivity extends Activity {
             }
         });
         player.getListeners().addTracksChangedListener(tracksChangedListener);
+        player.getListeners().addMetadataChangedListener(onMetadataChanged);
 
         Options options = new OptionsBuilder()
                 .withContentType(ContentType.DASH)
