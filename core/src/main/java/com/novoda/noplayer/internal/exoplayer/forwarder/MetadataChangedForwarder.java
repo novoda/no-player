@@ -17,6 +17,8 @@ class MetadataChangedForwarder implements MetadataOutput {
 
     @Override
     public void onMetadata(Metadata metadata) {
-        metadataChangedListener.onMetadataChanged(metadataParser.parseMetadata(metadata));
+        if (metadata != null) {
+            metadataChangedListener.onMetadataChanged(metadataParser.parseMetadata(metadata));
+        }
     }
 }

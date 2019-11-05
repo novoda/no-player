@@ -10,6 +10,9 @@ public class Metadata {
         this.entries = entries;
     }
 
+    /**
+     * Return a list of entries that are instance of {@link BinaryFrame} or {@link EventMessage}
+     */
     public List<Entry> getEntries() {
         return entries;
     }

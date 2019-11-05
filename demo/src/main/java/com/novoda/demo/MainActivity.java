@@ -93,7 +93,7 @@ public class MainActivity extends Activity {
         maxVideoSizeSelectionCheckBox.setOnCheckedChangeListener(toggleVideoSizeSelection);
     }
 
-    private final NoPlayer.MetadataChangedListener onMetadataChanged = new NoPlayer.MetadataChangedListener(){
+    private final NoPlayer.MetadataChangedListener onMetadataChanged = new NoPlayer.MetadataChangedListener() {
         @Override
         public void onMetadataChanged(Metadata metadata) {
             Log.v(getClass().getSimpleName(), "onMetadata: " + metadata.getEntries().size());

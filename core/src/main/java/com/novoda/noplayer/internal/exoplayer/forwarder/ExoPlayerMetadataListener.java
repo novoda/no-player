@@ -20,7 +20,7 @@ public class ExoPlayerMetadataListener implements MetadataOutput {
 
     @Override
     public void onMetadata(Metadata metadata) {
-        for(MetadataOutput listener : listeners) {
+        for (MetadataOutput listener : listeners) {
             listener.onMetadata(metadata);
         }
     }
