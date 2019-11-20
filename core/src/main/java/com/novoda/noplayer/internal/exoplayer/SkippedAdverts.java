@@ -77,4 +77,21 @@ final class SkippedAdverts {
         return updatedPlaybackState;
     }
 
+    static AdPlaybackState markCurrentGateAsSkipped(long currentPositionInMillis,
+                                                    List<AdvertBreak> advertBreaks,
+                                                    AdPlaybackState adPlaybackState) {
+        long min = Long.MAX_VALUE;
+        int advertBreakIndex = 0;
+
+        for (int i = 0; i < advertBreaks.size(); i++) {
+            long distance = currentPositionInMillis - advertBreaks.get(i).startTimeInMillis();
+            if (min > distance && distance > 0) {
+                advertBreakIndex = i;
+            }
+        }
+
+        AdPlaybackState updatedPlaybackState = adPlaybackState;
+        return updatedPlaybackState.withSkippedAdGroup(advertBreakIndex);
+    }
+
 }
