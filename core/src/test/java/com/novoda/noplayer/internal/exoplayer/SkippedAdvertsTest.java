@@ -3,12 +3,15 @@ package com.novoda.noplayer.internal.exoplayer;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.AdvertBreak;
 
+import org.junit.Test;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-
-import static com.google.android.exoplayer2.source.ads.AdPlaybackState.*;
+import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_AVAILABLE;
+import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_PLAYED;
+import static com.google.android.exoplayer2.source.ads.AdPlaybackState.AD_STATE_SKIPPED;
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
 import static com.novoda.noplayer.AdvertFixtures.anAdvert;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -105,6 +108,82 @@ public class SkippedAdvertsTest {
         assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_PLAYED});
         assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_PLAYED});
     }
+
+    @Test
+    public void markCurrentGateAsSkipped() {
+        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+        AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(TWENTY_SECONDS_IN_MILLIS + 1, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_AVAILABLE, AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
+    }
+
+    @Test
+    public void doesNotMarkCurrentPlayedGateAsSkipped() {
+        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+        initialAvailableAdPlaybackState = initialAvailableAdPlaybackState.withPlayedAd(0, 0);
+        initialAvailableAdPlaybackState = initialAvailableAdPlaybackState.withPlayedAd(0, 1);
+        AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(TWENTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED, AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
+    }
+
+    @Test
+    public void doesNotMarkCurrentNonInitialPlayedGateAsSkipped() {
+        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+        initialAvailableAdPlaybackState = initialAvailableAdPlaybackState.withPlayedAd(0, 0);
+        initialAvailableAdPlaybackState = initialAvailableAdPlaybackState.withPlayedAd(0, 1);
+        initialAvailableAdPlaybackState = initialAvailableAdPlaybackState.withPlayedAd(1, 0);
+        AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(TWENTY_SECONDS_IN_MILLIS + 1, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED, AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
+    }
+
+    @Test
+    public void markVeryFirstCurrentGateAsSkipped() {
+        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+        AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(0, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_SKIPPED, AD_STATE_SKIPPED});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
+    }
+
+    @Test
+    public void markVeryLastCurrentGateAsSkipped() {
+        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+        AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(Long.MAX_VALUE, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_AVAILABLE, AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_SKIPPED});
+    }
+
+// TODO refactor method
+//    @Test
+//    public void doesNotMarkAnyGateAsSkippedForNoAds() {
+//        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(new ArrayList<AdvertBreak>(0)).adPlaybackState();
+//        AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(0, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+//        assertThat(initialAvailableAdPlaybackState).isEqualTo(adPlaybackState);
+//    }
+//
+//
+//    @Test
+//    public void doesNotMarkAnyGateAsSkippedForNegativePosition() {
+//        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+//        AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(-1, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+//        assertThat(initialAvailableAdPlaybackState).isEqualTo(adPlaybackState);
+//    }
 
     private void assertThatGroupContains(AdPlaybackState.AdGroup adGroup, int[] states) {
         assertThat(adGroup.states).containsOnly(states);
