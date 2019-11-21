@@ -66,7 +66,7 @@ class AdvertState {
 
         if (advertsDisabled) {
             if (isPlayingAdvert) {
-                callback.skipDisabledAdvertBreak(currentAdvertBreakIndex, advertBreaks.get(advertBreakIndex));
+                callback.skipDisabledAdvertBreak(currentAdvertBreakIndex, advertBreaks.get(currentAdvertBreakIndex));
             }
             resetState();
             return;
@@ -77,16 +77,17 @@ class AdvertState {
 
         advertBreakIndex = playingAdvert ? currentAdvertBreakIndex : INVALID_INDEX;
         advertIndex = playingAdvert ? currentAdvertIndex : INVALID_INDEX;
-        boolean advertFinished = wasPlayingAd && advertIndex != previousAdvertIndex;
 
+        boolean advertStarted = isPlayingAdvert && advertIndex != previousAdvertIndex;
+
+        if (advertStarted) {
+            notifyAdvertStart(advertBreakIndex, advertIndex);
+        }
+
+        boolean advertFinished = wasPlayingAd && advertIndex != previousAdvertIndex;
         if (advertFinished) {
             callback.onAdvertPlayed(previousAdvertBreakIndex, previousAdvertIndex);
             notifyAdvertEnd(previousAdvertBreakIndex, previousAdvertIndex);
-        }
-
-        boolean advertStarted = isPlayingAdvert && advertIndex != previousAdvertIndex;
-        if (advertStarted) {
-            notifyAdvertStart(advertBreakIndex, advertIndex);
         }
     }
 
@@ -119,16 +120,25 @@ class AdvertState {
     }
 
     void disableAdverts() {
+        if (advertsDisabled) {
+            return;
+        }
+
         if (playingAdvert) {
-            callback.onAdvertBreakSkipped(advertBreakIndex, advertBreaks.get(advertBreakIndex));
+            callback.skipDisabledAdvertBreak(advertBreakIndex, advertBreaks.get(advertBreakIndex));
         }
         advertsDisabled = true;
         callback.onAdvertsDisabled(advertBreaks);
+        resetState();
     }
 
     void enableAdverts() {
+        if (!advertsDisabled) {
+            return;
+        }
         advertsDisabled = false;
         callback.onAdvertsEnabled(advertBreaks);
+        resetState();
     }
 
     void skipAdvertBreak() {
