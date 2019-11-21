@@ -145,19 +145,6 @@ public class SkippedAdvertsTest {
     }
 
     @Test
-    public void doesNotMarkCurrentGateAsSkippedIfPlayedFirstAlready() {
-        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
-        initialAvailableAdPlaybackState = initialAvailableAdPlaybackState.withPlayedAd(0, 0);
-        initialAvailableAdPlaybackState = initialAvailableAdPlaybackState.withPlayedAd(0, 1);
-        AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(1, ADVERT_BREAKS, initialAvailableAdPlaybackState);
-
-        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED, AD_STATE_PLAYED});
-        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
-        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
-        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
-    }
-
-    @Test
     public void markCurrentGateAsSkippedForTheFirstGate() {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
         AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(TEN_SECONDS_IN_MILLIS, ADVERT_BREAKS, initialAvailableAdPlaybackState);
@@ -169,7 +156,20 @@ public class SkippedAdvertsTest {
     }
 
     @Test
-    public void markCurrentGateAsSkippedForTheVeryLastPeriod() {
+    public void doesNotMarkCurrentGateAsSkippedForTheFirstGateIfPlayedAlready() {
+        AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
+        initialAvailableAdPlaybackState = initialAvailableAdPlaybackState.withPlayedAd(0, 0);
+        initialAvailableAdPlaybackState = initialAvailableAdPlaybackState.withPlayedAd(0, 1);
+        AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(TEN_SECONDS_IN_MILLIS, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+
+        assertThatGroupContains(adPlaybackState.adGroups[0], new int[]{AD_STATE_PLAYED, AD_STATE_PLAYED});
+        assertThatGroupContains(adPlaybackState.adGroups[1], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[2], new int[]{AD_STATE_AVAILABLE});
+        assertThatGroupContains(adPlaybackState.adGroups[3], new int[]{AD_STATE_AVAILABLE});
+    }
+
+    @Test
+    public void markCurrentGateAsSkippedForLastGate() {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
         AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(FORTY_SECONDS_IN_MILLIS, ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
@@ -180,7 +180,7 @@ public class SkippedAdvertsTest {
     }
 
     @Test
-    public void markCurrentGateAsSkippedForTheVeryLastPeriodForLargeCurrentPosition() {
+    public void markCurrentGateAsSkippedForTheVeryLastGateForLargeCurrentPosition() {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
         AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(Long.MAX_VALUE, ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
@@ -191,7 +191,7 @@ public class SkippedAdvertsTest {
     }
 
     @Test
-    public void doesNotMarkAnyGateAsSkippedForNoAds() {
+    public void doesNotMarkAnyGatesAsSkippedForNoAds() {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(new ArrayList<AdvertBreak>(0)).adPlaybackState();
         AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(0, ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
@@ -199,7 +199,7 @@ public class SkippedAdvertsTest {
     }
 
     @Test
-    public void doesNotMarkAnyGateAsSkippedForNegativePosition() {
+    public void doesNotMarkAnyGatesAsSkippedForNegativePosition() {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
         AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(-1, ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
@@ -209,7 +209,7 @@ public class SkippedAdvertsTest {
     @Test
     public void doesNotMarkCurrentGateAsSkippedWhenNoPreviousGatesAvailable() {
         AdPlaybackState initialAvailableAdPlaybackState = AdvertPlaybackState.from(ADVERT_BREAKS).adPlaybackState();
-        AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(TEN_SECONDS_IN_MILLIS -1, ADVERT_BREAKS, initialAvailableAdPlaybackState);
+        AdPlaybackState adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(TEN_SECONDS_IN_MILLIS - 1, ADVERT_BREAKS, initialAvailableAdPlaybackState);
 
         assertThat(initialAvailableAdPlaybackState).isEqualTo(adPlaybackState);
     }
