@@ -7,6 +7,7 @@ import com.novoda.noplayer.AdvertBreak;
 import java.io.IOException;
 import java.util.List;
 
+@SuppressWarnings("PMD.GodClass")
 class AdvertState {
 
     interface Callback {
@@ -63,16 +64,23 @@ class AdvertState {
     }
 
     void update(boolean isPlayingAdvert, int currentAdvertBreakIndex, int currentAdvertIndex) {
+        if (advertsDisabled) {
+            skipDisabledAdvertBreak(isPlayingAdvert, currentAdvertBreakIndex);
+        } else {
+            updateNotDisabled(isPlayingAdvert, currentAdvertBreakIndex, currentAdvertIndex);
+        }
+    }
+
+    private void skipDisabledAdvertBreak(boolean isPlayingAdvert, int currentAdvertBreakIndex) {
+        if (isPlayingAdvert) {
+            callback.skipDisabledAdvertBreak(currentAdvertBreakIndex, advertBreaks.get(currentAdvertBreakIndex));
+        }
+        resetState();
+    }
+
+    private void updateNotDisabled(boolean isPlayingAdvert, int currentAdvertBreakIndex, int currentAdvertIndex) {
         boolean wasPlayingAd = playingAdvert;
         playingAdvert = isPlayingAdvert;
-
-        if (advertsDisabled) {
-            if (isPlayingAdvert) {
-                callback.skipDisabledAdvertBreak(currentAdvertBreakIndex, advertBreaks.get(currentAdvertBreakIndex));
-            }
-            resetState();
-            return;
-        }
 
         int previousAdvertBreakIndex = advertBreakIndex;
         int previousAdvertIndex = advertIndex;
@@ -90,7 +98,6 @@ class AdvertState {
         if (advertStarted) {
             notifyAdvertStart(advertBreakIndex, advertIndex);
         }
-
     }
 
     private void notifyAdvertEnd(int playedAdvertBreakIndex, int playedAdvertIndex) {
