@@ -1,5 +1,6 @@
 package com.novoda.noplayer.internal.exoplayer;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.novoda.noplayer.AdvertBreak;
 
@@ -80,19 +81,21 @@ final class SkippedAdverts {
     static AdPlaybackState markCurrentGateAsSkipped(long currentPositionInMillis,
                                                     List<AdvertBreak> advertBreaks,
                                                     AdPlaybackState adPlaybackState) {
-        AdPlaybackState updatedPlaybackState = adPlaybackState;
 
-        long min = Long.MAX_VALUE;
-        int advertBreakIndex = 0;
-
+        int advertBreakIndex = C.INDEX_UNSET;
         for (int i = 0; i < advertBreaks.size(); i++) {
-            long distance = currentPositionInMillis - advertBreaks.get(i).startTimeInMillis();
-            if (min > distance && distance > 0) {
+            if (advertBreaks.get(i).startTimeInMillis() <= currentPositionInMillis) {
                 advertBreakIndex = i;
+            } else {
+                break;
             }
         }
 
-        return updatedPlaybackState.withSkippedAdGroup(advertBreakIndex);
+        if (advertBreakIndex == C.INDEX_UNSET) {
+            return adPlaybackState;
+        } else {
+            return adPlaybackState.withSkippedAdGroup(advertBreakIndex);
+        }
     }
 
 }
