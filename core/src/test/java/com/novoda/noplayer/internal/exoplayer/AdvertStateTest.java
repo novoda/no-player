@@ -309,4 +309,23 @@ public class AdvertStateTest {
 
         then(callback).shouldHaveZeroInteractions();
     }
+
+    @Test
+    public void doesNotHandleSeekWhenAdvertsDisabled() {
+        advertState.disableAdverts();
+        Mockito.reset(callback);
+
+        advertState.handleSeek();
+
+        then(callback).shouldHaveNoInteractions();
+    }
+
+    @Test
+    public void doesHandleSeekWhenAdvertsEnabled() {
+        advertState.handleSeek();
+
+        then(callback).should().reenableSkippedAdverts(ADVERT_BREAKS);
+    }
+
+
 }

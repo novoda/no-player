@@ -80,17 +80,17 @@ class AdvertState {
         advertBreakIndex = playingAdvert ? currentAdvertBreakIndex : INVALID_INDEX;
         advertIndex = playingAdvert ? currentAdvertIndex : INVALID_INDEX;
 
-        boolean advertStarted = isPlayingAdvert && advertIndex != previousAdvertIndex;
-
-        if (advertStarted) {
-            notifyAdvertStart(advertBreakIndex, advertIndex);
-        }
-
         boolean advertFinished = wasPlayingAd && advertIndex != previousAdvertIndex;
         if (advertFinished) {
             callback.onAdvertPlayed(previousAdvertBreakIndex, previousAdvertIndex);
             notifyAdvertEnd(previousAdvertBreakIndex, previousAdvertIndex);
         }
+
+        boolean advertStarted = isPlayingAdvert && advertIndex != previousAdvertIndex;
+        if (advertStarted) {
+            notifyAdvertStart(advertBreakIndex, advertIndex);
+        }
+
     }
 
     private void notifyAdvertEnd(int playedAdvertBreakIndex, int playedAdvertIndex) {

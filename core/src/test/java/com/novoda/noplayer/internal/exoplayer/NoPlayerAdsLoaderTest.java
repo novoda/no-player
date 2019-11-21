@@ -2,6 +2,8 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.os.Handler;
 
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.source.ads.AdPlaybackState;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.novoda.noplayer.Advert;
 import com.novoda.noplayer.AdvertBreak;
@@ -18,6 +20,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -157,6 +160,41 @@ public class NoPlayerAdsLoaderTest {
         noPlayerAdsLoader.handlePrepareError(0, 0, error);
 
         then(advertListener).should().onAdvertPrepareError(FIRST_ADVERT, error);
+    }
+
+    @Test
+    public void handlesSeekOnPositionDiscontinuityForSeek() {
+        noPlayerAdsLoader.start(eventListener, adViewProvider);
+        noPlayerAdsLoader.setPlayer(mock(Player.class));
+        invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
+        Mockito.reset(eventListener);
+
+        noPlayerAdsLoader.onPositionDiscontinuity(Player.DISCONTINUITY_REASON_SEEK);
+        then(eventListener).should().onAdPlaybackState(any(AdPlaybackState.class));
+    }
+
+    @Test
+    public void doesNotHandleSeekOnPositionDiscontinuityForSeekWhenAdsDisabled() {
+        noPlayerAdsLoader.start(eventListener, adViewProvider);
+        noPlayerAdsLoader.setPlayer(mock(Player.class));
+        invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
+        noPlayerAdsLoader.disableAdverts();
+        Mockito.reset(eventListener);
+
+        noPlayerAdsLoader.onPositionDiscontinuity(Player.DISCONTINUITY_REASON_SEEK);
+        then(eventListener).shouldHaveNoInteractions();
+    }
+
+    @Test
+    public void doesNotHandleSeekOnPositionDiscontinuityForOtherThanSeekReasons() {
+        noPlayerAdsLoader.start(eventListener, adViewProvider);
+        noPlayerAdsLoader.setPlayer(mock(Player.class));
+        invokeCallback().onAdvertsLoaded(Arrays.asList(FIRST_ADVERT_BREAK, SECOND_ADVERT_BREAK));
+        noPlayerAdsLoader.disableAdverts();
+        Mockito.reset(eventListener);
+
+        noPlayerAdsLoader.onPositionDiscontinuity(Player.DISCONTINUITY_REASON_INTERNAL);
+        then(eventListener).shouldHaveNoInteractions();
     }
 
     private AdvertsLoader.Callback invokeCallback() {
