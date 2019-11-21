@@ -29,6 +29,8 @@ class AdvertState {
 
         void onAdvertBreakSkipped(int advertBreakIndex, AdvertBreak advertBreak);
 
+        void skipDisabledAdvertBreak(int advertBreakIndex, AdvertBreak advertBreak);
+
         void onAdvertSkipped(int advertBreakIndex, int advertIndex, Advert advert);
 
         void onAdvertClicked(Advert advert);
@@ -61,6 +63,14 @@ class AdvertState {
     void update(boolean isPlayingAdvert, int currentAdvertBreakIndex, int currentAdvertIndex) {
         boolean wasPlayingAd = playingAdvert;
         playingAdvert = isPlayingAdvert;
+
+        if (advertsDisabled) {
+            if (isPlayingAdvert) {
+                callback.skipDisabledAdvertBreak(currentAdvertBreakIndex, advertBreaks.get(advertBreakIndex));
+            }
+            resetState();
+            return;
+        }
 
         int previousAdvertBreakIndex = advertBreakIndex;
         int previousAdvertIndex = advertIndex;
@@ -109,23 +119,16 @@ class AdvertState {
     }
 
     void disableAdverts() {
-        if (advertsDisabled) {
-            return;
+        if (playingAdvert) {
+            callback.onAdvertBreakSkipped(advertBreakIndex, advertBreaks.get(advertBreakIndex));
         }
-
         advertsDisabled = true;
         callback.onAdvertsDisabled(advertBreaks);
-        resetState();
     }
 
     void enableAdverts() {
-        if (!advertsDisabled) {
-            return;
-        }
-
         advertsDisabled = false;
         callback.onAdvertsEnabled(advertBreaks);
-        resetState();
     }
 
     void skipAdvertBreak() {
