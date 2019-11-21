@@ -31,6 +31,8 @@ class AdvertState {
 
         void skipDisabledAdvertBreak(int advertBreakIndex, AdvertBreak advertBreak);
 
+        void reenableSkippedAdverts(List<AdvertBreak> advertBreaks);
+
         void onAdvertSkipped(int advertBreakIndex, int advertIndex, Advert advert);
 
         void onAdvertClicked(Advert advert);
@@ -136,7 +138,7 @@ class AdvertState {
         if (!advertsDisabled) {
             return;
         }
-        
+
         advertsDisabled = false;
         callback.onAdvertsEnabled(advertBreaks);
         resetState();
@@ -163,6 +165,13 @@ class AdvertState {
             callback.onAdvertBreakEnd(advertBreak);
         }
         resetState();
+    }
+
+    void handleSeek() {
+        if (advertsDisabled) {
+            return;
+        }
+        callback.reenableSkippedAdverts(advertBreaks);
     }
 
     void clickAdvert() {
