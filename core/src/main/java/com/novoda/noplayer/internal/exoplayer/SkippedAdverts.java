@@ -80,6 +80,8 @@ final class SkippedAdverts {
     static AdPlaybackState markCurrentGateAsSkipped(long currentPositionInMillis,
                                                     List<AdvertBreak> advertBreaks,
                                                     AdPlaybackState adPlaybackState) {
+        AdPlaybackState updatedPlaybackState = adPlaybackState;
+
         long min = Long.MAX_VALUE;
         int advertBreakIndex = 0;
 
@@ -90,7 +92,6 @@ final class SkippedAdverts {
             }
         }
 
-        AdPlaybackState updatedPlaybackState = adPlaybackState;
         return updatedPlaybackState.withSkippedAdGroup(advertBreakIndex);
     }
 
