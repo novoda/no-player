@@ -136,6 +136,7 @@ class AdvertState {
         if (!advertsDisabled) {
             return;
         }
+        
         advertsDisabled = false;
         callback.onAdvertsEnabled(advertBreaks);
         resetState();
