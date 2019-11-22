@@ -19,8 +19,11 @@ import utils.ExceptionMatcher;
 import static com.novoda.noplayer.AdvertBreakFixtures.anAdvertBreak;
 import static com.novoda.noplayer.AdvertFixtures.anAdvert;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 
 public class AdvertStateTest {
 
@@ -309,4 +312,44 @@ public class AdvertStateTest {
 
         then(callback).shouldHaveZeroInteractions();
     }
+
+    @Test
+    public void doesNotHandleSeekWhenAdvertsDisabled() {
+        advertState.disableAdverts();
+        Mockito.reset(callback);
+
+        advertState.handleSeek();
+
+        then(callback).shouldHaveNoInteractions();
+    }
+
+    @Test
+    public void doesHandleSeekWhenAdvertsEnabled() {
+        advertState.handleSeek();
+
+        then(callback).should().reenableSkippedAdverts(ADVERT_BREAKS);
+    }
+
+    @Test
+    public void skipsPlayingAdvertsOnDisable() {
+        advertState.update(IS_PLAYING_ADVERT, 0, 0);
+
+        advertState.disableAdverts();
+
+        then(callback).should().skipDisabledAdvertBreak(0, FIRST_ADVERT_BREAK);
+    }
+
+    @Test
+    public void skipsPlayingAdvertsOnUpdateWhenDisabled() {
+        advertState.disableAdverts();
+
+        then(callback).should().onAdvertsDisabled(ADVERT_BREAKS);
+        then(callback).should(never()).skipDisabledAdvertBreak(anyInt(), any(AdvertBreak.class));
+
+        advertState.update(IS_PLAYING_ADVERT, 0, 0);
+
+        then(callback).should().skipDisabledAdvertBreak(0, FIRST_ADVERT_BREAK);
+        then(callback).shouldHaveNoMoreInteractions();
+    }
+
 }

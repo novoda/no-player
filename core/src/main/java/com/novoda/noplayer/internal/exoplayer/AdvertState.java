@@ -7,6 +7,7 @@ import com.novoda.noplayer.AdvertBreak;
 import java.io.IOException;
 import java.util.List;
 
+@SuppressWarnings("PMD.GodClass")
 class AdvertState {
 
     interface Callback {
@@ -28,6 +29,10 @@ class AdvertState {
         void onAdvertsEnabled(List<AdvertBreak> advertBreaks);
 
         void onAdvertBreakSkipped(int advertBreakIndex, AdvertBreak advertBreak);
+
+        void skipDisabledAdvertBreak(int advertBreakIndex, AdvertBreak advertBreak);
+
+        void reenableSkippedAdverts(List<AdvertBreak> advertBreaks);
 
         void onAdvertSkipped(int advertBreakIndex, int advertIndex, Advert advert);
 
@@ -59,6 +64,21 @@ class AdvertState {
     }
 
     void update(boolean isPlayingAdvert, int currentAdvertBreakIndex, int currentAdvertIndex) {
+        if (advertsDisabled) {
+            skipDisabledAdvertBreak(isPlayingAdvert, currentAdvertBreakIndex);
+        } else {
+            updateNotDisabled(isPlayingAdvert, currentAdvertBreakIndex, currentAdvertIndex);
+        }
+    }
+
+    private void skipDisabledAdvertBreak(boolean isPlayingAdvert, int currentAdvertBreakIndex) {
+        if (isPlayingAdvert) {
+            callback.skipDisabledAdvertBreak(currentAdvertBreakIndex, advertBreaks.get(currentAdvertBreakIndex));
+        }
+        resetState();
+    }
+
+    private void updateNotDisabled(boolean isPlayingAdvert, int currentAdvertBreakIndex, int currentAdvertIndex) {
         boolean wasPlayingAd = playingAdvert;
         playingAdvert = isPlayingAdvert;
 
@@ -67,8 +87,8 @@ class AdvertState {
 
         advertBreakIndex = playingAdvert ? currentAdvertBreakIndex : INVALID_INDEX;
         advertIndex = playingAdvert ? currentAdvertIndex : INVALID_INDEX;
-        boolean advertFinished = wasPlayingAd && advertIndex != previousAdvertIndex;
 
+        boolean advertFinished = wasPlayingAd && advertIndex != previousAdvertIndex;
         if (advertFinished) {
             callback.onAdvertPlayed(previousAdvertBreakIndex, previousAdvertIndex);
             notifyAdvertEnd(previousAdvertBreakIndex, previousAdvertIndex);
@@ -113,6 +133,9 @@ class AdvertState {
             return;
         }
 
+        if (playingAdvert) {
+            callback.skipDisabledAdvertBreak(advertBreakIndex, advertBreaks.get(advertBreakIndex));
+        }
         advertsDisabled = true;
         callback.onAdvertsDisabled(advertBreaks);
         resetState();
@@ -149,6 +172,13 @@ class AdvertState {
             callback.onAdvertBreakEnd(advertBreak);
         }
         resetState();
+    }
+
+    void handleSeek() {
+        if (advertsDisabled) {
+            return;
+        }
+        callback.reenableSkippedAdverts(advertBreaks);
     }
 
     void clickAdvert() {

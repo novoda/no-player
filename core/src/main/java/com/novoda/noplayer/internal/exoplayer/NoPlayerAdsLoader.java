@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
 
+import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SEEK;
+
 // Not much we can do, orchestrating adverts is a lot of work.
 @SuppressWarnings("PMD.GodClass")
 public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, AdvertView.AdvertInteractionListener {
@@ -189,6 +191,10 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             // We need all of the above to be able to respond to advert events.
             return;
         }
+        if (reason == DISCONTINUITY_REASON_SEEK) {
+            advertState.handleSeek();
+        }
+
         advertState.update(player.isPlayingAd(), player.getCurrentAdGroupIndex(), player.getCurrentAdIndexInAdGroup());
     }
 
@@ -267,14 +273,13 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
 
         @Override
         public void onAdvertsDisabled(List<AdvertBreak> advertBreaks) {
-            adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreaks, adPlaybackState);
-            updateAdPlaybackState();
             advertListener.onAdvertsDisabled();
         }
 
         @Override
         public void onAdvertsEnabled(List<AdvertBreak> advertBreaks) {
             AvailableAdverts.markSkippedAdvertsAsAvailable(advertBreaks, adPlaybackState);
+            adPlaybackState = SkippedAdverts.markCurrentGateAsSkipped(player.getContentPosition(), advertBreaks, adPlaybackState);
             updateAdPlaybackState();
             advertListener.onAdvertsEnabled(advertBreaks);
         }
@@ -284,6 +289,18 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
             adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreakIndex, adPlaybackState);
             updateAdPlaybackState();
             advertListener.onAdvertBreakSkipped(advertBreak);
+        }
+
+        @Override
+        public void skipDisabledAdvertBreak(int advertBreakIndex, AdvertBreak advertBreak) {
+            adPlaybackState = SkippedAdverts.markAdvertBreakAsSkipped(advertBreakIndex, adPlaybackState);
+            updateAdPlaybackState();
+        }
+
+        @Override
+        public void reenableSkippedAdverts(List<AdvertBreak> advertBreaks) {
+            AvailableAdverts.markSkippedAdvertsAsAvailable(advertBreaks, adPlaybackState);
+            updateAdPlaybackState();
         }
 
         @Override
