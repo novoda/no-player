@@ -29,7 +29,7 @@ jobs:
           key: gradle-cache-wrapper-${{ hashFiles('core/build.gradle') }}
 
       - name: Synchronise cache 2/2
-      - uses: actions/cache@v1
+        uses: actions/cache@v1
         with:
           path: .gradle/caches
           key: gradle-cache-caches-${{ hashFiles('core/build.gradle') }}
