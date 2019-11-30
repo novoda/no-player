@@ -35,7 +35,7 @@ jobs:
           key: gradle-cache-caches-${{ hashFiles('core/build.gradle') }}
 
       - name: Build
-        run: ./gradlew --no-daemon build lint
+        run: ./gradlew --no-daemon build
 
       - name: Upload Static Analysis for core
         uses: actions/upload-artifact@v1.0.0

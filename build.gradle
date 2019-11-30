@@ -28,7 +28,7 @@ subprojects {
         jcenter()
     }
 
-    apply from: teamPropsFile('static-analysis.gradle')
+    apply from: "$rootDir/team-props/static-analysis.gradle"
 }
 
 wrapper {
