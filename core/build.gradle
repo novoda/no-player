@@ -20,6 +20,8 @@ buildProperties {
                        | - bintrayUser: name of the account used to deploy the artifacts
                        | - bintrayKey: API key of the account used to deploy the artifacts
         '''.stripMargin()
+
+
     }
     publish {
         def generateVersion = {
@@ -67,6 +69,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.27.0'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
 }
+println "---------- bintrayRepo:" + buildProperties.publish['bintrayRepo'].string + " version:" + buildProperties.publish['version'].string + " bintrayUser:"+buildProperties.publish['bintrayUser'].string + " bintrayKey:" +  buildProperties.publish['bintrayKey'].string
 
 publish {
     userOrg = 'novoda'
