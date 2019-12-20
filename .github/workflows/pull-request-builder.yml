@@ -73,5 +73,5 @@ jobs:
 
       - name: Upload snapshot
         if: env.GITHUB_HEAD_REF_SLUG == 'move-ci-to-github-actions'
-        run: |
-          echo "deploy snapshot"
+        run: ./gradlew bintrayUpload -PdryRun=false -PbintraySnapshot=true -PbintrayOrg=${{ secrets.BINTRAY_ORG }} -PbintrayRepo=${{ secrets.BINTRAY_REPO_SNAPSHOT }} -PbintrayUser=${{ secrets.BINTRAY_USER }} -PbintrayKey=${{ secrets.BINTRAY_KEY_SNAPSHOT }}
+
