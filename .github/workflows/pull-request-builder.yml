@@ -72,6 +72,6 @@ jobs:
       - uses: rlespinasse/github-slug-action@master
 
       - name: Upload snapshot
-        if: {{ env.GITHUB_HEAD_REF_SLUG == 'move-ci-to-github-actions' }}
+        if: env.GITHUB_HEAD_REF_SLUG == 'move-ci-to-github-actions'
         run: |
           echo "deploy snapshot"
