@@ -68,4 +68,7 @@ jobs:
       - uses: rlespinasse/github-slug-action@master
 
       - name: Check branch name
-        run: echo ${{ env.GITHUB_REF_SLUG }}
+        run: |
+          echo ${{ env.GITHUB_REF_SLUG }}
+          echo ${{ env.GITHUB_HEAD_REF_SLUG }}
+          echo ${{ env.GITHUB_BASE_REF_SLUG }}
