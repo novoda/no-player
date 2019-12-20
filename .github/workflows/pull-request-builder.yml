@@ -2,6 +2,10 @@ name: Pull Request Builder
 
 on:
   pull_request:
+  push:
+    branches:
+      - master
+      - develop
 
 env:
   GRADLE_USER_HOME: .gradle
@@ -67,8 +71,7 @@ jobs:
 
       - uses: rlespinasse/github-slug-action@master
 
-      - name: Check branch name
+      - name: Upload snapshot
+        if: {{ env.GITHUB_HEAD_REF_SLUG == 'move-ci-to-github-actions' }}
         run: |
-          echo ${{ env.GITHUB_REF_SLUG }}
-          echo ${{ env.GITHUB_HEAD_REF_SLUG }}
-          echo ${{ env.GITHUB_BASE_REF_SLUG }}
+          echo "deploy snapshot"
