@@ -65,5 +65,7 @@ jobs:
           name: unit-tests-demo
           path: demo/build/test-results
 
+      - uses: rlespinasse/github-slug-action@master
+
       - name: Check branch name
-        run: echo ${{ GITHUB_REF##*/ }}
+        run: echo ${{ env.GITHUB_REF_SLUG }}
