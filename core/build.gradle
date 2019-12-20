@@ -10,12 +10,11 @@ buildProperties {
     bintray {
         def bintrayCredentials = {
             boolean isDryRun = cli['dryRun'].or(true).boolean
-            boolean bintrayPropertiesFileExists = "${System.getenv('BINTRAY_PROPERTIES')}" != "null"
-
             if (isDryRun) {
                 return ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a']
             }
 
+            boolean bintrayPropertiesFileExists = "${System.getenv('BINTRAY_PROPERTIES')}" != "null"
             if (bintrayPropertiesFileExists) {
                 new File("${System.getenv('BINTRAY_PROPERTIES')}")
             }
@@ -25,9 +24,7 @@ buildProperties {
             String bintrayUser = cli['bintrayUser'].string
             String bintrayKey = cli['bintrayKey'].string
 
-            def fromCommandLine = ['bintrayOrg': "${bintrayOrg}", 'bintrayRepo': "${bintrayRepo}", 'bintrayUser': "${bintrayUser}", 'bintrayKey': "${bintrayKey}"]
-            println(fromCommandLine)
-            return fromCommandLine
+            return ['bintrayOrg': "${bintrayOrg}", 'bintrayRepo': "${bintrayRepo}", 'bintrayUser': "${bintrayUser}", 'bintrayKey': "${bintrayKey}"]
         }
         using(bintrayCredentials()).or(cli)
         description = '''This should contain the following properties:
