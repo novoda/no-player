@@ -64,3 +64,6 @@ jobs:
         with:
           name: unit-tests-demo
           path: demo/build/test-results
+
+      - name: Check branch name
+        run: echo ${{ github.ref }}

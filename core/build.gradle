@@ -10,9 +10,24 @@ buildProperties {
     bintray {
         def bintrayCredentials = {
             boolean isDryRun = cli['dryRun'].or(true).boolean
-            return isDryRun ?
-                    ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
-                    new File("${System.getenv('BINTRAY_PROPERTIES')}")
+            boolean bintrayPropertiesFileExists = "${System.getenv('BINTRAY_PROPERTIES')}" != "null"
+
+            if (isDryRun) {
+                return ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a']
+            }
+
+            if (bintrayPropertiesFileExists) {
+                new File("${System.getenv('BINTRAY_PROPERTIES')}")
+            }
+
+            String bintrayOrg = cli['bintrayOrg'].string
+            String bintrayRepo = cli['bintrayRepo'].string
+            String bintrayUser = cli['bintrayUser'].string
+            String bintrayKey = cli['bintrayKey'].string
+
+            def fromCommandLine = ['bintrayOrg': "${bintrayOrg}", 'bintrayRepo': "${bintrayRepo}", 'bintrayUser': "${bintrayUser}", 'bintrayKey': "${bintrayKey}"]
+            println(fromCommandLine)
+            return fromCommandLine
         }
         using(bintrayCredentials()).or(cli)
         description = '''This should contain the following properties:
@@ -24,13 +39,14 @@ buildProperties {
     }
     publish {
         def generateVersion = {
+            def today = new Date().getTime()
             boolean isSnapshot = cli['bintraySnapshot'].or(false).boolean
             if (isSnapshot) {
-                return "DEVELOP-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
+                return "DEVELOP-${today}"
             }
             boolean isExperimental = cli['bintrayExperimental'].or(false).boolean
             if (isExperimental) {
-                return "EXPERIMENTAL-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
+                return "EXPERIMENTAL-${today}"
             }
             return version
         }
