@@ -75,3 +75,26 @@ jobs:
         if: env.GITHUB_HEAD_REF_SLUG == 'develop'
         run: ./gradlew bintrayUpload -PdryRun=false -PbintraySnapshot=true -PbintrayOrg=${{ secrets.BINTRAY_ORG }} -PbintrayRepo=${{ secrets.BINTRAY_REPO_SNAPSHOT }} -PbintrayUser=${{ secrets.BINTRAY_USER }} -PbintrayKey=${{ secrets.BINTRAY_KEY_SNAPSHOT }}
 
+      - name: Notify slack if success
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "good","text": "New No-Player <https://bintray.com/novoda-oss/snapshots/no-player|snapshot> available"}]}' $SLACK-NOS
+
+      - name: Notify slack if failure
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "danger","text": "No-Player snapshot build failed"}]}' $SLACK-NOS
+
+      - name: Upload release
+        if: env.GITHUB_HEAD_REF_SLUG == 'master'
+        run: ./gradlew bintrayUpload -PdryRun=false -PbintraySnapshot=false -PbintrayOrg=${{ secrets.BINTRAY_ORG }} -PbintrayRepo=${{ secrets.BINTRAY_REPO_RELEASE }} -PbintrayUser=${{ secrets.BINTRAY_USER }} -PbintrayKey=${{ secrets.BINTRAY_KEY_RELEASE }}
+
+      - name: Notify slack if success
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "good","text": "New No-Player <https://bintray.com/novoda-oss/maven/no-player|release> available"}]}' $SLACK-NOS
+
+      - name: Notify slack if failure
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "danger","text": "No-Player release (master) build failed"}]}' $SLACK-NOS
