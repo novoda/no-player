@@ -36,7 +36,7 @@ buildProperties {
     }
     publish {
         def generateVersion = {
-            long first2020 = new Date().parse("dd.MM.yyy", '22.12.2019').getTime()
+            long first2020 = new Date().parse("dd.MM.yyy", '01.01.2020').getTime()
             long today = new Date().getTime()
             int todaySinceFirst2020InSeconds = (today - first2020) / 1000
 
