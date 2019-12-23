@@ -16,7 +16,7 @@ buildProperties {
 
             boolean bintrayPropertiesFileExists = "${System.getenv('BINTRAY_PROPERTIES')}" != "null"
             if (bintrayPropertiesFileExists) {
-                new File("${System.getenv('BINTRAY_PROPERTIES')}")
+                return new File("${System.getenv('BINTRAY_PROPERTIES')}")
             }
 
             String bintrayOrg = cli['bintrayOrg'].string
@@ -36,14 +36,19 @@ buildProperties {
     }
     publish {
         def generateVersion = {
-            def today = new Date().getTime()
+            long first2020 = new Date().parse("dd.MM.yyy", '22.12.2019').getTime()
+            long today = new Date().getTime()
+            int todaySinceFirst2020InSeconds = (today - first2020) / 1000
+
+            println("today: " + todaySinceFirst2020InSeconds)
+
             boolean isSnapshot = cli['bintraySnapshot'].or(false).boolean
             if (isSnapshot) {
-                return "DEVELOP-${today}"
+                return "DEVELOP-${todaySinceFirst2020InSeconds}"
             }
             boolean isExperimental = cli['bintrayExperimental'].or(false).boolean
             if (isExperimental) {
-                return "EXPERIMENTAL-${today}"
+                return "EXPERIMENTAL-${todaySinceFirst2020InSeconds}"
             }
             return version
         }
