@@ -9,6 +9,7 @@ on:
 
 env:
   GRADLE_USER_HOME: .gradle
+  SLACK-NOS: ${{ secrets.SLACK-NOS }}
 
 jobs:
 
