@@ -10,9 +10,21 @@ buildProperties {
     bintray {
         def bintrayCredentials = {
             boolean isDryRun = cli['dryRun'].or(true).boolean
-            return isDryRun ?
-                    ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
-                    new File("${System.getenv('BINTRAY_PROPERTIES')}")
+            if (isDryRun) {
+                return ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a']
+            }
+
+            boolean bintrayPropertiesFileExists = "${System.getenv('BINTRAY_PROPERTIES')}" != "null"
+            if (bintrayPropertiesFileExists) {
+                return new File("${System.getenv('BINTRAY_PROPERTIES')}")
+            }
+
+            String bintrayOrg = cli['bintrayOrg'].string
+            String bintrayRepo = cli['bintrayRepo'].string
+            String bintrayUser = cli['bintrayUser'].string
+            String bintrayKey = cli['bintrayKey'].string
+
+            return ['bintrayOrg': "${bintrayOrg}", 'bintrayRepo': "${bintrayRepo}", 'bintrayUser': "${bintrayUser}", 'bintrayKey': "${bintrayKey}"]
         }
         using(bintrayCredentials()).or(cli)
         description = '''This should contain the following properties:
@@ -24,13 +36,17 @@ buildProperties {
     }
     publish {
         def generateVersion = {
+            long first2020 = new Date().parse("dd.MM.yyy Z", '01.01.2020 UTC').getTime()
+            long today = new Date().getTime()
+            int todaySinceFirst2020InSeconds = (today - first2020) / 1000
+
             boolean isSnapshot = cli['bintraySnapshot'].or(false).boolean
             if (isSnapshot) {
-                return "DEVELOP-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
+                return "DEVELOP-${todaySinceFirst2020InSeconds}"
             }
             boolean isExperimental = cli['bintrayExperimental'].or(false).boolean
             if (isExperimental) {
-                return "EXPERIMENTAL-${System.getenv('BUILD_NUMBER') ?: 'LOCAL'}"
+                return "EXPERIMENTAL-${todaySinceFirst2020InSeconds}"
             }
             return version
         }
