@@ -36,11 +36,9 @@ buildProperties {
     }
     publish {
         def generateVersion = {
-            long first2020 = new Date().parse("dd.MM.yyy", '01.01.2020').getTime()
+            long first2020 = new Date().parse("dd.MM.yyy Z", '01.01.2020 UTC').getTime()
             long today = new Date().getTime()
             int todaySinceFirst2020InSeconds = (today - first2020) / 1000
-
-            println("today: " + todaySinceFirst2020InSeconds)
 
             boolean isSnapshot = cli['bintraySnapshot'].or(false).boolean
             if (isSnapshot) {
