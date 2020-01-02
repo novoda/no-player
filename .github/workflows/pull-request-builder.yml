@@ -9,7 +9,7 @@ on:
 
 env:
   GRADLE_USER_HOME: .gradle
-  SLACK-NOS: ${{ secrets.SLACK_NOS }}
+  SLACK_NOS: ${{ secrets.SLACK_NOS }}
 
 jobs:
 
@@ -79,12 +79,12 @@ jobs:
       - name: Notify slack if success
         if: env.GITHUB_REF_SLUG == 'develop' && success()
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "good","text": "New No-Player <https://bintray.com/novoda-oss/snapshots/no-player|snapshot> available"}]}' $SLACK-NOS
+          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "good","text": "New No-Player <https://bintray.com/novoda-oss/snapshots/no-player|snapshot> available"}]}' $SLACK_NOS
 
       - name: Notify slack if failure
         if: env.GITHUB_REF_SLUG == 'develop' && failure()
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "danger","text": "No-Player snapshot build failed"}]}' $SLACK-NOS
+          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "danger","text": "No-Player snapshot build failed"}]}' $SLACK_NOS
 
       - name: Upload release
         if: env.GITHUB_REF_SLUG == 'master'
@@ -93,9 +93,9 @@ jobs:
       - name: Notify slack if success
         if: env.GITHUB_REF_SLUG == 'master' && success()
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "good","text": "New No-Player <https://bintray.com/novoda-oss/maven/no-player|release> available"}]}' $SLACK-NOS
+          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "good","text": "New No-Player <https://bintray.com/novoda-oss/maven/no-player|release> available"}]}' $SLACK_NOS
 
       - name: Notify slack if failure
         if: env.GITHUB_REF_SLUG == 'master' && failure()
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "danger","text": "No-Player release (master) build failed"}]}' $SLACK-NOS
+          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "danger","text": "No-Player release (master) build failed"}]}' $SLACK_NOS
