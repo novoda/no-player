@@ -50,6 +50,7 @@ jobs:
 
       - name: Notify slack if failure
         if: failure()
+        uses: novoda/github-slack-action@master
         with:
           color: danger
           text: No-Player release (master) build failed
