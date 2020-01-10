@@ -2,10 +2,6 @@ name: Pull Request Builder
 
 on:
   pull_request:
-  push:
-    branches:
-      - master
-      - develop
 
 env:
   GRADLE_USER_HOME: .gradle
@@ -19,8 +15,6 @@ jobs:
     steps:
       - name: Checkout source-code
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
 
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
@@ -69,33 +63,3 @@ jobs:
         with:
           name: unit-tests-demo
           path: demo/build/test-results
-
-      - uses: rlespinasse/github-slug-action@master
-
-      - name: Upload snapshot
-        if: env.GITHUB_REF_SLUG == 'develop'
-        run: ./gradlew bintrayUpload -PdryRun=false -PbintraySnapshot=true -PbintrayOrg=${{ secrets.BINTRAY_ORG }} -PbintrayRepo=${{ secrets.BINTRAY_REPO_SNAPSHOT }} -PbintrayUser=${{ secrets.BINTRAY_USER }} -PbintrayKey=${{ secrets.BINTRAY_KEY_SNAPSHOT }}
-
-      - name: Notify slack if success
-        if: env.GITHUB_REF_SLUG == 'develop' && success()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "good","text": "New No-Player <https://bintray.com/novoda-oss/snapshots/no-player|snapshot> available"}]}' $SLACK_NOS
-
-      - name: Notify slack if failure
-        if: env.GITHUB_REF_SLUG == 'develop' && failure()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "danger","text": "No-Player snapshot build failed"}]}' $SLACK_NOS
-
-      - name: Upload release
-        if: env.GITHUB_REF_SLUG == 'master'
-        run: ./gradlew bintrayUpload -PdryRun=false -PbintraySnapshot=false -PbintrayOrg=${{ secrets.BINTRAY_ORG }} -PbintrayRepo=${{ secrets.BINTRAY_REPO_RELEASE }} -PbintrayUser=${{ secrets.BINTRAY_USER }} -PbintrayKey=${{ secrets.BINTRAY_KEY_RELEASE }}
-
-      - name: Notify slack if success
-        if: env.GITHUB_REF_SLUG == 'master' && success()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "good","text": "New No-Player <https://bintray.com/novoda-oss/maven/no-player|release> available"}]}' $SLACK_NOS
-
-      - name: Notify slack if failure
-        if: env.GITHUB_REF_SLUG == 'master' && failure()
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"attachments": [{"color": "danger","text": "No-Player release (master) build failed"}]}' $SLACK_NOS
