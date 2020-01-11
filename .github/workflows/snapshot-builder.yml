@@ -54,4 +54,4 @@ jobs:
         with:
           color: danger
           text: No-Player snapshot build failed
-          webhook: ${{ secrets.$SLACK_NOS }}
+          webhook: ${{ secrets.SLACK_NOS }}
