@@ -27,22 +27,32 @@ class MainActivity : AppCompatActivity() {
         player_view.requestFocus()
         player_view.player = exoPlayer
 
-        val mediaDrmCallback = HttpMediaDrmCallback(
-                "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
-                DefaultHttpDataSourceFactory(Util.getUserAgent(this, "demo new exoplayer"))
+        val mediaSource = mediaSource(
+                licenseUrl = "https://proxy.uat.widevine.com/proxy?provider=widevine_test",
+                manifestUrl = "https://storage.googleapis.com/wvmedia/cenc/hevc/tears/tears.mpd"
         )
-        val drmSessionManager = DefaultDrmSessionManager.Builder().build(mediaDrmCallback)
-
-        val factory = DefaultDataSourceFactory(
-                this,
-                DefaultHttpDataSourceFactory(Util.getUserAgent(this, "demo new exoplayer"))
-        )
-        val uriDashManifest: Uri = Uri.parse("https://storage.googleapis.com/wvmedia/cenc/hevc/tears/tears.mpd")
-        val mediaSource = DashMediaSource.Factory(factory)
-                .setDrmSessionManager(drmSessionManager)
-                .createMediaSource(uriDashManifest)
 
         exoPlayer.prepare(mediaSource)
+    }
+
+    private fun mediaSource(licenseUrl: String, manifestUrl: String): DashMediaSource {
+        val defaultHttpDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(this, "demo new exoplayer"))
+        val mediaDrmCallback = HttpMediaDrmCallback(
+                licenseUrl,
+                defaultHttpDataSourceFactory
+        )
+        val drmSessionManager = DefaultDrmSessionManager.Builder()
+                .setMultiSession(true)
+                .setUseDrmSessionsForClearContent()
+                .build(mediaDrmCallback)
+        val factory = DefaultDataSourceFactory(
+                this,
+                defaultHttpDataSourceFactory
+        )
+        val uriDashManifest: Uri = Uri.parse(manifestUrl)
+        return DashMediaSource.Factory(factory)
+                .setDrmSessionManager(drmSessionManager)
+                .createMediaSource(uriDashManifest)
     }
 
     override fun onDestroy() {
