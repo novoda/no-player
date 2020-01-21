@@ -26,7 +26,6 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,88 +33,86 @@ import java.util.List;
  */
 /* package */ final class WebvttSubtitle implements Subtitle {
 
-  private final List<WebvttCue> cues;
-  private final int numCues;
-  private final long[] cueTimesUs;
-  private final long[] sortedCueTimesUs;
+    private final List<WebvttCue> cues;
+    private final int numCues;
+    private final long[] cueTimesUs;
+    private final long[] sortedCueTimesUs;
 
-  /**
-   * @param cues A list of the cues in this subtitle.
-   */
-  public WebvttSubtitle(List<WebvttCue> cues) {
-    this.cues = cues;
-    numCues = cues.size();
-    cueTimesUs = new long[2 * numCues];
-    for (int cueIndex = 0; cueIndex < numCues; cueIndex++) {
-      WebvttCue cue = cues.get(cueIndex);
-      int arrayIndex = cueIndex * 2;
-      cueTimesUs[arrayIndex] = cue.startTime;
-      cueTimesUs[arrayIndex + 1] = cue.endTime;
-    }
-    sortedCueTimesUs = Arrays.copyOf(cueTimesUs, cueTimesUs.length);
-    Arrays.sort(sortedCueTimesUs);
-  }
-
-  @Override
-  public int getNextEventTimeIndex(long timeUs) {
-    int index = Util.binarySearchCeil(sortedCueTimesUs, timeUs, false, false);
-    return index < sortedCueTimesUs.length ? index : C.INDEX_UNSET;
-  }
-
-  @Override
-  public int getEventTimeCount() {
-    return sortedCueTimesUs.length;
-  }
-
-  @Override
-  public long getEventTime(int index) {
-    Assertions.checkArgument(index >= 0);
-    Assertions.checkArgument(index < sortedCueTimesUs.length);
-    return sortedCueTimesUs[index];
-  }
-
-  @Override
-  public List<Cue> getCues(long timeUs) {
-    ArrayList<Cue> list = null;
-    WebvttCue firstNormalCue = null;
-    SpannableStringBuilder normalCueTextBuilder = null;
-
-    for (int i = 0; i < numCues; i++) {
-      if ((cueTimesUs[i * 2] <= timeUs) && (timeUs < cueTimesUs[i * 2 + 1])) {
-        if (list == null) {
-          list = new ArrayList<>();
+    /**
+     * @param cues A list of the cues in this subtitle.
+     */
+    public WebvttSubtitle(List<WebvttCue> cues) {
+        this.cues = cues;
+        numCues = cues.size();
+        cueTimesUs = new long[2 * numCues];
+        for (int cueIndex = 0; cueIndex < numCues; cueIndex++) {
+            WebvttCue cue = cues.get(cueIndex);
+            int arrayIndex = cueIndex * 2;
+            cueTimesUs[arrayIndex] = cue.startTime;
+            cueTimesUs[arrayIndex + 1] = cue.endTime;
         }
-        WebvttCue cue = cues.get(i);
-        if (cue.isNormalCue()) {
-          // we want to merge all of the normal cues into a single cue to ensure they are drawn
-          // correctly (i.e. don't overlap) and to emulate roll-up, but only if there are multiple
-          // normal cues, otherwise we can just append the single normal cue
-          if (firstNormalCue == null) {
-            firstNormalCue = cue;
-          } else if (normalCueTextBuilder == null) {
-            normalCueTextBuilder = new SpannableStringBuilder();
-            normalCueTextBuilder.append(firstNormalCue.text).append("\n").append(cue.text);
-          } else {
-            normalCueTextBuilder.append("\n").append(cue.text);
-          }
-        } else {
-          list.add(cue);
-        }
-      }
-    }
-    if (normalCueTextBuilder != null) {
-      // there were multiple normal cues, so create a new cue with all of the text
-      list.add(new WebvttCue(normalCueTextBuilder));
-    } else if (firstNormalCue != null) {
-      // there was only a single normal cue, so just add it to the list
-      list.add(firstNormalCue);
+        sortedCueTimesUs = Arrays.copyOf(cueTimesUs, cueTimesUs.length);
+        Arrays.sort(sortedCueTimesUs);
     }
 
-    if (list != null) {
-      return list;
-    } else {
-      return Collections.emptyList();
+    @Override
+    public int getNextEventTimeIndex(long timeUs) {
+        int index = Util.binarySearchCeil(sortedCueTimesUs, timeUs, false, false);
+        return index < sortedCueTimesUs.length ? index : C.INDEX_UNSET;
     }
-  }
+
+    @Override
+    public int getEventTimeCount() {
+        return sortedCueTimesUs.length;
+    }
+
+    @Override
+    public long getEventTime(int index) {
+        Assertions.checkArgument(index >= 0);
+        Assertions.checkArgument(index < sortedCueTimesUs.length);
+        return sortedCueTimesUs[index];
+    }
+
+    @Override
+    public List<Cue> getCues(long timeUs) {
+        List<Cue> list = new ArrayList<>();
+        WebvttCue firstNormalCue = null;
+        SpannableStringBuilder normalCueTextBuilder = null;
+
+        for (int i = 0; i < numCues; i++) {
+            if ((cueTimesUs[i * 2] <= timeUs) && (timeUs < cueTimesUs[i * 2 + 1])) {
+                WebvttCue cue = cues.get(i);
+                // TODO(ibaker): Replace this with a closer implementation of the WebVTT spec (keeping
+                // individual cues, but tweaking their `line` value):
+                // https://www.w3.org/TR/webvtt1/#cue-computed-line
+                if (cue.isNormalCue()) {
+                    // we want to merge all of the normal cues into a single cue to ensure they are drawn
+                    // correctly (i.e. don't overlap) and to emulate roll-up, but only if there are multiple
+                    // normal cues, otherwise we can just append the single normal cue
+                    if (firstNormalCue == null) {
+                        firstNormalCue = cue;
+                    } else if (normalCueTextBuilder == null) {
+                        normalCueTextBuilder = new SpannableStringBuilder();
+                        normalCueTextBuilder
+                                .append(Assertions.checkNotNull(firstNormalCue.text))
+                                .append("\n")
+                                .append(Assertions.checkNotNull(cue.text));
+                    } else {
+                        normalCueTextBuilder.append("\n").append(Assertions.checkNotNull(cue.text));
+                    }
+                } else {
+                    list.add(cue);
+                }
+            }
+        }
+        if (normalCueTextBuilder != null) {
+            // there were multiple normal cues, so create a new cue with all of the text
+            list.add(new WebvttCue.Builder().setText(normalCueTextBuilder).build());
+        } else if (firstNormalCue != null) {
+            // there was only a single normal cue, so just add it to the list
+            list.add(firstNormalCue);
+        }
+        return list;
+    }
 
 }

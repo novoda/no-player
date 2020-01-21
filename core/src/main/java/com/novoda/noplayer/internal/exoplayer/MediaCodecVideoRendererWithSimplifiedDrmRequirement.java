@@ -107,7 +107,7 @@ class MediaCodecVideoRendererWithSimplifiedDrmRequirement extends MediaCodecVide
 
         if (MimeTypes.VIDEO_DOLBY_VISION.equals(format.sampleMimeType)) {
             // Fallback to primary decoders for H.265/HEVC or H.264/AVC for the relevant DV profiles.
-            Pair<Integer, Integer> codecProfileAndLevel = MediaCodecUtil.getCodecProfileAndLevel(format.codecs);
+            Pair<Integer, Integer> codecProfileAndLevel = MediaCodecUtil.getCodecProfileAndLevel(format);
 
             if (codecProfileAndLevel != null) {
                 int profile = codecProfileAndLevel.first;

@@ -16,7 +16,7 @@
 package com.novoda.noplayer.external.exoplayer.text.webvtt;
 
 import android.graphics.Typeface;
-import android.text.Layout.Alignment;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -32,22 +32,23 @@ import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.webvtt.WebvttCssStyle;
 import com.google.android.exoplayer2.text.webvtt.WebvttCue;
 import com.google.android.exoplayer2.text.webvtt.WebvttParserUtil;
+import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.ParsableByteArray;
-import com.novoda.noplayer.external.exoplayer.util.ColorParser;
+import com.google.android.exoplayer2.util.Util;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Parser for WebVTT cues. (https://w3c.github.io/webvtt/#cues)
@@ -55,7 +56,7 @@ import java.util.regex.Pattern;
 public final class WebvttCueParser {
 
     public static final Pattern CUE_HEADER_PATTERN = Pattern
-        .compile("^(\\S+)\\s+-->\\s+(\\S+)(.*)?$");
+            .compile("^(\\S+)\\s+-->\\s+(\\S+)(.*)?$");
 
     private static final Pattern CUE_SETTING_PATTERN = Pattern.compile("(\\S+?):(\\S+)");
 
@@ -93,32 +94,31 @@ public final class WebvttCueParser {
      * Parses the next valid WebVTT cue in a parsable array, including timestamps, settings and text.
      *
      * @param webvttData Parsable WebVTT file data.
-     * @param builder    Builder for WebVTT Cues.
-     * @param styles     List of styles defined by the CSS style blocks preceeding the cues.
+     * @param builder    Builder for WebVTT Cues (output parameter).
+     * @param styles     List of styles defined by the CSS style blocks preceding the cues.
      * @return Whether a valid Cue was found.
      */
-    public boolean parseCue(ParsableByteArray webvttData, WebvttCue.Builder builder,
-                            List<WebvttCssStyle> styles) {
-        String firstLine = webvttData.readLine();
+    public boolean parseCue(
+            ParsableByteArray webvttData, WebvttCue.Builder builder, List<WebvttCssStyle> styles) {
+        @Nullable String firstLine = webvttData.readLine();
         if (firstLine == null) {
             return false;
         }
-        Matcher cueHeaderMatcher = com.google.android.exoplayer2.text.webvtt.WebvttCueParser.CUE_HEADER_PATTERN.matcher(firstLine);
+        Matcher cueHeaderMatcher = WebvttCueParser.CUE_HEADER_PATTERN.matcher(firstLine);
         if (cueHeaderMatcher.matches()) {
             // We have found the timestamps in the first line. No id present.
             return parseCue(null, cueHeaderMatcher, webvttData, builder, textBuilder, styles);
         }
         // The first line is not the timestamps, but could be the cue id.
-        String secondLine = webvttData.readLine();
+        @Nullable String secondLine = webvttData.readLine();
         if (secondLine == null) {
             return false;
         }
-        cueHeaderMatcher = com.google.android.exoplayer2.text.webvtt.WebvttCueParser.CUE_HEADER_PATTERN.matcher(secondLine);
+        cueHeaderMatcher = WebvttCueParser.CUE_HEADER_PATTERN.matcher(secondLine);
         if (cueHeaderMatcher.matches()) {
             // We can do the rest of the parsing, including the id.
             return parseCue(firstLine.trim(), cueHeaderMatcher, webvttData, builder, textBuilder,
-                            styles
-            );
+                    styles);
         }
         return false;
     }
@@ -129,7 +129,7 @@ public final class WebvttCueParser {
      * @param cueSettingsList String containing the settings for a given cue.
      * @param builder         The {@link WebvttCue.Builder} where incremental construction takes place.
      */
-  /* package */
+    /* package */
     static void parseCueSettingsList(String cueSettingsList,
                                      WebvttCue.Builder builder) {
         // Parse the cue settings list.
@@ -160,14 +160,14 @@ public final class WebvttCueParser {
      *
      * @param id      Id of the cue, {@code null} if it is not present.
      * @param markup  The markup text to be parsed.
-     * @param styles  List of styles defined by the CSS style blocks preceeding the cues.
+     * @param styles  List of styles defined by the CSS style blocks preceding the cues.
      * @param builder Output builder.
      */
-  /* package */
-    static void parseCueText(String id, String markup, WebvttCue.Builder builder,
-                             List<WebvttCssStyle> styles) {
+    /* package */
+    static void parseCueText(
+            @Nullable String id, String markup, WebvttCue.Builder builder, List<WebvttCssStyle> styles) {
         SpannableStringBuilder spannedText = new SpannableStringBuilder();
-        Stack<StartTag> startTagStack = new Stack<>();
+        ArrayDeque<StartTag> startTagStack = new ArrayDeque<>();
         List<StyleMatch> scratchStyleMatches = new ArrayList<>();
         int pos = 0;
         while (pos < markup.length()) {
@@ -182,12 +182,13 @@ public final class WebvttCueParser {
                     boolean isClosingTag = markup.charAt(ltPos + 1) == CHAR_SLASH;
                     pos = findEndOfTag(markup, ltPos + 1);
                     boolean isVoidTag = markup.charAt(pos - 2) == CHAR_SLASH;
-                    String fullTagExpression = markup.substring(
-                        ltPos + (isClosingTag ? 2 : 1),
-                        isVoidTag ? pos - 2 : pos - 1
-                    );
+                    String fullTagExpression = markup.substring(ltPos + (isClosingTag ? 2 : 1),
+                            isVoidTag ? pos - 2 : pos - 1);
+                    if (fullTagExpression.trim().isEmpty()) {
+                        continue;
+                    }
                     String tagName = getTagName(fullTagExpression);
-                    if (tagName == null || !isSupportedTag(tagName)) {
+                    if (!isSupportedTag(tagName)) {
                         continue;
                     }
                     if (isClosingTag) {
@@ -207,8 +208,8 @@ public final class WebvttCueParser {
                     int semiColonEndIndex = markup.indexOf(CHAR_SEMI_COLON, pos + 1);
                     int spaceEndIndex = markup.indexOf(CHAR_SPACE, pos + 1);
                     int entityEndIndex = semiColonEndIndex == -1 ? spaceEndIndex
-                        : (spaceEndIndex == -1 ? semiColonEndIndex
-                        : Math.min(semiColonEndIndex, spaceEndIndex));
+                            : (spaceEndIndex == -1 ? semiColonEndIndex
+                            : Math.min(semiColonEndIndex, spaceEndIndex));
                     if (entityEndIndex != -1) {
                         applyEntity(markup.substring(pos + 1, entityEndIndex), spannedText);
                         if (entityEndIndex == spaceEndIndex) {
@@ -231,17 +232,21 @@ public final class WebvttCueParser {
             applySpansForTag(id, startTagStack.pop(), spannedText, styles, scratchStyleMatches);
         }
         applySpansForTag(id, StartTag.buildWholeCueVirtualTag(), spannedText, styles,
-                         scratchStyleMatches
-        );
+                scratchStyleMatches);
         builder.setText(spannedText);
     }
 
-    private static boolean parseCue(String id, Matcher cueHeaderMatcher, ParsableByteArray webvttData,
-                                    WebvttCue.Builder builder, StringBuilder textBuilder, List<WebvttCssStyle> styles) {
+    private static boolean parseCue(
+            @Nullable String id,
+            Matcher cueHeaderMatcher,
+            ParsableByteArray webvttData,
+            WebvttCue.Builder builder,
+            StringBuilder textBuilder,
+            List<WebvttCssStyle> styles) {
         try {
             // Parse the cue start and end times.
             builder.setStartTime(WebvttParserUtil.parseTimestampUs(cueHeaderMatcher.group(1)))
-                .setEndTime(WebvttParserUtil.parseTimestampUs(cueHeaderMatcher.group(2)));
+                    .setEndTime(WebvttParserUtil.parseTimestampUs(cueHeaderMatcher.group(2)));
         } catch (NumberFormatException e) {
             Log.w(TAG, "Skipping cue with bad header: " + cueHeaderMatcher.group());
             return false;
@@ -251,8 +256,9 @@ public final class WebvttCueParser {
 
         // Parse the cue text.
         textBuilder.setLength(0);
-        String line;
-        while (!TextUtils.isEmpty(line = webvttData.readLine())) {
+        for (String line = webvttData.readLine();
+             !TextUtils.isEmpty(line);
+             line = webvttData.readLine()) {
             if (textBuilder.length() > 0) {
                 textBuilder.append("\n");
             }
@@ -264,14 +270,11 @@ public final class WebvttCueParser {
 
     // Internal methods
 
-    private static void parseLineAttribute(String s, WebvttCue.Builder builder)
-        throws NumberFormatException {
+    private static void parseLineAttribute(String s, WebvttCue.Builder builder) {
         int commaIndex = s.indexOf(',');
         if (commaIndex != -1) {
             builder.setLineAnchor(parsePositionAnchor(s.substring(commaIndex + 1)));
             s = s.substring(0, commaIndex);
-        } else {
-            builder.setLineAnchor(Cue.TYPE_UNSET);
         }
         if (s.endsWith("%")) {
             builder.setLine(WebvttParserUtil.parsePercentage(s)).setLineType(Cue.LINE_TYPE_FRACTION);
@@ -286,18 +289,16 @@ public final class WebvttCueParser {
         }
     }
 
-    private static void parsePositionAttribute(String s, WebvttCue.Builder builder)
-        throws NumberFormatException {
+    private static void parsePositionAttribute(String s, WebvttCue.Builder builder) {
         int commaIndex = s.indexOf(',');
         if (commaIndex != -1) {
             builder.setPositionAnchor(parsePositionAnchor(s.substring(commaIndex + 1)));
             s = s.substring(0, commaIndex);
-        } else {
-            builder.setPositionAnchor(Cue.TYPE_UNSET);
         }
         builder.setPosition(WebvttParserUtil.parsePercentage(s));
     }
 
+    @Cue.AnchorType
     private static int parsePositionAnchor(String s) {
         switch (s) {
             case "start":
@@ -313,20 +314,24 @@ public final class WebvttCueParser {
         }
     }
 
-    private static Alignment parseTextAlignment(String s) {
+    @WebvttCue.Builder.TextAlignment
+    private static int parseTextAlignment(String s) {
         switch (s) {
             case "start":
+                return WebvttCue.Builder.TEXT_ALIGNMENT_START;
             case "left":
-                return Alignment.ALIGN_NORMAL;
+                return WebvttCue.Builder.TEXT_ALIGNMENT_LEFT;
             case "center":
             case "middle":
-                return Alignment.ALIGN_CENTER;
+                return WebvttCue.Builder.TEXT_ALIGNMENT_CENTER;
             case "end":
+                return WebvttCue.Builder.TEXT_ALIGNMENT_END;
             case "right":
-                return Alignment.ALIGN_OPPOSITE;
+                return WebvttCue.Builder.TEXT_ALIGNMENT_RIGHT;
             default:
                 Log.w(TAG, "Invalid alignment value: " + s);
-                return null;
+                // Default value: https://www.w3.org/TR/webvtt1/#webvtt-cue-text-alignment
+                return WebvttCue.Builder.TEXT_ALIGNMENT_CENTER;
         }
     }
 
@@ -376,27 +381,27 @@ public final class WebvttCueParser {
         }
     }
 
-    private static void applySpansForTag(String cueId, StartTag startTag, SpannableStringBuilder text,
-                                         List<WebvttCssStyle> styles, List<StyleMatch> scratchStyleMatches) {
+    private static void applySpansForTag(
+            @Nullable String cueId,
+            StartTag startTag,
+            SpannableStringBuilder text,
+            List<WebvttCssStyle> styles,
+            List<StyleMatch> scratchStyleMatches) {
         int start = startTag.position;
         int end = text.length();
         switch (startTag.name) {
             case TAG_BOLD:
                 text.setSpan(new StyleSpan(STYLE_BOLD), start, end,
-                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 break;
             case TAG_ITALIC:
                 text.setSpan(new StyleSpan(STYLE_ITALIC), start, end,
-                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 break;
             case TAG_UNDERLINE:
                 text.setSpan(new UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 break;
             case TAG_CLASS:
-                applySupportedClasses(text, startTag.classes, start, end);
-                break;
             case TAG_LANG:
             case TAG_VOICE:
             case "": // Case of the "whole cue" virtual tag.
@@ -412,16 +417,6 @@ public final class WebvttCueParser {
         }
     }
 
-    private static void applySupportedClasses(SpannableStringBuilder text, String[] classes,
-                                              int start, int end) {
-        for (String className : classes) {
-            if (ColorParser.isNamedColor(className)) {
-                int color = ColorParser.parseCssColor(className);
-                text.setSpan(new ForegroundColorSpan(color), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
-    }
-
     private static void applyStyleToText(SpannableStringBuilder spannedText, WebvttCssStyle style,
                                          int start, int end) {
         if (style == null) {
@@ -429,8 +424,7 @@ public final class WebvttCueParser {
         }
         if (style.getStyle() != WebvttCssStyle.UNSPECIFIED) {
             spannedText.setSpan(new StyleSpan(style.getStyle()), start, end,
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         if (style.isLinethrough()) {
             spannedText.setSpan(new StrikethroughSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -440,39 +434,33 @@ public final class WebvttCueParser {
         }
         if (style.hasFontColor()) {
             spannedText.setSpan(new ForegroundColorSpan(style.getFontColor()), start, end,
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         if (style.hasBackgroundColor()) {
             spannedText.setSpan(new BackgroundColorSpan(style.getBackgroundColor()), start, end,
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         if (style.getFontFamily() != null) {
             spannedText.setSpan(new TypefaceSpan(style.getFontFamily()), start, end,
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
-        if (style.getTextAlign() != null) {
-            spannedText.setSpan(new AlignmentSpan.Standard(style.getTextAlign()), start, end,
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            );
+        Layout.Alignment textAlign = style.getTextAlign();
+        if (textAlign != null) {
+            spannedText.setSpan(
+                    new AlignmentSpan.Standard(textAlign), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         switch (style.getFontSizeUnit()) {
             case WebvttCssStyle.FONT_SIZE_UNIT_PIXEL:
                 spannedText.setSpan(new AbsoluteSizeSpan((int) style.getFontSize(), true), start, end,
-                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 break;
             case WebvttCssStyle.FONT_SIZE_UNIT_EM:
                 spannedText.setSpan(new RelativeSizeSpan(style.getFontSize()), start, end,
-                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 break;
             case WebvttCssStyle.FONT_SIZE_UNIT_PERCENT:
                 spannedText.setSpan(new RelativeSizeSpan(style.getFontSize() / 100), start, end,
-                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                );
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 break;
             case WebvttCssStyle.UNSPECIFIED:
                 // Do nothing.
@@ -488,14 +476,15 @@ public final class WebvttCueParser {
      */
     private static String getTagName(String tagExpression) {
         tagExpression = tagExpression.trim();
-        if (tagExpression.isEmpty()) {
-            return null;
-        }
-        return tagExpression.split("[ \\.]")[0];
+        Assertions.checkArgument(!tagExpression.isEmpty());
+        return Util.splitAtFirst(tagExpression, "[ \\.]")[0];
     }
 
-    private static void getApplicableStyles(List<WebvttCssStyle> declaredStyles, String id,
-                                            StartTag tag, List<StyleMatch> output) {
+    private static void getApplicableStyles(
+            List<WebvttCssStyle> declaredStyles,
+            @Nullable String id,
+            StartTag tag,
+            List<StyleMatch> output) {
         int styleCount = declaredStyles.size();
         for (int i = 0; i < styleCount; i++) {
             WebvttCssStyle style = declaredStyles.get(i);
@@ -542,9 +531,7 @@ public final class WebvttCueParser {
 
         public static StartTag buildStartTag(String fullTagExpression, int position) {
             fullTagExpression = fullTagExpression.trim();
-            if (fullTagExpression.isEmpty()) {
-                return null;
-            }
+            Assertions.checkArgument(!fullTagExpression.isEmpty());
             int voiceStartIndex = fullTagExpression.indexOf(" ");
             String voice;
             if (voiceStartIndex == -1) {
@@ -553,11 +540,11 @@ public final class WebvttCueParser {
                 voice = fullTagExpression.substring(voiceStartIndex).trim();
                 fullTagExpression = fullTagExpression.substring(0, voiceStartIndex);
             }
-            String[] nameAndClasses = fullTagExpression.split("\\.");
+            String[] nameAndClasses = Util.split(fullTagExpression, "\\.");
             String name = nameAndClasses[0];
             String[] classes;
             if (nameAndClasses.length > 1) {
-                classes = Arrays.copyOfRange(nameAndClasses, 1, nameAndClasses.length);
+                classes = Util.nullSafeArrayCopyOfRange(nameAndClasses, 1, nameAndClasses.length);
             } else {
                 classes = NO_CLASSES;
             }

@@ -4,7 +4,7 @@ public interface KeyRequestExecutor {
 
     KeyRequestExecutor NOT_REQUIRED = new KeyRequestExecutor() {
         @Override
-        public byte[] executeKeyRequest(ModularDrmKeyRequest request) throws DrmRequestException {
+        public byte[] executeKeyRequest(ModularDrmKeyRequest request) throws IllegalStateException {
             throw new IllegalStateException("No key request execution expected.");
         }
     };

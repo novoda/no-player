@@ -8,7 +8,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.exoplayer2.drm.DrmInitData;
-import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.OfflineLicenseHelper;
 import com.google.android.exoplayer2.source.dash.DashUtil;
 import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
@@ -57,7 +56,7 @@ class OfflineLicense {
                             offlineLicenseCallback.onLicenseDownloaded(offlineKeySetId);
                         }
                     });
-                } catch (DrmSession.DrmSessionException | IOException | InterruptedException e) {
+                } catch (IOException | InterruptedException e) {
                     Log.e(getClass().getSimpleName(), "Failed to download license", e);
                     Toast.makeText(context, "Failed to download license" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }

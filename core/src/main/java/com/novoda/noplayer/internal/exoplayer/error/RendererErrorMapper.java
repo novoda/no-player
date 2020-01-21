@@ -38,7 +38,7 @@ final class RendererErrorMapper {
             return new NoPlayerError(PlayerErrorType.RENDERER_DECODER, DetailErrorType.AUDIO_SINK_WRITE_ERROR, message);
         }
 
-        if (rendererException instanceof AudioProcessor.UnhandledFormatException) {
+        if (rendererException instanceof AudioProcessor.UnhandledAudioFormatException) {
             return new NoPlayerError(PlayerErrorType.RENDERER_DECODER, DetailErrorType.AUDIO_UNHANDLED_FORMAT_ERROR, message);
         }
 
@@ -49,7 +49,7 @@ final class RendererErrorMapper {
         if (rendererException instanceof MediaCodecRenderer.DecoderInitializationException) {
             MediaCodecRenderer.DecoderInitializationException decoderInitializationException =
                     (MediaCodecRenderer.DecoderInitializationException) rendererException;
-            String fullMessage = "decoder-name:" + decoderInitializationException.decoderName + ", "
+            String fullMessage = "decoder-name:" + decoderInitializationException.codecInfo.name + ", "
                     + "mimetype:" + decoderInitializationException.mimeType + ", "
                     + "secureCodeRequired:" + decoderInitializationException.secureDecoderRequired + ", "
                     + "diagnosticInfo:" + decoderInitializationException.diagnosticInfo + ", "
