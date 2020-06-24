@@ -267,6 +267,7 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         }
 
         @Override
+        @SuppressWarnings("PMD.AvoidCatchingGenericException")
         public void onAdvertPlayed(int advertBreakIndex, int advertIndex) {
             try {
                 adPlaybackState = adPlaybackState.withPlayedAd(advertBreakIndex, advertIndex);
