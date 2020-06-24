@@ -2,6 +2,7 @@ package com.novoda.noplayer.internal.exoplayer;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
@@ -266,8 +267,17 @@ public class NoPlayerAdsLoader implements AdsLoader, Player.EventListener, Adver
         }
 
         @Override
+        @SuppressWarnings("PMD.AvoidCatchingGenericException")
         public void onAdvertPlayed(int advertBreakIndex, int advertIndex) {
-            adPlaybackState = adPlaybackState.withPlayedAd(advertBreakIndex, advertIndex);
+            try {
+                adPlaybackState = adPlaybackState.withPlayedAd(advertBreakIndex, advertIndex);
+            } catch (Exception e) {
+                Log.e(
+                        NoPlayer.class.getSimpleName(),
+                        "error onAdvertPlayed for advertBreakIndex: " + advertBreakIndex + ", and advertIndex: " + advertIndex
+                );
+            }
+
             updateAdPlaybackState();
         }
 

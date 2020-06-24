@@ -60,7 +60,7 @@ class AdvertState {
         AdvertBreak advertBreak = advertBreaks.get(currentAdvertBreakIndex);
         Advert advert = advertBreak.adverts().get(currentAdvertIndex);
         callback.onHandledPrepareError(currentAdvertBreakIndex, currentAdvertIndex, advert, exception);
-        resetState();
+        //resetState();
     }
 
     void update(boolean isPlayingAdvert, int currentAdvertBreakIndex, int currentAdvertIndex) {
