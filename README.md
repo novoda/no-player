@@ -1,4 +1,4 @@
-# This project is no longer under maintenance
+# This project is no longer under maintenance - 13/7/2020
 Upgrades to latests version of `ExoPlayer` requires a significative amount of changes. The project is no longer maintained from our end.
 
 ![noplayer](art/noplayer-header.png)
