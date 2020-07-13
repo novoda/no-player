@@ -1,3 +1,6 @@
+# This project is no longer under maintenance
+Upgrades to latests version of `ExoPlayer` requires a significative amount of changes. The project is no longer maintained from our end.
+
 ![noplayer](art/noplayer-header.png)
 
 [![CI status](https://github.com/novoda/no-player/workflows/Production%20Builder/badge.svg)](https://github.com/novoda/no-player/actions?query=workflow%3A%22Production+Builder%22) [![Download from Bintray](https://api.bintray.com/packages/novoda/maven/no-player/images/download.svg)](https://bintray.com/novoda/maven/no-player/_latestVersion) ![Tests](https://img.shields.io/jenkins/t/https/ci.novoda.com/view/Open%20source/job/no-player.svg) ![Coverage](https://img.shields.io/jenkins/j/https/ci.novoda.com/view/Open%20source/job/no-player.svg) [![Apache 2.0 Licence](https://img.shields.io/github/license/novoda/no-player.svg)](https://github.com/novoda/no-player/blob/master/LICENSE)
