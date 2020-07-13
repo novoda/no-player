@@ -54,6 +54,12 @@ compileOptions {
       .withWidevineModularStreamingDrm(drmHandler)
       .build(this);
     ```
+    
+    ```kotlin
+    val player = PlayerBuilder()
+        .withPriority(PlayerType.EXO_PLAYER)
+        .build(this)
+    ```
 
  2. Create the `PlayerView`:
   
@@ -68,8 +74,13 @@ compileOptions {
  3. Attach to a `PlayerView`:
 
     ```java
-    PlayerView playerView = findViewById(R.id.player_view);
+    NoPlayerView playerView = findViewById(R.id.player_view);
     player.attach(playerView);
+    ```
+    
+    ```kotlin
+    val playerView = findViewById<NoPlayerView>(R.id.player_view)
+    player.attach(playerView)
     ```
 
 
@@ -79,7 +90,19 @@ compileOptions {
     player.getListeners().addPreparedListener(playerState -> player.play());
     
     Uri uri = Uri.parse(mpdUrl);
-    player.loadVideo(uri, ContentType.DASH);
+    player.loadVideo(uri, new OptionsBuilder()
+                .withContentType(ContentType.DASH)
+                .build());
+    ```
+    
+    ```kotlin
+    player.listeners.addPreparedListener { player.play() }
+    
+    val uri = Uri.parse("mpdUrl")
+    player.loadVideo(uri, OptionsBuilder()
+            .withContentType(ContentType.DASH)
+            .build())
+
     ```
 
 ## Snapshots
